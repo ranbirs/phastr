@@ -1,0 +1,100 @@
+<?php
+
+namespace sys\modules;
+
+class Xhr extends \sys\Common {
+
+	function __construct()
+	{
+		parent::__construct();
+
+		$this->view->assets('script', null,
+			'$.ajaxSetup({headers: {"' . $this->_key . '": "' . $this->_xid . '"}});'
+		);
+	}
+
+	public function server($key = null, $value = null)
+	{
+		return $this->_request('server', $key, $value);
+	}
+
+	public function get($key = null, $value = null)
+	{
+		return $this->_request('get', $key, $value);
+	}
+
+	public function post($key = null, $value = null)
+	{
+		return $this->_request('post', $key, $value);
+	}
+
+	public function header($key = "")
+	{
+		$key = "HTTP_" . strtoupper($key . $this->_key);
+		$header = $this->server($key);
+		if ($header === $this->_xid) {
+			return $header;
+		}
+		return false;
+	}
+
+	public function request()
+	{
+		$subj = \sys\Init::res('params', 0);
+		$type = \sys\Init::res('params', 1);
+
+		if (!$this->header() or $subj !== \app\confs\sys\xhr_param__) {
+			return false;
+		}
+		switch ($type) {
+			case 'post':
+			case 'get':
+				return $this->$type();
+			break;
+			case 'form':
+				$method = \sys\Init::res('params', 2);
+				$fid = \sys\Init::res('params', 3);
+				$key = $this->_key;
+
+				if ($method and method_exists($this, $method)) {
+					if ($this->$method("form_fid_$key") === $fid) {
+						return $this->$method();
+					}
+				}
+			break;
+		}
+		return false;
+	}
+
+	public function response($data, $format = 'json')
+	{
+		$this->view->response = $data;
+		$this->view->layout(\app\confs\sys\xhr_param__ . "/$format");
+	}
+
+	private function _request($type = 'post', $key = null, $value = null)
+	{
+		switch ($type) {
+			case 'server':
+				if ($value !== null)
+					$_SERVER[$key] = $value;
+				$request = ($key) ? ((isset($_SERVER[$key])) ? $_SERVER[$key] : null) : $_SERVER;
+			break;
+			case 'get':
+				if ($value !== null)
+					$_GET[$key] = $value;
+				$request = ($key) ? ((isset($_GET[$key])) ? $_GET[$key] : null) : $_GET;
+			break;
+			case 'post':
+				if ($value !== null)
+					$_POST[$key] = $value;
+				$request = ($key) ? ((isset($_POST[$key])) ? $_POST[$key] : null) : $_POST;
+			break;
+			default:
+				return false;
+			break;
+		}
+		return $request;
+	}
+
+}

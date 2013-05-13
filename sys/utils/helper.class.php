@@ -1,0 +1,84 @@
+<?php
+
+namespace sys\utils;
+
+class Helper {
+
+	public static function resolveFilePath($path, $ext = ".php")
+	{
+		$path = self::getPath($path) . $ext;
+		$file = stream_resolve_include_path($path);
+		if ($file !== false) {
+			return $path;
+		}
+		return false;
+	}
+
+	public static function getFileName($path)
+	{
+		$path = explode("/", $path);
+		return strtolower(end($path));
+	}
+
+	public static function getClassName($class)
+	{
+		$class = explode("\\", $class);
+		return ucfirst(strtolower(end($class)));
+	}
+
+	public static function getClassPath($class)
+	{
+		$class = explode("\\", $class);
+		return strtolower(implode("/", $class));
+	}
+
+	public static function getPathClass($path)
+	{
+		$path = explode("/", strtolower($path));
+		$class = ucfirst(array_pop($path));
+		array_push($path, $class);
+		return implode("\\", $path);
+	}
+
+	public static function getPath($path, $type = 'file')
+	{
+		switch ($type) {
+			case 'file':
+				$path = str_replace("-", "_", $path);
+			break;
+			case 'path':
+				$path = str_replace("_", "-", $path);
+			break;
+			case 'tree':
+				$path = str_replace(array("--", "-"), array("/", "_"), $path);
+			break;
+			case 'method':
+				$path = str_replace(array("--", "-"), array("__", "_"), $path);
+			break;
+			default:
+				return false;
+			break;
+		}
+		return strtolower($path);
+	}
+
+	public static function getArgs($params = null, $delimiter = ":")
+	{
+		$args = array();
+		if (!is_array($params))
+			$params = array($params);
+
+		foreach ($params as $param) {
+			$param = explode($delimiter, $param, 2);
+			if ($param[0])
+				$args[$param[0]] = (isset($param[1])) ? $param[1] : "";
+		}
+		return $args;
+	}
+
+	public static function getArray($string = null, $delimiter = ",")
+	{
+		return explode($delimiter, str_replace(" ", "", $string));
+	}
+
+}
