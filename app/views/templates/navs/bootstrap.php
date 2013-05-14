@@ -37,7 +37,7 @@ foreach ($items as $index => &$item) {
 		}
 		$val['attr'] = \sys\utils\Html::getAttr($val['attr']);
 
-		$leaf[] = "<li{$val['attr']}>";
+		$leaf[] = "<li" . $val['attr'] . ">";
 
 		if ($val['path'] and $val['path'] != "/")
 			$val['path'] = "/" . $val['path'] . "/";

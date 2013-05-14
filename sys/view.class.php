@@ -17,9 +17,13 @@ class View {
 			if (!isset($this->assets[$type]))
 				$this->assets[$type] = array();
 
-			return implode("\n", $this->assets[$type]);
+			return implode("\n", array_values($this->assets[$type]));
 		}
-		$this->assets[$type][] = \sys\utils\Html::getAsset($type, $subj, $content, $append);
+		$key = ($subj) ? $subj : md5($content);
+		if (isset($this->assets[$type][$key])) {
+			return true;
+		}
+		$this->assets[$type][$key] = \sys\utils\Html::getAsset($type, $subj, $content, $append);
 	}
 
 	public function block($name)

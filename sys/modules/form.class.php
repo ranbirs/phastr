@@ -36,7 +36,9 @@ class Form extends \sys\Common {
 
 		if (!$this->html) {
 			$this->build['method'] = $method;
-			$this->build['action'] = "/" . \sys\Init::res('route') . "/xhr/form/$method/" . $this->fid . "/";
+			$action = "/" . \sys\Init::res('route') . "/" . \app\confs\sys\xhr_param__;
+			$action .= "/form/$method/" . $this->fid . "/";
+			$this->build['action'] = $action;
 			$data = array('build' => $this->build, 'fields' => $this->fields);
 			$this->html = $this->view->template('form', $template, $data);
 		}

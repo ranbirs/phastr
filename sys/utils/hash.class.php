@@ -8,7 +8,7 @@ class Hash {
 	private static $cost = 10;
 	private static $salt = 22;
 
-	public static function rand($size = 0, $algo = 'sha256')
+	public static function rand($size = 0, $algo = 'sha1')
 	{
 		$hash = hash($algo, uniqid(mt_rand()));
 		if ($size)
