@@ -20,10 +20,10 @@ class View {
 			return implode("\n", array_values($this->assets[$type]));
 		}
 		$key = ($subj) ? $subj : md5($content);
-		if (isset($this->assets[$type][$key])) {
-			return true;
+		if (!isset($this->assets[$type][$key])) {
+			$this->assets[$type][$key] = \sys\utils\Html::getAsset($type, $subj, $content, $append);
 		}
-		$this->assets[$type][$key] = \sys\utils\Html::getAsset($type, $subj, $content, $append);
+		return true;	
 	}
 
 	public function block($name)
