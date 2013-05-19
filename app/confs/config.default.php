@@ -11,11 +11,12 @@ namespace app\confs\sys;
 
 	const hash__ = "xid_hash_key_str";
 
+	const autoload__ = "index";
+	const homepage__ = "index";
+
 	const master__ = "_scope";
 	const except__ = "error, xhr";
 
-	const autoload__ = "index";
-	const homepage__ = "index";
 	const page__ = "index";
 	const action__ = "index";
 	const method__ = "scope";

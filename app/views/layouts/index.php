@@ -1,5 +1,5 @@
 <?
-$this->meta['title'] = $this->title . " | " . $this->site;
+$this->full_title = $this->title . " | " . $this->app_title;
 ?>
 <!DOCTYPE html>
 <html lang="<?= \sys\Session::client('lang'); ?>">
@@ -10,7 +10,7 @@ $this->meta['title'] = $this->title . " | " . $this->site;
 
 	<?= $this->assets('meta'); ?>
 
-	<title><?= $this->meta['title'] ?></title>
+	<title><?= $this->full_title; ?></title>
 
 	<link href="/css/bootstrap.min.css?2.3.0" rel="stylesheet">
 
@@ -42,7 +42,7 @@ $this->meta['title'] = $this->title . " | " . $this->site;
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</a>
-				<a class="brand" href="/"><?= $this->site; ?></a>
+				<a class="brand" href="/"><?= $this->app_title; ?></a>
 				<nav class="nav-collapse">
 					<?= $this->top_nav; ?>
 					<?= $this->user_nav; ?>
@@ -53,7 +53,7 @@ $this->meta['title'] = $this->title . " | " . $this->site;
 
 	<div id="page">
 		<div id="load">
-			<div id="node" data-sitetitle="<?= $this->meta['title']; ?>" data-sitename="<?= $this->site; ?>"<? if ($this->callback) { ?> data-callback="<?= $this->callback; ?>"<? } ?>>
+			<div id="node" data-sitetitle="<?= $this->full_title; ?>" data-sitename="<?= $this->app_title; ?>"<? if ($this->callback) { ?> data-callback="<?= $this->callback; ?>"<? } ?>>
 				<section class="container" id="content">
 					<h1 class="title"><?= $this->title; ?></h1>
 					<div id="body">
@@ -69,7 +69,7 @@ $this->meta['title'] = $this->title . " | " . $this->site;
 	</footer>
 
 <script src="/js/jquery-1.9.1.min.js"></script>
-<script src="/js/bootstrap.min.js?2.3.0"></script>
+<script src="/js/bootstrap.min.js?2.3.2"></script>
 
 <?= $this->assets('script'); ?>
 

@@ -20,8 +20,7 @@ class _scope extends \sys\Controller {
 		$this->view->user_nav = $this->user_nav->html();
 
 		$this->view->callback = "";
-		$this->view->meta = array();
-		$this->view->site = \sys\utils\Conf::k('app\\title');
+		$this->view->app_title = \sys\utils\Conf::k('app\\title');
 
 		$this->load->model('node');
 		$node = $this->node->data(array('title', 'body'), \sys\Init::res('path'));
