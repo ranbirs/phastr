@@ -23,7 +23,7 @@ class View {
 		if (!isset($this->assets[$type][$key])) {
 			$this->assets[$type][$key] = \sys\utils\Html::getAsset($type, $subj, $content, $append);
 		}
-		return true;	
+		return true;
 	}
 
 	public function block($name)

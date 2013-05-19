@@ -19,7 +19,7 @@ class Session {
 		$_SESSION['_timestamp'][0] = self::$timestamp[0];
 
 		$_SESSION[self::$sid]['_xid'] = self::$xid;
-		$_SESSION[self::$sid]['_client']['ua'] = $_SERVER['HTTP_USER_AGENT'];
+		$_SESSION[self::$sid]['_client']['ua'] = (isset($_SERVER['HTTP_USER_AGENT'])) ? $_SERVER['HTTP_USER_AGENT'] : "";
 		$_SESSION[self::$sid]['_client']['ip'] = $_SERVER['REMOTE_ADDR'];
 		$_SESSION[self::$sid]['_client']['lang'] = \app\confs\app\lang__;
 	}
