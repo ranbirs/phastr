@@ -8,12 +8,17 @@ class Hash {
 	private static $cost = 10;
 	private static $salt = 22;
 
+	public static function rid($entropy = false)
+	{
+		return uniqid(mt_rand(), $entropy);
+	}
+
 	public static function rand($size = 0, $algo = 'sha1')
 	{
-		$hash = hash($algo, uniqid(mt_rand()));
-		if ($size)
-			$hash = substr($hash, 0, $size);
-
+		$hash = hash($algo, self::rid());
+		if ($size) {
+			$hash = ($size > strlen($hash)) ? str_pad($hash, $size, $hash) : substr($hash, 0, $size);
+		}
 		return str_shuffle($hash);
 	}
 

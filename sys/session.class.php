@@ -4,7 +4,7 @@ namespace sys;
 
 class Session {
 
-	private static $sid, $xid, $key;
+	private static $sid, $xid, $gid, $key;
 
 	private static $timestamp = array();
 
@@ -12,9 +12,11 @@ class Session {
 	{
 		self::$timestamp[0] = microtime(true);
 		self::$xid = \sys\utils\Hash::rand();
-		self::$key = \sys\utils\Hash::get(self::$sid . self::$xid . self::$timestamp[0], 'sha1');
+		self::$gid = \sys\utils\Hash::rid(true);
+		self::$key = self::keygen();
 
 		$_SESSION['_sid'] = self::$sid;
+		$_SESSION['_gid'] = self::$gid;
 		$_SESSION['_key'] = self::$key;
 		$_SESSION['_timestamp'][0] = self::$timestamp[0];
 
@@ -35,6 +37,7 @@ class Session {
 
 		self::$timestamp[1] = microtime(true);
 		self::$xid = $_SESSION[self::$sid]['_xid'];
+		self::$gid = $_SESSION['_gid'];
 		self::$key = $_SESSION['_key'];
 		$_SESSION['_timestamp'][1] = self::$timestamp[1];
 	}
@@ -52,6 +55,15 @@ class Session {
 	public static function key()
 	{
 		return self::$key;
+	}
+
+	public static function keygen($key = null)
+	{
+		$gen = \sys\utils\Hash::get(self::$sid . self::$xid . self::$gid . self::$timestamp[0], 'sha1');
+		if ($key) {
+			return ($key === $gen);
+		}
+		return $gen;
 	}
 
 	public static function timestamp($start = true)
