@@ -12,26 +12,16 @@ class Init {
 	private static function _init()
 	{
 		\sys\Load::sys('view');
-
 		self::$view = new \sys\View();
 
 		if (!self::_resource()) {
 			self::$view->error(404, self::$error);
 		}
 
-		\sys\Load::sys('utils/hash');
-
 		\sys\Load::sys('session');
 		\sys\Session::start();
 
-		\sys\Load::sys('common');
 		\sys\Load::sys('controller');
-		\sys\Load::sys('model');
-
-		\sys\Load::sys('modules/xhr');
-
-		self::$load = new \sys\Load();
-		self::$xhr = new \sys\modules\Xhr();
 	}
 
 	public static function start()
@@ -41,7 +31,7 @@ class Init {
 		\sys\Load::conf('autoload');
 
 		if (self::$res['master']) {
-			if (!in_array(self::$controller, \sys\utils\Helper::getArray(\app\confs\sys\except__))) {
+			if (!in_array(self::$res['controller'], \sys\utils\Helper::getArray(\app\confs\sys\except__))) {
 				self::$master = \sys\Load::controller(self::$res['master']);
 			}
 			else {
@@ -58,11 +48,17 @@ class Init {
 
 	public static function load()
 	{
+		if (!isset(self::$load))
+			self::$load = new \sys\Load();
+
 		return self::$load;
 	}
 
 	public static function xhr()
 	{
+		if (!isset(self::$xhr))
+			self::$xhr = new \sys\modules\Xhr();
+
 		return self::$xhr;
 	}
 

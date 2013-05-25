@@ -2,13 +2,13 @@
 
 namespace sys\modules;
 
-class Validation extends \sys\Common {
+class Validation {
 
 	private $result = array();
 
 	function __construct()
 	{
-		parent::__construct();
+
 	}
 
 	public function get($key = null)
@@ -27,12 +27,12 @@ class Validation extends \sys\Common {
 		$this->result[$key]['validate'][] = array($subj, $msg);
 	}
 
-	public function validate($id, $validation, $value = null)
+	public function parse($id, $validation, $value = null)
 	{
 		foreach ($validation as $key => $args) {
 			$rule = (!is_numeric($key)) ? $key : $args;
 			$param = (isset($args['value'])) ? $args['value'] : "";
-			$valid = ($this->valid($rule, $value, $param)) ? 'success' : 'error';
+			$valid = ($this->validate($rule, $value, $param)) ? 'success' : 'error';
 
 			if (is_array($args)) {
 				if (array_key_exists($valid, $args)) {
@@ -45,39 +45,19 @@ class Validation extends \sys\Common {
 		}
 	}
 
-	public function sanitize($value, $filter = 'string')
-	{
-		switch ($filter) {
-			case 'string':
-				$value = filter_var($value, FILTER_SANITIZE_STRING, FILTER_FLAG_ENCODE_HIGH);
-			break;
-			case 'int':
-				$value = filter_var($value, FILTER_SANITIZE_NUMBER_INT);
-			break;
-			case 'float':
-				$value = filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT);
-			break;
-			default:
-				return false;
-			break;
-		}
-		return $value;
-	}
-
-	public function valid($rule, $value = null, $param = null)
+	public function validate($rule, $value = null, $param = null)
 	{
 		switch($rule) {
-			case 'header':
-				return ($value === $this->xhr->header());
+			case 'xhr':
+				return ($value === \sys\Init::xhr()->token());
 			break;
 			case 'match':
 				return ($value === $param);
 			break;
 			case 'required':
-				if (is_array($value)) {
-					$value = array_values($value);
+				if (is_array($value))
 					$value = implode($value);
-				}
+
 				return ($value);
 			break;
 			case 'maxlength':
@@ -104,6 +84,25 @@ class Validation extends \sys\Common {
 			break;
 		}
 		return true;
+	}
+
+	public function sanitize($filter = 'string', $value = null)
+	{
+		switch ($filter) {
+			case 'string':
+				$value = filter_var($value, FILTER_SANITIZE_STRING, FILTER_FLAG_ENCODE_HIGH);
+			break;
+			case 'int':
+				$value = filter_var($value, FILTER_SANITIZE_NUMBER_INT);
+			break;
+			case 'float':
+				$value = filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT);
+			break;
+			default:
+				return false;
+			break;
+		}
+		return $value;
 	}
 
 }

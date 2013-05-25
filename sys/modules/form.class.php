@@ -2,9 +2,9 @@
 
 namespace sys\modules;
 
-class Form extends \sys\Common {
+class Form {
 
-	protected $validation;
+	protected $xhr, $validation;
 
 	private $fid, $token, $html;
 
@@ -17,10 +17,9 @@ class Form extends \sys\Common {
 
 	function __construct()
 	{
-		parent::__construct();
+		$this->xhr = \sys\Init::xhr();
 
-		$name = \sys\utils\Helper::getClassName(get_class($this));
-		$this->fid = strtolower($name);
+		$this->fid = strtolower(\sys\utils\Helper::getClassName(get_class($this)));
 		$this->token = \sys\Session::get($this->fid, 'token');
 		if (!$this->token)
 			$this->token = \sys\Session::set($this->fid, 'token');
@@ -36,11 +35,11 @@ class Form extends \sys\Common {
 
 		if (!$this->html) {
 			$this->build['method'] = $method;
-			$action = "/" . \sys\Init::res('route') . "/" . \app\confs\sys\xhr_param__;
-			$action .= "/form/$method/" . $this->fid . "/";
+			$action = "/" . \sys\Init::res('route') . "/" . \app\confs\sys\xhr_param__ .
+				"/form/$method/" . $this->fid . "/";
 			$this->build['action'] = $action;
 			$data = array('build' => $this->build, 'fields' => $this->fields);
-			$this->html = $this->view->template('form', $template, $data);
+			$this->html = \sys\Init::view()->template('form', $template, $data);
 		}
 		return $this->html;
 	}
@@ -50,10 +49,10 @@ class Form extends \sys\Common {
 		$this->validation = new \sys\modules\Validation();
 
 		foreach ($this->sanitized as $id => $filter) {
-			$this->xhr->$method($id, $this->validation->sanitize($this->xhr->$method($id)), $filter);
+			$this->xhr->$method($id, $this->validation->sanitize($filter, $this->xhr->$method($id)));
 		}
 		foreach ($this->validated as $id => $validation) {
-			$this->validation->validate($id, $validation, $this->xhr->$method($id));
+			$this->validation->parse($id, $validation, $this->xhr->$method($id));
 		}
 		if (array_key_exists('error', $this->validation->get())) {
 			return $this->fail();
@@ -83,12 +82,12 @@ class Form extends \sys\Common {
 
 	protected function close()
 	{
-		$key = $this->_key;
+		$key = \sys\Session::key();
 
 		$this->field(array('input' => 'hidden'), "form_xid_$key", null,
 			$data = array(
-				'value' => $this->_xid,
-				'validate' => array('header')
+				'value' => \sys\Session::xid(),
+				'validate' => array('xhr')
 			)
 		);
 		$this->field(array('input' => 'hidden'), "form_fid_$key", null,

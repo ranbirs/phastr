@@ -31,7 +31,7 @@ class User extends \sys\Controller {
 	public function register_verify()
 	{
 		$token = \sys\Init::res('params', 1);
-		if (\sys\Init::res('params', 0) !== $this->_xid) {
+		if (\sys\Init::res('params', 0) !== \sys\Session::xid()) {
 			$this->view->error(404);
 		}
 		if ($token) {

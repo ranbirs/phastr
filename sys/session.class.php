@@ -59,7 +59,7 @@ class Session {
 
 	public static function keygen($key = null)
 	{
-		$gen = \sys\utils\Hash::get(self::$sid . self::$xid . self::$gid . self::$timestamp[0], 'sha1');
+		$gen = \sys\utils\Hash::get(self::$sid . self::$xid . self::$gid, 'sha1');
 		if ($key) {
 			return ($key === $gen);
 		}

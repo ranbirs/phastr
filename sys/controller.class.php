@@ -2,13 +2,17 @@
 
 namespace sys;
 
-class Controller extends \sys\Common {
+class Controller {
+
+	protected $view, $load, $xhr;
 
 	private static $instance;
 
 	function __construct()
 	{
-		parent::__construct();
+		$this->view = \sys\Init::view();
+		$this->load = \sys\Init::load();
+		$this->xhr = \sys\Init::Xhr();
 
 		self::$instance = &$this;
 

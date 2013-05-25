@@ -63,12 +63,12 @@ class User extends \sys\Model {
 			$addr = "noreply@$host";
 			$from = \sys\utils\Conf::k('app\\title');
 			$path = \sys\Init::res('path');
-			$xid = $this->_xid;
+			$xid = \sys\Session::xid();
 
 			$headers = "From: $from <$addr>\n";
 			$subject = \sys\utils\Vocab::t('user_register\\verify_email_subject');
-			$msg = \sys\utils\Vocab::t('user_register\\verify_email_body');
-			$msg .= "http://$host/$path/verify/$xid/$token/";
+			$msg = \sys\utils\Vocab::t('user_register\\verify_email_body') .
+				"http://$host/$path/verify/$xid/$token/";
 			mail($email, $subject, $msg, $headers, "-f $addr");
 
 			return true;

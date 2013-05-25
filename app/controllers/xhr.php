@@ -11,7 +11,7 @@ class Xhr extends \sys\Controller {
 
 	public function init()
 	{
-		if (!$this->xhr->header()) {
+		if (!$this->xhr->token()) {
 			$this->view->error(404);
 		}
 	}

@@ -2,7 +2,7 @@
 
 namespace sys\modules;
 
-class Nav extends \sys\Common {
+class Nav {
 
 	private $build = array();
 	private $items = array();
@@ -11,7 +11,7 @@ class Nav extends \sys\Common {
 
 	function __construct()
 	{
-		parent::__construct();
+
 	}
 
 	public function html($template = "bootstrap", $data = null)
@@ -20,7 +20,7 @@ class Nav extends \sys\Common {
 
 		if (!$this->html) {
 			$data = array('build' => $this->build, 'items' => $this->items);
-			$this->html = $this->view->template('nav', $template, $data);
+			$this->html = \sys\Init::view()->template('nav', $template, $data);
 		}
 		return $this->html;
 	}

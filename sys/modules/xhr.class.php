@@ -2,11 +2,17 @@
 
 namespace sys\modules;
 
-class Xhr extends \sys\Common {
+class Xhr {
+
+	private $view;
+	private $_key, $_xid;
 
 	function __construct()
 	{
-		parent::__construct();
+		$this->view = \sys\Init::view();
+
+		$this->_xid = \sys\Session::xid();
+		$this->_key = \sys\Session::key();
 
 		$this->view->assets('script', null,
 			'$.ajaxSetup({headers: {"' . $this->_key . '": "' . $this->_xid . '"}});'
@@ -28,12 +34,12 @@ class Xhr extends \sys\Common {
 		return $this->_request('post', $key, $value);
 	}
 
-	public function header($key = "")
+	public function token($key = "")
 	{
 		$key = "HTTP_" . strtoupper($key . $this->_key);
-		$header = $this->server($key);
-		if ($header === $this->_xid) {
-			return $header;
+		$token = $this->server($key);
+		if ($token === $this->_xid) {
+			return $token;
 		}
 		return false;
 	}
@@ -43,7 +49,7 @@ class Xhr extends \sys\Common {
 		$subj = \sys\Init::res('params', 0);
 		$type = \sys\Init::res('params', 1);
 
-		if (!$this->header() or $subj !== \app\confs\sys\xhr_param__) {
+		if (!$this->token() or $subj !== \app\confs\sys\xhr_param__) {
 			return false;
 		}
 		switch ($type) {

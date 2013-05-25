@@ -42,8 +42,7 @@ foreach ($items as $index => &$item) {
 		if ($val['path'] and $val['path'] != "/")
 			$val['path'] = "/" . $val['path'] . "/";
 
-		$val['anchor'] = ($val['path']) ? '<a href="' . $val['path'] . '">' : "<a>";
-		$val['anchor'] .= $val['label'] . "</a>";
+		$val['anchor'] = "<a" . (($val['path']) ? ' href="' . $val['path'] . '"' : "") . ">" . $val['label'] . "</a>";
 		$leaf[] = $val['anchor'];
 		$leaf[] = "</li>";
 	}
@@ -69,9 +68,8 @@ foreach ($items as $index => &$item) {
 		$item['path'] = "/" . $item['path'] . "/";
 
 	if (!empty($leaf)) {
-		$item['anchor'] = '<a data-toggle="dropdown" class="dropdown-toggle"';
-		$item['anchor'] .= ($item['path']) ? ' href="' . $item['path'] . '">' : ">";
-		$item['anchor'] .= $item['label'] . "</a>";
+		$item['anchor'] = '<a data-toggle="dropdown" class="dropdown-toggle"' .
+			(($item['path']) ? ' href="' . $item['path'] . '"' : "") . ">" . $item['label'] . "</a>";
 		$menu[] = $item['anchor'];
 		$menu[] = '<ul class="dropdown-menu">' . implode("\n", $leaf) . "</ul>";
 	}

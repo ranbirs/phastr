@@ -13,11 +13,12 @@ class Model {
 
 	public function db()
 	{
-		if (!self::$dbh) {
-			if (\app\confs\db\enabled__) {
-				self::$dbh = new \sys\modules\Database();
-			}
+		if (!\app\confs\db\enabled__) {
+			return false;
 		}
+		if (!isset(self::$dbh))
+			self::$dbh = new \sys\modules\Database();
+
 		return self::$dbh;
 	}
 

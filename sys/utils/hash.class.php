@@ -4,9 +4,9 @@ namespace sys\utils;
 
 class Hash {
 
-	private static $algo = '$2a$';
-	private static $cost = 10;
-	private static $salt = 22;
+	private static $algo = \app\confs\hash\algo__;
+	private static $cost = \app\confs\hash\cost__;
+	private static $salt = \app\confs\hash\salt__;
 
 	public static function rid($entropy = false)
 	{
@@ -16,9 +16,9 @@ class Hash {
 	public static function rand($size = 0, $algo = 'sha1')
 	{
 		$hash = hash($algo, self::rid());
-		if ($size) {
+		if ($size)
 			$hash = ($size > strlen($hash)) ? str_pad($hash, $size, $hash) : substr($hash, 0, $size);
-		}
+
 		return str_shuffle($hash);
 	}
 
