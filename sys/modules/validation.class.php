@@ -4,7 +4,7 @@ namespace sys\modules;
 
 class Validation {
 
-	private $result = array();
+	private $_result = array();
 
 	function __construct()
 	{
@@ -14,17 +14,17 @@ class Validation {
 	public function get($key = null)
 	{
 		if ($key) {
-			if (isset($this->result[$key])) {
-				return $this->result[$key];
+			if (isset($this->_result[$key])) {
+				return $this->_result[$key];
 			}
 			return false;
 		}
-		return $this->result;
+		return $this->_result;
 	}
 
 	public function set($msg = null, $key = 'error', $subj = 'parse')
 	{
-		$this->result[$key]['validate'][] = array($subj, $msg);
+		$this->_result[$key]['validate'][] = array($subj, $msg);
 	}
 
 	public function parse($id, $validation, $value = null)
@@ -49,7 +49,7 @@ class Validation {
 	{
 		switch($rule) {
 			case 'xhr':
-				return ($value === \sys\Init::xhr()->token());
+				return ($value === \sys\Res::xhr()->token());
 			break;
 			case 'match':
 				return ($value === $param);

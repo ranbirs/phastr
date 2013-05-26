@@ -2,12 +2,13 @@
 
 namespace sys;
 
-class Init {
+class Res {
 
 	private static $view, $load, $xhr;
 
 	private static $master, $controller, $error;
-	private static $res = array();
+
+	private static $resource = array();
 
 	private static function _init()
 	{
@@ -30,15 +31,15 @@ class Init {
 
 		\sys\Load::conf('autoload');
 
-		if (self::$res['master']) {
-			if (!in_array(self::$res['controller'], \sys\utils\Helper::getArray(\app\confs\sys\except__))) {
-				self::$master = \sys\Load::controller(self::$res['master']);
+		if (self::$resource['master']) {
+			if (!in_array(self::$resource['controller'], \sys\utils\Helper::getArray(\app\confs\sys\except__))) {
+				self::$master = \sys\Load::controller(self::$resource['master']);
 			}
 			else {
-				self::$res['master'] = "";
+				self::$resource['master'] = "";
 			}
 		}
-		self::$controller = \sys\Load::controller(self::$res['controller']);
+		self::$controller = \sys\Load::controller(self::$resource['controller']);
 	}
 
 	public static function view()
@@ -62,38 +63,38 @@ class Init {
 		return self::$xhr;
 	}
 
-	public static function res($key = null, $arg = null)
+	public static function get($key = null, $arg = null)
 	{
 		switch ($key) {
 			case null:
-				return self::$res;
+				return self::$resource;
 			break;
 			default:
-				if (!isset(self::$res[$key])) {
+				if (!isset(self::$resource[$key])) {
 					return false;
 				}
 			break;
 			case 'params':
 				if (is_numeric($arg)) {
-					if (isset(self::$res[$key][$arg])) {
-						return self::$res[$key][$arg];
+					if (isset(self::$resource[$key][$arg])) {
+						return self::$resource[$key][$arg];
 					}
 					return false;
 				}
 			break;
 			case 'args':
-				if (!isset(self::$res[$key])) {
-					self::$res[$key] = \sys\utils\Helper::getArgs(self::$res['params']);
+				if (!isset(self::$resource[$key])) {
+					self::$resource[$key] = \sys\utils\Helper::getArgs(self::$resource['params']);
 				}
 				if ($arg) {
-					if (isset(self::$res[$key][$arg])) {
-						return self::$res[$key][$arg];
+					if (isset(self::$resource[$key][$arg])) {
+						return self::$resource[$key][$arg];
 					}
 					return false;
 				}
 			break;
 		}
-		return self::$res[$key];
+		return self::$resource[$key];
 	}
 
 	private static function _resource()
@@ -117,19 +118,19 @@ class Init {
 			$path = $default['autoload'] . "/" . $default['homepage'];
 		$path = explode("/", $path);
 
-		$resource = array_splice($path, 0, 3);
+		$route = array_splice($path, 0, 3);
 		$params = $path;
 		$path = array();
 
-		if (!\sys\utils\Helper::resolveFilePath(\sys\app_base__ . "controllers/" . $resource[0]))
-			array_unshift($resource, $default['autoload']);
+		if (!\sys\utils\Helper::resolveFilePath(\sys\app_base__ . "controllers/" . $route[0]))
+			array_unshift($route, $default['autoload']);
 
-		if (!isset($resource[1]))
-			$resource[1] = $default['page'];
-		if (!isset($resource[2]))
-			$resource[2] = $default['action'];
+		if (!isset($route[1]))
+			$route[1] = $default['page'];
+		if (!isset($route[2]))
+			$route[2] = $default['action'];
 
-		foreach ($resource as $index => $param) {
+		foreach ($route as $index => $param) {
 
 			if ((strlen($param) > 128)) {
 				self::$error = \app\vocabs\sys\er_icr__;
@@ -169,7 +170,7 @@ class Init {
 			}
 		}
 
-		self::$res = array(
+		self::$resource = array(
 			'request' => ($request) ? $request : "/",
 			'path' => ($request) ? implode("/", $path) : $default['homepage'],
 			'route' => "$controller/$page/$action",

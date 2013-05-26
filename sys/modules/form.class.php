@@ -6,23 +6,25 @@ class Form {
 
 	protected $xhr, $validation;
 
-	private $fid, $token, $html;
+	private $_fid, $_token, $_html;
 
-	private $build = array();
-	private $fields = array();
-	private $field = array();
-	private $required = array();
-	private $validated = array();
-	private $sanitized = array();
+	private $_field = array();
+
+	private $_build = array();
+	private $_fields = array();
+
+	private $_required = array();
+	private $_validated = array();
+	private $_sanitized = array();
 
 	function __construct()
 	{
-		$this->xhr = \sys\Init::xhr();
+		$this->xhr = \sys\Res::xhr();
 
-		$this->fid = strtolower(\sys\utils\Helper::getClassName(get_class($this)));
-		$this->token = \sys\Session::get($this->fid, 'token');
-		if (!$this->token)
-			$this->token = \sys\Session::set($this->fid, 'token');
+		$this->_fid = strtolower(\sys\utils\Helper::getClassName(get_class($this)));
+		$this->_token = \sys\Session::get($this->_fid, 'token');
+		if (!$this->_token)
+			$this->_token = \sys\Session::set($this->_fid, 'token');
 	}
 
 	public function html($data = null, $method = 'post', $template = "bootstrap/form")
@@ -33,25 +35,25 @@ class Form {
 			$this->xhr->response($this->_submit($method));
 		}
 
-		if (!$this->html) {
-			$this->build['method'] = $method;
-			$action = "/" . \sys\Init::res('route') . "/" . \app\confs\sys\xhr_param__ .
-				"/form/$method/" . $this->fid . "/";
-			$this->build['action'] = $action;
-			$data = array('build' => $this->build, 'fields' => $this->fields);
-			$this->html = \sys\Init::view()->template('form', $template, $data);
+		if (!$this->_html) {
+			$this->_build['method'] = $method;
+			$action = "/" . \sys\Res::get('route') . "/" . \app\confs\sys\xhr_param__ .
+				"/form/$method/" . $this->_fid . "/";
+			$this->_build['action'] = $action;
+			$data = array('build' => $this->_build, 'fields' => $this->_fields);
+			$this->_html = \sys\Res::view()->template('form', $template, $data);
 		}
-		return $this->html;
+		return $this->_html;
 	}
 
 	private function _submit($method)
 	{
 		$this->validation = new \sys\modules\Validation();
 
-		foreach ($this->sanitized as $id => $filter) {
+		foreach ($this->_sanitized as $id => $filter) {
 			$this->xhr->$method($id, $this->validation->sanitize($filter, $this->xhr->$method($id)));
 		}
-		foreach ($this->validated as $id => $validation) {
+		foreach ($this->_validated as $id => $validation) {
 			$this->validation->parse($id, $validation, $this->xhr->$method($id));
 		}
 		if (array_key_exists('error', $this->validation->get())) {
@@ -59,7 +61,7 @@ class Form {
 		}
 		$parse = $this->parse();
 		if ($parse['output']) {
-			\sys\Session::drop($this->fid, 'token');
+			\sys\Session::drop($this->_fid, 'token');
 
 			return $this->success();
 		}
@@ -75,9 +77,9 @@ class Form {
 
 	protected function open($title = null, $css = array())
 	{
-		$this->build['fid'] = $this->fid;
-		$this->build['css'] = implode(" ", $css);
-		$this->build['title'] = $title;
+		$this->_build['fid'] = $this->_fid;
+		$this->_build['css'] = implode(" ", $css);
+		$this->_build['title'] = $title;
 	}
 
 	protected function close()
@@ -92,14 +94,14 @@ class Form {
 		);
 		$this->field(array('input' => 'hidden'), "form_fid_$key", null,
 			$data = array(
-				'value' => $this->fid,
-				'validate' => array('match' => array('value' => $this->fid))
+				'value' => $this->_fid,
+				'validate' => array('match' => array('value' => $this->_fid))
 			)
 		);
 		$this->field(array('input' => 'hidden'), "form_token_$key", null,
 			$data = array(
-				'value' => $this->token,
-				'validate' => array('match' => array('value' => $this->token))
+				'value' => $this->_token,
+				'validate' => array('match' => array('value' => $this->_token))
 			)
 		);
 	}
@@ -122,16 +124,16 @@ class Form {
 	protected function field($control, $id, $label = null, $data = array())
 	{
 		$type = null;
-		$this->field = $data;
-		$this->field['label'] = $label;
+		$this->_field = $data;
+		$this->_field['label'] = $label;
 
-		if (!isset($this->field['value']))
-			$this->field['value'] = "";
+		if (!isset($this->_field['value']))
+			$this->_field['value'] = "";
 
-		if (!isset($this->field['validate']))
-			$this->field['validate'] = array();
-		if (!isset($this->field['sanitize']))
-			$this->field['sanitize'] = array();
+		if (!isset($this->_field['validate']))
+			$this->_field['validate'] = array();
+		if (!isset($this->_field['sanitize']))
+			$this->_field['sanitize'] = array();
 
 		if (is_array($control)) {
 			$type = current(array_values($control));
@@ -146,51 +148,51 @@ class Form {
 		$key = $id;
 		$build = "";
 
-		$this->field['stack'] = false;
-		$this->field['attr']['id'] = $id;
-		$this->field['attr']['name'] = (!is_array($this->field['value'])) ? $id : $id . "[]";
-		$this->field['css'][] = "field";
+		$this->_field['stack'] = false;
+		$this->_field['attr']['id'] = $id;
+		$this->_field['attr']['name'] = (!is_array($this->_field['value'])) ? $id : $id . "[]";
+		$this->_field['css'][] = "field";
 
 		if ($control == 'input') {
-			$this->field['attr']['type'] = $type;
-			$this->field['attr']['value'] = $this->field['value'];
+			$this->_field['attr']['type'] = $type;
+			$this->_field['attr']['value'] = $this->_field['value'];
 		}
 
-		if (isset($this->field['prop'])) {
-			foreach ($this->field['prop'] as $prop) {
-				$this->field['attr'][$prop] = $prop;
+		if (isset($this->_field['prop'])) {
+			foreach ($this->_field['prop'] as $prop) {
+				$this->_field['attr'][$prop] = $prop;
 			}
 		}
 
-		if (!empty($this->field['validate']))
+		if (!empty($this->_field['validate']))
 			$this->_buildFieldValidation($id, $control, $type);
 
-		if (is_array($this->field['value']))
+		if (is_array($this->_field['value']))
 			$this->_buildFieldStack($id, $control);
 
-		$this->field['attr']['class'] = implode(" ", $this->field['css']);
-		$build = "<$control" . \sys\utils\Html::getAttr($this->field['attr']) . ">";
+		$this->_field['attr']['class'] = implode(" ", $this->_field['css']);
+		$build = "<$control" . \sys\utils\Html::getAttr($this->_field['attr']) . ">";
 
 		switch ($control) {
 			case 'input':
 				if ($type == 'hidden') {
-					$this->field['stack'] = true;
+					$this->_field['stack'] = true;
 					$key = $type;
 				}
-				if (is_array($this->field['value']))
-					$this->field['stack'] = true;
+				if (is_array($this->_field['value']))
+					$this->_field['stack'] = true;
 			break;
 			case 'select':
 				$options = array();
-				foreach ($this->fields[$id]['field'] as $field) {
+				foreach ($this->_fields[$id]['field'] as $field) {
 					$options[] = $field['field'];
 				}
 				$build .= "\n\t" . implode("\n\t", $options) . "</$control>";
 			break;
 			case 'button':
-				$build .= $this->field['label'] . "</$control>";
+				$build .= $this->_field['label'] . "</$control>";
 				if (in_array($type, array('submit', 'action'))) {
-					$this->field['stack'] = true;
+					$this->_field['stack'] = true;
 					$key = 'action';
 				}
 			break;
@@ -198,24 +200,24 @@ class Form {
 				$build .= "</$control>";
 			break;
 			case 'markup':
-				$build = $this->field['value'];
+				$build = $this->_field['value'];
 			break;
 			default:
 				return false;
 			break;
 		}
 
-		if ($this->field['label'] and $control != 'button')
-			$this->fields[$id]['label'] = $this->field['label'];
+		if ($this->_field['label'] and $control != 'button')
+			$this->_fields[$id]['label'] = $this->_field['label'];
 
-		if (isset($this->field['helptext']))
-			$this->fields[$id]['helptext'] = $this->field['helptext'];
+		if (isset($this->_field['helptext']))
+			$this->_fields[$id]['helptext'] = $this->_field['helptext'];
 
-		if ($this->field['stack']) {
-			return $this->fields[$key][] = $build;
+		if ($this->_field['stack']) {
+			return $this->_fields[$key][] = $build;
 		}
 
-		return $this->fields[$key]['field'] = $build;
+		return $this->_fields[$key]['field'] = $build;
 	}
 
 	private function _buildFieldStack($id, $control)
@@ -223,7 +225,7 @@ class Form {
 		$tag = $control;
 		$build = "";
 
-		foreach ($this->field['value'] as $index => &$field) {
+		foreach ($this->_field['value'] as $index => &$field) {
 
 			if (!isset($field['label']))
 				$field['label'] = "";
@@ -246,13 +248,13 @@ class Form {
 				$build = $field['label'] . "</$tag>";
 			}
 			else {
-				$field['css'] = array_merge($this->field['css'], $field['css']);
+				$field['css'] = array_merge($this->_field['css'], $field['css']);
 				$field['attr']['class'] = implode(" ", $field['css']);
 				$field['attr']['id'] = $id . "-" . $index;
 				$field['attr']['name'] = $id . "[]";
-				$field['attr'] = array_merge($this->field['attr'], $field['attr']);
+				$field['attr'] = array_merge($this->_field['attr'], $field['attr']);
 			}
-			$this->fields[$id]['field'][] = array(
+			$this->_fields[$id]['field'][] = array(
 				'label' => $field['label'],
 				'field' => "<$tag" . \sys\utils\Html::getAttr($field['attr']) . ">$build"
 			);
@@ -262,24 +264,24 @@ class Form {
 
 	private function _buildFieldValidation($id, $control, $type = null)
 	{
-		$this->validated[$id] = $this->field['validate'];
-		$this->field['css'][] = "validated";
+		$this->_validated[$id] = $this->_field['validate'];
+		$this->_field['css'][] = "validated";
 
-		foreach ($this->field['validate'] as $rule => $validation) {
+		foreach ($this->_field['validate'] as $rule => $validation) {
 			if (is_numeric($rule))
 				$rule = $validation;
 
 			if ($rule == 'required')
-				$this->required[] = $id;
-			$this->field['css'][] = "rule-" . $rule;
+				$this->_required[] = $id;
+			$this->_field['css'][] = "rule-" . $rule;
 
 			if (is_array($validation)) {
 				if ($rule == 'maxlength')
-					$this->field['attr'][$rule] = $validation['value'];
+					$this->_field['attr'][$rule] = $validation['value'];
 
 				if (array_intersect(array('error', 'success'), array_keys($validation))) {
 					if ($type != 'hidden')
-						$this->fields[$id]['helper'] = true;
+						$this->_fields[$id]['helper'] = true;
 				}
 			}
 		}

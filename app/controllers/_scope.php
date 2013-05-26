@@ -23,7 +23,7 @@ class _scope extends \sys\Controller {
 		$this->view->app_title = \sys\utils\Conf::k('app\\title');
 
 		$this->load->model('node');
-		$node = $this->node->data(array('title', 'body'), \sys\Init::res('path'));
+		$node = $this->node->data(array('title', 'body'), \sys\Res::get('path'));
 
 		$this->view->title = (isset($node->title)) ? $node->title : "";
 		$this->view->body = (isset($node->body)) ? $node->body : "";

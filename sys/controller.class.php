@@ -10,9 +10,9 @@ class Controller {
 
 	function __construct()
 	{
-		$this->view = \sys\Init::view();
-		$this->load = \sys\Init::load();
-		$this->xhr = \sys\Init::Xhr();
+		$this->view = \sys\Res::view();
+		$this->load = \sys\Res::load();
+		$this->xhr = \sys\Res::Xhr();
 
 		self::$instance = &$this;
 
@@ -33,7 +33,7 @@ class Controller {
 
 	private function _method()
 	{
-		$res = \sys\Init::res();
+		$res = \sys\Res::get();
 
 		if ($res['master']) {
 			if ($this->_master($res['master'])) {

@@ -16,7 +16,7 @@ class Example_blog extends \sys\Controller {
 
 	public function scope()
 	{
-		$this->view->page = $this->view->page(\sys\Init::res('path'));
+		$this->view->page = $this->view->page(\sys\Res::get('path'));
 		$this->view->layout('index');
 	}
 

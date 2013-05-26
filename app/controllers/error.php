@@ -16,7 +16,7 @@ class Error extends \sys\Controller {
 
 	public function scope()
 	{
-		$this->view->layout("error/" . \sys\Init::res('page'));
+		$this->view->layout("error/" . \sys\Res::get('page'));
 	}
 
 }

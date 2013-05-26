@@ -24,7 +24,7 @@ foreach ($items as $index => &$item) {
 
 		$val['active'] = false;
 		if (!$active) {
-			if (\sys\Init::res('path') === $val['path']) {
+			if (\sys\Res::get('path') === $val['path']) {
 				$val['active'] = true;
 				$item['active'] = true;
 			}
@@ -42,7 +42,8 @@ foreach ($items as $index => &$item) {
 		if ($val['path'] and $val['path'] != "/")
 			$val['path'] = "/" . $val['path'] . "/";
 
-		$val['anchor'] = "<a" . (($val['path']) ? ' href="' . $val['path'] . '"' : "") . ">" . $val['label'] . "</a>";
+		$val['anchor'] = "<a" . (($val['path']) ? ' href="' . $val['path'] . '"' : "") . ">" .
+			$val['label'] . "</a>";
 		$leaf[] = $val['anchor'];
 		$leaf[] = "</li>";
 	}
@@ -51,8 +52,8 @@ foreach ($items as $index => &$item) {
 	if (!empty($leaf))
 		$item['css'][] = "dropdown";
 	if (!$active) {
-		if (($item['active'] or $item['path'] === \sys\Init::res('path')) or
-			($item['path'] == "/" and $item['path'] === \sys\Init::res('request'))) {
+		if (($item['active'] or $item['path'] === \sys\Res::get('path')) or
+			($item['path'] == "/" and $item['path'] === \sys\Res::get('request'))) {
 				$item['css'][] = "active";
 				$active = true;
 		}

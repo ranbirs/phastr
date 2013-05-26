@@ -38,7 +38,7 @@ class Xhr extends \sys\Controller {
 
 	private function _response($request, $action)
 	{
-		$format = \sys\Init::res('args', 'format');
+		$format = \sys\Res::get('args', 'format');
 		if (!$format)
 			$format = 'json';
 		$this->view->request = $this->xhr->$request();

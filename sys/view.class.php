@@ -4,7 +4,7 @@ namespace sys;
 
 class View {
 
-	private $assets = array();
+	private $_assets = array();
 
 	function __construct()
 	{
@@ -14,14 +14,14 @@ class View {
 	public function assets($type = 'script', $subj = null, $content = null, $append = \app\confs\app\iteration__)
 	{
 		if (!$subj and !$content) {
-			if (!isset($this->assets[$type]))
-				$this->assets[$type] = array();
+			if (!isset($this->_assets[$type]))
+				$this->_assets[$type] = array();
 
-			return implode("\n", array_values($this->assets[$type]));
+			return implode("\n", array_values($this->_assets[$type]));
 		}
 		$key = ($subj) ? $subj : md5($content);
-		if (!isset($this->assets[$type][$key])) {
-			$this->assets[$type][$key] = \sys\utils\Html::getAsset($type, $subj, $content, $append);
+		if (!isset($this->_assets[$type][$key])) {
+			$this->_assets[$type][$key] = \sys\utils\Html::getAsset($type, $subj, $content, $append);
 		}
 		return true;
 	}
@@ -34,8 +34,8 @@ class View {
 	public function page($name = null)
 	{
 		if (!$name) {
-			$path = \sys\utils\Helper::getPath(\sys\Init::res('controller'));
-			$name = "$path/" . \sys\utils\Helper::getPath(\sys\Init::res('page'), 'tree');
+			$path = \sys\utils\Helper::getPath(\sys\Res::get('controller'));
+			$name = "$path/" . \sys\utils\Helper::getPath(\sys\Res::get('page'), 'tree');
 		}
 		return $this->_render($name, 'page');
 	}

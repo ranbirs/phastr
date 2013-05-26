@@ -62,7 +62,7 @@ class User extends \sys\Model {
 			$host = $_SERVER['SERVER_NAME'];
 			$addr = "noreply@$host";
 			$from = \sys\utils\Conf::k('app\\title');
-			$path = \sys\Init::res('path');
+			$path = \sys\Res::get('path');
 			$xid = \sys\Session::xid();
 
 			$headers = "From: $from <$addr>\n";

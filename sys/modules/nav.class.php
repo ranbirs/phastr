@@ -4,10 +4,10 @@ namespace sys\modules;
 
 class Nav {
 
-	private $build = array();
-	private $items = array();
+	private $_html;
 
-	private $html;
+	private $_build = array();
+	private $_items = array();
 
 	function __construct()
 	{
@@ -18,18 +18,18 @@ class Nav {
 	{
 		$this->build($data);
 
-		if (!$this->html) {
-			$data = array('build' => $this->build, 'items' => $this->items);
-			$this->html = \sys\Init::view()->template('nav', $template, $data);
+		if (!$this->_html) {
+			$data = array('build' => $this->_build, 'items' => $this->_items);
+			$this->_html = \sys\Res::view()->template('nav', $template, $data);
 		}
-		return $this->html;
+		return $this->_html;
 	}
 
 	protected function open($css = array())
 	{
 		if (!empty($css)) {
-			$this->build['attr']['class'] = implode(" ", $css);
-			$this->build['attr'] = \sys\utils\Html::getAttr($this->build['attr']);
+			$this->_build['attr']['class'] = implode(" ", $css);
+			$this->_build['attr'] = \sys\utils\Html::getAttr($this->_build['attr']);
 		}
 	}
 
@@ -40,23 +40,23 @@ class Nav {
 
 	protected function item($label = null, $path = null, $data = array())
 	{
-		$count = count($this->items);
+		$count = count($this->_items);
 		$index = ($count > 0) ? $count + 1 : 0;
 
 		if (!empty($data)) {
 			foreach ($data as $key => $val) {
 				if (is_numeric($key)) {
-					$this->items[$index]['label'] = $label;
-					$this->items[$index]['path'] = $path;
-					$this->items[$index]['data'][] = $val;
+					$this->_items[$index]['label'] = $label;
+					$this->_items[$index]['path'] = $path;
+					$this->_items[$index]['data'][] = $val;
 					continue;
 				}
-				$this->items[] = array('label' => $label, 'path' => $path, 'data' => $data);
+				$this->_items[] = array('label' => $label, 'path' => $path, 'data' => $data);
 				break;
 			}
 			return;
 		}
-		$this->items[] = array('label' => $label, 'path' => $path, 'data' => $data);
+		$this->_items[] = array('label' => $label, 'path' => $path, 'data' => $data);
 	}
 
 }

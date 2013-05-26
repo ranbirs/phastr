@@ -4,12 +4,13 @@ namespace sys\modules;
 
 class Xhr {
 
-	private $view;
-	private $_key, $_xid;
+	protected $view;
+
+	private $_xid, $_key;
 
 	function __construct()
 	{
-		$this->view = \sys\Init::view();
+		$this->view = \sys\Res::view();
 
 		$this->_xid = \sys\Session::xid();
 		$this->_key = \sys\Session::key();
@@ -46,8 +47,8 @@ class Xhr {
 
 	public function request()
 	{
-		$subj = \sys\Init::res('params', 0);
-		$type = \sys\Init::res('params', 1);
+		$subj = \sys\Res::get('params', 0);
+		$type = \sys\Res::get('params', 1);
 
 		if (!$this->token() or $subj !== \app\confs\sys\xhr_param__) {
 			return false;
@@ -58,8 +59,8 @@ class Xhr {
 				return $this->$type();
 			break;
 			case 'form':
-				$method = \sys\Init::res('params', 2);
-				$fid = \sys\Init::res('params', 3);
+				$method = \sys\Res::get('params', 2);
+				$fid = \sys\Res::get('params', 3);
 				$key = $this->_key;
 
 				if ($method and method_exists($this, $method)) {

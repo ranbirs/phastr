@@ -6,11 +6,8 @@ class Session {
 
 	private static $sid, $xid, $gid, $key;
 
-	private static $timestamp = array();
-
 	private static function _init()
 	{
-		self::$timestamp[0] = microtime(true);
 		self::$xid = \sys\utils\Hash::rand();
 		self::$gid = \sys\utils\Hash::rid(true);
 		self::$key = self::keygen();
@@ -18,9 +15,10 @@ class Session {
 		$_SESSION['_sid'] = self::$sid;
 		$_SESSION['_gid'] = self::$gid;
 		$_SESSION['_key'] = self::$key;
-		$_SESSION['_timestamp'][0] = self::$timestamp[0];
 
 		$_SESSION[self::$sid]['_xid'] = self::$xid;
+		$_SESSION[self::$sid]['_timestamp'][0] = microtime(true);
+
 		$_SESSION[self::$sid]['_client']['ua'] = (isset($_SERVER['HTTP_USER_AGENT'])) ? $_SERVER['HTTP_USER_AGENT'] : "";
 		$_SESSION[self::$sid]['_client']['ip'] = $_SERVER['REMOTE_ADDR'];
 		$_SESSION[self::$sid]['_client']['lang'] = \app\confs\app\lang__;
@@ -35,11 +33,11 @@ class Session {
 			self::_init();
 		}
 
-		self::$timestamp[1] = microtime(true);
 		self::$xid = $_SESSION[self::$sid]['_xid'];
 		self::$gid = $_SESSION['_gid'];
 		self::$key = $_SESSION['_key'];
-		$_SESSION['_timestamp'][1] = self::$timestamp[1];
+
+		$_SESSION[self::$sid]['_timestamp'][1] = microtime(true);
 	}
 
 	public static function sid()
@@ -66,11 +64,12 @@ class Session {
 		return $gen;
 	}
 
-	public static function timestamp($start = true)
+	public static function timestamp($key = 0, $set = false)
 	{
-		$key = ($start) ? 0 : 1;
-
-		return self::$timestamp[$key];
+		if ($set) {
+			return self::set('_timestamp', $key, microtime(true));
+		}
+		return self::get('_timestamp', $key);
 	}
 
 	public static function uid()
@@ -90,7 +89,7 @@ class Session {
 
 	public static function get($type, $key = null)
 	{
-		if ($key) {
+		if ($key or $key === 0) {
 			if (isset($_SESSION[self::$sid][$type][$key])) {
 				return $_SESSION[self::$sid][$type][$key];
 			}
@@ -104,10 +103,10 @@ class Session {
 
 	public static function set($type, $key, $value = null)
 	{
-		$hash = (!$value and $value !== 0) ? \sys\utils\Hash::rand() : $value;
-		$_SESSION[self::$sid][$type][$key] = $hash;
+		$value = (!$value and $value !== 0) ? \sys\utils\Hash::rand() : $value;
+		$_SESSION[self::$sid][$type][$key] = $value;
 
-		return $hash;
+		return $value;
 	}
 
 	public static function drop($type, $key)
