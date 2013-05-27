@@ -3,29 +3,23 @@
 namespace sys;
 
 use sys\Res;
+use sys\Compositor;
 
 use sys\utils\Helper;
 
-class Controller {
+class Controller extends Compositor {
 
 	protected $view, $load, $xhr;
 
-	private static $instance;
-
 	function __construct()
 	{
+		parent::__construct();
+
 		$this->view = Res::view();
 		$this->load = Res::load();
 		$this->xhr = Res::Xhr();
 
-		self::$instance = &$this;
-
 		$this->_method();
-	}
-
-	public static function instance()
-	{
-		return self::$instance;
 	}
 
 	private function _master($master)

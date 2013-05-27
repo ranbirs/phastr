@@ -35,16 +35,6 @@ class Load {
 		return self::_load("controllers/$path", 'instance');
 	}
 
-	public function sys($path, $control = null, $ext = ".class.php")
-	{
-		return self::_load($path, $control, 'sys', $ext);
-	}
-
-	public function app($path, $control = null, $ext = ".php")
-	{
-		return self::_load($path, $control, 'app', $ext);
-	}
-
 	public static function conf($path)
 	{
 		return self::_load("confs/$path");
@@ -56,6 +46,16 @@ class Load {
 			$path = Res::session()->client('lang') . "/$path";
 
 		return self::_load("vocabs/$path");
+	}
+
+	public static function sys($path, $control = null, $ext = ".class.php")
+	{
+		return self::_load($path, $control, 'sys', $ext);
+	}
+
+	public static function app($path, $control = null, $ext = ".php")
+	{
+		return self::_load($path, $control, 'app', $ext);
 	}
 
 	private static function _load($path, $control = null, $base = 'app', $ext = ".php")
@@ -75,7 +75,7 @@ class Load {
 
 		if ($control == 'composite') {
 			$prop = Helper::getFileName($path);
-			$inst = Controller::instance();
+			$inst = Compositor::instance();
 			$inst->$prop = new $class();
 		}
 
