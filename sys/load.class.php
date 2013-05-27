@@ -2,7 +2,7 @@
 
 namespace sys;
 
-use sys\Controller;
+use sys\Compositor;
 
 use sys\utils\Helper;
 
