@@ -9,14 +9,14 @@ use sys\utils\Helper;
 
 class Controller extends Compositor {
 
-	protected $view, $load, $xhr;
+	protected $load, $view, $xhr;
 
 	function __construct()
 	{
 		parent::__construct();
 
-		$this->view = Res::view();
 		$this->load = Res::load();
+		$this->view = Res::view();
 		$this->xhr = Res::Xhr();
 
 		$this->_method();

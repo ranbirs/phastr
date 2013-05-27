@@ -2,15 +2,15 @@
 
 namespace sys;
 
-use sys\View;
 use sys\Load;
+use sys\View;
 use sys\Session;
 
 use sys\utils\Helper;
 
 class Init {
 
-	protected static $view, $session, $load, $xhr;
+	protected static $load, $view, $session, $xhr;
 
 	protected static $resource = array();
 
@@ -18,8 +18,8 @@ class Init {
 
 	public static function start()
 	{
-		\sys\Load::conf('constants');
-		\sys\Load::vocab('sys', false);
+		Load::conf('constants');
+		Load::vocab('sys', false);
 
 		self::$view = new View();
 
