@@ -2,7 +2,10 @@
 
 namespace sys\modules;
 
-class Database extends \PDO {
+use PDO;
+use PDOException;
+
+class Database extends PDO {
 
 	function __construct()
 	{
@@ -10,13 +13,13 @@ class Database extends \PDO {
 			$dsn = \app\confs\db\type__ . ":host=" . \app\confs\db\host__ . ";dbname=" . \app\confs\db\name__;
 			parent::__construct($dsn, \app\confs\db\user__, \app\confs\db\pass__);
 		}
-		catch(\PDOException $e) {
+		catch(PDOException $e) {
 			trigger_error($e->getMessage());
 			exit();
 		}
 	}
 
-	public function select($table, $fields = array(), $data = array(), $fetch = \PDO::FETCH_OBJ)
+	public function select($table, $fields = array(), $data = array(), $fetch = PDO::FETCH_OBJ)
 	{
 		$clause = $data[0];
 		$values = $data[1];

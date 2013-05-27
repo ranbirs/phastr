@@ -2,6 +2,8 @@
 
 namespace sys;
 
+use sys\modules\Database;
+
 class Model {
 
 	private static $dbh;
@@ -17,7 +19,7 @@ class Model {
 			return false;
 		}
 		if (!isset(self::$dbh))
-			self::$dbh = new \sys\modules\Database();
+			self::$dbh = new Database();
 
 		return self::$dbh;
 	}

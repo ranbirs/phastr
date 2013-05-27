@@ -2,6 +2,10 @@
 
 namespace sys;
 
+use sys\Controller;
+
+use sys\utils\Helper;
+
 class Load {
 
 	private static $base = array('sys' => \sys\sys_base__, 'app' => \sys\app_base__);
@@ -26,9 +30,19 @@ class Load {
 		return self::_load("navs/$path", 'composite');
 	}
 
-	public static function controller($path)
+	public function controller($path)
 	{
 		return self::_load("controllers/$path", 'instance');
+	}
+
+	public function sys($path, $control = null, $ext = ".class.php")
+	{
+		return self::_load($path, $control, 'sys', $ext);
+	}
+
+	public function app($path, $control = null, $ext = ".php")
+	{
+		return self::_load($path, $control, 'app', $ext);
 	}
 
 	public static function conf($path)
@@ -39,40 +53,30 @@ class Load {
 	public static function vocab($path, $lang = true)
 	{
 		if ($lang)
-			$path = \sys\Session::client('lang') . "/$path";
+			$path = Res::session()->client('lang') . "/$path";
 
 		return self::_load("vocabs/$path");
 	}
 
-	public static function sys($path, $control = null, $ext = ".class.php")
-	{
-		return self::_load($path, $control, 'sys', $ext);
-	}
-
-	public static function app($path, $control = null, $ext = ".php")
-	{
-		return self::_load($path, $control, 'app', $ext);
-	}
-
 	private static function _load($path, $control = null, $base = 'app', $ext = ".php")
 	{
-		$path = \sys\utils\Helper::getPath($path);
+		$path = Helper::getPath($path);
 		require_once self::$base[$base] . $path . $ext;
 
 		if (!$control) {
 			return true;
 		}
 
-		$class = "\\$base\\" . \sys\utils\Helper::getPathClass($path);
+		$class = "\\$base\\" . Helper::getPathClass($path);
 
 		if ($control == 'instance') {
 			return new $class();
 		}
 
 		if ($control == 'composite') {
-			$property = \sys\utils\Helper::getFileName($path);
-			$instance = \sys\Controller::instance();
-			$instance->$property = new $class();
+			$prop = Helper::getFileName($path);
+			$inst = Controller::instance();
+			$inst->$prop = new $class();
 		}
 
 		return true;

@@ -2,6 +2,8 @@
 
 namespace sys\modules;
 
+use sys\Res;
+
 class Xhr {
 
 	protected $view;
@@ -10,10 +12,10 @@ class Xhr {
 
 	function __construct()
 	{
-		$this->view = \sys\Res::view();
+		$this->view = Res::view();
 
-		$this->_xid = \sys\Session::xid();
-		$this->_key = \sys\Session::key();
+		$this->_xid = Res::session()->xid();
+		$this->_key = Res::session()->key();
 
 		$this->view->assets('script', null,
 			'$.ajaxSetup({headers: {"' . $this->_key . '": "' . $this->_xid . '"}});'
@@ -47,8 +49,8 @@ class Xhr {
 
 	public function request()
 	{
-		$subj = \sys\Res::get('params', 0);
-		$type = \sys\Res::get('params', 1);
+		$subj = Res::get('params', 0);
+		$type = Res::get('params', 1);
 
 		if (!$this->token() or $subj !== \app\confs\sys\xhr_param__) {
 			return false;
@@ -59,8 +61,8 @@ class Xhr {
 				return $this->$type();
 			break;
 			case 'form':
-				$method = \sys\Res::get('params', 2);
-				$fid = \sys\Res::get('params', 3);
+				$method = Res::get('params', 2);
+				$fid = Res::get('params', 3);
 				$key = $this->_key;
 
 				if ($method and method_exists($this, $method)) {

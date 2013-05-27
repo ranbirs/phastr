@@ -2,6 +2,8 @@
 
 namespace sys\modules;
 
+use sys\Res;
+
 class Validation {
 
 	private $_result = array();
@@ -49,7 +51,7 @@ class Validation {
 	{
 		switch($rule) {
 			case 'xhr':
-				return ($value === \sys\Res::xhr()->token());
+				return ($value === Res::xhr()->token());
 			break;
 			case 'match':
 				return ($value === $param);

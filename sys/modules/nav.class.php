@@ -2,6 +2,10 @@
 
 namespace sys\modules;
 
+use sys\Res;
+
+use sys\utils\Html;
+
 class Nav {
 
 	private $_html;
@@ -20,7 +24,7 @@ class Nav {
 
 		if (!$this->_html) {
 			$data = array('build' => $this->_build, 'items' => $this->_items);
-			$this->_html = \sys\Res::view()->template('nav', $template, $data);
+			$this->_html = Res::view()->template('nav', $template, $data);
 		}
 		return $this->_html;
 	}
@@ -29,7 +33,7 @@ class Nav {
 	{
 		if (!empty($css)) {
 			$this->_build['attr']['class'] = implode(" ", $css);
-			$this->_build['attr'] = \sys\utils\Html::getAttr($this->_build['attr']);
+			$this->_build['attr'] = Html::getAttr($this->_build['attr']);
 		}
 	}
 

@@ -2,6 +2,10 @@
 
 namespace sys;
 
+use sys\Res;
+
+use sys\utils\Helper;
+
 class Controller {
 
 	protected $view, $load, $xhr;
@@ -10,9 +14,9 @@ class Controller {
 
 	function __construct()
 	{
-		$this->view = \sys\Res::view();
-		$this->load = \sys\Res::load();
-		$this->xhr = \sys\Res::Xhr();
+		$this->view = Res::view();
+		$this->load = Res::load();
+		$this->xhr = Res::Xhr();
 
 		self::$instance = &$this;
 
@@ -26,14 +30,14 @@ class Controller {
 
 	private function _master($master)
 	{
-		$controller = \sys\utils\Helper::getClassName(get_class($this));
+		$controller = Helper::getClassName(get_class($this));
 
 		return ($controller === $master);
 	}
 
 	private function _method()
 	{
-		$res = \sys\Res::get();
+		$res = Res::get();
 
 		if ($res['master']) {
 			if ($this->_master($res['master'])) {
@@ -44,8 +48,8 @@ class Controller {
 		$this->init();
 
 		$default = $res['method'];
-		$page = \sys\utils\Helper::getPath($res['page'], 'method');
-		$action = \sys\utils\Helper::getPath($res['action']);
+		$page = Helper::getPath($res['page'], 'method');
+		$action = Helper::getPath($res['action']);
 		$params = $res['params'];
 
 		$methods = array(

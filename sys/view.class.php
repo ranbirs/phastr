@@ -2,6 +2,11 @@
 
 namespace sys;
 
+use sys\Res;
+
+use sys\utils\Html;
+use sys\utils\Helper;
+
 class View {
 
 	private $_assets = array();
@@ -21,7 +26,7 @@ class View {
 		}
 		$key = ($subj) ? $subj : md5($content);
 		if (!isset($this->_assets[$type][$key])) {
-			$this->_assets[$type][$key] = \sys\utils\Html::getAsset($type, $subj, $content, $append);
+			$this->_assets[$type][$key] = Html::getAsset($type, $subj, $content, $append);
 		}
 		return true;
 	}
@@ -34,8 +39,8 @@ class View {
 	public function page($name = null)
 	{
 		if (!$name) {
-			$path = \sys\utils\Helper::getPath(\sys\Res::get('controller'));
-			$name = "$path/" . \sys\utils\Helper::getPath(\sys\Res::get('page'), 'tree');
+			$path = Helper::getPath(Res::get('controller'));
+			$name = "$path/" . Helper::getPath(Res::get('page'), 'tree');
 		}
 		return $this->_render($name, 'page');
 	}
@@ -99,7 +104,7 @@ class View {
 	{
 		$path = \sys\app_base__ . "views/{$type}s/$name";
 
-		return \sys\utils\Helper::resolveFilePath($path);
+		return Helper::resolveFilePath($path);
 	}
 
 	private function _include($file)
@@ -115,12 +120,12 @@ class View {
 		switch ($role) {
 			case 'public':
 				if ($rule == 'deny') {
-					return (\sys\Session::token());
+					return (Res::session()->token());
 				}
 			break;
 			case 'private':
 				if ($rule == 'deny') {
-					return (!\sys\Session::token());
+					return (!Res::session()->token());
 				}
 			break;
 			case 'role':

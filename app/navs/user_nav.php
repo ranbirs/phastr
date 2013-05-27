@@ -13,7 +13,7 @@ class User_nav extends \sys\modules\Nav {
 	{
 		$this->open(array("nav", "ajax-load", "pull-right"));
 
-		if (\sys\Session::token()) {
+		if (\sys\Res::session()->token()) {
 			$this->item("Sign out", "user/logout");
 		}
 		else {

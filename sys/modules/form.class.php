@@ -2,6 +2,13 @@
 
 namespace sys\modules;
 
+use sys\Res;
+
+use sys\modules\Validation;
+
+use sys\utils\Html;
+use sys\utils\Helper;
+
 class Form {
 
 	protected $xhr, $validation;
@@ -19,12 +26,12 @@ class Form {
 
 	function __construct()
 	{
-		$this->xhr = \sys\Res::xhr();
+		$this->xhr = Res::xhr();
 
-		$this->_fid = strtolower(\sys\utils\Helper::getClassName(get_class($this)));
-		$this->_token = \sys\Session::get($this->_fid, 'token');
+		$this->_fid = strtolower(Helper::getClassName(get_class($this)));
+		$this->_token = Res::session()->get($this->_fid, 'token');
 		if (!$this->_token)
-			$this->_token = \sys\Session::set($this->_fid, 'token');
+			$this->_token = Res::session()->set($this->_fid, 'token');
 	}
 
 	public function html($data = null, $method = 'post', $template = "bootstrap/form")
@@ -37,18 +44,18 @@ class Form {
 
 		if (!$this->_html) {
 			$this->_build['method'] = $method;
-			$action = "/" . \sys\Res::get('route') . "/" . \app\confs\sys\xhr_param__ .
+			$action = "/" . Res::get('route') . "/" . \app\confs\sys\xhr_param__ .
 				"/form/$method/" . $this->_fid . "/";
 			$this->_build['action'] = $action;
 			$data = array('build' => $this->_build, 'fields' => $this->_fields);
-			$this->_html = \sys\Res::view()->template('form', $template, $data);
+			$this->_html = Res::view()->template('form', $template, $data);
 		}
 		return $this->_html;
 	}
 
 	private function _submit($method)
 	{
-		$this->validation = new \sys\modules\Validation();
+		$this->validation = new Validation();
 
 		foreach ($this->_sanitized as $id => $filter) {
 			$this->xhr->$method($id, $this->validation->sanitize($filter, $this->xhr->$method($id)));
@@ -61,7 +68,7 @@ class Form {
 		}
 		$parse = $this->parse();
 		if ($parse['output']) {
-			\sys\Session::drop($this->_fid, 'token');
+			Res::session()->drop($this->_fid, 'token');
 
 			return $this->success();
 		}
@@ -84,11 +91,11 @@ class Form {
 
 	protected function close()
 	{
-		$key = \sys\Session::key();
+		$key = Res::session()->key();
 
 		$this->field(array('input' => 'hidden'), "form_xid_$key", null,
 			$data = array(
-				'value' => \sys\Session::xid(),
+				'value' => Res::session()->xid(),
 				'validate' => array('xhr')
 			)
 		);
@@ -171,7 +178,7 @@ class Form {
 			$this->_buildFieldStack($id, $control);
 
 		$this->_field['attr']['class'] = implode(" ", $this->_field['css']);
-		$build = "<$control" . \sys\utils\Html::getAttr($this->_field['attr']) . ">";
+		$build = "<$control" . Html::getAttr($this->_field['attr']) . ">";
 
 		switch ($control) {
 			case 'input':
@@ -256,7 +263,7 @@ class Form {
 			}
 			$this->_fields[$id]['field'][] = array(
 				'label' => $field['label'],
-				'field' => "<$tag" . \sys\utils\Html::getAttr($field['attr']) . ">$build"
+				'field' => "<$tag" . Html::getAttr($field['attr']) . ">$build"
 			);
 		}
 		unset($field);
