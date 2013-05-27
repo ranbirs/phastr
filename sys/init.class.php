@@ -10,7 +10,7 @@ use sys\utils\Helper;
 
 class Init {
 
-	protected static $view, $load, $session, $xhr;
+	protected static $view, $session, $load, $xhr;
 
 	protected static $resource = array();
 
@@ -18,14 +18,17 @@ class Init {
 
 	public static function start()
 	{
+		\sys\Load::conf('constants');
+		\sys\Load::vocab('sys', false);
+
 		self::$view = new View();
 
 		if (!self::_resource()) {
 			self::$view->error(404, self::$error);
 		}
 
-		self::$load = new Load();
 		self::$session = new Session();
+		self::$load = new Load();
 
 		Load::conf('autoload');
 
