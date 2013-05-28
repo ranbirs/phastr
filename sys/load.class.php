@@ -3,7 +3,6 @@
 namespace sys;
 
 use sys\Compositor;
-
 use sys\utils\Helper;
 
 class Load {

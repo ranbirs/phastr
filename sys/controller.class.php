@@ -4,7 +4,6 @@ namespace sys;
 
 use sys\Res;
 use sys\Compositor;
-
 use sys\utils\Helper;
 
 class Controller extends Compositor {

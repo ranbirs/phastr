@@ -3,9 +3,7 @@
 namespace sys;
 
 use sys\Init;
-
 use sys\modules\Xhr;
-
 use sys\utils\Helper;
 
 class Res extends Init {

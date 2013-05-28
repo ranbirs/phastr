@@ -7,7 +7,6 @@ use sys\Res;
 class Xhr {
 
 	protected $view;
-
 	private $_xid, $_key;
 
 	function __construct()

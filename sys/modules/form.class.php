@@ -3,26 +3,21 @@
 namespace sys\modules;
 
 use sys\Res;
-
 use sys\modules\Validation;
-
-use sys\utils\Helper
+use sys\utils\Helper;
 use sys\utils\Html;
 
 class Form {
 
 	protected $xhr, $validation;
-
-	private $_fid, $_token, $_html;
-
+	private $_fid, $_token;
 	private $_field = array();
-
 	private $_build = array();
 	private $_fields = array();
-
 	private $_required = array();
 	private $_validated = array();
 	private $_sanitized = array();
+	private $_html;
 
 	function __construct()
 	{

@@ -3,15 +3,13 @@
 namespace sys\modules;
 
 use sys\Res;
-
 use sys\utils\Html;
 
 class Nav {
 
-	private $_html;
-
 	private $_build = array();
 	private $_items = array();
+	private $_html;
 
 	function __construct()
 	{

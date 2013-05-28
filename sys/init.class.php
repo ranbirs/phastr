@@ -5,16 +5,14 @@ namespace sys;
 use sys\Load;
 use sys\View;
 use sys\Session;
-
 use sys\utils\Helper;
 
 class Init {
 
 	protected static $load, $view, $session, $xhr;
-
 	protected static $resource = array();
-
-	private static $master, $controller, $error;
+	private static $master, $controller;
+	private static $error;
 
 	public static function start()
 	{
