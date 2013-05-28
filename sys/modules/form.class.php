@@ -11,12 +11,8 @@ class Form {
 
 	protected $xhr, $validation;
 	private $_fid, $_token;
-	private $_field = array();
-	private $_build = array();
-	private $_fields = array();
-	private $_required = array();
-	private $_validated = array();
-	private $_sanitized = array();
+	private $_field = array(), $_build = array(), $_fields = array();
+	private $_required = array(), $_validated = array(), $_sanitized = array();
 	private $_html;
 
 	function __construct()
