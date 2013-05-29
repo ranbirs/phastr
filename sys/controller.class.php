@@ -24,7 +24,6 @@ class Controller extends Compositor {
 	private function _master($master)
 	{
 		$controller = Helper::getClassName(get_class($this));
-
 		return ($controller === $master);
 	}
 
@@ -44,7 +43,6 @@ class Controller extends Compositor {
 		$page = Helper::getPath($res['page'], 'method');
 		$action = Helper::getPath($res['action']);
 		$params = $res['params'];
-
 		$methods = array(
 			$page . "_" . $action,
 			$page . "_" . $default,
@@ -56,7 +54,6 @@ class Controller extends Compositor {
 			if (method_exists($this, $method))
 				$this->$method($action, $params);
 		}
-
 		return true;
 	}
 

@@ -27,7 +27,6 @@ class Res extends Init {
 	{
 		if (!isset(self::$xhr))
 			self::$xhr = new Xhr();
-
 		return self::$xhr;
 	}
 
@@ -36,12 +35,6 @@ class Res extends Init {
 		switch ($key) {
 			case null:
 				return self::$resource;
-			break;
-			default:
-				if (!isset(self::$resource[$key])) {
-					return false;
-				}
-			break;
 			case 'params':
 				if (is_numeric($arg)) {
 					if (isset(self::$resource[$key][$arg])) {
@@ -49,7 +42,7 @@ class Res extends Init {
 					}
 					return false;
 				}
-			break;
+				break;
 			case 'args':
 				if (!isset(self::$resource[$key])) {
 					self::$resource[$key] = Helper::getArgs(self::$resource['params']);
@@ -60,7 +53,11 @@ class Res extends Init {
 					}
 					return false;
 				}
-			break;
+				break;
+			default:
+				if (!isset(self::$resource[$key])) {
+					return false;
+				}
 		}
 		return self::$resource[$key];
 	}

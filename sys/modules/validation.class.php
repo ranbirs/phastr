@@ -52,16 +52,12 @@ class Validation {
 		switch($rule) {
 			case 'xhr':
 				return ($value === Res::xhr()->token());
-			break;
 			case 'match':
 				return ($value === $param);
-			break;
 			case 'required':
 				if (is_array($value))
 					$value = implode($value);
-
 				return ($value);
-			break;
 			case 'maxlength':
 				if (!is_numeric($param)) {
 					return false;
@@ -74,37 +70,24 @@ class Validation {
 						return false;
 					}
 				}
-			break;
+				return true;
 			case 'alnum':
 				return (ctype_alnum($value));
-			break;
 			case 'email':
 				return (filter_var($value, FILTER_VALIDATE_EMAIL));
-			break;
-			default:
-				return false;
-			break;
 		}
-		return true;
 	}
 
 	public function sanitize($filter = 'string', $value = null)
 	{
 		switch ($filter) {
 			case 'string':
-				$value = filter_var($value, FILTER_SANITIZE_STRING, FILTER_FLAG_ENCODE_HIGH);
-			break;
+				return filter_var($value, FILTER_SANITIZE_STRING, FILTER_FLAG_ENCODE_HIGH);
 			case 'int':
-				$value = filter_var($value, FILTER_SANITIZE_NUMBER_INT);
-			break;
+				return filter_var($value, FILTER_SANITIZE_NUMBER_INT);
 			case 'float':
-				$value = filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT);
-			break;
-			default:
-				return false;
-			break;
+				return filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT);
 		}
-		return $value;
 	}
 
 }

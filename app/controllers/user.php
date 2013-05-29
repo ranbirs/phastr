@@ -38,7 +38,6 @@ class User extends \sys\Controller {
 			if ($this->user->verify($token)) {
 				$this->view->title = "New User Verification";
 				$this->view->body = $this->view->page('user/register/verify');
-
 				return true;
 			}
 		}

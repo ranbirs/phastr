@@ -24,8 +24,8 @@ class Database extends PDO {
 		$clause = $data[0];
 		$values = $data[1];
 		$columns = implode(", ", $fields);
-
 		$q = $this->prepare("SELECT $columns FROM $table $clause");
+
 		foreach ($values as $key => $val) {
 			$q->bindValue(":$key", $val);
 		}
@@ -46,8 +46,8 @@ class Database extends PDO {
 			$columns[] = "$field = :$field";
 		}
 		$columns = implode(", ", $columns);
-
 		$q = $this->prepare("UPDATE $table SET $columns $clause");
+
 		foreach (array_merge($data, $values) as $key => $val) {
 			$q->bindValue(":$key", $val);
 		}
@@ -59,13 +59,12 @@ class Database extends PDO {
 		$fields = array_keys($data);
 		$columns = implode(", ", $fields);
 		$values = ":" . implode(", :", $fields);
-
 		$q = $this->prepare("INSERT INTO $table ($columns) VALUES ($values)");
+
 		foreach ($data as $key => $val) {
 			$q->bindValue(":$key", $val);
 		}
 		$q->execute();
-
 		return $this->lastInsertId();
 	}
 

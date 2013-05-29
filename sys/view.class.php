@@ -20,7 +20,6 @@ class View {
 		if (!$subj and !$content) {
 			if (!isset($this->_assets[$type]))
 				$this->_assets[$type] = array();
-
 			return implode("\n", array_values($this->_assets[$type]));
 		}
 		$key = ($subj) ? $subj : md5($content);
@@ -47,7 +46,6 @@ class View {
 	public function template($type, $name, $data = null)
 	{
 		$this->$type = $data;
-
 		return $this->_render(array($type => $name), 'template');
 	}
 
@@ -102,7 +100,6 @@ class View {
 	private function _resolve($name = null, $type = 'page')
 	{
 		$path = \sys\app_base__ . "views/{$type}s/$name";
-
 		return Helper::resolveFilePath($path);
 	}
 
@@ -121,15 +118,13 @@ class View {
 				if ($rule == 'deny') {
 					return (Res::session()->token());
 				}
-			break;
+				break;
 			case 'private':
 				if ($rule == 'deny') {
 					return (!Res::session()->token());
 				}
-			break;
+				break;
 			case 'role':
-				return false;
-			break;
 		}
 		return false;
 	}

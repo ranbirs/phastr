@@ -107,7 +107,6 @@ class Session {
 	{
 		$value = (!$value and $value !== 0) ? Hash::rand() : $value;
 		$_SESSION[$this->_sid][$type][$key] = $value;
-
 		return $value;
 	}
 
@@ -115,7 +114,6 @@ class Session {
 	{
 		if ($this->get($type, $key)) {
 			unset($_SESSION[$this->_sid][$type][$key]);
-
 			return true;
 		}
 		return false;

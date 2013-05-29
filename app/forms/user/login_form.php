@@ -43,12 +43,10 @@ class Login_form extends \sys\modules\Form {
 	protected function parse()
 	{
 		$user = new \app\models\User();
-
 		$email = $this->xhr->post('login_email');
 		$password = $this->xhr->post('login_password');
 
-		$login = $user->login($email, $password);
-		if ($login) {
+		if ($user->login($email, $password)) {
 			return array('output' => true);
 		}
 		return array('output' => false, 'message' => "Invalid credentials");

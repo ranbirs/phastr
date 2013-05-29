@@ -20,7 +20,6 @@ class Model {
 		}
 		if (!isset(self::$dbh))
 			self::$dbh = new Database();
-
 		return self::$dbh;
 	}
 

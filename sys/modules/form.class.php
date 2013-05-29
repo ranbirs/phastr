@@ -60,11 +60,9 @@ class Form {
 		$parse = $this->parse();
 		if ($parse['output']) {
 			Res::session()->drop($this->_fid, 'token');
-
 			return $this->success();
 		}
 		$this->validation->set($parse['message']);
-
 		return $this->fail();
 	}
 
@@ -137,7 +135,6 @@ class Form {
 			$type = current(array_values($control));
 			$control = current(array_keys($control));
 		}
-
 		$this->_buildField($id, $control, $type);
 	}
 
@@ -179,30 +176,26 @@ class Form {
 				}
 				if (is_array($this->_field['value']))
 					$this->_field['stack'] = true;
-			break;
+				break;
 			case 'select':
 				$options = array();
 				foreach ($this->_fields[$id]['field'] as $field) {
 					$options[] = $field['field'];
 				}
 				$build .= "\n\t" . implode("\n\t", $options) . "</$control>";
-			break;
+				break;
 			case 'button':
 				$build .= $this->_field['label'] . "</$control>";
 				if (in_array($type, array('submit', 'action'))) {
 					$this->_field['stack'] = true;
 					$key = 'action';
 				}
-			break;
+				break;
 			case 'textarea':
 				$build .= "</$control>";
-			break;
+				break;
 			case 'markup':
 				$build = $this->_field['value'];
-			break;
-			default:
-				return false;
-			break;
 		}
 
 		if ($this->_field['label'] and $control != 'button')
@@ -214,7 +207,6 @@ class Form {
 		if ($this->_field['stack']) {
 			return $this->_fields[$key][] = $build;
 		}
-
 		return $this->_fields[$key]['field'] = $build;
 	}
 

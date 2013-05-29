@@ -29,7 +29,6 @@ class User extends \sys\Model {
 			\sys\Res::session()->set('_user', 'uid', $user->uid);
 			\sys\Res::session()->set('_user', 'token');
 			\sys\Res::session()->start();
-
 			return true;
 		}
 		return false;
@@ -64,13 +63,12 @@ class User extends \sys\Model {
 			$from = \sys\utils\Conf::k('app\\title');
 			$path = \sys\Res::get('path');
 			$xid = \sys\Res::session()->xid();
-
 			$headers = "From: $from <$addr>\n";
 			$subject = \sys\utils\Vocab::t('user_register\\verify_email_subject');
 			$msg = \sys\utils\Vocab::t('user_register\\verify_email_body') .
 				"http://$host/$path/verify/$xid/$token/";
-			mail($email, $subject, $msg, $headers, "-f $addr");
 
+			mail($email, $subject, $msg, $headers, "-f $addr");
 			return true;
 		}
 		return false;

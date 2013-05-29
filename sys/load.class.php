@@ -2,7 +2,6 @@
 
 namespace sys;
 
-use sys\Compositor;
 use sys\utils\Helper;
 
 class Load {
@@ -39,11 +38,10 @@ class Load {
 		return self::_load("confs/$path");
 	}
 
-	public static function vocab($path, $lang = true)
+	public static function vocab($path, $lang = "")
 	{
 		if ($lang)
-			$path = Res::session()->client('lang') . "/$path";
-
+			$path = "$lang/$path";
 		return self::_load("vocabs/$path");
 	}
 
@@ -59,26 +57,12 @@ class Load {
 
 	private static function _load($path, $control = null, $base = 'app', $ext = ".php")
 	{
-		$path = Helper::getPath($path);
-		require_once self::$base[$base] . $path . $ext;
+		Helper::requireFilePath(self::$base[$base] . $path, $ext);
 
 		if (!$control) {
 			return true;
 		}
-
-		$class = "\\$base\\" . Helper::getPathClass($path);
-
-		if ($control == 'instance') {
-			return new $class();
-		}
-
-		if ($control == 'composite') {
-			$prop = Helper::getFileName($path);
-			$inst = Compositor::instance();
-			$inst->$prop = new $class();
-		}
-
-		return true;
+		return Helper::resolveClassControl($path, $control, $base);
 	}
 
 }

@@ -58,7 +58,6 @@ class Xhr {
 			case 'post':
 			case 'get':
 				return $this->$type();
-			break;
 			case 'form':
 				$method = Res::get('params', 2);
 				$fid = Res::get('params', 3);
@@ -69,7 +68,6 @@ class Xhr {
 						return $this->$method();
 					}
 				}
-			break;
 		}
 		return false;
 	}
@@ -86,23 +84,16 @@ class Xhr {
 			case 'server':
 				if ($value !== null)
 					$_SERVER[$key] = $value;
-				$request = ($key) ? ((isset($_SERVER[$key])) ? $_SERVER[$key] : null) : $_SERVER;
-			break;
+				return ($key) ? ((isset($_SERVER[$key])) ? $_SERVER[$key] : null) : $_SERVER;
 			case 'get':
 				if ($value !== null)
 					$_GET[$key] = $value;
-				$request = ($key) ? ((isset($_GET[$key])) ? $_GET[$key] : null) : $_GET;
-			break;
+				return ($key) ? ((isset($_GET[$key])) ? $_GET[$key] : null) : $_GET;
 			case 'post':
 				if ($value !== null)
 					$_POST[$key] = $value;
-				$request = ($key) ? ((isset($_POST[$key])) ? $_POST[$key] : null) : $_POST;
-			break;
-			default:
-				return false;
-			break;
+				return ($key) ? ((isset($_POST[$key])) ? $_POST[$key] : null) : $_POST;
 		}
-		return $request;
 	}
 
 }

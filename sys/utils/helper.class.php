@@ -4,6 +4,12 @@ namespace sys\utils;
 
 class Helper {
 
+	public static function getFileName($path)
+	{
+		$path = explode("/", $path);
+		return strtolower(end($path));
+	}
+
 	public static function resolveFilePath($path, $ext = ".php")
 	{
 		$path = self::getPath($path) . $ext;
@@ -13,13 +19,12 @@ class Helper {
 		}
 		return false;
 	}
-
-	public static function getFileName($path)
+	
+	public static function requireFilePath($path, $ext = ".php")
 	{
-		$path = explode("/", $path);
-		return strtolower(end($path));
+		require_once self::getPath($path) . $ext;
 	}
-
+	
 	public static function getClassName($class)
 	{
 		$class = explode("\\", $class);
@@ -32,6 +37,22 @@ class Helper {
 		return strtolower(implode("/", $class));
 	}
 
+	public static function resolveClassControl($path, $control = null, $base = 'app')
+	{
+		$path = self::getPath($path);
+		$class = "\\$base\\" . self::getPathClass($path);
+
+		switch ($control) {
+			case 'instance':
+				return new $class();
+			case 'composite':
+				$prop = self::getFileName($path);
+				$inst = \sys\Compositor::instance();
+				$inst->$prop = new $class();
+		}
+		return true;
+	}
+	
 	public static function getPathClass($path)
 	{
 		$path = explode("/", strtolower($path));
@@ -42,24 +63,18 @@ class Helper {
 
 	public static function getPath($path, $type = 'file')
 	{
+		$path = strtolower($path);
+
 		switch ($type) {
 			case 'file':
-				$path = str_replace("-", "_", $path);
-			break;
+				return str_replace("-", "_", $path);
 			case 'path':
-				$path = str_replace("_", "-", $path);
-			break;
+				return str_replace("_", "-", $path);
 			case 'tree':
-				$path = str_replace(array("--", "-"), array("/", "_"), $path);
-			break;
+				return str_replace(array("--", "-"), array("/", "_"), $path);
 			case 'method':
-				$path = str_replace(array("--", "-"), array("__", "_"), $path);
-			break;
-			default:
-				return false;
-			break;
+				return str_replace(array("--", "-"), array("__", "_"), $path);
 		}
-		return strtolower($path);
 	}
 
 	public static function getArgs($params = null, $delimiter = ":")

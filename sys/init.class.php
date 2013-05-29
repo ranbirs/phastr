@@ -17,7 +17,7 @@ class Init {
 	public static function start()
 	{
 		Load::conf('constants');
-		Load::vocab('sys', false);
+		Load::vocab('sys');
 
 		self::$view = new View();
 
@@ -101,16 +101,16 @@ class Init {
 					}
 					if ($controller !== $default['autoload'])
 						$path[] = $controller;
-				break;
+					break;
 				case 1:
 					$page = $param;
 					$path[] = $page;
-				break;
+					break;
 				case 2:
 					$action = $param;
 					if ($action !== $default['action'])
 						$path[] = $action;
-				break;
+					break;
 			}
 		}
 

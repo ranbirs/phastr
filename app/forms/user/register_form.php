@@ -49,13 +49,11 @@ class Register_form extends \sys\modules\Form {
 	protected function parse()
 	{
 		$user = new \app\models\User();
-
 		$name = $this->xhr->post('register_name');
 		$email = $this->xhr->post('register_email');
 		$password = $this->xhr->post('register_password');
 
-		$register = $user->register($name, $email, $password);
-		if ($register) {
+		if ($user->register($name, $email, $password)) {
 			return array('output' => true);
 		}
 		return array('output' => false, 'message' => \sys\utils\Vocab::t('user_register\\fail'));

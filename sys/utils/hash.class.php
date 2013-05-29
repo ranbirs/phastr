@@ -18,7 +18,6 @@ class Hash {
 		$hash = hash($algo, self::rid());
 		if ($size)
 			$hash = ($size > strlen($hash)) ? str_pad($hash, $size, $hash) : substr($hash, 0, $size);
-
 		return str_shuffle($hash);
 	}
 
@@ -38,7 +37,6 @@ class Hash {
 	public static function get($data, $algo = 'sha512', $key = \app\confs\sys\hash__)
 	{
 		$hash = ($key) ? hash_hmac($algo, $data, $key) : hash($algo, $data);
-
 		return $hash;
 	}
 
