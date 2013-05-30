@@ -14,10 +14,7 @@ class Helper {
 	{
 		$path = self::getPath($path) . $ext;
 		$file = stream_resolve_include_path($path);
-		if ($file !== false) {
-			return $path;
-		}
-		return false;
+		return ($file !== false) ? $path : $file;
 	}
 	
 	public static function requireFilePath($path, $ext = ".php")
@@ -37,20 +34,20 @@ class Helper {
 		return strtolower(implode("/", $class));
 	}
 
-	public static function resolveClassControl($path, $control = null, $base = 'app')
+	public static function resolveClassInstance($path, $control = null, $base = 'app')
 	{
 		$path = self::getPath($path);
 		$class = "\\$base\\" . self::getPathClass($path);
+		$instance = new $class;
 
 		switch ($control) {
-			case 'instance':
-				return new $class();
 			case 'composite':
 				$prop = self::getFileName($path);
-				$inst = \sys\Compositor::instance();
-				$inst->$prop = new $class();
+				$comp = \sys\Compositor::instance();
+				$comp->$prop = $instance;
+				break;
 		}
-		return true;
+		return $instance;
 	}
 	
 	public static function getPathClass($path)
@@ -61,20 +58,23 @@ class Helper {
 		return implode("\\", $path);
 	}
 
-	public static function getPath($path, $type = 'file')
+	public static function getPath($path = "", $type = 'file')
 	{
-		$path = strtolower($path);
-
 		switch ($type) {
 			case 'file':
-				return str_replace("-", "_", $path);
+				$path = str_replace("-", "_", $path);
+				break;
 			case 'path':
-				return str_replace("_", "-", $path);
+				$path = str_replace("_", "-", $path);
+				break;
 			case 'tree':
-				return str_replace(array("--", "-"), array("/", "_"), $path);
+				$path = str_replace(array("--", "-"), array("/", "_"), $path);
+				break;
 			case 'method':
-				return str_replace(array("--", "-"), array("__", "_"), $path);
+				$path = str_replace(array("--", "-"), array("__", "_"), $path);
+				break;
 		}
+		return strtolower($path);
 	}
 
 	public static function getArgs($params = null, $delimiter = ":")

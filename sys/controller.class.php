@@ -21,22 +21,14 @@ class Controller extends Compositor {
 		$this->_method();
 	}
 
-	private function _master($master)
-	{
-		$controller = Helper::getClassName(get_class($this));
-		return ($controller === $master);
-	}
-
 	private function _method()
 	{
 		$res = Res::get();
+		$master = $res['master'];
 
-		if ($res['master']) {
-			if ($this->_master($res['master'])) {
-				return false;
-			}
+		if (Helper::getClassName(get_class($this)) === $master) {
+			return false;
 		}
-
 		$this->init();
 
 		$default = $res['method'];
@@ -49,12 +41,11 @@ class Controller extends Compositor {
 			$default . "_" . $action,
 			$default
 		);
-
 		foreach ($methods as $method) {
 			if (method_exists($this, $method))
 				$this->$method($action, $params);
 		}
-		return true;
+		return $methods;
 	}
 
 }

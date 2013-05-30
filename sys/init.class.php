@@ -20,11 +20,11 @@ class Init {
 		Load::vocab('sys');
 
 		self::$view = new View();
+		self::$resource = self::_resource();
 
-		if (!self::_resource()) {
+		if (!self::$resource) {
 			self::$view->error(404, self::$error);
 		}
-
 		self::$session = new Session();
 		self::$load = new Load();
 
@@ -114,7 +114,7 @@ class Init {
 			}
 		}
 
-		self::$resource = array(
+		return array(
 			'request' => ($request) ? $request : "/",
 			'path' => ($request) ? implode("/", $path) : $default['homepage'],
 			'route' => "$controller/$page/$action",
@@ -125,8 +125,6 @@ class Init {
 			'params' => $params,
 			'method' => $default['method']
 		);
-
-		return true;
 	}
 
 }

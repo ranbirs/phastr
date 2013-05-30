@@ -17,21 +17,27 @@ class Html {
 	{
 		switch ($type) {
 			case 'script':
-				return (!$content) ?
+				$asset = (!$content) ?
 					'<script src="' . (($append) ? $subj . "?" . $append : $subj) . '"></script>' :
 					"<script>$content</script>";
+				break;
 			case 'style':
 				$attrs = "";
 				if (is_array($content)) {
 					$attrs = self::getAttr($content);
 					$content = null;
 				}
-				return (!$content) ?
+				$asset = (!$content) ?
 					'<link href="' . (($append) ? $subj . "?" . $append : $subj) . '" rel="stylesheet"' . "$attrs>" :
 					"<style>$content</style>";
+				break;
 			case 'meta':
-				return '<meta name="' . $subj . '" content="' . $content . '">';
+				$asset = '<meta name="' . $subj . '" content="' . $content . '">';
+				break;
+			default:
+				$asset = null;
 		}
+		return $asset;
 	}
 
 }

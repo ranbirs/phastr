@@ -15,13 +15,7 @@ class Validation {
 
 	public function get($key = null)
 	{
-		if ($key) {
-			if (isset($this->_result[$key])) {
-				return $this->_result[$key];
-			}
-			return false;
-		}
-		return $this->_result;
+		return (!is_null($key) and isset($this->_result[$key])) ? $this->_result[$key] : $this->_result;
 	}
 
 	public function set($msg = null, $key = 'error', $subj = 'parse')
@@ -42,8 +36,11 @@ class Validation {
 					continue;
 				}
 			}
-			if ($valid == 'error')
-				$this->set("", $valid, $id);
+			switch ($valid) {
+				case 'error':
+					$this->set("", $valid, $id);
+					break;
+			}
 		}
 	}
 
@@ -51,43 +48,59 @@ class Validation {
 	{
 		switch($rule) {
 			case 'xhr':
-				return ($value === Res::xhr()->token());
+				$valid = ($value === Res::xhr()->token());
+				break;
 			case 'match':
-				return ($value === $param);
+				$valid = ($value === $param);
+				break;
 			case 'required':
 				if (is_array($value))
 					$value = implode($value);
-				return ($value);
+				$valid = (strlen($value) > 0);
+				break;
 			case 'maxlength':
 				if (!is_numeric($param)) {
-					return false;
+					$valid = false;
+					break;
 				}
 				if (!is_array($value)) {
-					return (strlen($value) < $param);
+					$valid = (strlen($value) < $param);
+					break;
 				}
 				foreach ($value as $val) {
 					if (strlen($val) > $param) {
-						return false;
+						$valid = false;
+						break 2;
 					}
 				}
-				return true;
+				$valid = true;
+				break;
 			case 'alnum':
-				return (ctype_alnum($value));
+				$valid = (ctype_alnum($value));
+				break;
 			case 'email':
-				return (filter_var($value, FILTER_VALIDATE_EMAIL));
+				$valid = (filter_var($value, FILTER_VALIDATE_EMAIL));
+				break;
+			default:
+				$valid = true;
 		}
+		return $valid;
 	}
 
 	public function sanitize($filter = 'string', $value = null)
 	{
 		switch ($filter) {
 			case 'string':
-				return filter_var($value, FILTER_SANITIZE_STRING, FILTER_FLAG_ENCODE_HIGH);
+				$value = filter_var($value, FILTER_SANITIZE_STRING, FILTER_FLAG_ENCODE_HIGH);
+				break;
 			case 'int':
-				return filter_var($value, FILTER_SANITIZE_NUMBER_INT);
+				$value = filter_var($value, FILTER_SANITIZE_NUMBER_INT);
+				break;
 			case 'float':
-				return filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT);
+				$value = filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT);
+				break;
 		}
+		return $value;
 	}
 
 }

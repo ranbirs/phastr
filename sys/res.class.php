@@ -34,32 +34,24 @@ class Res extends Init {
 	{
 		switch ($key) {
 			case null:
-				return self::$resource;
+				$resource = self::$resource;
+				break;
 			case 'params':
-				if (is_numeric($arg)) {
-					if (isset(self::$resource[$key][$arg])) {
-						return self::$resource[$key][$arg];
-					}
-					return false;
-				}
+				$resource = (is_numeric($arg)) ?
+					((isset(self::$resource[$key][$arg])) ? self::$resource[$key][$arg] : null) :
+					self::$resource[$key];
 				break;
 			case 'args':
-				if (!isset(self::$resource[$key])) {
+				if (!isset(self::$resource[$key]))
 					self::$resource[$key] = Helper::getArgs(self::$resource['params']);
-				}
-				if ($arg) {
-					if (isset(self::$resource[$key][$arg])) {
-						return self::$resource[$key][$arg];
-					}
-					return false;
-				}
+				$resource = ($arg) ?
+					((isset(self::$resource[$key][$arg])) ? self::$resource[$key][$arg] : null) :
+					self::$resource[$key];
 				break;
 			default:
-				if (!isset(self::$resource[$key])) {
-					return false;
-				}
+				$resource = (isset(self::$resource[$key])) ? self::$resource[$key] : null;
 		}
-		return self::$resource[$key];
+		return $resource;
 	}
 
 }

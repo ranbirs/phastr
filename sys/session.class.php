@@ -60,18 +60,12 @@ class Session {
 	public function keygen($key = null)
 	{
 		$gen = Hash::get($this->_sid . $this->_xid . $this->_gid, 'sha1');
-		if ($key) {
-			return ($key === $gen);
-		}
-		return $gen;
+		return ($key) ? ($key === $gen) : $gen;
 	}
 
 	public function timestamp($key = 0, $set = false)
 	{
-		if ($set) {
-			return $this->set('_timestamp', $key, microtime(true));
-		}
-		return $this->get('_timestamp', $key);
+		return ($set) ? $this->set('_timestamp', $key, microtime(true)) : $this->get('_timestamp', $key);
 	}
 
 	public function uid()
@@ -84,28 +78,22 @@ class Session {
 		return $this->get('_user', 'token');
 	}
 
-	public function client($key = 'lang')
+	public function client($key = 'ua')
 	{
 		return $this->get('_client', $key);
 	}
 
 	public function get($type, $key = null)
 	{
-		if ($key or $key === 0) {
-			if (isset($_SESSION[$this->_sid][$type][$key])) {
-				return $_SESSION[$this->_sid][$type][$key];
-			}
-			return false;
-		}
-		if (isset($_SESSION[$this->_sid][$type])) {
-			return $_SESSION[$this->_sid][$type];
-		}
-		return false;
+		$value = ($key or is_numeric($key)) ?
+			((isset($_SESSION[$this->_sid][$type][$key])) ? $_SESSION[$this->_sid][$type][$key] : null) :
+			((isset($_SESSION[$this->_sid][$type])) ? $_SESSION[$this->_sid][$type] : null);
+		return $value;
 	}
 
 	public function set($type, $key, $value = null)
 	{
-		$value = (!$value and $value !== 0) ? Hash::rand() : $value;
+		$value = (!$value and !is_numeric($value)) ? Hash::rand() : $value;
 		$_SESSION[$this->_sid][$type][$key] = $value;
 		return $value;
 	}

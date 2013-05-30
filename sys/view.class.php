@@ -76,24 +76,20 @@ class View {
 			$name = current(array_values($name));
 			$name = "{$control}s/$name";
 		}
-
 		$file = $this->_resolve($name, $type);
 
 		if (!$file) {
 			$this->error(404, \app\vocabs\sys\er_vcv__);
 		}
-
 		ob_start();
-
 		$this->_include($file);
 
-		if (isset($this->access)) {
+		if (isset($this->access[1])) {
 			if (!$this->_access($this->access[0], $this->access[1])) {
 				ob_end_clean();
 				$this->error(403);
 			}
 		}
-
 		return ob_get_clean();
 	}
 
@@ -115,18 +111,26 @@ class View {
 		}
 		switch ($role) {
 			case 'public':
-				if ($rule == 'deny') {
-					return (Res::session()->token());
+				switch ($rule) {
+					case 'deny':
+						$access = (!is_null(Res::session()->token()));
+						break 2;
 				}
+				$access = true;
 				break;
 			case 'private':
-				if ($rule == 'deny') {
-					return (!Res::session()->token());
+				switch ($rule) {
+					case 'deny':
+						$access = (is_null(Res::session()->token()));
+						break 2;
 				}
+				$access = true;
 				break;
 			case 'role':
+			default:
+				$access = false;
 		}
-		return false;
+		return $access;
 	}
 
 }

@@ -141,22 +141,22 @@ class Form {
 	private function _buildField($id, $control, $type = null)
 	{
 		$key = $id;
-		$build = "";
+		$build = array_fill(0, 3, null);
 
 		$this->_field['stack'] = false;
 		$this->_field['attr']['id'] = $id;
 		$this->_field['attr']['name'] = (!is_array($this->_field['value'])) ? $id : $id . "[]";
 		$this->_field['css'][] = "field";
 
-		if ($control == 'input') {
-			$this->_field['attr']['type'] = $type;
-			$this->_field['attr']['value'] = $this->_field['value'];
-		}
-
 		if (isset($this->_field['prop'])) {
 			foreach ($this->_field['prop'] as $prop) {
 				$this->_field['attr'][$prop] = $prop;
 			}
+		}
+
+		if ($control == 'input') {
+			$this->_field['attr']['type'] = $type;
+			$this->_field['attr']['value'] = $this->_field['value'];
 		}
 
 		if (!empty($this->_field['validate']))
@@ -165,14 +165,13 @@ class Form {
 		if (is_array($this->_field['value']))
 			$this->_buildFieldStack($id, $control);
 
-		$this->_field['attr']['class'] = implode(" ", $this->_field['css']);
-		$build = "<$control" . Html::getAttr($this->_field['attr']) . ">";
-
 		switch ($control) {
 			case 'input':
-				if ($type == 'hidden') {
-					$this->_field['stack'] = true;
-					$key = $type;
+				switch ($type) {
+					case 'hidden':
+						$this->_field['stack'] = true;
+						$key = $type;
+						break;
 				}
 				if (is_array($this->_field['value']))
 					$this->_field['stack'] = true;
@@ -182,23 +181,32 @@ class Form {
 				foreach ($this->_fields[$id]['field'] as $field) {
 					$options[] = $field['field'];
 				}
-				$build .= "\n\t" . implode("\n\t", $options) . "</$control>";
+				$build[1] = "\n\t" . implode("\n\t", $options) . "</$control>";
 				break;
 			case 'button':
-				$build .= $this->_field['label'] . "</$control>";
+				$build[1] = $this->_field['label'] . "</$control>";
+				$this->_field['label'] = null;
+
 				if (in_array($type, array('submit', 'action'))) {
 					$this->_field['stack'] = true;
 					$key = 'action';
 				}
+				unset($this->_fields[$id]['label']);
 				break;
 			case 'textarea':
-				$build .= "</$control>";
+				$build[1] = "</$control>";
 				break;
 			case 'markup':
-				$build = $this->_field['value'];
+				$build[2] = $this->_field['value'];
+				break;
 		}
 
-		if ($this->_field['label'] and $control != 'button')
+		$this->_field['attr']['class'] = implode(" ", $this->_field['css']);
+
+		$build[0] = (!$build[2]) ? "<$control" . Html::getAttr($this->_field['attr']) . ">" : null;
+		$build = implode(array_filter($build));
+
+		if ($this->_field['label'])
 			$this->_fields[$id]['label'] = $this->_field['label'];
 
 		if (isset($this->_field['helptext']))
@@ -231,18 +239,19 @@ class Form {
 				}
 			}
 
-			if ($control == 'select') {
-				if (!empty($field['css']))
+			switch ($control) {
+				case 'select':
+					if (!empty($field['css']))
+						$field['attr']['class'] = implode(" ", $field['css']);
+					$tag = 'option';
+					$build = $field['label'] . "</$tag>";
+					break;
+				default:
+					$field['css'] = array_merge($this->_field['css'], $field['css']);
 					$field['attr']['class'] = implode(" ", $field['css']);
-				$tag = 'option';
-				$build = $field['label'] . "</$tag>";
-			}
-			else {
-				$field['css'] = array_merge($this->_field['css'], $field['css']);
-				$field['attr']['class'] = implode(" ", $field['css']);
-				$field['attr']['id'] = $id . "-" . $index;
-				$field['attr']['name'] = $id . "[]";
-				$field['attr'] = array_merge($this->_field['attr'], $field['attr']);
+					$field['attr']['id'] = $id . "-" . $index;
+					$field['attr']['name'] = $id . "[]";
+					$field['attr'] = array_merge($this->_field['attr'], $field['attr']);
 			}
 			$this->_fields[$id]['field'][] = array(
 				'label' => $field['label'],
@@ -258,20 +267,28 @@ class Form {
 		$this->_field['css'][] = "validated";
 
 		foreach ($this->_field['validate'] as $rule => $validation) {
+
 			if (is_numeric($rule))
 				$rule = $validation;
 
-			if ($rule == 'required')
-				$this->_required[] = $id;
+			switch ($rule) {
+				case 'required':
+					$this->_required[] = $id;
+					break;
+				case 'maxlength':
+					$this->_field['attr'][$rule] = (isset($validation['value'])) ? $validation['value'] : 64;
+					break;
+			}
 			$this->_field['css'][] = "rule-" . $rule;
 
 			if (is_array($validation)) {
-				if ($rule == 'maxlength')
-					$this->_field['attr'][$rule] = $validation['value'];
-
 				if (array_intersect(array('error', 'success'), array_keys($validation))) {
-					if ($type != 'hidden')
-						$this->_fields[$id]['helper'] = true;
+					switch ($type) {
+						case 'hidden':
+							break;
+						default:
+							$this->_fields[$id]['helper'] = true;
+					}
 				}
 			}
 		}

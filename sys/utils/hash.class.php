@@ -36,8 +36,7 @@ class Hash {
 
 	public static function get($data, $algo = 'sha512', $key = \app\confs\sys\hash__)
 	{
-		$hash = ($key) ? hash_hmac($algo, $data, $key) : hash($algo, $data);
-		return $hash;
+		return ($key) ? hash_hmac($algo, $data, $key) : hash($algo, $data);
 	}
 
 	public static function gen($data)

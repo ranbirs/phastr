@@ -62,7 +62,7 @@ class Load {
 		if (!$control) {
 			return true;
 		}
-		return Helper::resolveClassControl($path, $control, $base);
+		return Helper::resolveClassInstance($path, $control, $base);
 	}
 
 }

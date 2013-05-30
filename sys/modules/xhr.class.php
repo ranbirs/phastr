@@ -12,7 +12,6 @@ class Xhr {
 	function __construct()
 	{
 		$this->view = Res::view();
-
 		$this->_xid = Res::session()->xid();
 		$this->_key = Res::session()->key();
 
@@ -40,10 +39,7 @@ class Xhr {
 	{
 		$key = "HTTP_" . strtoupper($key . $this->_key);
 		$token = $this->server($key);
-		if ($token === $this->_xid) {
-			return $token;
-		}
-		return false;
+		return ($token === $this->_xid) ? $token : null;
 	}
 
 	public function request()
@@ -57,7 +53,8 @@ class Xhr {
 		switch ($type) {
 			case 'post':
 			case 'get':
-				return $this->$type();
+				$request = $this->$type();
+				break;
 			case 'form':
 				$method = Res::get('params', 2);
 				$fid = Res::get('params', 3);
@@ -65,11 +62,16 @@ class Xhr {
 
 				if ($method and method_exists($this, $method)) {
 					if ($this->$method("form_fid_$key") === $fid) {
-						return $this->$method();
+						$request = $this->$method();
+						break;
 					}
 				}
+				$request = null;
+				break;
+			default:
+				$request = null;
 		}
-		return false;
+		return $request;
 	}
 
 	public function response($data, $format = 'json')
@@ -82,18 +84,27 @@ class Xhr {
 	{
 		switch ($type) {
 			case 'server':
-				if ($value !== null)
+				if (!is_null($value))
 					$_SERVER[$key] = $value;
-				return ($key) ? ((isset($_SERVER[$key])) ? $_SERVER[$key] : null) : $_SERVER;
+				$request = ($key) ? ((isset($_SERVER[$key])) ? $_SERVER[$key] : null) : $_SERVER;
+				break;
 			case 'get':
-				if ($value !== null)
+				if (!is_null($value))
 					$_GET[$key] = $value;
-				return ($key) ? ((isset($_GET[$key])) ? $_GET[$key] : null) : $_GET;
+				$request = ($key) ? ((isset($_GET[$key])) ? $_GET[$key] : null) : $_GET;
+				break;
 			case 'post':
-				if ($value !== null)
+				if (!is_null($value))
 					$_POST[$key] = $value;
-				return ($key) ? ((isset($_POST[$key])) ? $_POST[$key] : null) : $_POST;
+				$request = ($key) ? ((isset($_POST[$key])) ? $_POST[$key] : null) : $_POST;
+				break;
+			case 'request':
+				$request = ($key) ? ((isset($_REQUEST[$key])) ? $_REQUEST[$key] : null) : $_REQUEST;
+				break;
+			default:
+				$request = null;
 		}
+		return $request;
 	}
 
 }
