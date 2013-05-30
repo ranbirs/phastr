@@ -45,7 +45,6 @@ class Controller extends Compositor {
 			if (method_exists($this, $method))
 				$this->$method($action, $params);
 		}
-		return $methods;
 	}
 
 }
