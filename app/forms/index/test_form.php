@@ -9,16 +9,14 @@ class Test_form extends \sys\modules\Form {
 		parent::__construct();
 	}
 
-	protected function build($import)
+	protected function build($data = null)
 	{
-		$this->open("Example Form", array("form-horizontal"));
-
 		$this->field('markup', "", "<em>Example data</em>",
-			$data = array('value' => "<pre>" . print_r($import, true) . "</pre>")
+			$build = array('value' => "<pre>" . print_r($data, true) . "</pre>")
 		);
 
 		$this->field(array('input' =>'email'), "test_email_field", "Email field",
-			$data = array(
+			$build = array(
 				'helptext' => "Field is validated",
 				'validate' => array(
 					'email' => array(
@@ -32,7 +30,7 @@ class Test_form extends \sys\modules\Form {
 		);
 
 		$this->field(array('input' => 'text'), "test_text_field_required", "Text field",
-			$data = array(
+			$build = array(
 				'attr' => array('placeholder' => "placeholder text..."),
 				'validate' => array(
 					'maxlength' => array('value' => 32),
@@ -42,7 +40,7 @@ class Test_form extends \sys\modules\Form {
 		);
 
 		$this->field(array('input' => 'checkbox'), "checkbox_field", "Checkboxes",
-			$data = array(
+			$build = array(
 				'value' => array(
 					array(
 						'value' => "somefeature",
@@ -65,7 +63,7 @@ class Test_form extends \sys\modules\Form {
 		);
 
 		$this->field(array('input' => 'radio'), "radio_field", "Radio buttons",
-			$data = array(
+			$build = array(
 				'value' => array(
 					array(
 						'value' => "fm",
@@ -85,7 +83,7 @@ class Test_form extends \sys\modules\Form {
 		);
 
 		$this->field('select', "select_field", "Select",
-			$data = array(
+			$build = array(
 				'value' => array(
 					array(
 						'value' => "",
@@ -111,7 +109,7 @@ class Test_form extends \sys\modules\Form {
 		);
 
 		$this->field('select', "multiple_select_field", "Le multiple select",
-			$data = array(
+			$build = array(
 				'value' => array(
 					array(
 						'value' => "",
@@ -138,7 +136,7 @@ class Test_form extends \sys\modules\Form {
 		);
 
 		$this->field(array('input' => 'text'), "address_field", "Practically a single field",
-			$data = array(
+			$build = array(
 				'value' => array(
 					array(
 						'value' => "",
@@ -158,23 +156,21 @@ class Test_form extends \sys\modules\Form {
 		);
 
 		$this->field('markup', "some_markup", null,
-			$data = array('value' => "<p>More custom markup...</p>")
+			$build = array('value' => "<p>More custom markup...</p>")
 		);
 
 		$this->field(array('input' => 'text'), "test_text_field", "Text field 2");
 
 		$this->field(array('button' => 'submit'), "submit_button", "Submit", 
-			$data = array(
+			$build = array(
 				'css' => array("btn", "btn-primary"),
 				'attr' => array('data-loading-text' => "Loading...")
 			)
 		);
 
 		$this->field(array('button' => 'action'), "cancel_button", "Cancel",
-			$data = array('css' => array("btn"))
+			$build = array('css' => array("btn"))
 		);
-
-		$this->close();
 	}
 
 	protected function success()

@@ -17,24 +17,14 @@ class Controller extends Compositor {
 		$this->load = Res::load();
 		$this->view = Res::view();
 		$this->xhr = Res::Xhr();
-
-		$this->_method();
 	}
 
-	private function _method()
+	public function method($resource)
 	{
-		$res = Res::get();
-		$master = $res['master'];
-
-		if (Helper::getClassName(get_class($this)) === $master) {
-			return false;
-		}
-		$this->init();
-
-		$default = $res['method'];
-		$page = Helper::getPath($res['page'], 'method');
-		$action = Helper::getPath($res['action']);
-		$params = $res['params'];
+		$page = Helper::getPath($resource['page'], 'method');
+		$action = Helper::getPath($resource['action']);
+		$params = $resource['params'];
+		$default = $resource['method'];
 		$methods = array(
 			$page . "_" . $action,
 			$page . "_" . $default,

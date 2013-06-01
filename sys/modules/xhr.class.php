@@ -61,7 +61,7 @@ class Xhr {
 				$key = $this->_key;
 
 				if ($method and method_exists($this, $method)) {
-					if ($this->$method("form_fid_$key") === $fid) {
+					if ($this->$method($fid . "_fid_" . $key) === $fid) {
 						$request = $this->$method();
 						break;
 					}

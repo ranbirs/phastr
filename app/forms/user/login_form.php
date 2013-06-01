@@ -9,13 +9,10 @@ class Login_form extends \sys\modules\Form {
 		parent::__construct();
 	}
 
-	protected function build()
+	protected function build($data = null)
 	{
-		$this->open("Authentication Form", array("form-horizontal"));
-
-		$this->field(
-			$field = array('input' => 'email'), "login_email", "Email",
-			$data = array(
+		$this->field(array('input' => 'email'), "login_email", "Email",
+			$build = array(
 				'validate' => array(
 					'maxlength' => array('value' => 128),
 					'email' => ""
@@ -23,9 +20,8 @@ class Login_form extends \sys\modules\Form {
 			)
 		);
 
-		$this->field(
-			$field = array('input' => 'password'), "login_password", "Password",
-			$data = array(
+		$this->field(array('input' => 'password'), "login_password", "Password",
+			$build = array(
 				'validate' => array(
 					'maxlength' => array('value' => 32),
 					'required' => ""
@@ -34,10 +30,8 @@ class Login_form extends \sys\modules\Form {
 		);
 
 		$this->field(array('button' => 'submit'), "login_submit", "Sign in",
-			$data = array('css' => array("btn", "btn-primary"))
+			$build = array('css' => array("btn", "btn-primary"))
 		);
-
-		$this->close();
 	}
 
 	protected function parse()
@@ -47,9 +41,9 @@ class Login_form extends \sys\modules\Form {
 		$password = $this->xhr->post('login_password');
 
 		if ($user->login($email, $password)) {
-			return array('output' => true);
+			return array('result' => true);
 		}
-		return array('output' => false, 'message' => "Invalid credentials");
+		return array('result' => false, 'message' => "Invalid credentials");
 	}
 
 	protected function success()

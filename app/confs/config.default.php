@@ -14,12 +14,12 @@ namespace app\confs\sys;
 	const autoload__ = "index";
 	const homepage__ = "index";
 
-	const master__ = "_scope";
-	const except__ = "error, xhr";
-
 	const page__ = "index";
 	const action__ = "index";
 	const method__ = "scope";
+
+	const master__ = "_scope";
+	const except__ = "error,xhr";
 
 	const xhr_param__ = "xhr";
 

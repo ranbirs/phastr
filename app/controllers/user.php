@@ -18,14 +18,14 @@ class User extends \sys\Controller {
 	public function login_index()
 	{
 		$this->load->form('user/login_form');
-		$this->view->login_form = $this->login_form->html();
+		$this->view->login_form = $this->login_form->html($data = null, $title = "Authentication Form", $css = array("form-horizontal"));
 	}
 
 	public function register_index()
 	{
 		$this->load->form('user/register_form');
 		$this->view->title = "New User Registration";
-		$this->view->body = $this->register_form->html();
+		$this->view->body = $this->register_form->html($data = null, $title = "Registration Form", $css = array("form-horizontal"));
 	}
 
 	public function register_verify()

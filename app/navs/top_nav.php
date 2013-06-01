@@ -9,10 +9,8 @@ class Top_nav extends \sys\modules\Nav {
 		parent::__construct();
 	}
 
-	protected function build()
+	protected function build($data = null)
 	{
-		$this->open(array("nav", "ajax-load"));
-
 		$this->item("/", "/",
 			$data = array(
 				'css' => array("css-class"),
@@ -39,8 +37,6 @@ class Top_nav extends \sys\modules\Nav {
 			)
 		);
 		$this->item("Private", "user");
-
-		$this->close();
 	}
 
 }

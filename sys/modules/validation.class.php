@@ -23,7 +23,7 @@ class Validation {
 		$this->_result[$key]['validate'][] = array($subj, $msg);
 	}
 
-	public function parse($id, $validation, $value = null)
+	public function resolve($id, $validation, $value = null)
 	{
 		foreach ($validation as $key => $args) {
 			$rule = (!is_numeric($key)) ? $key : $args;

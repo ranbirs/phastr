@@ -5,7 +5,7 @@ namespace sys\modules;
 use sys\Res;
 use sys\utils\Html;
 
-class Nav {
+abstract class Nav {
 
 	private $_build = array(), $_items = array();
 	private $_html;
@@ -15,28 +15,21 @@ class Nav {
 
 	}
 
-	public function html($template = "bootstrap", $data = null)
+	abstract protected function build();
+
+	public function html($data = null, $title = null, $css = array(), $template = "bootstrap")
 	{
 		$this->build($data);
 
 		if (!$this->_html) {
-			$data = array('build' => $this->_build, 'items' => $this->_items);
+			if (!empty($css)) {
+				$this->_build['attr']['class'] = implode(" ", $css);
+				$this->_build['attr'] = Html::getAttr($this->_build['attr']);
+			}
+			$data = array('title' => $title, 'build' => $this->_build, 'items' => $this->_items);
 			$this->_html = Res::view()->template('nav', $template, $data);
 		}
 		return $this->_html;
-	}
-
-	protected function open($css = array())
-	{
-		if (!empty($css)) {
-			$this->_build['attr']['class'] = implode(" ", $css);
-			$this->_build['attr'] = Html::getAttr($this->_build['attr']);
-		}
-	}
-
-	protected function close()
-	{
-
 	}
 
 	protected function item($label = null, $path = null, $data = array())

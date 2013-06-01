@@ -14,10 +14,10 @@ class _scope extends \sys\Controller {
 		$this->view->assets('style', "/css/bootstrap-responsive.min.css?2.3.0", array('media' => "screen"), null);
 
 		$this->load->nav('top_nav');
-		$this->view->top_nav = $this->top_nav->html();
+		$this->view->top_nav = $this->top_nav->html($data = null, $title = null, $css = array("nav"));
 
 		$this->load->nav('user_nav');
-		$this->view->user_nav = $this->user_nav->html();
+		$this->view->user_nav = $this->user_nav->html($data = null, $title = null, $css = array("nav", "pull-right"));
 
 		$this->view->callback = "";
 		$this->view->app_title = \sys\utils\Conf::k('app\\title');

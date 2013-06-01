@@ -7,7 +7,7 @@ use sys\modules\Validation;
 use sys\utils\Helper;
 use sys\utils\Html;
 
-class Form {
+abstract class Form {
 
 	protected $xhr, $validation;
 	private $_fid, $_token;
@@ -25,23 +25,54 @@ class Form {
 			$this->_token = Res::session()->set($this->_fid, 'token');
 	}
 
-	public function html($data = null, $method = 'post', $template = "bootstrap/form")
+	abstract protected function build();
+
+	public function html($data = null, $title = null, $css = array(), $method = 'post', $template = "bootstrap")
 	{
 		$this->build($data);
+		$this->_close();
 
 		if ($this->xhr->request($method)) {
 			$this->xhr->response($this->_submit($method));
 		}
-
 		if (!$this->_html) {
+			$this->_build['fid'] = $this->_fid;
+			$this->_build['title'] = $title;
+			$this->_build['css'] = implode(" ", $css);
 			$this->_build['method'] = $method;
-			$action = "/" . Res::get('route') . "/" . \app\confs\sys\xhr_param__ .
+			$this->_build['action'] = "/" . Res::get('route') . "/" . \app\confs\sys\xhr_param__ .
 				"/form/$method/" . $this->_fid . "/";
-			$this->_build['action'] = $action;
 			$data = array('build' => $this->_build, 'fields' => $this->_fields);
 			$this->_html = Res::view()->template('form', $template, $data);
 		}
 		return $this->_html;
+	}
+
+	private function _close()
+	{
+		$key = Res::session()->key();
+		$xid = Res::session()->xid();
+		$fid = $this->_fid;
+		$token = $this->_token;
+
+		$this->field(array('input' => 'hidden'), "xid_$key", null,
+			$data = array(
+				'value' => $xid,
+				'validate' => array('xhr')
+			)
+		);
+		$this->field(array('input' => 'hidden'), "fid_$key", null,
+			$data = array(
+				'value' => $fid,
+				'validate' => array('match' => array('value' => $fid))
+			)
+		);
+		$this->field(array('input' => 'hidden'), "token_$key", null,
+			$data = array(
+				'value' => $token,
+				'validate' => array('match' => array('value' => $token))
+			)
+		);
 	}
 
 	private function _submit($method)
@@ -52,13 +83,13 @@ class Form {
 			$this->xhr->$method($id, $this->validation->sanitize($filter, $this->xhr->$method($id)));
 		}
 		foreach ($this->_validated as $id => $validation) {
-			$this->validation->parse($id, $validation, $this->xhr->$method($id));
+			$this->validation->resolve($id, $validation, $this->xhr->$method($id));
 		}
 		if (array_key_exists('error', $this->validation->get())) {
 			return $this->fail();
 		}
 		$parse = $this->parse();
-		if ($parse['output']) {
+		if ($parse['result']) {
 			Res::session()->drop($this->_fid, 'token');
 			return $this->success();
 		}
@@ -66,45 +97,9 @@ class Form {
 		return $this->fail();
 	}
 
-	protected function build()
-	{
-
-	}
-
-	protected function open($title = null, $css = array())
-	{
-		$this->_build['fid'] = $this->_fid;
-		$this->_build['css'] = implode(" ", $css);
-		$this->_build['title'] = $title;
-	}
-
-	protected function close()
-	{
-		$key = Res::session()->key();
-
-		$this->field(array('input' => 'hidden'), "form_xid_$key", null,
-			$data = array(
-				'value' => Res::session()->xid(),
-				'validate' => array('xhr')
-			)
-		);
-		$this->field(array('input' => 'hidden'), "form_fid_$key", null,
-			$data = array(
-				'value' => $this->_fid,
-				'validate' => array('match' => array('value' => $this->_fid))
-			)
-		);
-		$this->field(array('input' => 'hidden'), "form_token_$key", null,
-			$data = array(
-				'value' => $this->_token,
-				'validate' => array('match' => array('value' => $this->_token))
-			)
-		);
-	}
-
 	protected function parse()
 	{
-		return array('output' => true);
+		return array('result' => true);
 	}
 
 	protected function success()
@@ -119,10 +114,14 @@ class Form {
 
 	protected function field($control, $id, $label = null, $data = array())
 	{
+		$id = $this->_fid . "_" . $id;
 		$type = null;
+		if (is_array($control)) {
+			$type = current(array_values($control));
+			$control = current(array_keys($control));
+		}
 		$this->_field = $data;
 		$this->_field['label'] = $label;
-
 		if (!isset($this->_field['value']))
 			$this->_field['value'] = "";
 
@@ -131,10 +130,6 @@ class Form {
 		if (!isset($this->_field['sanitize']))
 			$this->_field['sanitize'] = array();
 
-		if (is_array($control)) {
-			$type = current(array_values($control));
-			$control = current(array_keys($control));
-		}
 		$this->_buildField($id, $control, $type);
 	}
 

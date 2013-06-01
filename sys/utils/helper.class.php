@@ -84,7 +84,7 @@ class Helper {
 			$params = array($params);
 
 		foreach ($params as $param) {
-			$param = explode($delimiter, $param, 2);
+			$param = array_map('trim', explode($delimiter, $param, 2));
 			if ($param[0])
 				$args[$param[0]] = (isset($param[1])) ? $param[1] : "";
 		}
@@ -93,7 +93,14 @@ class Helper {
 
 	public static function getArray($string = null, $delimiter = ",")
 	{
-		return explode($delimiter, str_replace(" ", "", $string));
+		$array = explode($delimiter, $string);
+		$trim = function ($arg) {
+			return trim($arg, ", ");
+		};
+		$filter = function ($arg) {
+			return ($arg or is_numeric($arg));
+		};
+		return array_values(array_filter(array_map($trim, $array), $filter));
 	}
 
 }

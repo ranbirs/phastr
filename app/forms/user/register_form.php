@@ -9,12 +9,10 @@ class Register_form extends \sys\modules\Form {
 		parent::__construct();
 	}
 
-	protected function build()
+	protected function build($data = null)
 	{
-		$this->open("Registration Form", array("form-horizontal"));
-
 		$this->field(array('input' => 'text'), "register_name", "Name",
-			$data = array(
+			$build = array(
 				'validate' => array(
 					'maxlength' => array('value' => 64)
 				)
@@ -22,7 +20,7 @@ class Register_form extends \sys\modules\Form {
 		);
 
 		$this->field(array('input' => 'email'), "register_email", "Email",
-			$data = array(
+			$build = array(
 				'validate' => array(
 					'maxlength' => array('value' => 128),
 					'email' => ""
@@ -31,7 +29,7 @@ class Register_form extends \sys\modules\Form {
 		);
 
 		$this->field(array('input' => 'password'), "register_password", "Password",
-			$data = array(
+			$build = array(
 				'validate' => array(
 					'maxlength' => array('value' => 32),
 					'required' => ""
@@ -40,10 +38,8 @@ class Register_form extends \sys\modules\Form {
 		);
 
 		$this->field(array('button' => 'submit'), "register_submit", "Submit",
-			$data = array('css' => array("btn", "btn-primary"))
+			$build = array('css' => array("btn", "btn-primary"))
 		);
-
-		$this->close();
 	}
 
 	protected function parse()
@@ -54,9 +50,9 @@ class Register_form extends \sys\modules\Form {
 		$password = $this->xhr->post('register_password');
 
 		if ($user->register($name, $email, $password)) {
-			return array('output' => true);
+			return array('result' => true);
 		}
-		return array('output' => false, 'message' => \sys\utils\Vocab::t('user_register\\fail'));
+		return array('result' => false, 'message' => \sys\utils\Vocab::t('user_register\\fail'));
 	}
 
 	protected function success()

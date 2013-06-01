@@ -9,10 +9,8 @@ class User_nav extends \sys\modules\Nav {
 		parent::__construct();
 	}
 
-	protected function build()
+	protected function build($data = null)
 	{
-		$this->open(array("nav", "ajax-load", "pull-right"));
-
 		if (\sys\Res::session()->token()) {
 			$this->item("Sign out", "user/logout");
 		}
@@ -20,8 +18,6 @@ class User_nav extends \sys\modules\Nav {
 			$this->item("Sign in", "user/login");
 			$this->item("Sign up", "user/register");
 		}
-
-		$this->close();
 	}
 
 }

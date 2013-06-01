@@ -11,7 +11,7 @@ class Init {
 
 	protected static $load, $view, $session, $xhr;
 	protected static $resource = array();
-	private static $master, $controller;
+	private static $controller, $master;
 	private static $error;
 
 	public static function start()
@@ -31,14 +31,12 @@ class Init {
 		Load::conf('autoload');
 
 		if (self::$resource['master']) {
-			if (!in_array(self::$resource['controller'], Helper::getArray(\app\confs\sys\except__))) {
+			if (!in_array(self::$resource['controller'], Helper::getArray(\app\confs\sys\except__)))
 				self::$master = self::$load->controller(self::$resource['master']);
-			}
-			else {
-				self::$resource['master'] = "";
-			}
 		}
 		self::$controller = self::$load->controller(self::$resource['controller']);
+		self::$controller->init();
+		self::$controller->method(self::$resource);
 	}
 
 	private static function _resource()
@@ -92,9 +90,8 @@ class Init {
 			switch ($index) {
 				case 0:
 					$controller = $param;
-					$master = $default['master'];
-					if ($master) {
-						if ($controller === $master) {
+					if ($default['master']) {
+						if ($controller === $default['master']) {
 							self::$error = \app\vocabs\sys\er_icc__;
 							return false;
 						}
@@ -118,12 +115,12 @@ class Init {
 			'request' => ($request) ? $request : "/",
 			'path' => ($request) ? implode("/", $path) : $default['homepage'],
 			'route' => "$controller/$page/$action",
-			'master' => $master,
 			'controller' => $controller,
 			'page' => $page,
 			'action' => $action,
 			'params' => $params,
-			'method' => $default['method']
+			'method' => $default['method'],
+			'master' => $default['master']
 		);
 	}
 
