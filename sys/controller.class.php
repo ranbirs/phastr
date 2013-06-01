@@ -24,7 +24,7 @@ class Controller extends Compositor {
 		$page = Helper::getPath($resource['page'], 'method');
 		$action = Helper::getPath($resource['action']);
 		$params = $resource['params'];
-		$default = $resource['method'];
+		$default = $resource['default']['method'];
 		$methods = array(
 			$page . "_" . $action,
 			$page . "_" . $default,

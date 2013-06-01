@@ -11,7 +11,7 @@
 		<h1 class="title">Not Found</h3>
 		<div id="body">
 			<h3>The requested page could not be found</h3>
-			<pre>Error: <?= $this->sys_error_msg; ?></pre>
+			<p><?= $this->sys_error_msg; ?></p>
 			<section><a href="/" class="ajax-load">Home</a></section>
 		</div>
 	</div>

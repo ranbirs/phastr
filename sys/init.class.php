@@ -35,7 +35,7 @@ class Init {
 				self::$master = self::$load->controller(self::$resource['master']);
 		}
 		self::$controller = self::$load->controller(self::$resource['controller']);
-		self::$controller->init();
+		self::$controller->{self::$resource['default']['init']}();
 		self::$controller->method(self::$resource);
 	}
 
@@ -48,9 +48,9 @@ class Init {
 		$request = $path = strtolower(trim($request, "/"));
 
 		$default = array(
-			'master' => \app\confs\sys\master__,
 			'autoload' => \app\confs\sys\autoload__,
 			'homepage' => \app\confs\sys\homepage__,
+			'init' => \app\confs\sys\init__,
 			'page' => \app\confs\sys\page__,
 			'action' => \app\confs\sys\action__,
 			'method' => \app\confs\sys\method__
@@ -74,15 +74,15 @@ class Init {
 
 		foreach ($route as $index => $param) {
 
-			if ((strlen($param) > 128)) {
-				self::$error = \app\vocabs\sys\er_icr__;
-				return false;
-			}
 			if (preg_match('/[^a-z0-9-]/i', $param)) {
 				self::$error = \app\vocabs\sys\er_icr__;
 				return false;
 			}
-			if ($param === $default['method']) {
+			if (in_array($param, array('method', $default['method'], $default['init']))) {
+				self::$error = \app\vocabs\sys\er_icr__;
+				return false;
+			}
+			if ((strlen($param) > 128)) {
 				self::$error = \app\vocabs\sys\er_icr__;
 				return false;
 			}
@@ -90,11 +90,10 @@ class Init {
 			switch ($index) {
 				case 0:
 					$controller = $param;
-					if ($default['master']) {
-						if ($controller === $default['master']) {
-							self::$error = \app\vocabs\sys\er_icc__;
-							return false;
-						}
+					$master = \app\confs\sys\master__;
+					if ($controller === $master) {
+						self::$error = \app\vocabs\sys\er_icc__;
+						return false;
 					}
 					if ($controller !== $default['autoload'])
 						$path[] = $controller;
@@ -119,8 +118,8 @@ class Init {
 			'page' => $page,
 			'action' => $action,
 			'params' => $params,
-			'method' => $default['method'],
-			'master' => $default['master']
+			'master' => $master,
+			'default' => $default
 		);
 	}
 
