@@ -57,10 +57,10 @@ class Session {
 		return $this->_key;
 	}
 
-	public function keygen($key = null)
+	public function keygen($hash = null)
 	{
-		$gen = Hash::get($this->_sid . $this->_xid . $this->_gid, 'sha1');
-		return ($key) ? ($key === $gen) : $gen;
+		$keygen = Hash::get($this->_sid . $this->_xid . $this->_gid, 'sha1');
+		return ($hash) ? ($hash === $keygen) : $keygen;
 	}
 
 	public function timestamp($key = 0, $set = false)
@@ -83,25 +83,25 @@ class Session {
 		return $this->get('_client', $key);
 	}
 
-	public function get($type, $key = null)
+	public function get($subj, $key = null)
 	{
 		$value = ($key or is_numeric($key)) ?
-			((isset($_SESSION[$this->_sid][$type][$key])) ? $_SESSION[$this->_sid][$type][$key] : null) :
-			((isset($_SESSION[$this->_sid][$type])) ? $_SESSION[$this->_sid][$type] : null);
+			((isset($_SESSION[$this->_sid][$subj][$key])) ? $_SESSION[$this->_sid][$subj][$key] : null) :
+			((isset($_SESSION[$this->_sid][$subj])) ? $_SESSION[$this->_sid][$subj] : null);
 		return $value;
 	}
 
-	public function set($type, $key, $value = null)
+	public function set($subj, $key, $value = null)
 	{
 		$value = (!$value and !is_numeric($value)) ? Hash::rand() : $value;
-		$_SESSION[$this->_sid][$type][$key] = $value;
+		$_SESSION[$this->_sid][$subj][$key] = $value;
 		return $value;
 	}
 
-	public function drop($type, $key)
+	public function drop($subj, $key)
 	{
-		if ($this->get($type, $key)) {
-			unset($_SESSION[$this->_sid][$type][$key]);
+		if ($this->get($subj, $key)) {
+			unset($_SESSION[$this->_sid][$subj][$key]);
 			return true;
 		}
 		return false;

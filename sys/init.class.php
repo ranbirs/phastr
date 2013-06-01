@@ -78,7 +78,7 @@ class Init {
 				self::$error = \app\vocabs\sys\er_icr__;
 				return false;
 			}
-			if (in_array($param, array('method', $default['method'], $default['init']))) {
+			if (in_array($param, array('method', $default['init'], $default['method']))) {
 				self::$error = \app\vocabs\sys\er_icr__;
 				return false;
 			}

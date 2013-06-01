@@ -18,7 +18,7 @@ class Index extends \sys\Controller {
 	{
 		$this->load->form('index/test_form');
 		$data = array('example' => array("data"));
-		$this->view->test_form = $this->test_form->html($data, $title = "Example Form", array("form-horizontal"));
+		$this->view->test_form = $this->test_form->html($data, $title = "Example Form", $css = array("form-horizontal"));
 	}
 
 	public function scope()

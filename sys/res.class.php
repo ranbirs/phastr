@@ -49,7 +49,9 @@ class Res extends Init {
 					self::$resource[$key];
 				break;
 			default:
-				$resource = (isset(self::$resource[$key])) ? self::$resource[$key] : null;
+				$resource = ($arg) ?
+					((isset(self::$resource[$key][$arg])) ? self::$resource[$key][$arg] : null) :
+					self::$resource[$key];
 		}
 		return $resource;
 	}
