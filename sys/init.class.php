@@ -74,11 +74,11 @@ class Init {
 
 		foreach ($route as $index => $param) {
 
-			if (preg_match('/[^a-z0-9-]/i', $param)) {
+			if (in_array($param, array('method', $default['init'], $default['method']))) {
 				self::$error = \app\vocabs\sys\er_icr__;
 				return false;
 			}
-			if (in_array($param, array('method', $default['init'], $default['method']))) {
+			if (preg_match('/[^a-z0-9-]/i', $param)) {
 				self::$error = \app\vocabs\sys\er_icr__;
 				return false;
 			}
