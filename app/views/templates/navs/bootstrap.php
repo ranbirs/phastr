@@ -40,7 +40,7 @@ foreach ($items as $index => &$item) {
 		$leaf[] = "<li" . $val['attr'] . ">";
 
 		if ($val['path'] and $val['path'] != "/")
-			$val['path'] = "/" . $val['path'] . "/";
+			$val['path'] = \sys\utils\Helper::getPath($val['path'], 'route') . "/";
 
 		$val['anchor'] = "<a" . (($val['path']) ? ' href="' . $val['path'] . '"' : "") . ">" .
 			$val['label'] . "</a>";
@@ -66,7 +66,7 @@ foreach ($items as $index => &$item) {
 	$menu[] = "<li" . $item['attr'] . ">";
 
 	if ($item['path'] and $item['path'] != "/")
-		$item['path'] = "/" . $item['path'] . "/";
+		$item['path'] = \sys\utils\Helper::getPath($item['path'], 'route') . "/";
 
 	if (!empty($leaf)) {
 		$item['anchor'] = '<a data-toggle="dropdown" class="dropdown-toggle"' .

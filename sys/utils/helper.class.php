@@ -73,6 +73,10 @@ class Helper {
 			case 'method':
 				$path = str_replace(array("--", "-"), array("__", "_"), $path);
 				break;
+			case 'route':
+				$path = ($path) ? "/" . trim($path, "/") : $path;
+				$path = (\app\confs\sys\rewrite__) ? $path : $_SERVER['SCRIPT_NAME'] . $path;
+				break;
 		}
 		return strtolower($path);
 	}
@@ -95,7 +99,7 @@ class Helper {
 	{
 		$array = explode($delimiter, $string);
 		$trim = function ($arg) {
-			return trim($arg, ", ");
+			return trim($arg, $delimiter . " ");
 		};
 		$filter = function ($arg) {
 			return ($arg or is_numeric($arg));

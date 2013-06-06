@@ -9,6 +9,7 @@ namespace app\confs\app;
 
 namespace app\confs\sys;
 
+	const rewrite__ = 1;
 	const hash__ = "xid_hash_key_str";
 
 	const autoload__ = "index";

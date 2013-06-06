@@ -40,7 +40,7 @@ abstract class Form {
 			$this->_build['title'] = $title;
 			$this->_build['css'] = implode(" ", $css);
 			$this->_build['method'] = $method;
-			$this->_build['action'] = "/" . Res::get('route') . "/" . \app\confs\sys\xhr_param__ .
+			$this->_build['action'] = Res::get('route') . "/" . \app\confs\sys\xhr_param__ .
 				"/form/$method/" . $this->_fid . "/";
 			$data = array('build' => $this->_build, 'fields' => $this->_fields);
 			$this->_html = Res::view()->template('form', $template, $data);

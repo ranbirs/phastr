@@ -109,11 +109,11 @@ class Init {
 					break;
 			}
 		}
-
 		return array(
 			'request' => ($request) ? $request : "/",
 			'path' => ($request) ? implode("/", $path) : $default['homepage'],
-			'route' => "$controller/$page/$action",
+			'route' => Helper::getPath("$controller/$page/$action", 'route'),
+			'root' => Helper::getPath("", 'route'),
 			'controller' => $controller,
 			'page' => $page,
 			'action' => $action,

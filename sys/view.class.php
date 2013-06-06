@@ -23,9 +23,8 @@ class View {
 			return implode("\n", array_values($this->_assets[$type]));
 		}
 		$key = ($subj) ? $subj : md5($content);
-		if (!isset($this->_assets[$type][$key])) {
+		if (!isset($this->_assets[$type][$key]))
 			$this->_assets[$type][$key] = Html::getAsset($type, $subj, $content, $append);
-		}
 		return true;
 	}
 
