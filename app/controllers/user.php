@@ -47,7 +47,7 @@ class User extends \sys\Controller {
 	public function logout_index()
 	{
 		if (\sys\Res::session()->token()) {
-			\sys\Res::session()->quit();
+			\sys\Res::session()->drop('_user');
 		}
 	}
 

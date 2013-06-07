@@ -98,7 +98,7 @@ class Helper {
 	public static function getArray($string = null, $delimiter = ",")
 	{
 		$array = explode($delimiter, $string);
-		$trim = function ($arg) {
+		$trim = function ($arg) use ($delimiter) {
 			return trim($arg, $delimiter . " ");
 		};
 		$filter = function ($arg) {

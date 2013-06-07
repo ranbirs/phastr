@@ -26,9 +26,8 @@ class User extends \sys\Model {
 				$data = array('sid' => $this->_sid),
 				array("WHERE uid = :uid", array('uid' => $user->uid))
 			);
-			\sys\Res::session()->set('_user', 'uid', $user->uid);
-			\sys\Res::session()->set('_user', 'token');
-			\sys\Res::session()->start();
+			\sys\Res::session()->set(array('_user' => 'uid'), $user->uid);
+			\sys\Res::session()->set(array('_user' => 'token'));
 			return true;
 		}
 		return false;

@@ -22,7 +22,7 @@ abstract class Form {
 		$this->_fid = strtolower(Helper::getClassName(get_class($this)));
 		$this->_token = Res::session()->get($this->_fid, 'token');
 		if (!$this->_token)
-			$this->_token = Res::session()->set($this->_fid, 'token');
+			$this->_token = Res::session()->set(array($this->_fid => 'token'));
 	}
 
 	abstract protected function build();

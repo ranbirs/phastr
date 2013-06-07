@@ -6,40 +6,38 @@ use sys\utils\Hash;
 
 class Session {
 
-	private $_sid, $_xid, $_gid, $_key;
+	private $_sid;
 
 	function __construct()
+	{
+		$this->start();
+	}
+
+	private function _init()
+	{
+		$this->set('_xid');
+		$this->set('_gid', Hash::rid(true));
+		$this->set('_key', $this->keygen());
+
+		$this->timestamp(0, true);
+
+		if (isset($_SERVER['HTTP_USER_AGENT']))
+			$this->set(array('_client' => 'ua'), $_SERVER['HTTP_USER_AGENT']);
+		$this->set(array('_client' => 'ip'), $_SERVER['REMOTE_ADDR']);
+		$this->set(array('_client' => 'lang'), \app\confs\app\lang__);
+	}
+
+	public function start()
 	{
 		session_start();
 		$this->_sid = session_id();
 
 		if (!isset($_SESSION['_sid']) or $this->_sid !== $_SESSION['_sid']) {
+			$_SESSION['_sid'] = $this->_sid;
 			$this->_init();
 		}
 
-		$this->_xid = $_SESSION[$this->_sid]['_xid'];
-		$this->_gid = $_SESSION['_gid'];
-		$this->_key = $_SESSION['_key'];
-
-		$_SESSION[$this->_sid]['_timestamp'][1] = microtime(true);
-	}
-
-	private function _init()
-	{
-		$this->_xid = Hash::rand();
-		$this->_gid = Hash::rid(true);
-		$this->_key = $this->keygen();
-
-		$_SESSION['_sid'] = $this->_sid;
-		$_SESSION['_gid'] = $this->_gid;
-		$_SESSION['_key'] = $this->_key;
-
-		$_SESSION[$this->_sid]['_xid'] = $this->_xid;
-		$_SESSION[$this->_sid]['_timestamp'][0] = microtime(true);
-
-		$_SESSION[$this->_sid]['_client']['ua'] = (isset($_SERVER['HTTP_USER_AGENT'])) ? $_SERVER['HTTP_USER_AGENT'] : "";
-		$_SESSION[$this->_sid]['_client']['ip'] = $_SERVER['REMOTE_ADDR'];
-		$_SESSION[$this->_sid]['_client']['lang'] = \app\confs\app\lang__;
+		$this->timestamp(1, true);
 	}
 
 	public function sid()
@@ -49,23 +47,23 @@ class Session {
 
 	public function xid()
 	{
-		return $this->_xid;
+		return $this->get('_xid');
 	}
 
 	public function key()
 	{
-		return $this->_key;
+		return $this->get('_key');
 	}
 
 	public function keygen($hash = null)
 	{
-		$keygen = Hash::get($this->_sid . $this->_xid . $this->_gid, 'sha1');
+		$keygen = Hash::get($this->_sid . $this->get('_xid'). $this->get('_gid'), 'sha1');
 		return ($hash) ? ($hash === $keygen) : $keygen;
 	}
 
 	public function timestamp($key = 0, $set = false)
 	{
-		return ($set) ? $this->set('_timestamp', $key, microtime(true)) : $this->get('_timestamp', $key);
+		return ($set) ? $this->set(array('_timestamp' => $key), microtime(true)) : $this->get('_timestamp', $key);
 	}
 
 	public function uid()
@@ -91,17 +89,28 @@ class Session {
 		return $value;
 	}
 
-	public function set($subj, $key, $value = null)
+	public function set($subj, $value = null)
 	{
+		$key = null;
+		if (is_array($subj)) {
+			$key = current(array_values($subj));
+			$subj = current(array_keys($subj));
+		}
 		$value = (!$value and !is_numeric($value)) ? Hash::rand() : $value;
-		$_SESSION[$this->_sid][$subj][$key] = $value;
+		($key or is_numeric($key)) ?
+			$_SESSION[$this->_sid][$subj][$key] = $value :
+			$_SESSION[$this->_sid][$subj] = $value;
 		return $value;
 	}
 
-	public function drop($subj, $key)
+	public function drop($subj, $key = null)
 	{
 		if ($this->get($subj, $key)) {
-			unset($_SESSION[$this->_sid][$subj][$key]);
+			if ($key or is_numeric($key)) {
+				unset($_SESSION[$this->_sid][$subj][$key]);
+				return true;
+			}
+			unset($_SESSION[$this->_sid][$subj]);
 			return true;
 		}
 		return false;
