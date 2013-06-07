@@ -57,7 +57,7 @@ class Session {
 
 	public function keygen($hash = null)
 	{
-		$keygen = Hash::get($this->_sid . $this->get('_xid'). $this->get('_gid'), 'sha1');
+		$keygen = Hash::get($this->_sid . $this->xid() . $this->gid(), 'sha1');
 		return ($hash) ? ($hash === $keygen) : $keygen;
 	}
 
