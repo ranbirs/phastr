@@ -74,8 +74,9 @@ class Helper {
 				$path = str_replace(array("--", "-"), array("__", "_"), $path);
 				break;
 			case 'route':
-				$path = ($path) ? "/" . trim($path, "/") : $path;
-				$path = (\app\confs\sys\rewrite__) ? $path : $_SERVER['SCRIPT_NAME'] . $path;
+				$path = "/" . $path;
+				if (!\app\confs\sys\rewrite__)
+					$path = $_SERVER['SCRIPT_NAME'] . $path;
 				break;
 		}
 		return strtolower($path);

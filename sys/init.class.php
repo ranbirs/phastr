@@ -112,7 +112,7 @@ class Init {
 		return array(
 			'request' => ($request) ? $request : "/",
 			'path' => ($request) ? implode("/", $path) : $default['homepage'],
-			'route' => Helper::getPath("/$controller/$page/$action", 'route'),
+			'route' => Helper::getPath("$controller/$page/$action", 'route'),
 			'controller' => $controller,
 			'page' => $page,
 			'action' => $action,
