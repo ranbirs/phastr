@@ -9,11 +9,6 @@ class Error extends \sys\Controller {
 		parent::__construct();
 	}
 
-	public function init()
-	{
-
-	}
-
 	public function scope()
 	{
 		$this->view->layout("error/" . \sys\Res::get('page'));

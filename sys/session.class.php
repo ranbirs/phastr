@@ -55,17 +55,6 @@ class Session {
 		return $this->get('_key');
 	}
 
-	public function keygen($hash = null)
-	{
-		$keygen = Hash::get($this->_sid . $this->xid() . $this->gid(), 'sha1');
-		return ($hash) ? ($hash === $keygen) : $keygen;
-	}
-
-	public function timestamp($key = 0, $set = false)
-	{
-		return ($set) ? $this->set(array('_timestamp' => $key), microtime(true)) : $this->get('_timestamp', $key);
-	}
-
 	public function uid()
 	{
 		return $this->get('_user', 'uid');
@@ -81,6 +70,17 @@ class Session {
 		return $this->get('_client', $key);
 	}
 
+	public function keygen($hash = null)
+	{
+		$keygen = Hash::get($this->_sid . $this->xid() . $this->get('_gid'), 'sha1');
+		return ($hash) ? ($hash === $keygen) : $keygen;
+	}
+
+	public function timestamp($key = 0, $set = false)
+	{
+		return ($set) ? $this->set(array('_timestamp' => $key), microtime(true)) : $this->get('_timestamp', $key);
+	}
+
 	public function get($subj, $key = null)
 	{
 		$value = ($key or is_numeric($key)) ?
@@ -93,8 +93,8 @@ class Session {
 	{
 		$key = null;
 		if (is_array($subj)) {
-			$key = current(array_values($subj));
-			$subj = current(array_keys($subj));
+			$key = current($subj);
+			$subj = key($subj);
 		}
 		$value = (!$value and !is_numeric($value)) ? Hash::rand() : $value;
 		($key or is_numeric($key)) ?

@@ -19,7 +19,7 @@ class Controller extends Compositor {
 		$this->xhr = Res::Xhr();
 	}
 
-	public function method($resource)
+	final public function method($resource)
 	{
 		$page = Helper::getPath($resource['page'], 'method');
 		$action = Helper::getPath($resource['action']);

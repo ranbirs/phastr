@@ -15,7 +15,6 @@ namespace app\confs\sys;
 	const autoload__ = "index";
 	const homepage__ = "index";
 
-	const init__ = "init";
 	const page__ = "index";
 	const action__ = "index";
 	const method__ = "scope";

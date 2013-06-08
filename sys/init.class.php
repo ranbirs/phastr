@@ -35,7 +35,6 @@ class Init {
 				self::$master = self::$load->controller(self::$resource['master']);
 		}
 		self::$controller = self::$load->controller(self::$resource['controller']);
-		self::$controller->{self::$resource['default']['init']}();
 		self::$controller->method(self::$resource);
 	}
 
@@ -50,7 +49,6 @@ class Init {
 		$default = array(
 			'autoload' => \app\confs\sys\autoload__,
 			'homepage' => \app\confs\sys\homepage__,
-			'init' => \app\confs\sys\init__,
 			'page' => \app\confs\sys\page__,
 			'action' => \app\confs\sys\action__,
 			'method' => \app\confs\sys\method__
@@ -74,7 +72,7 @@ class Init {
 
 		foreach ($route as $index => $param) {
 
-			if (in_array($param, array('method', $default['init'], $default['method']))) {
+			if ($param === $default['method']) {
 				self::$error = \app\vocabs\sys\er_icr__;
 				return false;
 			}

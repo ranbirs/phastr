@@ -9,11 +9,6 @@ class Index extends \sys\Controller {
 		parent::__construct();
 	}
 
-	public function init()
-	{
-
-	}
-
 	public function example_forms_index()
 	{
 		$this->load->form('index/test_form');

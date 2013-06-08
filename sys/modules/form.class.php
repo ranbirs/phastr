@@ -117,8 +117,8 @@ abstract class Form {
 		$id = $this->_fid . "_" . $id;
 		$type = null;
 		if (is_array($control)) {
-			$type = current(array_values($control));
-			$control = current(array_keys($control));
+			$type = current($control);
+			$control = key($control);
 		}
 		$this->_field = $data;
 		$this->_field['label'] = $label;
@@ -280,7 +280,7 @@ abstract class Form {
 				if (array_intersect(array('error', 'success'), array_keys($validation))) {
 					switch ($type) {
 						case 'hidden':
-							break;
+							continue 2;
 						default:
 							$this->_fields[$id]['helper'] = true;
 					}

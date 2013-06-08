@@ -71,8 +71,8 @@ class View {
 	private function _render($name = null, $type = 'page')
 	{
 		if (is_array($name)) {
-			$control = current(array_keys($name));
-			$name = current(array_values($name));
+			$control = key($name);
+			$name = current($name);
 			$name = "{$control}s/$name";
 		}
 		$file = $this->_resolve($name, $type);

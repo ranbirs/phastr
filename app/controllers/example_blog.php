@@ -9,11 +9,6 @@ class Example_blog extends \sys\Controller {
 		parent::__construct();
 	}
 
-	public function init()
-	{
-
-	}
-
 	public function scope()
 	{
 		$this->view->page = $this->view->page(\sys\Res::get('path'));

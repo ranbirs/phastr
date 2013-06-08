@@ -7,10 +7,7 @@ class User extends \sys\Controller {
 	function __construct()
 	{
 		parent::__construct();
-	}
 
-	public function init()
-	{
 		$this->load->model('user');
 		$this->view->title = "User";
 	}

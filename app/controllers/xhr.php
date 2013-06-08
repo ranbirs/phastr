@@ -7,10 +7,7 @@ class Xhr extends \sys\Controller {
 	function __construct()
 	{
 		parent::__construct();
-	}
 
-	public function init()
-	{
 		if (!$this->xhr->token()) {
 			$this->view->error(404);
 		}
