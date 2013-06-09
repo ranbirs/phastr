@@ -14,7 +14,7 @@ foreach ($items as $index => &$item) {
 
 	foreach ($item['data'] as $key => &$val) {
 
-		if (!is_numeric($key)) {
+		if (!is_int($key)) {
 			continue;
 		}
 		if (!isset($val['css']))

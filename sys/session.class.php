@@ -15,7 +15,7 @@ class Session {
 
 	private function _init()
 	{
-		$this->set('_xid');
+		$this->set('_xid', Hash::rand());
 		$this->set('_gid', Hash::rid(true));
 		$this->set('_key', $this->keygen());
 
@@ -96,7 +96,6 @@ class Session {
 			$key = current($subj);
 			$subj = key($subj);
 		}
-		$value = (!$value and !is_numeric($value)) ? Hash::rand() : $value;
 		($key or is_numeric($key)) ?
 			$_SESSION[$this->_sid][$subj][$key] = $value :
 			$_SESSION[$this->_sid][$subj] = $value;

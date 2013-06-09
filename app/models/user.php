@@ -27,7 +27,7 @@ class User extends \sys\Model {
 				array("WHERE uid = :uid", array('uid' => $user->uid))
 			);
 			\sys\Res::session()->set(array('_user' => 'uid'), $user->uid);
-			\sys\Res::session()->set(array('_user' => 'token'));
+			\sys\Res::session()->set(array('_user' => 'token', \sys\utils\Hash::rand()));
 			return true;
 		}
 		return false;

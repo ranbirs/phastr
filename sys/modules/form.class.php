@@ -5,6 +5,7 @@ namespace sys\modules;
 use sys\Res;
 use sys\modules\Validation;
 use sys\utils\Helper;
+use sys\utils\Hash;
 use sys\utils\Html;
 
 abstract class Form {
@@ -22,7 +23,7 @@ abstract class Form {
 		$this->_fid = strtolower(Helper::getClassName(get_class($this)));
 		$this->_token = Res::session()->get($this->_fid, 'token');
 		if (!$this->_token)
-			$this->_token = Res::session()->set(array($this->_fid => 'token'));
+			$this->_token = Res::session()->set(array($this->_fid => 'token'), Hash::rand());
 	}
 
 	abstract protected function build();
@@ -263,7 +264,7 @@ abstract class Form {
 
 		foreach ($this->_field['validate'] as $rule => $validation) {
 
-			if (is_numeric($rule))
+			if (is_int($rule))
 				$rule = $validation;
 
 			switch ($rule) {

@@ -26,7 +26,7 @@ class Validation {
 	public function resolve($id, $validation, $value = null)
 	{
 		foreach ($validation as $key => $args) {
-			$rule = (!is_numeric($key)) ? $key : $args;
+			$rule = (!is_int($key)) ? $key : $args;
 			$param = (isset($args['value'])) ? $args['value'] : "";
 			$valid = ($this->validate($rule, $value, $param)) ? 'success' : 'error';
 
@@ -59,10 +59,7 @@ class Validation {
 				$valid = (strlen($value) > 0);
 				break;
 			case 'maxlength':
-				if (!is_numeric($param)) {
-					$valid = false;
-					break;
-				}
+				$param = (int) $param;
 				if (!is_array($value)) {
 					$valid = (strlen($value) < $param);
 					break;

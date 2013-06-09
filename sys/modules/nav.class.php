@@ -39,7 +39,7 @@ abstract class Nav {
 
 		if (!empty($data)) {
 			foreach ($data as $key => $val) {
-				if (is_numeric($key)) {
+				if (is_int($key)) {
 					$this->_items[$index]['label'] = $label;
 					$this->_items[$index]['path'] = $path;
 					$this->_items[$index]['data'][] = $val;
