@@ -18,8 +18,8 @@ class Init {
 
 	public static function start()
 	{
-		components\Call::conf('constants');
-		components\Call::vocab('sys');
+		Call::conf('constants');
+		Call::vocab('sys');
 
 		self::$view = new View();
 		self::$resource = self::_resource();
@@ -30,13 +30,13 @@ class Init {
 		self::$load = new Load();
 		self::$session = new Session();
 
-		components\Call::conf('autoload');
+		Call::conf('autoload');
 
 		if (self::$resource['master']) {
 			if (!in_array(self::$resource['controller'], Helper::getArray(\app\confs\sys\except__)))
-				self::$master = components\Call::controller(self::$resource['master']);
+				self::$master = Call::controller(self::$resource['master']);
 		}
-		self::$controller = components\Call::controller(self::$resource['controller']);
+		self::$controller = Call::controller(self::$resource['controller']);
 		self::$controller->method(self::$resource);
 	}
 
