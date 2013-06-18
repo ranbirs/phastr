@@ -64,7 +64,7 @@ class Init {
 		$params = $path;
 		$path = array();
 
-		if (!Loader::resolveFilePath("controllers/" . $route[0]))
+		if (!Loader::resolveFile("controllers/" . $route[0]))
 			array_unshift($route, $default['autoload']);
 
 		if (!isset($route[1]))

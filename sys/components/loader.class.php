@@ -8,14 +8,14 @@ class Loader {
 
 	private static $base = array('sys' => \sys\sys_base__, 'app' => \sys\app_base__);
 
-	public static function resolveFilePath($path, $base = 'app', $ext = ".php")
+	public static function resolveFile($path, $base = 'app', $ext = ".php")
 	{
 		$path = Helper::getPath($base . "/" . $path) . $ext;
 		$file = stream_resolve_include_path($path);
 		return ($file !== false) ? $path : $file;
 	}
 
-	protected static function includeFile($path, $ext = ".php")
+	public static function includeFile($path, $ext = ".php")
 	{
 		require_once Helper::getPath($path) . $ext;
 	}

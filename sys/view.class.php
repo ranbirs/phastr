@@ -96,7 +96,7 @@ class View {
 	private function _resolve($name = null, $type = 'page')
 	{
 		$path = "views/{$type}s/$name";
-		return Loader::resolveFilePath($path);
+		return Loader::resolveFile($path);
 	}
 
 	private function _include($file)
