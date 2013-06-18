@@ -126,11 +126,6 @@ abstract class Form {
 		if (!isset($this->_field['value']))
 			$this->_field['value'] = "";
 
-		if (!isset($this->_field['validate']))
-			$this->_field['validate'] = array();
-		if (!isset($this->_field['sanitize']))
-			$this->_field['sanitize'] = array();
-
 		$this->_buildField($id, $control, $type);
 	}
 
@@ -139,10 +134,15 @@ abstract class Form {
 		$key = $id;
 		$build = array_fill(0, 3, null);
 
-		$this->_field['stack'] = false;
 		$this->_field['attr']['id'] = $id;
 		$this->_field['attr']['name'] = (!is_array($this->_field['value'])) ? $id : $id . "[]";
 		$this->_field['css'][] = "field";
+		$this->_field['stack'] = false;
+
+		if ($control == 'input') {
+			$this->_field['attr']['type'] = $type;
+			$this->_field['attr']['value'] = $this->_field['value'];
+		}
 
 		if (isset($this->_field['prop'])) {
 			foreach ($this->_field['prop'] as $prop) {
@@ -150,10 +150,10 @@ abstract class Form {
 			}
 		}
 
-		if ($control == 'input') {
-			$this->_field['attr']['type'] = $type;
-			$this->_field['attr']['value'] = $this->_field['value'];
-		}
+		if (!isset($this->_field['validate']))
+			$this->_field['validate'] = array();
+		if (!isset($this->_field['sanitize']))
+			$this->_field['sanitize'] = array();
 
 		if (!empty($this->_field['validate']))
 			$this->_buildFieldValidation($id, $control, $type);
@@ -272,7 +272,8 @@ abstract class Form {
 					$this->_required[] = $id;
 					break;
 				case 'maxlength':
-					$this->_field['attr'][$rule] = (isset($validation['value'])) ? $validation['value'] : 64;
+					if (isset($validation['value']))
+						$this->_field['attr'][$rule] = (int) $validation['value'];
 					break;
 			}
 			$this->_field['css'][] = "rule-" . $rule;

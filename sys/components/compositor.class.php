@@ -1,17 +1,17 @@
 <?php
 
-namespace sys;
+namespace sys\components;
 
-abstract class Compositor {
+class Compositor {
 
-	protected static $instance;
+	private static $instance;
 
 	function __construct()
 	{
 		self::$instance = &$this;
 	}
 
-	public static function instance()
+	final public static function instance()
 	{
 		return self::$instance;
 	}

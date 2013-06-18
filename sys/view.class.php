@@ -3,6 +3,7 @@
 namespace sys;
 
 use sys\Res;
+use sys\components\Loader;
 use sys\utils\Helper;
 use sys\utils\Html;
 
@@ -94,8 +95,8 @@ class View {
 
 	private function _resolve($name = null, $type = 'page')
 	{
-		$path = \sys\app_base__ . "views/{$type}s/$name";
-		return Helper::resolveFilePath($path);
+		$path = "views/{$type}s/$name";
+		return Loader::resolveFilePath($path);
 	}
 
 	private function _include($file)

@@ -3,19 +3,19 @@
 namespace sys;
 
 use sys\Res;
-use sys\Compositor;
+use sys\components\Compositor;
 use sys\utils\Helper;
 
 class Controller extends Compositor {
 
-	protected $load, $view, $xhr;
+	protected $view, $load, $xhr;
 
 	function __construct()
 	{
 		parent::__construct();
 
-		$this->load = Res::load();
 		$this->view = Res::view();
+		$this->load = Res::load();
 		$this->xhr = Res::Xhr();
 	}
 

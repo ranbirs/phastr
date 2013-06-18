@@ -2,22 +2,24 @@
 
 namespace sys;
 
-use sys\Load;
 use sys\View;
 use sys\Session;
+use sys\components\Loader;
+use sys\components\Call;
+use sys\components\Load;
 use sys\utils\Helper;
 
 class Init {
 
-	protected static $load, $view, $session, $xhr;
+	protected static $view, $load, $session, $xhr;
 	protected static $resource = array();
 	private static $controller, $master;
 	private static $error;
 
 	public static function start()
 	{
-		Load::conf('constants');
-		Load::vocab('sys');
+		components\Call::conf('constants');
+		components\Call::vocab('sys');
 
 		self::$view = new View();
 		self::$resource = self::_resource();
@@ -25,16 +27,16 @@ class Init {
 		if (!self::$resource) {
 			self::$view->error(404, self::$error);
 		}
-		self::$session = new Session();
 		self::$load = new Load();
+		self::$session = new Session();
 
-		Load::conf('autoload');
+		components\Call::conf('autoload');
 
 		if (self::$resource['master']) {
 			if (!in_array(self::$resource['controller'], Helper::getArray(\app\confs\sys\except__)))
-				self::$master = self::$load->controller(self::$resource['master']);
+				self::$master = components\Call::controller(self::$resource['master']);
 		}
-		self::$controller = self::$load->controller(self::$resource['controller']);
+		self::$controller = components\Call::controller(self::$resource['controller']);
 		self::$controller->method(self::$resource);
 	}
 
@@ -62,7 +64,7 @@ class Init {
 		$params = $path;
 		$path = array();
 
-		if (!Helper::resolveFilePath(\sys\app_base__ . "controllers/" . $route[0]))
+		if (!Loader::resolveFilePath("controllers/" . $route[0]))
 			array_unshift($route, $default['autoload']);
 
 		if (!isset($route[1]))

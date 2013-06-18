@@ -8,14 +8,14 @@ use sys\utils\Helper;
 
 class Res extends Init {
 
-	public static function load()
-	{
-		return self::$load;
-	}
-
 	public static function view()
 	{
 		return self::$view;
+	}
+
+	public static function load()
+	{
+		return self::$load;
 	}
 
 	public static function session()

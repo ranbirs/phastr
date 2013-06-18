@@ -4,24 +4,6 @@ namespace sys\utils;
 
 class Helper {
 
-	public static function getFileName($path)
-	{
-		$path = explode("/", $path);
-		return strtolower(end($path));
-	}
-
-	public static function resolveFilePath($path, $ext = ".php")
-	{
-		$path = self::getPath($path) . $ext;
-		$file = stream_resolve_include_path($path);
-		return ($file !== false) ? $path : $file;
-	}
-	
-	public static function requireFilePath($path, $ext = ".php")
-	{
-		require_once self::getPath($path) . $ext;
-	}
-	
 	public static function getClassName($class)
 	{
 		$class = explode("\\", $class);
@@ -34,28 +16,18 @@ class Helper {
 		return strtolower(implode("/", $class));
 	}
 
-	public static function resolveClassInstance($path, $control = null, $base = 'app')
-	{
-		$path = self::getPath($path);
-		$class = "\\$base\\" . self::getPathClass($path);
-		$instance = new $class;
-
-		switch ($control) {
-			case 'composite':
-				$prop = self::getFileName($path);
-				$comp = \sys\Compositor::instance();
-				$comp->$prop = $instance;
-				break;
-		}
-		return $instance;
-	}
-	
 	public static function getPathClass($path)
 	{
 		$path = explode("/", strtolower($path));
 		$class = ucfirst(array_pop($path));
 		array_push($path, $class);
 		return implode("\\", $path);
+	}
+
+	public static function getPathName($path)
+	{
+		$path = explode("/", $path);
+		return strtolower(end($path));
 	}
 
 	public static function getPath($path = "", $type = 'file')
