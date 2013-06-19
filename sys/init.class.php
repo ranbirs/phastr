@@ -2,10 +2,10 @@
 
 namespace sys;
 
+use sys\Call;
 use sys\View;
 use sys\Session;
 use sys\components\Loader;
-use sys\components\Call;
 use sys\components\Load;
 use sys\utils\Helper;
 

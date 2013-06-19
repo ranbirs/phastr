@@ -6,9 +6,9 @@ class Vocab {
 
 	private static $lang;
 
-	public static function t($term, $lang = null, $suffix = "__")
+	public static function t($term, $lang = null, $append = "__")
 	{
-		return constant("\\app\\vocabs\\$term" . $suffix);
+		return constant("\\app\\vocabs\\$term" . $append);
 	}
 
 }

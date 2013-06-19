@@ -8,7 +8,7 @@ class _scope extends \sys\Controller {
 	{
 		parent::__construct();
 
-		\sys\components\Call::vocab('lexicon');
+		\sys\Call::vocab('lexicon');
 
 		$this->view->assets('meta', "viewport", "width=device-width, initial-scale=1.0");
 		$this->view->assets('style', "/css/bootstrap-responsive.min.css?2.3.0", array('media' => "screen"), null);

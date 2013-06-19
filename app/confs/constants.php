@@ -1,3 +1,3 @@
 <?php
 
-\sys\components\Call::conf('config');
+\sys\Call::conf('config');

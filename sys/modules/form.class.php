@@ -90,17 +90,22 @@ abstract class Form {
 			return $this->fail();
 		}
 		$parse = $this->parse();
-		if ($parse['result']) {
-			Res::session()->drop($this->_fid, 'token');
-			return $this->success();
+		if (isset($parse['result'])) {
+			if ($parse['result']) {
+				Res::session()->drop($this->_fid, 'token');
+				return $this->success();
+			}
+			if (isset($parse['message'])) {
+				if ($parse['message'])
+					$this->validation->set($parse['message']);
+			}
 		}
-		$this->validation->set($parse['message']);
 		return $this->fail();
 	}
 
 	protected function parse()
 	{
-		return array('result' => true);
+		return array('result' => true, 'message' => "");
 	}
 
 	protected function success()

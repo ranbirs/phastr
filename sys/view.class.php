@@ -4,6 +4,7 @@ namespace sys;
 
 use sys\Res;
 use sys\components\Loader;
+use sys\components\Access;
 use sys\utils\Helper;
 use sys\utils\Html;
 
@@ -85,7 +86,7 @@ class View {
 		$this->_include($file);
 
 		if (isset($this->access[1])) {
-			if (!$this->_access($this->access[0], $this->access[1])) {
+			if (!Access::resolveRule($this->access[0], $this->access[1])) {
 				ob_end_clean();
 				$this->error(403);
 			}
@@ -102,35 +103,6 @@ class View {
 	private function _include($file)
 	{
 		include $file;
-	}
-
-	private function _access($rule, $role)
-	{
-		if (is_array($role)) {
-			return false;
-		}
-		switch ($role) {
-			case 'public':
-				switch ($rule) {
-					case 'deny':
-						$access = (!is_null(Res::session()->token()));
-						break 2;
-				}
-				$access = true;
-				break;
-			case 'private':
-				switch ($rule) {
-					case 'deny':
-						$access = (is_null(Res::session()->token()));
-						break 2;
-				}
-				$access = true;
-				break;
-			case 'role':
-			default:
-				$access = false;
-		}
-		return $access;
 	}
 
 }

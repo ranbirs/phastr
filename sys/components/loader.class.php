@@ -6,7 +6,10 @@ use sys\utils\Helper;
 
 class Loader {
 
-	private static $base = array('sys' => \sys\sys_base__, 'app' => \sys\app_base__);
+	public static function includeFile($path, $ext = ".php")
+	{
+		require_once Helper::getPath($path) . $ext;
+	}
 
 	public static function resolveFile($path, $base = 'app', $ext = ".php")
 	{
@@ -15,14 +18,9 @@ class Loader {
 		return ($file !== false) ? $path : $file;
 	}
 
-	public static function includeFile($path, $ext = ".php")
-	{
-		require_once Helper::getPath($path) . $ext;
-	}
-
 	protected static function resolveInclude($path, $control = null, $base = 'app', $ext = ".php")
 	{
-		self::includeFile(self::$base[$base] . $path, $ext);
+		self::includeFile($base . "/" . $path, $ext);
 
 		if (!$control) {
 			return true;
