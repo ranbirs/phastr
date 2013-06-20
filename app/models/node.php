@@ -14,10 +14,7 @@ class Node extends \sys\Model {
 	public function data($fields, $path)
 	{
 		$data = $this->db()->select('node', $fields,
-			array(
-				"WHERE path = :path",
-				array('path' => $path)
-			)
+			"WHERE path = :path", array('path' => $path)
 		);
 		if ($data) {
 			$data = $data[0];

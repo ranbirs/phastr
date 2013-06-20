@@ -36,6 +36,7 @@ class Top_nav extends \sys\modules\Nav {
 				)
 			)
 		);
+		$this->item("Tree page", "multi-level--sub-level--example-page");
 		$this->item("Private", "user");
 	}
 

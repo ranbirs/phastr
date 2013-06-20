@@ -19,11 +19,36 @@ class Database extends PDO {
 		}
 	}
 
-	public function select($table, $fields = array(), $data = array(), $fetch = PDO::FETCH_OBJ)
+	public function query($statement, $values = array())
 	{
-		$clause = $data[0];
-		$values = $data[1];
-		$columns = implode(", ", $fields);
+		$q = $this->prepare($statement);
+
+		foreach ($values as $key => &$val) {
+			if (is_int($key) and is_array($val)) {
+				$val = array_values($val);
+				switch (count($val)) {
+					case 3:
+						$q->bindValue(":" . $val[0], $val[1], $val[2]);
+						break;
+					case 2:
+						$q->bindValue(":" . $val[0], $val[1]);
+						break;
+					default:
+						return false;
+				}
+			}
+			else {
+				$q->bindValue(":$key", $val);
+			}
+		}
+		unset($val);
+		$q->execute();
+		return $q;
+	}
+
+	public function select($table, $columns = array(), $clause = null, $values = array(), $fetch = PDO::FETCH_OBJ)
+	{
+		$columns = implode(", ", $columns);
 		$q = $this->prepare("SELECT $columns FROM $table $clause");
 
 		foreach ($values as $key => $val) {
@@ -36,32 +61,30 @@ class Database extends PDO {
 		return false;
 	}
 
-	public function update($table, $data = array(), $clause = array())
+	public function update($table, $values = array(), $clause = null, $args = array())
 	{
-		$values = $clause[1];
-		$clause = $clause[0];
-		$fields = array_keys($data);
-		$columns = array();
-		foreach($fields as $field) {
-			$columns[] = "$field = :$field";
+		$keys = array_keys($values);
+		$binds = array();
+		foreach($keys as $key) {
+			$binds[] = "$key = :$key";
 		}
-		$columns = implode(", ", $columns);
-		$q = $this->prepare("UPDATE $table SET $columns $clause");
+		$binds = implode(", ", $binds);
+		$q = $this->prepare("UPDATE $table SET $binds $clause");
 
-		foreach (array_merge($data, $values) as $key => $val) {
+		foreach (array_merge($values, $args) as $key => $val) {
 			$q->bindValue(":$key", $val);
 		}
 		return $q->execute();
 	}
 
-	public function insert($table, $data = array())
+	public function insert($table, $values = array())
 	{
-		$fields = array_keys($data);
-		$columns = implode(", ", $fields);
-		$values = ":" . implode(", :", $fields);
-		$q = $this->prepare("INSERT INTO $table ($columns) VALUES ($values)");
+		$keys = array_keys($values);
+		$columns = implode(", ", $keys);
+		$binds = ":" . implode(", :", $keys);
+		$q = $this->prepare("INSERT INTO $table ($columns) VALUES ($binds)");
 
-		foreach ($data as $key => $val) {
+		foreach ($values as $key => $val) {
 			$q->bindValue(":$key", $val);
 		}
 		$q->execute();

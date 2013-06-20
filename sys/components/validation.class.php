@@ -1,6 +1,6 @@
 <?php
 
-namespace sys\modules;
+namespace sys\components;
 
 use sys\Res;
 

@@ -3,7 +3,7 @@
 namespace sys\modules;
 
 use sys\Res;
-use sys\modules\Validation;
+use sys\components\Validation;
 use sys\utils\Helper;
 use sys\utils\Hash;
 use sys\utils\Html;

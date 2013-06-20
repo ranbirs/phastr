@@ -21,9 +21,6 @@ class Session {
 
 		$this->timestamp(0, true);
 
-		if (isset($_SERVER['HTTP_USER_AGENT']))
-			$this->set(array('_client' => 'ua'), $_SERVER['HTTP_USER_AGENT']);
-		$this->set(array('_client' => 'ip'), $_SERVER['REMOTE_ADDR']);
 		$this->set(array('_client' => 'lang'), \app\confs\app\lang__);
 	}
 
@@ -36,6 +33,8 @@ class Session {
 			$_SESSION['_sid'] = $this->_sid;
 			$this->_init();
 		}
+		if (isset($_SERVER['HTTP_USER_AGENT']))
+			$this->set(array('_client' => 'agent'), $_SERVER['HTTP_USER_AGENT']);
 
 		$this->timestamp(1, true);
 	}
@@ -65,7 +64,7 @@ class Session {
 		return $this->get('_user', 'token');
 	}
 
-	public function client($key = 'ua')
+	public function client($key = 'agent')
 	{
 		return $this->get('_client', $key);
 	}

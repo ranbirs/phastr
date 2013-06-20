@@ -36,9 +36,8 @@ class Loader {
 
 		switch ($control) {
 			case 'composite':
-				$prop = Helper::getPathName($path);
-				$comp = \sys\components\Compositor::instance();
-				$comp->$prop = $instance;
+				$property = Helper::getPathName($path);
+				\sys\components\Compositor::instance()->$property = $instance;
 				break;
 		}
 		return $instance;

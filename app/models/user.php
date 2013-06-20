@@ -12,19 +12,17 @@ class User extends \sys\Model {
 	public function login($email, $password)
 	{
 		$user = $this->db()->select('user', array('uid', 'role', 'authentication'),
-			array(
-				"WHERE email = :email AND status = :status",
-				array('email' => $email, 'status' => 'active')
-			)
+			"WHERE email = :email AND status = :status",
+			array('email' => $email, 'status' => 'active')
 		);
 		if ($user) {
 			$user = $user[0];
 			if (!\sys\utils\Hash::resolve($user->authentication, $password)) {
 				return false;
 			}
-			$this->db()->update('user',
-				$data = array('sid' => $this->_sid),
-				array("WHERE uid = :uid", array('uid' => $user->uid))
+			$this->db()->update('user', array('sid' => $this->_sid),
+				"WHERE uid = :uid",
+				array('uid' => $user->uid)
 			);
 			\sys\Res::session()->set(array('_user' => 'uid'), $user->uid);
 			\sys\Res::session()->set(array('_user' => 'token', \sys\utils\Hash::rand()));
@@ -36,10 +34,8 @@ class User extends \sys\Model {
 	public function register($name, $email, $password)
 	{
 		$user = $this->db()->select('user', array('uid'),
-			array(
-				"WHERE email = :email",
-				array('email' => $email)
-			)
+			"WHERE email = :email",
+			array('email' => $email)
 		);
 		if ($user) {
 			return false;
@@ -76,16 +72,13 @@ class User extends \sys\Model {
 	public function verify($token)
 	{
 		$verify = $this->db()->select('user', array('uid'),
-			array(
-				"WHERE sid = :sid AND status = :status",
-				array('sid' => $token, 'status' => 'new')
-			)
+			"WHERE sid = :sid AND status = :status",
+			array('sid' => $token, 'status' => 'new')
 		);
 		if ($verify) {
 			$user = $verify[0];
-			$this->db()->update('user',
-				$data = array('status' => 'active'),
-				array("WHERE uid = :uid", array('uid' => $user->uid))
+			$this->db()->update('user', array('status' => 'active'),
+				"WHERE uid = :uid", array('uid' => $user->uid)
 			);
 			return true;
 		}
