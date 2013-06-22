@@ -20,67 +20,29 @@ class Xhr {
 		);
 	}
 
+	public function header($key = null)
+	{
+		if (is_null($key))
+			$key = $this->_key;
+		return $this->server("HTTP_" . strtoupper($key));
+	}
+
 	public function server($key = null, $value = null)
 	{
-		return $this->_request('server', $key, $value);
+		return $this->request('server', $key, $value);
 	}
 
 	public function get($key = null, $value = null)
 	{
-		return $this->_request('get', $key, $value);
+		return $this->request('get', $key, $value);
 	}
 
 	public function post($key = null, $value = null)
 	{
-		return $this->_request('post', $key, $value);
+		return $this->request('post', $key, $value);
 	}
 
-	public function token($key = "")
-	{
-		$key = "HTTP_" . strtoupper($key . $this->_key);
-		$token = $this->server($key);
-		return ($token === $this->_xid) ? $token : null;
-	}
-
-	public function request()
-	{
-		$subj = Res::get('params', 0);
-		$type = Res::get('params', 1);
-
-		if (!$this->token() or $subj !== \app\confs\sys\xhr_param__) {
-			return false;
-		}
-		switch ($type) {
-			case 'post':
-			case 'get':
-				$request = $this->$type();
-				break;
-			case 'form':
-				$method = Res::get('params', 2);
-				$fid = Res::get('params', 3);
-				$key = $this->_key;
-
-				if ($method and method_exists($this, $method)) {
-					if ($this->$method($fid . "_fid_" . $key) === $fid) {
-						$request = $this->$method();
-						break;
-					}
-				}
-				$request = null;
-				break;
-			default:
-				$request = null;
-		}
-		return $request;
-	}
-
-	public function response($data, $format = 'json')
-	{
-		$this->view->response = $data;
-		$this->view->layout(\app\confs\sys\xhr_param__ . "/$format");
-	}
-
-	private function _request($type = 'post', $key = null, $value = null)
+	public function request($type = 'post', $key = null, $value = null)
 	{
 		switch ($type) {
 			case 'server':
@@ -105,6 +67,12 @@ class Xhr {
 				$request = null;
 		}
 		return $request;
+	}
+
+	public function response($data, $format = 'json')
+	{
+		$this->view->response = $data;
+		$this->view->layout(\app\confs\sys\xhr_param__ . "/$format");
 	}
 
 }

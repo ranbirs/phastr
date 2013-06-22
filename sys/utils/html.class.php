@@ -17,7 +17,7 @@ class Html {
 	{
 		switch ($type) {
 			case 'script':
-				$asset = (!$content) ?
+				$asset = (is_null($content)) ?
 					'<script src="' . (($append) ? $subj . "?" . $append : $subj) . '"></script>' :
 					"<script>$content</script>";
 				break;
@@ -27,7 +27,7 @@ class Html {
 					$attrs = self::getAttr($content);
 					$content = null;
 				}
-				$asset = (!$content) ?
+				$asset = (is_null($content)) ?
 					'<link href="' . (($append) ? $subj . "?" . $append : $subj) . '" rel="stylesheet"' . "$attrs>" :
 					"<style>$content</style>";
 				break;

@@ -47,8 +47,8 @@ class Helper {
 				break;
 			case 'route':
 				$path = "/" . $path;
-				if (!\app\confs\sys\rewrite__)
-					$path = $_SERVER['SCRIPT_NAME'] . $path;
+				if (!\app\confs\app\rewrite__)
+					$path = $_SERVER['SCRIPT_NAME'] . "?" . \app\confs\sys\query_str__ . "=" . $path;
 				break;
 		}
 		return strtolower($path);

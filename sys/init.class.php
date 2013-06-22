@@ -13,7 +13,6 @@ class Init {
 
 	protected static $view, $load, $session, $xhr;
 	protected static $resource = array();
-	private static $controller, $master;
 	private static $error;
 
 	public static function start()
@@ -34,23 +33,20 @@ class Init {
 
 		if (self::$resource['master']) {
 			if (!in_array(self::$resource['controller'], Helper::getArray(\app\confs\sys\except__)))
-				self::$master = Call::controller(self::$resource['master']);
+				Call::controller(self::$resource['master']);
 		}
-		self::$controller = Call::controller(self::$resource['controller']);
-		self::$controller->method(self::$resource);
+		Call::controller(self::$resource['controller'])->method(self::$resource);
 	}
 
 	private static function _resource()
 	{
-		$request = (isset($_SERVER['PATH_INFO'])) ?
-			$_SERVER['PATH_INFO'] :
-			((isset($_SERVER['ORIG_PATH_INFO'])) ? $_SERVER['ORIG_PATH_INFO'] : null);
-
+		$qs = \app\confs\sys\query_str__;
+		$request = (isset($_GET[$qs])) ? $_GET[$qs] : null;
 		$request = $path = strtolower(trim($request, "/"));
 
 		$default = array(
-			'autoload' => \app\confs\sys\autoload__,
-			'homepage' => \app\confs\sys\homepage__,
+			'autoload' => \app\confs\app\autoload__,
+			'homepage' => \app\confs\app\homepage__,
 			'page' => \app\confs\sys\page__,
 			'action' => \app\confs\sys\action__,
 			'method' => \app\confs\sys\method__

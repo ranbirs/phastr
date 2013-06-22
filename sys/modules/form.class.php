@@ -33,9 +33,6 @@ abstract class Form {
 		$this->build($data);
 		$this->_close();
 
-		if ($this->xhr->request($method)) {
-			$this->xhr->response($this->_submit($method));
-		}
 		if (!$this->_html) {
 			$this->_build['fid'] = $this->_fid;
 			$this->_build['title'] = $title;
@@ -76,7 +73,7 @@ abstract class Form {
 		);
 	}
 
-	private function _submit($method)
+	public function submit($method = 'post')
 	{
 		$this->validation = new Validation();
 

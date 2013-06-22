@@ -15,14 +15,14 @@ class Loader {
 	{
 		$path = Helper::getPath($base . "/" . $path) . $ext;
 		$file = stream_resolve_include_path($path);
-		return ($file !== false) ? $path : $file;
+		return ($file !== false) ? $path : false;
 	}
 
 	protected static function resolveInclude($path, $control = null, $base = 'app', $ext = ".php")
 	{
 		self::includeFile($base . "/" . $path, $ext);
 
-		if (!$control) {
+		if (is_null($control)) {
 			return true;
 		}
 		return self::resolveInstance($path, $control, $base);
@@ -36,8 +36,8 @@ class Loader {
 
 		switch ($control) {
 			case 'composite':
-				$property = Helper::getPathName($path);
-				\sys\components\Compositor::instance()->$property = $instance;
+				$subj = Helper::getPathName($path);
+				\sys\components\Compositor::instance()->$subj = $instance;
 				break;
 		}
 		return $instance;

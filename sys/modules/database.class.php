@@ -23,9 +23,8 @@ class Database extends PDO {
 	{
 		$q = $this->prepare($statement);
 
-		foreach ($values as $key => &$val) {
+		foreach ($values as $key => $val) {
 			if (is_int($key) and is_array($val)) {
-				$val = array_values($val);
 				switch (count($val)) {
 					case 3:
 						$q->bindValue(":" . $val[0], $val[1], $val[2]);
@@ -41,7 +40,6 @@ class Database extends PDO {
 				$q->bindValue(":$key", $val);
 			}
 		}
-		unset($val);
 		$q->execute();
 		return $q;
 	}

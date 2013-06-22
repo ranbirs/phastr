@@ -13,17 +13,6 @@ class Session {
 		$this->start();
 	}
 
-	private function _init()
-	{
-		$this->set('_xid', Hash::rand());
-		$this->set('_gid', Hash::rid(true));
-		$this->set('_key', $this->keygen());
-
-		$this->timestamp(0, true);
-
-		$this->set(array('_client' => 'lang'), \app\confs\app\lang__);
-	}
-
 	public function start()
 	{
 		session_start();
@@ -31,12 +20,16 @@ class Session {
 
 		if (!isset($_SESSION['_sid']) or $this->_sid !== $_SESSION['_sid']) {
 			$_SESSION['_sid'] = $this->_sid;
-			$this->_init();
+
+			$this->timestamp(0, true);
+			$this->set('_xid', Hash::rand());
+			$this->set('_gid', Hash::rid(true));
+			$this->set('_key', $this->keygen());
+			$this->set(array('_client' => 'lang'), \app\confs\app\lang__);
 		}
+		$this->timestamp(1, true);
 		if (isset($_SERVER['HTTP_USER_AGENT']))
 			$this->set(array('_client' => 'agent'), $_SERVER['HTTP_USER_AGENT']);
-
-		$this->timestamp(1, true);
 	}
 
 	public function sid()
