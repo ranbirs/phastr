@@ -28,6 +28,33 @@ abstract class Form {
 
 	abstract protected function build();
 
+	public function submit($method = 'post')
+	{
+		$this->validation = new Validation();
+
+		foreach ($this->_sanitized as $id => $filter) {
+			$this->xhr->$method($id, $this->validation->sanitize($filter, $this->xhr->$method($id)));
+		}
+		foreach ($this->_validated as $id => $validation) {
+			$this->validation->resolve($id, $validation, $this->xhr->$method($id));
+		}
+		if (array_key_exists('error', $this->validation->get())) {
+			return $this->fail();
+		}
+		$parse = $this->parse();
+		if (isset($parse['result'])) {
+			if ($parse['result']) {
+				Res::session()->drop($this->_fid, 'token');
+				return $this->success();
+			}
+			if (isset($parse['message'])) {
+				if ($parse['message'])
+					$this->validation->set($parse['message']);
+			}
+		}
+		return $this->fail();
+	}
+
 	public function html($data = null, $title = null, $css = array(), $method = 'post', $template = "bootstrap")
 	{
 		$this->build($data);
@@ -71,33 +98,6 @@ abstract class Form {
 				'validate' => array('match' => array('value' => $token))
 			)
 		);
-	}
-
-	public function submit($method = 'post')
-	{
-		$this->validation = new Validation();
-
-		foreach ($this->_sanitized as $id => $filter) {
-			$this->xhr->$method($id, $this->validation->sanitize($filter, $this->xhr->$method($id)));
-		}
-		foreach ($this->_validated as $id => $validation) {
-			$this->validation->resolve($id, $validation, $this->xhr->$method($id));
-		}
-		if (array_key_exists('error', $this->validation->get())) {
-			return $this->fail();
-		}
-		$parse = $this->parse();
-		if (isset($parse['result'])) {
-			if ($parse['result']) {
-				Res::session()->drop($this->_fid, 'token');
-				return $this->success();
-			}
-			if (isset($parse['message'])) {
-				if ($parse['message'])
-					$this->validation->set($parse['message']);
-			}
-		}
-		return $this->fail();
 	}
 
 	protected function parse()
