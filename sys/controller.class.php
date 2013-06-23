@@ -24,7 +24,8 @@ class Controller extends Compositor {
 		$methods = array(
 			$page . "_" . $action,
 			$page . "_" . $default,
-			$default . "_" . $action
+			$default . "_" . $action,
+			$default . "_" . $default
 		);
 		foreach ($methods as $method) {
 			if (method_exists($this, $method))
