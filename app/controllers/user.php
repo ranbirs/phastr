@@ -28,7 +28,7 @@ class User extends \sys\Controller {
 	public function register_verify()
 	{
 		$token = \sys\Res::get('params', 1);
-		if (\sys\Res::get('params', 0) !== \sys\Res::session()->xid()) {
+		if (\sys\Res::get('params', 0) !== $this->session->xid()) {
 			$this->view->error(404);
 		}
 		if ($token) {
@@ -43,8 +43,8 @@ class User extends \sys\Controller {
 
 	public function logout_index()
 	{
-		if (\sys\Res::session()->token()) {
-			\sys\Res::session()->drop('_user');
+		if ($this->session->token()) {
+			$this->session->drop('_user');
 		}
 	}
 

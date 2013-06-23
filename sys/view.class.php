@@ -31,6 +31,11 @@ class View {
 		return true;
 	}
 
+	public function request($name)
+	{
+		return $this->_render($name, 'request');
+	}
+
 	public function block($name)
 	{
 		return $this->_render($name, 'block');

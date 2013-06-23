@@ -31,11 +31,17 @@ class Init {
 
 		Call::conf('autoload');
 
+		$page = Helper::getPath(self::$resource['page'], 'method');
+		$action = Helper::getPath(self::$resource['action'], 'file');
+		$params = self::$resource['params'];
+		$method = self::$resource['default']['method'];
+
 		if (self::$resource['master']) {
 			if (!in_array(self::$resource['controller'], Helper::getArray(\app\confs\sys\except__)))
 				Call::controller(self::$resource['master']);
 		}
-		Call::controller(self::$resource['controller'])->method(self::$resource);
+		Call::controller(self::$resource['controller'])->dispatch($method, $page, $action, $params);
+		exit();
 	}
 
 	private static function _resource()

@@ -4,11 +4,10 @@ namespace sys;
 
 use sys\Res;
 use sys\components\Compositor;
-use sys\utils\Helper;
 
 class Controller extends Compositor {
 
-	protected $view, $load, $xhr;
+	protected $view, $load, $session, $xhr;
 
 	function __construct()
 	{
@@ -16,15 +15,12 @@ class Controller extends Compositor {
 
 		$this->view = Res::view();
 		$this->load = Res::load();
-		$this->xhr = Res::Xhr();
+		$this->session = Res::session();
+		$this->xhr = Res::xhr();
 	}
 
-	final public function method($resource)
+	final public function dispatch($default, $page, $action, $params = array())
 	{
-		$page = Helper::getPath($resource['page'], 'method');
-		$action = Helper::getPath($resource['action']);
-		$params = $resource['params'];
-		$default = $resource['default']['method'];
 		$methods = array(
 			$page . "_" . $action,
 			$page . "_" . $default,
@@ -32,34 +28,39 @@ class Controller extends Compositor {
 		);
 		foreach ($methods as $method) {
 			if (method_exists($this, $method))
-				$this->$method($action, $params);
+				$this->$method($page, $action, $params);
 		}
-		if (isset($params[3]) and $params[0] === \app\confs\sys\xhr_param__) {
-			$this->_xhr($params[0], $params[1], $params[2], $params[3]);
+		if (isset($params[2]) and $params[0] === \app\confs\sys\xhr_param__) {
+			if ($this->xhr->header() === $this->session->xid())
+				$this->_request($params[1], $params[2], ((isset($params[3])) ? $params[3] : 'json'));
 		}
-		$this->$default($action, $params);
+		if (method_exists($this, $default))
+			$this->$default($page, $action, $params);
 	}
 
-	private function _xhr($param, $subj, $context, $arg)
+	private function _request($type, $subj, $context)
 	{
-		if ($this->xhr->header() !== Res::session()->xid()) {
-			return false;
-		}
-		switch ($subj) {
-			case 'post':
+		switch ($type) {
 			case 'get':
-				switch ($arg) {
+			case 'post':
+				switch ($context) {
 					case 'json':
 					case 'html':
-						$this->view->request = $this->xhr->$subj();
-						$this->xhr->response($this->view->page("$param/$subj/$context"), $arg);
+						$request = $this->xhr->$type();
+						if (!empty($request)) {
+							$this->view->request = $request;
+							$this->xhr->response($this->view->request("$type/$subj"), $context);
+						}
 						break 2;
 				}
 				break;
 			case 'form':
-				if ($this->$arg instanceof \sys\modules\Form) {
-					$this->view->request = $this->xhr->$context();
-					$this->xhr->response($this->$arg->submit($context));
+				if ($this->$context instanceof \sys\modules\Form) {
+					$request = $this->xhr->$subj();
+					if (!empty($request)) {
+						$this->view->request = $request;
+						$this->xhr->response($this->$context->submit($subj));
+					}
 				}
 				break;
 		}

@@ -28,7 +28,7 @@ abstract class Form {
 
 	abstract protected function build();
 
-	public function submit($method = 'post')
+	final public function submit($method = 'post')
 	{
 		$this->validation = new Validation();
 
@@ -55,7 +55,7 @@ abstract class Form {
 		return $this->fail();
 	}
 
-	public function html($data = null, $title = null, $css = array(), $method = 'post', $template = "bootstrap")
+	final public function html($data = null, $title = null, $css = array(), $method = 'post', $template = "bootstrap")
 	{
 		$this->build($data);
 		$this->_close();
