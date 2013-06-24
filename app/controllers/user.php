@@ -12,20 +12,25 @@ class User extends \sys\Controller {
 		$this->view->title = "User";
 	}
 
-	public function login_index()
+	protected function index_index()
+	{
+
+	}
+
+	protected function login_index()
 	{
 		$this->load->form('user/login_form');
 		$this->view->login_form = $this->login_form->html($data = null, $title = "Authentication Form", $css = array("form-horizontal"));
 	}
 
-	public function register_index()
+	protected function register_index()
 	{
 		$this->load->form('user/register_form');
 		$this->view->title = "New User Registration";
 		$this->view->body = $this->register_form->html($data = null, $title = "Registration Form", $css = array("form-horizontal"));
 	}
 
-	public function register_verify()
+	protected function register_verify()
 	{
 		$token = \sys\Res::get('params', 1);
 		if (\sys\Res::get('params', 0) !== $this->session->xid()) {
@@ -41,14 +46,14 @@ class User extends \sys\Controller {
 		$this->view->error(404);
 	}
 
-	public function logout_index()
+	protected function logout_index()
 	{
 		if ($this->session->token()) {
 			$this->session->drop('_user');
 		}
 	}
 
-	public function scope()
+	protected function render()
 	{
 		$this->view->page = $this->view->page();
 		$this->view->layout('index');

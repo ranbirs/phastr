@@ -31,11 +31,6 @@ class View {
 		return true;
 	}
 
-	public function request($name)
-	{
-		return $this->_render($name, 'request');
-	}
-
 	public function block($name)
 	{
 		return $this->_render($name, 'block');
@@ -48,10 +43,15 @@ class View {
 		return $this->_render($name, 'page');
 	}
 
+	public function request($type, $name)
+	{
+		return $this->_render($type . "/" . $name, 'request');
+	}
+
 	public function template($type, $name, $data = null)
 	{
 		$this->$type = $data;
-		return $this->_render(array($type => $name), 'template');
+		return $this->_render($type . "/" . $name, 'template');
 	}
 
 	public function layout($name)
@@ -70,13 +70,11 @@ class View {
 	{
 		header(" ", true, $code);
 		$this->error_msg = (\app\confs\app\error_msg__) ? $msg : "";
-		$this->layout("error/$code");
+		$this->layout("error/" . $code);
 	}
 
 	private function _render($name, $type = 'page')
 	{
-		if (is_array($name))
-			$name = key($name) . "s/" . current($name);
 		$file = $this->_resolveFile($name, $type);
 
 		if (!$file) {
@@ -96,7 +94,7 @@ class View {
 
 	private function _resolveFile($name, $type = 'page')
 	{
-		return Loader::resolveFile("views/{$type}s/$name");
+		return Loader::resolveFile("views/" . $type . "s/" . $name);
 	}
 
 	private function _includeFile($file)

@@ -2,7 +2,7 @@
 
 namespace app\controllers;
 
-class _scope extends \sys\Controller {
+class _scope extends \sys\components\Compositor {
 
 	function __construct()
 	{

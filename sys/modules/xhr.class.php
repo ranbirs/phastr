@@ -50,15 +50,15 @@ class Xhr {
 					$_SERVER[$key] = $value;
 				$request = ($key) ? ((isset($_SERVER[$key])) ? $_SERVER[$key] : null) : $_SERVER;
 				break;
-			case 'get':
-				if (!is_null($value))
-					$_GET[$key] = $value;
-				$request = ($key) ? ((isset($_GET[$key])) ? $_GET[$key] : null) : $_GET;
-				break;
 			case 'post':
 				if (!is_null($value))
 					$_POST[$key] = $value;
 				$request = ($key) ? ((isset($_POST[$key])) ? $_POST[$key] : null) : $_POST;
+				break;
+			case 'get':
+				if (!is_null($value))
+					$_GET[$key] = $value;
+				$request = ($key) ? ((isset($_GET[$key])) ? $_GET[$key] : null) : $_GET;
 				break;
 			case 'request':
 				$request = ($key) ? ((isset($_REQUEST[$key])) ? $_REQUEST[$key] : null) : $_REQUEST;

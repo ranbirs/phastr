@@ -2,41 +2,41 @@
 
 namespace sys;
 
-use sys\Res;
 use sys\components\Compositor;
 
-class Controller extends Compositor {
-
-	protected $view, $load, $session, $xhr;
+abstract class Controller extends Compositor {
 
 	function __construct()
 	{
 		parent::__construct();
-
-		$this->view = Res::view();
-		$this->load = Res::load();
-		$this->session = Res::session();
-		$this->xhr = Res::xhr();
 	}
+
+	abstract protected function render();
 
 	final public function dispatch($default, $page, $action, $params = array())
 	{
 		$methods = array(
-			$page . "_" . $action,
-			$page . "_" . $default,
+			$default . "_" . $default,
 			$default . "_" . $action,
-			$default . "_" . $default
+			$page . "_" . $default,
+			$page . "_" . $action
 		);
+		$process = count($methods);
 		foreach ($methods as $method) {
-			if (method_exists($this, $method))
+			if (method_exists($this, $method)) {
 				$this->$method($page, $action, $params);
+				continue;
+			}
+			$process--;
+		}
+		if (empty($process)) {
+			$this->view->error(404, \app\vocabs\sys\er_ccm__);
 		}
 		if (isset($params[2]) and $params[0] === \app\confs\sys\xhr_param__) {
 			if ($this->xhr->header() === $this->session->xid())
 				$this->_request($params[1], $params[2], ((isset($params[3])) ? $params[3] : 'json'));
 		}
-		if (method_exists($this, $default))
-			$this->$default($page, $action, $params);
+		$this->render($page, $action, $params);
 	}
 
 	private function _request($type, $subj, $context)
@@ -50,20 +50,24 @@ class Controller extends Compositor {
 						$request = $this->xhr->$type();
 						if (!empty($request)) {
 							$this->view->request = $request;
-							$this->xhr->response($this->view->request("$type/$subj"), $context);
+							$this->xhr->response($this->view->request($type, $subj), $context);
 						}
 						break 2;
 				}
 				break;
 			case 'form':
-				if ($this->$context instanceof \sys\modules\Form) {
-					$request = $this->xhr->$subj();
-					if (!empty($request)) {
-						$this->view->request = $request;
-						$this->xhr->response($this->$context->submit($subj));
-					}
+				switch ($context) {
+					case 'post':
+					case 'get':
+						if ($this->$subj instanceof \sys\modules\Form) {
+							$request = $this->xhr->$context();
+							if (!empty($request)) {
+								$this->view->request = $request;
+								$this->xhr->response($this->$subj->submit($context));
+							}
+						}
+						break 2;
 				}
-				break;
 		}
 	}
 

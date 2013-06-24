@@ -9,7 +9,17 @@ class Example_blog extends \sys\Controller {
 		parent::__construct();
 	}
 
-	public function scope()
+	protected function test_index()
+	{
+
+	}
+
+	protected function test1_index()
+	{
+
+	}
+
+	protected function render()
 	{
 		$this->view->page = $this->view->page(\sys\Res::get('path'));
 		$this->view->layout('index');
