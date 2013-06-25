@@ -13,17 +13,17 @@ class Load extends Loader {
 
 	public function model($path)
 	{
-		return self::resolveInclude("models/$path", 'composite');
+		return self::resolveInclude($path, 'model', 'composite');
 	}
 
 	public function form($path)
 	{
-		return self::resolveInclude("forms/$path", 'composite');
+		return self::resolveInclude($path, 'form', 'composite');
 	}
 
 	public function nav($path)
 	{
-		return self::resolveInclude("navs/$path", 'composite');
+		return self::resolveInclude($path, 'nav', 'composite');
 	}
 
 }

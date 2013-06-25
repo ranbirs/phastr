@@ -46,7 +46,7 @@ class Validation {
 	{
 		switch($rule) {
 			case 'xhr':
-				$valid = ($value === \sys\Res::xhr()->header());
+				$valid = ($value === \sys\Inst::xhr()->header());
 				break;
 			case 'match':
 				$valid = ($value === $param);

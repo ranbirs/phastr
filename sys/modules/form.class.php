@@ -3,6 +3,7 @@
 namespace sys\modules;
 
 use sys\Res;
+use sys\Inst;
 use sys\components\Validation;
 use sys\utils\Helper;
 use sys\utils\Hash;
@@ -18,12 +19,12 @@ abstract class Form {
 
 	function __construct()
 	{
-		$this->xhr = Res::xhr();
+		$this->xhr = Inst::xhr();
 
 		$this->_fid = strtolower(Helper::getClassName(get_class($this)));
-		$this->_token = Res::session()->get($this->_fid, 'token');
+		$this->_token = Inst::session()->get($this->_fid, 'token');
 		if (!$this->_token)
-			$this->_token = Res::session()->set(array($this->_fid => 'token'), Hash::rand());
+			$this->_token = Inst::session()->set(array($this->_fid => 'token'), Hash::rand());
 	}
 
 	abstract protected function build();
@@ -44,7 +45,7 @@ abstract class Form {
 		$parse = $this->parse();
 		if (isset($parse['result'])) {
 			if ($parse['result']) {
-				Res::session()->drop($this->_fid, 'token');
+				Inst::session()->drop($this->_fid, 'token');
 				return $this->success();
 			}
 			if (isset($parse['message'])) {
@@ -65,18 +66,18 @@ abstract class Form {
 			$this->_build['title'] = $title;
 			$this->_build['css'] = implode(" ", $css);
 			$this->_build['method'] = $method;
-			$this->_build['action'] = Res::get('route') . "/" . \app\confs\sys\xhr_param__ .
+			$this->_build['action'] = Res::route() . "/" . \app\confs\sys\xhr_param__ .
 				"/form/" . $this->_fid . "/$method/";
 			$data = array('build' => $this->_build, 'fields' => $this->_fields);
-			$this->_html = Res::view()->template('form', $template, $data);
+			$this->_html = Inst::view()->template('form', $template, $data);
 		}
 		return $this->_html;
 	}
 
 	private function _close()
 	{
-		$key = Res::session()->key();
-		$xid = Res::session()->xid();
+		$key = Inst::session()->key();
+		$xid = Inst::session()->xid();
 		$fid = $this->_fid;
 		$token = $this->_token;
 

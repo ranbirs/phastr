@@ -2,9 +2,9 @@
 
 namespace sys;
 
-use sys\components\Compositor;
+use sys\components\Constructor;
 
-abstract class Controller extends Compositor {
+abstract class Controller extends Constructor {
 
 	function __construct()
 	{
@@ -59,11 +59,11 @@ abstract class Controller extends Compositor {
 				switch ($context) {
 					case 'post':
 					case 'get':
-						if ($this->$subj instanceof \sys\modules\Form) {
+						if ($this->$type->$subj instanceof \sys\modules\Form) {
 							$request = $this->xhr->$context();
 							if (!empty($request)) {
 								$this->view->request = $request;
-								$this->xhr->response($this->$subj->submit($context));
+								$this->xhr->response($this->$type->$subj->submit($context));
 							}
 						}
 						break 2;

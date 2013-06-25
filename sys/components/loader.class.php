@@ -18,26 +18,26 @@ class Loader {
 		return ($file !== false) ? $path : false;
 	}
 
-	protected static function resolveInclude($path, $control = null, $base = 'app', $ext = ".php")
+	protected static function resolveInclude($path, $context, $control = null, $base = 'app', $ext = ".php")
 	{
-		self::includeFile($base . "/" . $path, $ext);
+		self::includeFile($base . "/" . $context . "s/". $path, $ext);
 
 		if (is_null($control)) {
 			return true;
 		}
-		return self::resolveInstance($path, $control, $base);
+		return self::resolveInstance($path, $context, $control, $base);
 	}
 
-	private static function resolveInstance($path, $control = null, $base = 'app')
+	private static function resolveInstance($path, $context, $control = null, $base = 'app')
 	{
-		$path = Helper::getPath($path);
+		$path = Helper::getPath($context . "s/" . $path);
 		$class = "\\$base\\" . Helper::getPathClass($path);
 		$instance = new $class;
 
 		switch ($control) {
 			case 'composite':
 				$subj = Helper::getPathName($path);
-				\sys\components\Compositor::instance()->$subj = $instance;
+				\sys\components\Compositor::instance($context)->$subj = $instance;
 				break;
 		}
 		return $instance;

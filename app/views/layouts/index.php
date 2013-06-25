@@ -2,7 +2,7 @@
 $this->full_title = $this->title . " | " . $this->app_title;
 ?>
 <!DOCTYPE html>
-<html lang="<?= \sys\Res::session()->client('lang'); ?>">
+<html lang="<?= \sys\Inst::session()->client('lang'); ?>">
 <head>
 
 	<meta charset="utf-8">

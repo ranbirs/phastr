@@ -39,7 +39,7 @@ class View {
 	public function page($name = null)
 	{
 		if (is_null($name))
-			$name = Helper::getPath(Res::get('controller')) . "/" . Helper::getPath(Res::get('page'), 'tree');
+			$name = Res::controller() . "/" . Helper::getPath(Res::page(), 'tree');
 		return $this->_render($name, 'page');
 	}
 

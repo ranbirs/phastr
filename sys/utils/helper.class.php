@@ -30,20 +30,17 @@ class Helper {
 		return strtolower(end($path));
 	}
 
-	public static function getPath($path = "", $type = 'file')
+	public static function getPath($path = "", $type = 'label')
 	{
 		switch ($type) {
-			case 'file':
-				$path = str_replace("-", "_", $path);
+			case 'label':
+				$path = str_replace(array("--", "-"), array("__", "_"), $path);
 				break;
 			case 'path':
-				$path = str_replace("_", "-", $path);
+				$path = str_replace(array("__", "_"), array("--", "-"), $path);
 				break;
 			case 'tree':
-				$path = str_replace(array("--", "-"), array("/", "_"), $path);
-				break;
-			case 'method':
-				$path = str_replace(array("--", "-"), array("__", "_"), $path);
+				$path = str_replace(array("__", "--", "-"), array("/", "/", "_"), $path);
 				break;
 			case 'route':
 				$path = "/" . $path;

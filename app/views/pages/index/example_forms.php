@@ -1,6 +1,6 @@
 <?php
 
-$path = \sys\Res::get('route') . '/xhr/post/post_example/';
+$path = \sys\Res::route() . '/xhr/post/post_example/';
 $script = <<<script
 	$(function () {
 		$('#post_example_trigger').click(function () {

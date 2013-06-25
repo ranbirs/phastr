@@ -2,7 +2,7 @@
 
 namespace sys\modules;
 
-use sys\Res;
+use sys\Inst;
 
 class Xhr {
 
@@ -11,9 +11,9 @@ class Xhr {
 
 	function __construct()
 	{
-		$this->view = Res::view();
-		$this->_xid = Res::session()->xid();
-		$this->_key = Res::session()->key();
+		$this->view = Inst::view();
+		$this->_xid = Inst::session()->xid();
+		$this->_key = Inst::session()->key();
 
 		$this->view->assets('script', null,
 			'$.ajaxSetup({headers: {"' . $this->_key . '": "' . $this->_xid . '"}});'
