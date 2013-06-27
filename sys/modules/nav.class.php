@@ -2,7 +2,7 @@
 
 namespace sys\modules;
 
-use sys\Inst;
+use sys\Init;
 use sys\utils\Html;
 
 abstract class Nav {
@@ -27,7 +27,7 @@ abstract class Nav {
 				$this->_build['attr'] = Html::getAttr($this->_build['attr']);
 			}
 			$data = array('title' => $title, 'build' => $this->_build, 'items' => $this->_items);
-			$this->_html = Inst::view()->template('nav', $template, $data);
+			$this->_html = Init::view()->template('nav', $template, $data);
 		}
 		return $this->_html;
 	}

@@ -2,7 +2,7 @@
 
 namespace sys\components;
 
-use sys\Inst;
+use sys\Init;
 use sys\components\Compositor;
 
 class Constructor extends Compositor {
@@ -13,10 +13,10 @@ class Constructor extends Compositor {
 	{
 		parent::__construct();
 
-		$this->load = Inst::load();
-		$this->view = Inst::view();
-		$this->session = Inst::session();
-		$this->xhr = Inst::xhr();
+		$this->load = Init::load();
+		$this->view = Init::view();
+		$this->session = Init::session();
+		$this->xhr = Init::xhr();
 	}
 
 }

@@ -1,3 +1,3 @@
 <?php
 
-\sys\Call::vocab('user_register', \sys\Inst::session()->client('lang'));
+\sys\Load::vocab('user_register', \sys\Init::session()->client('lang'));

@@ -24,8 +24,8 @@ class User extends \sys\Model {
 				"WHERE uid = :uid",
 				array('uid' => $user->uid)
 			);
-			\sys\Inst::session()->set(array('_user' => 'uid'), $user->uid);
-			\sys\Inst::session()->set(array('_user' => 'token', \sys\utils\Hash::rand()));
+			\sys\Init::session()->set(array('_user' => 'uid'), $user->uid);
+			\sys\Init::session()->set(array('_user' => 'token', \sys\utils\Hash::rand()));
 			return true;
 		}
 		return false;
@@ -57,7 +57,7 @@ class User extends \sys\Model {
 			$addr = "noreply@$host";
 			$from = \sys\utils\Conf::k('app\\title');
 			$path = \sys\Res::path();
-			$xid = \sys\Inst::session()->xid();
+			$xid = \sys\Init::session()->xid();
 			$headers = "From: $from <$addr>\n";
 			$subject = \sys\utils\Vocab::t('user_register\\verify_email_subject');
 			$msg = \sys\utils\Vocab::t('user_register\\verify_email_body') .

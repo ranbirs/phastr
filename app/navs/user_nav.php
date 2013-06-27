@@ -11,7 +11,7 @@ class User_nav extends \sys\modules\Nav {
 
 	protected function build($data = null)
 	{
-		if (\sys\Inst::session()->token()) {
+		if (\sys\Init::session()->token()) {
 			$this->item("Sign out", "user/logout");
 		}
 		else {

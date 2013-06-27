@@ -7,16 +7,16 @@ use sys\utils\Helper;
 
 class Res {
 
-	protected static $resource = array();
-	protected static $error;
+	protected static $request, $path, $route;
+	protected static $controller, $page, $action, $params = array();
+	protected static $error, $defaults = array();
 
 	protected static function init()
 	{
 		$qs = \app\confs\sys\query_str__;
 		$request = (isset($_GET[$qs])) ? $_GET[$qs] : null;
 		$request = $path = strtolower(trim($request, "/"));
-
-		$default = array(
+		$defaults = array(
 			'autoload' => \app\confs\app\autoload__,
 			'homepage' => \app\confs\app\homepage__,
 			'page' => \app\confs\sys\page__,
@@ -26,44 +26,43 @@ class Res {
 		);
 
 		if (!$path)
-			$path = $default['autoload'] . "/" . $default['homepage'];
+			$path = $defaults['autoload'] . "/" . $defaults['homepage'];
 		$path = explode("/", $path);
-
 		$route = array_splice($path, 0, 3);
 		$params = $path;
 		$path = array();
 
 		if (!Loader::resolveFile("controllers/" . $route[0]))
-			array_unshift($route, $default['autoload']);
+			array_unshift($route, $defaults['autoload']);
 
 		if (!isset($route[1]))
-			$route[1] = $default['page'];
+			$route[1] = $defaults['page'];
 		if (!isset($route[2]))
-			$route[2] = $default['action'];
+			$route[2] = $defaults['action'];
 
 		foreach ($route as $index => $param) {
 
-			if ($param === $default['method']) {
+			if ($param === $defaults['method']) {
 				self::$error = \app\vocabs\sys\er_icr__;
-				return false;
+				break;
 			}
 			if (preg_match('/[^a-z0-9-]/i', $param)) {
 				self::$error = \app\vocabs\sys\er_icr__;
-				return false;
+				break;
 			}
 			if ((strlen($param) > 128)) {
 				self::$error = \app\vocabs\sys\er_icr__;
-				return false;
+				break;
 			}
 
 			switch ($index) {
 				case 0:
 					$controller = $param;
-					if ($controller === $default['master']) {
+					if ($controller === $defaults['master']) {
 						self::$error = \app\vocabs\sys\er_icc__;
-						return false;
+						break 2;
 					}
-					if ($controller !== $default['autoload'])
+					if ($controller !== $defaults['autoload'])
 						$path[] = $controller;
 					break;
 				case 1:
@@ -72,67 +71,58 @@ class Res {
 					break;
 				case 2:
 					$action = $param;
-					if ($action !== $default['action'])
+					if ($action !== $defaults['action'])
 						$path[] = $action;
 					break;
 			}
 		}
-		return array(
-			'request' => ($request) ? $request : "/",
-			'path' => ($request) ? implode("/", $path) : $default['homepage'],
-			'route' => Helper::getPath("$controller/$page/$action", 'route'),
-			'controller' => Helper::getPath($controller),
-			'page' => Helper::getPath($page),
-			'action' => Helper::getPath($action),
-			'params' => $params,
-			'default' => $default
-		);
+		if (!isset(self::$error)) {
+			self::$request = ($request) ? $request : "/";
+			self::$path = ($request) ? implode("/", $path) : $defaults['homepage'];
+			self::$route = Helper::getPath("$controller/$page/$action", 'route');
+			self::$controller = Helper::getPath($controller);
+			self::$page = Helper::getPath($page);
+			self::$action = Helper::getPath($action);
+			self::$params = $params;
+			self::$defaults = $defaults;
+		}
 	}
 
 	public static function request()
 	{
-		return self::$resource['request'];
+		return self::$request;
 	}
 
 	public static function path()
 	{
-		return self::$resource['path'];
+		return self::$path;
 	}
 
 	public static function route()
 	{
-		return self::$resource['route'];
+		return self::$route;
 	}
 
 	public static function controller()
 	{
-		return self::$resource['controller'];
+		return self::$controller;
 	}
 
 	public static function page()
 	{
-		return self::$resource['page'];
+		return self::$page;
 	}
 
 	public static function action()
 	{
-		return self::$resource['action'];
+		return self::$action;
 	}
 
 	public static function params($index = null)
 	{
-		return (is_numeric($index)) ?
-			((isset(self::$resource['params'][$index])) ? self::$resource['params'][$index] : null) :
-			self::$resource['params'];
-	}
-
-	public static function args($key = null)
-	{
-		if (!isset(self::$resource['args']))
-			self::$resource['args'] = Helper::getArgs(self::$resource['params']);
-		return ($key) ?
-			((isset(self::$resource['args'][$key])) ? self::$resource['args'][$key] : null) :
-			self::$resource['args'];
+		return (!empty(self::$params) and is_numeric($index)) ?
+			((isset(self::$params[$index])) ? self::$params[$index] : null) :
+			self::$params;
 	}
 
 

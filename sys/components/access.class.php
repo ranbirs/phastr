@@ -2,7 +2,7 @@
 
 namespace sys\components;
 
-use sys\Inst;
+use sys\Init;
 
 class Access {
 
@@ -15,7 +15,7 @@ class Access {
 			case 'public':
 				switch ($rule) {
 					case 'deny':
-						$access = (!is_null(Inst::session()->token()));
+						$access = (!is_null(Init::session()->token()));
 						break 2;
 				}
 				$access = true;
@@ -23,7 +23,7 @@ class Access {
 			case 'private':
 				switch ($rule) {
 					case 'deny':
-						$access = (is_null(Inst::session()->token()));
+						$access = (is_null(Init::session()->token()));
 						break 2;
 				}
 				$access = true;

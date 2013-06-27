@@ -3,30 +3,59 @@
 namespace sys;
 
 use sys\Res;
-use sys\Call;
-use sys\Inst;
+use sys\Load;
 
 class Init extends Res {
 
+	private static $load, $view, $session, $xhr;
+
 	public static function start()
 	{
-		Call::conf('constants');
-		Call::vocab('sys');
+		Load::conf('constants');
+		Load::vocab('sys');
 
-		self::$resource = self::init();
+		self::init();
 
-		if (!self::$resource) {
-			Inst::view()->error(404, self::$error);
+		if (isset(self::$error)) {
+			self::view()->error(404, self::$error);
 		}
 
-		Call::conf('autoload');
+		Load::conf('autoload');
 
-		if (self::$resource['default']['master']) {
-			Call::controller(self::$resource['default']['master']);
+		if (self::$defaults['master']) {
+			Load::controller(self::$defaults['master']);
 		}
-		Call::controller(self::$resource['controller'])
-			->dispatch(self::$resource['default']['method'], self::$resource['page'], self::$resource['action'], self::$resource['params']);
+		Load::controller(self::$controller)
+			->dispatch(self::$defaults['method'], self::$page, self::$action, self::$params);
 		exit();
+	}
+
+	public static function load()
+	{
+		if (!isset(self::$load))
+			self::$load = new \sys\Load();
+		return self::$load;
+	}
+
+	public static function view()
+	{
+		if (!isset(self::$view))
+			self::$view = new \sys\View();
+		return self::$view;
+	}
+
+	public static function session()
+	{
+		if (!isset(self::$session))
+			self::$session = new \sys\Session();
+		return self::$session;
+	}
+
+	public static function xhr()
+	{
+		if (!isset(self::$xhr))
+			self::$xhr = new \sys\modules\Xhr();
+		return self::$xhr;
 	}
 
 }
