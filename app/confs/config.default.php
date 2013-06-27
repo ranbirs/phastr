@@ -19,9 +19,7 @@ namespace app\confs\sys;
 	const page__ = "index";
 	const action__ = "index";
 	const method__ = "scope";
-
 	const master__ = "_scope";
-	const except__ = "error,xhr";
 
 	const query_str__ = "_q";
 	const xhr_param__ = "xhr";
