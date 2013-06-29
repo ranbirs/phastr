@@ -49,7 +49,7 @@ class Validation {
 				$valid = ($value === \sys\Init::xhr()->header());
 				break;
 			case 'match':
-				$valid = ($value === $param);
+				$valid = (!is_null($param) and $value === $param);
 				break;
 			case 'required':
 				if (is_array($value))
