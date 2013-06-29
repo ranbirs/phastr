@@ -10,7 +10,7 @@ class Hash {
 
 	public static function rid($entropy = false)
 	{
-		return uniqid(mt_rand(), $entropy);
+		return uniqid(mt_rand(), (bool) $entropy);
 	}
 
 	public static function rand($size = 0, $algo = 'sha1')

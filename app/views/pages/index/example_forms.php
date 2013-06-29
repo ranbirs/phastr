@@ -21,6 +21,7 @@ $this->assets('script', null, $script);
 ?>
 <section><?= $this->body; ?></section>
 <section><?= $this->test_form; ?></section>
+<section><?= $this->simple_form; ?></section>
 <section>
 	<h3>Posting a [non-Form] request...</h3>
 	<div>

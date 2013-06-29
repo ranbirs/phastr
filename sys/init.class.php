@@ -29,28 +29,28 @@ class Init extends Res {
 
 	public static function load($inst = false)
 	{
-		if (!isset(self::$load) or $inst)
+		if (!isset(self::$load) or (bool) $inst)
 			self::$load = new \sys\Load();
 		return self::$load;
 	}
 
 	public static function view($inst = false)
 	{
-		if (!isset(self::$view) or $inst)
+		if (!isset(self::$view) or (bool) $inst)
 			self::$view = new \sys\View();
 		return self::$view;
 	}
 
 	public static function session($inst = false)
 	{
-		if (!isset(self::$session) or $inst)
+		if (!isset(self::$session) or (bool) $inst)
 			self::$session = new \sys\Session();
 		return self::$session;
 	}
 
 	public static function xhr($inst = false)
 	{
-		if (!isset(self::$xhr) or $inst)
+		if (!isset(self::$xhr) or (bool) $inst)
 			self::$xhr = new \sys\modules\Xhr();
 		return self::$xhr;
 	}

@@ -11,20 +11,17 @@ use sys\utils\Html;
 
 abstract class Form {
 
-	protected $xhr, $validation;
-	private $_fid, $_token;
+	protected $fid, $xhr, $validation;
 	private $_field = array(), $_build = array(), $_fields = array();
-	private $_required = array(), $_validated = array(), $_sanitized = array();
+	private $_required = array(), $_validated = array(), $_sanitized = array(), $_expire = true;
 	private $_html;
 
 	function __construct()
 	{
+		$this->fid = strtolower(Helper::getClassName(get_class($this)));
+		if (!Init::session()->get($this->fid, 'token'))
+			Init::session()->set(array($this->fid => 'token'), Hash::rand());
 		$this->xhr = Init::xhr();
-
-		$this->_fid = strtolower(Helper::getClassName(get_class($this)));
-		$this->_token = Init::session()->get($this->_fid, 'token');
-		if (!$this->_token)
-			$this->_token = Init::session()->set(array($this->_fid => 'token'), Hash::rand());
 	}
 
 	abstract protected function build();
@@ -45,7 +42,8 @@ abstract class Form {
 		$parse = $this->parse();
 		if (isset($parse['result'])) {
 			if ($parse['result']) {
-				Init::session()->drop($this->_fid, 'token');
+				if ($this->_expire)
+					Init::session()->drop($this->fid, 'token');
 				return $this->success();
 			}
 			if (isset($parse['message'])) {
@@ -59,44 +57,41 @@ abstract class Form {
 	final public function html($data = null, $title = null, $css = array(), $method = 'post', $template = "bootstrap")
 	{
 		$this->build($data);
-		$this->_close();
+		$this->_close($method);
 
 		if (!$this->_html) {
-			$this->_build['fid'] = $this->_fid;
+			$this->_build['fid'] = $this->fid;
 			$this->_build['title'] = $title;
 			$this->_build['css'] = implode(" ", $css);
 			$this->_build['method'] = $method;
-			$this->_build['action'] = Res::route() . "/" . \app\confs\sys\xhr_param__ .
-				"/form/" . $this->_fid . "/$method/";
+			$this->_build['action'] = Helper::getPath(array('form', $this->fid, $method), 'xhr') . "/";
 			$data = array('build' => $this->_build, 'fields' => $this->_fields);
 			$this->_html = Init::view()->template('form', $template, $data);
 		}
 		return $this->_html;
 	}
 
-	private function _close()
+	private function _close($method)
 	{
 		$key = Init::session()->key();
 		$xid = Init::session()->xid();
-		$fid = $this->_fid;
-		$token = $this->_token;
 
-		$this->field(array('input' => 'hidden'), "xid_$key", null,
+		$this->field(array('input' => 'hidden'), "fid_" . $key, null,
+			$data = array(
+				'value' => $this->fid,
+				'validate' => array($method => array('value' => array($this->fid . "_fid_" . $key => $this->fid)))
+			)
+		);
+		$this->field(array('input' => 'hidden'), "xid_" . $key, null,
 			$data = array(
 				'value' => $xid,
-				'validate' => array('xhr')
+				'validate' => array('header' => array('value' => array($key => $xid)))
 			)
 		);
-		$this->field(array('input' => 'hidden'), "fid_$key", null,
+		$this->field(array('input' => 'hidden'), "token_" . $key, null,
 			$data = array(
-				'value' => $fid,
-				'validate' => array('match' => array('value' => $fid))
-			)
-		);
-		$this->field(array('input' => 'hidden'), "token_$key", null,
-			$data = array(
-				'value' => $token,
-				'validate' => array('match' => array('value' => $token))
+				'value' => Init::session()->get($this->fid, 'token'),
+				'validate' => array('token' => array('value' => $this->fid))
 			)
 		);
 	}
@@ -116,9 +111,14 @@ abstract class Form {
 		return $this->validation->get();
 	}
 
+	protected function expire($expire = true)
+	{
+		$this->_expire = (bool) $expire;
+	}
+
 	protected function field($control, $id, $label = null, $data = array())
 	{
-		$id = $this->_fid . "_" . $id;
+		$id = $this->fid . "_" . $id;
 		$type = null;
 		if (is_array($control)) {
 			$type = current($control);
@@ -208,8 +208,8 @@ abstract class Form {
 		if ($this->_field['label'])
 			$this->_fields[$id]['label'] = $this->_field['label'];
 
-		if (isset($this->_field['helptext']))
-			$this->_fields[$id]['helptext'] = $this->_field['helptext'];
+		if (isset($this->_field['hint']))
+			$this->_fields[$id]['hint'] = $this->_field['hint'];
 
 		if ($this->_field['stack']) {
 			return $this->_fields[$key][] = $build;
@@ -287,7 +287,7 @@ abstract class Form {
 						case 'hidden':
 							continue 2;
 						default:
-							$this->_fields[$id]['helper'] = true;
+							$this->_fields[$id]['help'] = true;
 					}
 				}
 			}

@@ -7,23 +7,20 @@ use sys\Init;
 class Xhr {
 
 	protected $view;
-	private $_xid, $_key;
 
 	function __construct()
 	{
 		$this->view = Init::view();
-		$this->_xid = Init::session()->xid();
-		$this->_key = Init::session()->key();
 
 		$this->view->assets('script', null,
-			'$.ajaxSetup({headers: {"' . $this->_key . '": "' . $this->_xid . '"}});'
+			'$.ajaxSetup({headers: {"' . Init::session()->key() . '": "' . Init::session()->xid() . '"}});'
 		);
 	}
 
 	public function header($key = null)
 	{
 		if (is_null($key))
-			$key = $this->_key;
+			$key = Init::session()->key();
 		return $this->server("HTTP_" . strtoupper($key));
 	}
 
@@ -48,20 +45,20 @@ class Xhr {
 			case 'server':
 				if (!is_null($value))
 					$_SERVER[$key] = $value;
-				$request = ($key) ? ((isset($_SERVER[$key])) ? $_SERVER[$key] : null) : $_SERVER;
+				$request = (!is_null($key)) ? ((isset($_SERVER[$key])) ? $_SERVER[$key] : null) : $_SERVER;
 				break;
 			case 'post':
 				if (!is_null($value))
 					$_POST[$key] = $value;
-				$request = ($key) ? ((isset($_POST[$key])) ? $_POST[$key] : null) : $_POST;
+				$request = (!is_null($key)) ? ((isset($_POST[$key])) ? $_POST[$key] : null) : $_POST;
 				break;
 			case 'get':
 				if (!is_null($value))
 					$_GET[$key] = $value;
-				$request = ($key) ? ((isset($_GET[$key])) ? $_GET[$key] : null) : $_GET;
+				$request = (!is_null($key)) ? ((isset($_GET[$key])) ? $_GET[$key] : null) : $_GET;
 				break;
 			case 'request':
-				$request = ($key) ? ((isset($_REQUEST[$key])) ? $_REQUEST[$key] : null) : $_REQUEST;
+				$request = (!is_null($key)) ? ((isset($_REQUEST[$key])) ? $_REQUEST[$key] : null) : $_REQUEST;
 				break;
 			default:
 				$request = null;

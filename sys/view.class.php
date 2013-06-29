@@ -11,7 +11,7 @@ use sys\utils\Html;
 class View {
 
 	public $request, $response, $error_msg;
-	private $_assets = array();
+	protected $access, $assets;
 
 	function __construct()
 	{
@@ -21,13 +21,13 @@ class View {
 	public function assets($type = 'script', $subj = null, $content = null, $append = \app\confs\app\iteration__)
 	{
 		if (is_null($subj) and is_null($content)) {
-			if (!isset($this->_assets[$type]))
-				$this->_assets[$type] = array();
-			return implode("\n", array_values($this->_assets[$type]));
+			if (!isset($this->assets[$type]))
+				$this->assets[$type] = array();
+			return implode("\n", array_values($this->assets[$type]));
 		}
-		$key = ($subj) ? hash('md5', $subj) : hash('md5', $content);
-		if (!isset($this->_assets[$type][$key]))
-			$this->_assets[$type][$key] = Html::getAsset($type, $subj, $content, $append);
+		$key = (!is_null($subj)) ? hash('md5', $subj) : hash('md5', $content);
+		if (!isset($this->assets[$type][$key]))
+			$this->assets[$type][$key] = Html::getAsset($type, $subj, $content, $append);
 		return true;
 	}
 

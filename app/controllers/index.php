@@ -24,6 +24,9 @@ class Index extends \sys\Controller {
 		$this->load->form('index/test_form');
 		$data = array('example' => array("data"));
 		$this->view->test_form = $this->form->test_form->html($data, $title = "Example Form", $css = array("form-horizontal"));
+
+		$this->load->form('index/simple_form');
+		$this->view->simple_form = $this->form->simple_form->html($data = null, $title = "Simple Form", $css = array("form-inline"));
 	}
 
 	protected function render()

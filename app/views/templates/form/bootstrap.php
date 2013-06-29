@@ -30,11 +30,11 @@ $this->assets('script', '/js/form.js');
 			<? else: ?>
 			<?= $field['field']; ?>
 			<? endif; ?>
-			<? if (isset($field['helper'])): ?>
-			<span class="help-inline" style="display: none;"></span>
+			<? if (isset($field['help'])): ?>
+			<span class="help help-inline" style="display: none;"></span>
 			<? endif; ?>
-			<? if (isset($field['helptext'])): ?>
-			<div class="help-block"><?= $field['helptext']; ?></div>
+			<? if (isset($field['hint'])): ?>
+			<div class="hint help-block"><?= $field['hint']; ?></div>
 			<? endif; ?>
 		</div>
 	</div>

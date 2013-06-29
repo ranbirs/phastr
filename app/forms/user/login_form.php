@@ -15,7 +15,7 @@ class Login_form extends \sys\modules\Form {
 			$build = array(
 				'validate' => array(
 					'maxlength' => array('value' => 128),
-					'email' => ""
+					'email'
 				)
 			)
 		);
@@ -24,7 +24,7 @@ class Login_form extends \sys\modules\Form {
 			$build = array(
 				'validate' => array(
 					'maxlength' => array('value' => 32),
-					'required' => ""
+					'required'
 				)
 			)
 		);

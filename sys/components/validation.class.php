@@ -25,7 +25,7 @@ class Validation {
 	{
 		foreach ($validation as $key => $args) {
 			$rule = (!is_int($key)) ? $key : $args;
-			$param = (isset($args['value'])) ? $args['value'] : "";
+			$param = (isset($args['value'])) ? $args['value'] : null;
 			$valid = ($this->validate($rule, $value, $param)) ? 'success' : 'error';
 
 			if (is_array($args)) {
@@ -45,8 +45,19 @@ class Validation {
 	public function validate($rule, $value = null, $param = null)
 	{
 		switch($rule) {
-			case 'xhr':
-				$valid = ($value === \sys\Init::xhr()->header());
+			case 'header':
+			case 'server':
+			case 'post':
+			case 'get':
+				if (!is_array($param)) {
+					$valid = false;
+					break;
+				}
+				$request = \sys\Init::xhr()->$rule(key($param));
+				$valid = (!is_null($value) and $value === $request and $request === current($param));
+				break;
+			case 'token':
+				$valid = (!is_null($param) and $value === \sys\Init::session()->get($param, 'token'));
 				break;
 			case 'match':
 				$valid = (!is_null($param) and $value === $param);

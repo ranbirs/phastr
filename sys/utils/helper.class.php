@@ -32,6 +32,8 @@ class Helper {
 
 	public static function getPath($path = "", $type = 'label')
 	{
+		if (is_array($path))
+			$path = implode("/", $path);
 		switch ($type) {
 			case 'label':
 				$path = str_replace(array("--", "-"), array("__", "_"), $path);
@@ -46,6 +48,9 @@ class Helper {
 				$path = "/" . $path;
 				if (!\app\confs\app\rewrite__)
 					$path = $_SERVER['SCRIPT_NAME'] . "?" . \app\confs\sys\query_str__ . "=" . $path;
+				break;
+			case 'xhr':
+				$path = \sys\Res::route() . "/" . \app\confs\sys\xhr_param__ . "/" . $path;
 				break;
 		}
 		return strtolower($path);

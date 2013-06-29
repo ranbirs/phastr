@@ -10,8 +10,8 @@ $(function () {
 			$('body, form').css('cursor', '');
 			form.find('.form-actions button').removeAttr('disabled').removeClass('disabled').css('cursor', '');
 			form.removeClass('error success').find('.control-group').removeClass('error success');
-			form.find('.alert').empty().removeClass('alert-error alert-success');
-			form.find('.help-inline').empty();
+			form.find('.alert').empty().removeClass('alert-error alert-success').hide();
+			form.find('.help').empty().hide();
 			if (data.error) {
 				$.each(data.error.validate, function(index, value) {
 					if (value[0]) {
@@ -23,7 +23,7 @@ $(function () {
 						}
 					}
 					if (value[1]) {
-						form.find('.field[name^="' + value[0] + '"]').closest('.control-group').find('.help-inline').html(value[1]).fadeIn();
+						form.find('.field[name^="' + value[0] + '"]').closest('.control-group').find('.help').html(value[1]).show();
 					}
 				});
 				if (form.find('.recaptcha-challenge').length) {
@@ -31,7 +31,7 @@ $(function () {
 				}
 			}
 			else {
-				form.find('.help-inline').fadeOut();
+				form.find('.help').fadeOut();
 				if (data.message) {
 					form.find('.alert').addClass('alert-success').html(data.message).slideDown(function() {
 						if (data.callback) {
@@ -51,7 +51,7 @@ $(function () {
 						form.addClass('error').find('.field[name^="' + value[0] + '"]').closest('.control-group').addClass('success');
 					}
 					if (value[1]) {
-						form.find('.field[name^="' + value[0] + '"]').closest('.control-group').find('.help-inline').html(value[1]).fadeIn();
+						form.find('.field[name^="' + value[0] + '"]').closest('.control-group').find('.help').html(value[1]).show();
 					}
 				});
 			}

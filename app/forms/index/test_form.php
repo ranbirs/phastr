@@ -11,20 +11,22 @@ class Test_form extends \sys\modules\Form {
 
 	protected function build($data = null)
 	{
+		$required_field_msg = "This is a required field";
+
 		$this->field('markup', "", "<em>Example data</em>",
 			$build = array('value' => "<pre>" . print_r($data, true) . "</pre>")
 		);
 
 		$this->field(array('input' =>'email'), "test_email_field", "Email field",
 			$build = array(
-				'helptext' => "Field is validated",
+				'hint' => "Hint text...this field is validated",
 				'validate' => array(
 					'email' => array(
-						'error' => "Invalid email address",
+						'error' => "That doesn't look like an email address",
 						'success' => "Looking good"
 					),
 					'maxlength' => array('value' => 128),
-					'required' => array('error' => "Required field")
+					'required' => array('error' => $required_field_msg)
 				)
 			)
 		);
@@ -34,7 +36,7 @@ class Test_form extends \sys\modules\Form {
 				'attr' => array('placeholder' => "placeholder text..."),
 				'validate' => array(
 					'maxlength' => array('value' => 32),
-					'required' => array('error' => "Required field")
+					'required' => array('error' => $required_field_msg)
 				)
 			)
 		);
@@ -58,7 +60,7 @@ class Test_form extends \sys\modules\Form {
 						'prop' => array('checked')
 					)
 				),
-				'validate' => array('required' => array('error' => "Required field"))
+				'validate' => array('required' => array('error' => $required_field_msg))
 			)
 		);
 
@@ -78,7 +80,7 @@ class Test_form extends \sys\modules\Form {
 						'label' => "DAB"
 					)
 				),
-				'validate' => array('required' => array('error' => "Required field"))
+				'validate' => array('required' => array('error' => $required_field_msg))
 			)
 		);
 
@@ -104,7 +106,7 @@ class Test_form extends \sys\modules\Form {
 						'label' => "3rd option"
 					)
 				),
-				'validate' => array('required' => array('error' => "Required field"))
+				'validate' => array('required' => array('error' => $required_field_msg))
 			)
 		);
 
@@ -131,7 +133,7 @@ class Test_form extends \sys\modules\Form {
 					)
 				),
 				'prop' => array('multiple'),
-				'validate' => array('required' => array('error' => "Required field"))
+				'validate' => array('required' => array('error' => $required_field_msg))
 			)
 		);
 
@@ -151,15 +153,15 @@ class Test_form extends \sys\modules\Form {
 						'label' => "address line 3"
 					)
 				),
-				'validate' => array('required' => array('error' => "Required field"))
+				'validate' => array('required' => array('error' => $required_field_msg))
 			)
 		);
 
 		$this->field('markup', "some_markup", null,
-			$build = array('value' => "<p>More custom markup...</p>")
+			$build = array('value' => "<p>Any custom markup...</p>")
 		);
 
-		$this->field(array('input' => 'text'), "test_text_field", "Text field 2");
+		$this->field(array('input' => 'text'), "test_text_field_optional", "An optional text field");
 
 		$this->field(array('button' => 'submit'), "submit_button", "Submit", 
 			$build = array(

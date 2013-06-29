@@ -83,4 +83,4 @@ unset($item);
 
 $attrs = (isset($build['attr'])) ? $build['attr'] : "";
 
-print "<ul$attrs>" . implode("\n", $menu) . "</ul>";
+print "<ul$attrs>" . "\n" . implode("\n", $menu) . "</ul>";

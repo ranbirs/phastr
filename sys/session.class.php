@@ -60,20 +60,19 @@ class Session {
 	public function keygen($hash = null)
 	{
 		$keygen = Hash::get($this->_sid . $this->xid() . $this->get('_gid'), 'sha1');
-		return ($hash) ? ($hash === $keygen) : $keygen;
+		return (!is_null($hash)) ? ($hash === $keygen) : $keygen;
 	}
 
 	public function timestamp($key = 0, $set = false)
 	{
-		return ($set) ? $this->set(array('_timestamp' => $key), microtime(true)) : $this->get('_timestamp', $key);
+		return ((bool) $set) ? $this->set(array('_timestamp' => $key), microtime(true)) : $this->get('_timestamp', $key);
 	}
 
 	public function get($subj, $key = null)
 	{
-		$value = ($key or is_numeric($key)) ?
+		return (!is_null($key)) ?
 			((isset($_SESSION[$this->_sid][$subj][$key])) ? $_SESSION[$this->_sid][$subj][$key] : null) :
 			((isset($_SESSION[$this->_sid][$subj])) ? $_SESSION[$this->_sid][$subj] : null);
-		return $value;
 	}
 
 	public function set($subj, $value = null)
@@ -83,16 +82,15 @@ class Session {
 			$key = current($subj);
 			$subj = key($subj);
 		}
-		($key or is_numeric($key)) ?
+		return (!is_null($key)) ?
 			$_SESSION[$this->_sid][$subj][$key] = $value :
 			$_SESSION[$this->_sid][$subj] = $value;
-		return $value;
 	}
 
 	public function drop($subj, $key = null)
 	{
 		if ($this->get($subj, $key)) {
-			if ($key or is_numeric($key)) {
+			if (!is_null($key)) {
 				unset($_SESSION[$this->_sid][$subj][$key]);
 				return true;
 			}
