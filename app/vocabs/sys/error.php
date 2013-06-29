@@ -8,4 +8,4 @@ namespace app\vocabs\sys\error;
 	const controller_methods__ = 'None of the Current [methods] ("[default]_[default]", "[default]_[action]", "[page]_[default]" or "[page]_[action]") was declared in the scope of the Current [controller]';
 
 	const view_render__ = "Current [view] could not be found";
-	const view_page__ = "Current [layout] could not be found";
+	const view_layout__ = "Current [layout] could not be found";
