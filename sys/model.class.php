@@ -4,7 +4,7 @@ namespace sys;
 
 use sys\modules\Database;
 
-class Model {
+abstract class Model {
 
 	private static $dbh;
 

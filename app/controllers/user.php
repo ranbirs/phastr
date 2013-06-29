@@ -9,6 +9,7 @@ class User extends \sys\Controller {
 		parent::__construct();
 
 		$this->view->title = "User";
+		\sys\Load::vocab('user', 'en');
 	}
 
 	protected function index_index()

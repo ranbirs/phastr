@@ -2,7 +2,7 @@
 
 namespace sys\components;
 
-class Compositor {
+abstract class Compositor {
 
 	private static $instance;
 

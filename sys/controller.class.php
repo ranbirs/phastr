@@ -30,7 +30,7 @@ abstract class Controller extends Constructor {
 			$process--;
 		}
 		if (empty($process)) {
-			$this->view->error(404, \app\vocabs\sys\er_ccm__);
+			$this->view->error(404, \app\vocabs\sys\error\controller_methods__);
 		}
 		if (isset($params[2]) and $params[0] === \app\confs\sys\xhr_param__) {
 			if ($this->xhr->header() === $this->session->xid())

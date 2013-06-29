@@ -9,12 +9,9 @@ class Init extends Res {
 
 	private static $load, $view, $session, $xhr;
 
-	public static function start()
+	function __construct()
 	{
-		Load::conf('constants');
-		Load::vocab('sys');
-
-		self::init();
+		parent::__construct();
 
 		if (isset(self::$error)) {
 			self::view()->error(404, self::$error);
@@ -30,30 +27,30 @@ class Init extends Res {
 		exit();
 	}
 
-	public static function load()
+	public static function load($inst = false)
 	{
-		if (!isset(self::$load))
+		if (!isset(self::$load) or $inst)
 			self::$load = new \sys\Load();
 		return self::$load;
 	}
 
-	public static function view()
+	public static function view($inst = false)
 	{
-		if (!isset(self::$view))
+		if (!isset(self::$view) or $inst)
 			self::$view = new \sys\View();
 		return self::$view;
 	}
 
-	public static function session()
+	public static function session($inst = false)
 	{
-		if (!isset(self::$session))
+		if (!isset(self::$session) or $inst)
 			self::$session = new \sys\Session();
 		return self::$session;
 	}
 
-	public static function xhr()
+	public static function xhr($inst = false)
 	{
-		if (!isset(self::$xhr))
+		if (!isset(self::$xhr) or $inst)
 			self::$xhr = new \sys\modules\Xhr();
 		return self::$xhr;
 	}

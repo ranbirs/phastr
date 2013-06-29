@@ -31,7 +31,7 @@ class Loader {
 	private static function resolveInstance($path, $context, $control = null, $base = 'app')
 	{
 		$path = Helper::getPath($context . "s/" . $path);
-		$class = "\\$base\\" . Helper::getPathClass($path);
+		$class = Helper::getPathClass("\\$base\\" . $path);
 		$instance = new $class;
 
 		switch ($control) {

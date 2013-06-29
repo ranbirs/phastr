@@ -52,12 +52,12 @@ class Register_form extends \sys\modules\Form {
 		if ($user->register($name, $email, $password)) {
 			return array('result' => true);
 		}
-		return array('result' => false, 'message' => \sys\utils\Vocab::t('user_register\\fail'));
+		return array('result' => false, 'message' => \sys\utils\Vocab::t('user\\register_fail'));
 	}
 
 	protected function success()
 	{
-		$msg = \sys\utils\Vocab::t('user_register\\success');
+		$msg = \sys\utils\Vocab::t('user\\register_success');
 		return array('message' => $msg, 'callback' => "");
 	}
 

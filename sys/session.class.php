@@ -10,11 +10,6 @@ class Session {
 
 	function __construct()
 	{
-		$this->start();
-	}
-
-	public function start()
-	{
 		session_start();
 		$this->_sid = session_id();
 

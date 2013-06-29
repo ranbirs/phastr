@@ -7,6 +7,8 @@ class User extends \sys\Model {
 	function __construct()
 	{
 		parent::__construct();
+
+		\sys\Load::vocab('user', 'en');
 	}
 
 	public function login($email, $password)
@@ -59,8 +61,8 @@ class User extends \sys\Model {
 			$path = \sys\Res::path();
 			$xid = \sys\Init::session()->xid();
 			$headers = "From: $from <$addr>\n";
-			$subject = \sys\utils\Vocab::t('user_register\\verify_email_subject');
-			$msg = \sys\utils\Vocab::t('user_register\\verify_email_body') .
+			$subject = \sys\utils\Vocab::t('user\\register_verify_email_subject');
+			$msg = \sys\utils\Vocab::t('user\\register_verify_email_body') .
 				"http://$host/$path/verify/$xid/$token/";
 
 			mail($email, $subject, $msg, $headers, "-f $addr");

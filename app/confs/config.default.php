@@ -8,18 +8,18 @@ namespace app\confs\app;
 	const hash__ = "xid_hash_key_str";
 	const lang__ = "en";
 
-	const autoload__ = "index";
-	const homepage__ = "index";
-
 	const error_msg__ = 1;
 	const iteration__ = "a0c780df";
 
 namespace app\confs\sys;
 
+	const master__ = "_scope";
+	const autoload__ = "index";
+	const homepage__ = "index";
+
 	const page__ = "index";
 	const action__ = "index";
 	const method__ = "scope";
-	const master__ = "_scope";
 
 	const query_str__ = "_q";
 	const xhr_param__ = "xhr";

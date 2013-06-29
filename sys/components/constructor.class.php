@@ -5,7 +5,7 @@ namespace sys\components;
 use sys\Init;
 use sys\components\Compositor;
 
-class Constructor extends Compositor {
+abstract class Constructor extends Compositor {
 
 	protected $load, $view, $session, $xhr;
 

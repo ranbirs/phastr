@@ -2,32 +2,36 @@
 
 namespace sys;
 
+use sys\Load;
 use sys\components\Loader;
 use sys\utils\Helper;
 
-class Res {
+abstract class Res {
 
 	protected static $request, $path, $route;
 	protected static $controller, $page, $action, $params = array();
 	protected static $error, $defaults = array();
 
-	protected static function init()
+	function __construct()
 	{
+		Load::conf('constants');
+		Load::vocab('sys/error');
+
 		$qs = \app\confs\sys\query_str__;
 		$request = (isset($_GET[$qs])) ? $_GET[$qs] : null;
 		$request = $path = strtolower(trim($request, "/"));
 		$defaults = array(
-			'autoload' => \app\confs\app\autoload__,
-			'homepage' => \app\confs\app\homepage__,
+			'master' => \app\confs\sys\master__,
+			'autoload' => \app\confs\sys\autoload__,
+			'homepage' => \app\confs\sys\homepage__,
 			'page' => \app\confs\sys\page__,
 			'action' => \app\confs\sys\action__,
-			'method' => \app\confs\sys\method__,
-			'master' => \app\confs\sys\master__
+			'method' => \app\confs\sys\method__
 		);
 
-		if (!$path)
+		if (!strlen($path))
 			$path = $defaults['autoload'] . "/" . $defaults['homepage'];
-		$path = explode("/", $path);
+		$path = Helper::getArray($path, "/");
 		$route = array_splice($path, 0, 3);
 		$params = $path;
 		$path = array();
@@ -43,15 +47,15 @@ class Res {
 		foreach ($route as $index => $param) {
 
 			if ($param === $defaults['method']) {
-				self::$error = \app\vocabs\sys\er_icr__;
+				self::$error = \app\vocabs\sys\error\res_route__;
 				break;
 			}
 			if (preg_match('/[^a-z0-9-]/i', $param)) {
-				self::$error = \app\vocabs\sys\er_icr__;
+				self::$error = \app\vocabs\sys\error\res_route__;
 				break;
 			}
 			if ((strlen($param) > 128)) {
-				self::$error = \app\vocabs\sys\er_icr__;
+				self::$error = \app\vocabs\sys\error\res_route__;
 				break;
 			}
 
@@ -59,7 +63,7 @@ class Res {
 				case 0:
 					$controller = $param;
 					if ($controller === $defaults['master']) {
-						self::$error = \app\vocabs\sys\er_icc__;
+						self::$error = \app\vocabs\sys\error\res_controller__;
 						break 2;
 					}
 					if ($controller !== $defaults['autoload'])

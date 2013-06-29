@@ -25,7 +25,7 @@ class View {
 				$this->_assets[$type] = array();
 			return implode("\n", array_values($this->_assets[$type]));
 		}
-		$key = ($subj) ? $subj : hash('md5', $content);
+		$key = ($subj) ? hash('md5', $subj) : hash('md5', $content);
 		if (!isset($this->_assets[$type][$key]))
 			$this->_assets[$type][$key] = Html::getAsset($type, $subj, $content, $append);
 		return true;
@@ -61,7 +61,7 @@ class View {
 			$this->_includeFile($file);
 		}
 		else {
-			trigger_error(\app\vocabs\sys\er_vcl__);
+			trigger_error(\app\vocabs\sys\error\view_layout__);
 		}
 		exit();
 	}
@@ -78,7 +78,7 @@ class View {
 		$file = $this->_resolveFile($name, $type);
 
 		if (!$file) {
-			$this->error(404, \app\vocabs\sys\er_vcv__);
+			$this->error(404, \app\vocabs\sys\error\view_render__);
 		}
 		ob_start();
 		$this->_includeFile($file);
