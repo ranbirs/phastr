@@ -37,8 +37,8 @@ class Login_form extends \sys\modules\Form {
 	protected function parse()
 	{
 		$user = new \app\models\User();
-		$email = $this->xhr->post('login_email');
-		$password = $this->xhr->post('login_password');
+		$email = $this->xhr->context($this->fid, 'login_email');
+		$password = $this->xhr->context($this->fid, 'login_password');
 
 		if ($user->login($email, $password)) {
 			return array('result' => true);
@@ -48,7 +48,7 @@ class Login_form extends \sys\modules\Form {
 
 	protected function success()
 	{
-		return array('message' => "Successfully logged in", 'callback' => "location.href = '/user/'");
+		return array('message' => "<p>You have successfully signed in.</p>", 'callback' => "location.href = '/user/'");
 	}
 
 }

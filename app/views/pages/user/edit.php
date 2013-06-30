@@ -1,4 +1,6 @@
 <?
 $this->access = array('deny', 'public');
 ?>
-Edit Form...
+<section>
+	<p>User edit page...</p>
+</section>

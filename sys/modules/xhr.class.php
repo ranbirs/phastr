@@ -29,31 +29,49 @@ class Xhr {
 		return $this->request('server', $key, $value);
 	}
 
+	public function post($key = null, $value = null)
+	{
+		return $this->request('post', $key, $value);
+	}
+
 	public function get($key = null, $value = null)
 	{
 		return $this->request('get', $key, $value);
 	}
 
-	public function post($key = null, $value = null)
+	public function context($subj, $key = null, $method = 'post', $separator = "_")
 	{
-		return $this->request('post', $key, $value);
+		if (is_null($key)) {
+			$request = $this->request($method);
+			$names = array_keys($request);
+			$size = strlen($subj . $separator);
+			$context = array();
+			foreach ($names as $name) {
+				if (substr($name, 0, $size) === $subj . $separator) {
+					$key = substr($name, $size);
+					$context[$key] = $request[$name];
+				}
+			}
+			return $context;
+		}
+		return $this->request($method, $subj . $separator . $key);
 	}
 
 	public function request($type = 'post', $key = null, $value = null)
 	{
 		switch ($type) {
 			case 'server':
-				if (!is_null($value))
+				if (!is_null($key) and !is_null($value))
 					$_SERVER[$key] = $value;
 				$request = (!is_null($key)) ? ((isset($_SERVER[$key])) ? $_SERVER[$key] : null) : $_SERVER;
 				break;
 			case 'post':
-				if (!is_null($value))
+				if (!is_null($key) and !is_null($value))
 					$_POST[$key] = $value;
 				$request = (!is_null($key)) ? ((isset($_POST[$key])) ? $_POST[$key] : null) : $_POST;
 				break;
 			case 'get':
-				if (!is_null($value))
+				if (!is_null($key) and !is_null($value))
 					$_GET[$key] = $value;
 				$request = (!is_null($key)) ? ((isset($_GET[$key])) ? $_GET[$key] : null) : $_GET;
 				break;

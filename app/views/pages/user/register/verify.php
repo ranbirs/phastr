@@ -1,1 +1,6 @@
-<div class="alert alert-success">Your email has been confirmed successfully. <a href="/user/login">Sign in</a>.</div>
+<section>
+	<div class="alert alert-success">
+		<p>Your email has been confirmed successfully.</p>
+		<p>You may now <a href="/user/login">Sign in</a>.</p>
+	</div>
+</section>

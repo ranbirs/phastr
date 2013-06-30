@@ -19,7 +19,7 @@ class Html {
 			case 'script':
 				$asset = (is_null($content)) ?
 					'<script src="' . (($append) ? $subj . "?" . $append : $subj) . '"></script>' :
-					"<script>$content</script>";
+					"<script>" . $content . "</script>";
 				break;
 			case 'style':
 				$attrs = "";
@@ -29,7 +29,7 @@ class Html {
 				}
 				$asset = (is_null($content)) ?
 					'<link href="' . (($append) ? $subj . "?" . $append : $subj) . '" rel="stylesheet"' . "$attrs>" :
-					"<style>$content</style>";
+					"<style>" . $content . "</style>";
 				break;
 			case 'meta':
 				$asset = '<meta name="' . $subj . '" content="' . $content . '">';

@@ -1,4 +1,8 @@
 <?
 $this->access = array('deny', 'private');
 ?>
-<?= $this->body; ?>
+<section>
+	<div class="body">
+		<p><?= $this->body; ?></p>
+	</div>
+</section>

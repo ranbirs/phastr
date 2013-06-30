@@ -17,9 +17,8 @@ abstract class Res {
 		Load::conf('constants');
 		Load::vocab('sys/error');
 
-		$qs = \app\confs\sys\query_str__;
-		$request = (isset($_GET[$qs])) ? $_GET[$qs] : null;
-		$request = $path = strtolower(trim($request, "/"));
+		$key = \app\confs\sys\query_str__;
+		$request = (isset($_GET[$key])) ? Helper::getArray($_GET[$key], "/") : array();
 		$defaults = array(
 			'master' => \app\confs\sys\master__,
 			'autoload' => \app\confs\sys\autoload__,
@@ -28,10 +27,7 @@ abstract class Res {
 			'action' => \app\confs\sys\action__,
 			'method' => \app\confs\sys\method__
 		);
-
-		if (!strlen($path))
-			$path = $defaults['autoload'] . "/" . $defaults['homepage'];
-		$path = Helper::getArray($path, "/");
+		$path = (!empty($request)) ? $request : array($defaults['autoload'], $defaults['homepage'], $defaults['action']);
 		$route = array_splice($path, 0, 3);
 		$params = $path;
 		$path = array();
@@ -46,11 +42,11 @@ abstract class Res {
 
 		foreach ($route as $index => $param) {
 
-			if ($param === $defaults['method']) {
+			if (preg_match('/[^a-z0-9-]/i', $param)) {
 				self::$error = \app\vocabs\sys\error\res_route__;
 				break;
 			}
-			if (preg_match('/[^a-z0-9-]/i', $param)) {
+			if ($param === $defaults['method']) {
 				self::$error = \app\vocabs\sys\error\res_route__;
 				break;
 			}
@@ -80,16 +76,30 @@ abstract class Res {
 					break;
 			}
 		}
+
 		if (!isset(self::$error)) {
-			self::$request = ($request) ? $request : "/";
-			self::$path = ($request) ? implode("/", $path) : $defaults['homepage'];
-			self::$route = Helper::getPath("$controller/$page/$action", 'route');
-			self::$controller = Helper::getPath($controller);
-			self::$page = Helper::getPath($page);
-			self::$action = Helper::getPath($action);
-			self::$params = $params;
-			self::$defaults = $defaults;
+			$resource = array(
+				'request' => $request,
+				'path' => $path,
+				'controller' => $controller,
+				'page' => $page,
+				'action' => $action,
+				'params' => $params
+			);
+			self::_build($resource, $defaults);
 		}
+	}
+
+	private static function _build($resource, $defaults)
+	{
+		self::$request = (!empty($resource['request'])) ? implode("/", $resource['request']) : "/";
+		self::$path = (!empty($resource['path'])) ? implode("/", $resource['path']) : $defaults['homepage'];
+		self::$route = Helper::getPath(array($resource['controller'], $resource['page'], $resource['action']), 'route');
+		self::$controller = Helper::getPath($resource['controller']);
+		self::$page = Helper::getPath($resource['page']);
+		self::$action = Helper::getPath($resource['action']);
+		self::$params = $resource['params'];
+		self::$defaults = $defaults;
 	}
 
 	public static function request()
@@ -128,6 +138,5 @@ abstract class Res {
 			((isset(self::$params[$index])) ? self::$params[$index] : null) :
 			self::$params;
 	}
-
 
 }

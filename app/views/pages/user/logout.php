@@ -1,4 +1,6 @@
 <? 
 $this->access = array('deny', 'public');
 ?>
-<section>Logged out</section>
+<section>
+	<p>Logged out</p>
+</section>

@@ -1,5 +1,11 @@
 <?
 $this->access = array('deny', 'public');
 ?>
-<section><?= $this->body; ?></section>
-<section>teh private-page view</section>
+<section>
+	<div class="body">
+		<p><?= $this->body; ?></p>
+	</div>
+</section>
+<section>
+	<p>Teh private page...</p>
+</section>

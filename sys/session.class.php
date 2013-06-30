@@ -92,9 +92,10 @@ class Session {
 		if ($this->get($subj, $key)) {
 			if (!is_null($key)) {
 				unset($_SESSION[$this->_sid][$subj][$key]);
-				return true;
 			}
-			unset($_SESSION[$this->_sid][$subj]);
+			else {
+				unset($_SESSION[$this->_sid][$subj]);
+			}
 			return true;
 		}
 		return false;

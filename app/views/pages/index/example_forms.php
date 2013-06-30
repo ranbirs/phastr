@@ -1,10 +1,11 @@
 <?php
 
-$path = \sys\Res::route() . '/xhr/post/post_example/';
+$method = $this->request_method;
+$path = \sys\utils\Helper::getPath(array('view', 'request_example'), 'xhr') . "/";
 $script = <<<script
 	$(function () {
 		$('#post_example_trigger').click(function () {
-			$.post('{$path}',
+			$.{$method}('{$path}',
 				{
 					post_data: $('#post_example_input').val()
 				},
@@ -15,19 +16,29 @@ $script = <<<script
 		});
 	});
 script;
-
 $this->assets('script', null, $script);
-
 ?>
-<section><?= $this->body; ?></section>
-<section><?= $this->test_form; ?></section>
-<section><?= $this->simple_form; ?></section>
+<section>
+	<div class="body">
+		<p><?= $this->body; ?></p>
+	</div>
+</section>
+<section>
+	<div class="form">
+		<?= $this->test_form; ?>
+	</div>
+	<div class="form">
+		<?= $this->simple_form; ?>
+	</div>
+</section>
 <section>
 	<h3>Posting a [non-Form] request...</h3>
-	<div>
-		<input id="post_example_input" type="text">
-	</div>
-	<div>
-		<button class="btn btn-primary" type="button" id="post_example_trigger">Submit</button>
+	<div class="form">
+		<div class="row">
+			<input id="post_example_input" type="text">
+		</div>
+		<div class="row">
+			<button class="btn btn-primary" type="button" id="post_example_trigger">Submit</button>
+		</div>
 	</div>
 </section>

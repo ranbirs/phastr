@@ -57,7 +57,9 @@ $this->full_title = $this->title . " | " . $this->app_title;
 				<section class="container" id="content">
 					<h1 class="title"><?= $this->title; ?></h1>
 					<div id="body">
-						<section><?= $this->page; ?></section>
+						<div class="page">
+							<?= $this->page; ?>
+						</div>
 					</div>
 				</section>
 			</div>

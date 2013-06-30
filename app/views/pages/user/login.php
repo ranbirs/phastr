@@ -2,4 +2,8 @@
 $this->access = array('deny', 'private');
 $this->title = "User Authentication";
 ?>
-<?= $this->login_form; ?>
+<section>
+	<div class="form">
+		<?= $this->login_form; ?>
+	</div>
+</section>

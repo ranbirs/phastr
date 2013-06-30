@@ -34,42 +34,32 @@ abstract class Controller extends Constructor {
 		}
 		if (isset($params[2]) and $params[0] === \app\confs\sys\xhr_param__) {
 			if ($this->xhr->header() === $this->session->xid())
-				$this->_request($params[1], $params[2], ((isset($params[3])) ? $params[3] : 'json'));
+				$this->_xhr($params[1], $params[2]);
 		}
 		$this->render($page, $action, $params);
 	}
 
-	private function _request($type, $subj, $context)
+	private function _xhr($context, $subj)
 	{
-		switch ($type) {
-			case 'get':
-			case 'post':
-				switch ($context) {
-					case 'json':
-					case 'html':
-						$request = $this->xhr->$type();
-						if (!empty($request)) {
-							$this->view->request = $request;
-							$this->xhr->response($this->view->request($type, $subj), $context);
-						}
-						break 2;
+		switch ($context) {
+			case 'view':
+				$method = (isset($this->view->request_method)) ? $this->view->request_method : 'post';
+				$this->view->request = $this->xhr->$method();
+				if (!empty($this->view->request)) {
+					$format = (isset($this->view->request_format)) ? $this->view->request_format : 'json';
+					$this->xhr->response($this->view->request($subj), $format);
 				}
 				break;
 			case 'form':
-				switch ($context) {
-					case 'post':
-					case 'get':
-						if ($this->$type->$subj instanceof \sys\modules\Form) {
-							$request = $this->xhr->$context();
-							if (!empty($request)) {
-								$this->view->request = $request;
-								$this->xhr->response($this->$type->$subj->submit($context));
-							}
-						}
-						break 2;
+				if ($this->$context->$subj instanceof \sys\modules\Form) {
+					$method = $this->$context->$subj->method();
+					$this->view->request = $this->xhr->$method();
+					if (!empty($this->view->request)) {
+						$this->xhr->response($this->$context->$subj->submit());
+					}
 				}
+				break;
 		}
 	}
-
 
 }

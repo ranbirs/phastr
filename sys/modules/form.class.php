@@ -2,7 +2,6 @@
 
 namespace sys\modules;
 
-use sys\Res;
 use sys\Init;
 use sys\components\Validation;
 use sys\utils\Helper;
@@ -11,7 +10,7 @@ use sys\utils\Html;
 
 abstract class Form {
 
-	protected $fid, $xhr, $validation;
+	protected $fid, $method, $xhr, $validation;
 	private $_field = array(), $_build = array(), $_fields = array();
 	private $_required = array(), $_validated = array(), $_sanitized = array(), $_expire = true;
 	private $_html;
@@ -26,8 +25,19 @@ abstract class Form {
 
 	abstract protected function build();
 
-	final public function submit($method = 'post')
+	final public function fid()
 	{
+		return $this->fid;
+	}
+
+	final public function method()
+	{
+		return $this->method;
+	}
+
+	final public function submit()
+	{
+		$method = $this->method;
 		$this->validation = new Validation();
 
 		foreach ($this->_sanitized as $id => $filter) {
@@ -56,22 +66,23 @@ abstract class Form {
 
 	final public function html($data = null, $title = null, $css = array(), $method = 'post', $template = "bootstrap")
 	{
+		$this->method = $method;
 		$this->build($data);
-		$this->_close($method);
+		$this->_close();
 
 		if (!$this->_html) {
 			$this->_build['fid'] = $this->fid;
 			$this->_build['title'] = $title;
 			$this->_build['css'] = implode(" ", $css);
 			$this->_build['method'] = $method;
-			$this->_build['action'] = Helper::getPath(array('form', $this->fid, $method), 'xhr') . "/";
+			$this->_build['action'] = Helper::getPath(array('form', $this->fid), 'xhr') . "/";
 			$data = array('build' => $this->_build, 'fields' => $this->_fields);
 			$this->_html = Init::view()->template('form', $template, $data);
 		}
 		return $this->_html;
 	}
 
-	private function _close($method)
+	private function _close()
 	{
 		$key = Init::session()->key();
 		$xid = Init::session()->xid();
@@ -79,7 +90,7 @@ abstract class Form {
 		$this->field(array('input' => 'hidden'), "fid_" . $key, null,
 			$data = array(
 				'value' => $this->fid,
-				'validate' => array($method => array('value' => array($this->fid . "_fid_" . $key => $this->fid)))
+				'validate' => array($this->method => array('value' => array($this->fid . "_fid_" . $key => $this->fid)))
 			)
 		);
 		$this->field(array('input' => 'hidden'), "xid_" . $key, null,

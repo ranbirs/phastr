@@ -42,7 +42,9 @@ class Simple_form extends \sys\modules\Form {
 
 	protected function success()
 	{
-		return array('message' => 'Good job...<br>The token for this Form will not "expire" during this Session (so it may be re-submitted successfully without refreshing)');
+		return array('message' => '<p>Good job...</p>' .
+			'<p>The token for this form will not "expire" during the current session (so it may be re-submitted successfully without refreshing the page).</p>'
+		);
 	}
 
 }

@@ -45,9 +45,9 @@ class Register_form extends \sys\modules\Form {
 	protected function parse()
 	{
 		$user = new \app\models\User();
-		$name = $this->xhr->post('register_name');
-		$email = $this->xhr->post('register_email');
-		$password = $this->xhr->post('register_password');
+		$name = $this->xhr->context($this->fid, 'register_name');
+		$email = $this->xhr->context($this->fid, 'register_email');
+		$password = $this->xhr->context($this->fid, 'register_password');
 
 		if ($user->register($name, $email, $password)) {
 			return array('result' => true);

@@ -2,7 +2,6 @@
 
 namespace sys;
 
-use sys\Res;
 use sys\components\Loader;
 use sys\components\Access;
 use sys\utils\Helper;
@@ -10,7 +9,7 @@ use sys\utils\Html;
 
 class View {
 
-	public $request, $response, $error_msg;
+	public $request, $response, $request_method, $request_format, $error_msg;
 	protected $access, $assets;
 
 	function __construct()
@@ -26,9 +25,7 @@ class View {
 			return implode("\n", array_values($this->assets[$type]));
 		}
 		$key = (!is_null($subj)) ? hash('md5', $subj) : hash('md5', $content);
-		if (!isset($this->assets[$type][$key]))
-			$this->assets[$type][$key] = Html::getAsset($type, $subj, $content, $append);
-		return true;
+		return $this->assets[$type][$key] = Html::getAsset($type, $subj, $content, $append);
 	}
 
 	public function block($name)
@@ -39,13 +36,13 @@ class View {
 	public function page($name = null)
 	{
 		if (is_null($name))
-			$name = Res::controller() . "/" . Helper::getPath(Res::page(), 'tree');
+			$name = \sys\Res::controller() . "/" . Helper::getPath(\sys\Res::page(), 'tree');
 		return $this->_render($name, 'page');
 	}
 
-	public function request($type, $name)
+	public function request($name)
 	{
-		return $this->_render($type . "/" . $name, 'request');
+		return $this->_render($name, 'request');
 	}
 
 	public function template($type, $name, $data = null)
