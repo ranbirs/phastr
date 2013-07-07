@@ -16,10 +16,10 @@ class Session {
 		if (!isset($_SESSION['_sid']) or $this->_sid !== $_SESSION['_sid']) {
 			$_SESSION['_sid'] = $this->_sid;
 
-			$this->timestamp(0, true);
 			$this->set('_xid', Hash::rand());
-			$this->set('_gid', Hash::rid(true));
+			$this->set('_gid', Hash::get(Hash::rid(true), 'sha1', false));
 			$this->set('_key', $this->keygen());
+			$this->timestamp(0, true);
 			$this->set(array('_client' => 'lang'), \app\confs\app\lang__);
 		}
 		$this->timestamp(1, true);
@@ -59,8 +59,13 @@ class Session {
 
 	public function keygen($hash = null)
 	{
+<<<<<<< HEAD
+		$key = Hash::get($this->_sid . $this->xid() . $this->get('_gid'), 'sha1');
+		return (!is_null($hash)) ? ($hash === $key) : $key;
+=======
 		$keygen = Hash::get($this->_sid . $this->xid() . $this->get('_gid'), 'sha1');
 		return (!is_null($hash)) ? ($hash === $keygen) : $keygen;
+>>>>>>> d6a96e0a4e6f64cabab2fc6a9729eb94aa71ea4b
 	}
 
 	public function timestamp($key = 0, $set = false)

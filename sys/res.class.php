@@ -86,11 +86,19 @@ abstract class Res {
 				'action' => $action,
 				'params' => $params
 			);
+<<<<<<< HEAD
+			self::_init($resource, $defaults);
+		}
+	}
+
+	private static function _init($resource, $defaults)
+=======
 			self::_build($resource, $defaults);
 		}
 	}
 
 	private static function _build($resource, $defaults)
+>>>>>>> d6a96e0a4e6f64cabab2fc6a9729eb94aa71ea4b
 	{
 		self::$request = (!empty($resource['request'])) ? implode("/", $resource['request']) : "/";
 		self::$path = (!empty($resource['path'])) ? implode("/", $resource['path']) : $defaults['homepage'];

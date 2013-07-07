@@ -37,8 +37,13 @@ class Login_form extends \sys\modules\Form {
 	protected function parse()
 	{
 		$user = new \app\models\User();
+<<<<<<< HEAD
+		$email = $this->xhr->context($this->fid, 'login_email', $this->method);
+		$password = $this->xhr->context($this->fid, 'login_password', $this->method);
+=======
 		$email = $this->xhr->context($this->fid, 'login_email');
 		$password = $this->xhr->context($this->fid, 'login_password');
+>>>>>>> d6a96e0a4e6f64cabab2fc6a9729eb94aa71ea4b
 
 		if ($user->login($email, $password)) {
 			return array('result' => true);

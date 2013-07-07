@@ -42,6 +42,13 @@ abstract class Controller extends Constructor {
 	private function _xhr($context, $subj)
 	{
 		switch ($context) {
+<<<<<<< HEAD
+			case 'request':
+				$method = $this->view->xhr_method;
+				$this->view->request = $this->xhr->$method();
+				$this->view->response = $this->view->request($subj);
+				$this->view->response($this->view->xhr_layout);
+=======
 			case 'view':
 				$method = (isset($this->view->request_method)) ? $this->view->request_method : 'post';
 				$this->view->request = $this->xhr->$method();
@@ -49,14 +56,20 @@ abstract class Controller extends Constructor {
 					$format = (isset($this->view->request_format)) ? $this->view->request_format : 'json';
 					$this->xhr->response($this->view->request($subj), $format);
 				}
+>>>>>>> d6a96e0a4e6f64cabab2fc6a9729eb94aa71ea4b
 				break;
 			case 'form':
 				if ($this->$context->$subj instanceof \sys\modules\Form) {
 					$method = $this->$context->$subj->method();
 					$this->view->request = $this->xhr->$method();
+<<<<<<< HEAD
+					$this->view->response = $this->$context->$subj->submit();
+					$this->view->response('json');
+=======
 					if (!empty($this->view->request)) {
 						$this->xhr->response($this->$context->$subj->submit());
 					}
+>>>>>>> d6a96e0a4e6f64cabab2fc6a9729eb94aa71ea4b
 				}
 				break;
 		}

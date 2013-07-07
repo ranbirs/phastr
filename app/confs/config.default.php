@@ -22,7 +22,10 @@ namespace app\confs\sys;
 	const method__ = "scope";
 
 	const query_str__ = "_q";
+
 	const xhr_param__ = "xhr";
+	const xhr_method__ = "post";
+	const xhr_layout__ = "json";
 
 namespace app\confs\db;
 

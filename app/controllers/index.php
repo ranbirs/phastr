@@ -28,8 +28,13 @@ class Index extends \sys\Controller {
 		$this->load->form('index/simple_form');
 		$this->view->simple_form = $this->form->simple_form->html($data = null, $title = "A simpler form", $css = array("form-inline"));
 
+<<<<<<< HEAD
+		$this->view->xhr_method = 'post';
+		$this->view->xhr_layout = 'json';
+=======
 		$this->view->request_method = 'post';
 		$this->view->request_format = 'json';
+>>>>>>> d6a96e0a4e6f64cabab2fc6a9729eb94aa71ea4b
 	}
 
 	protected function render()

@@ -177,7 +177,10 @@ class Test_form extends \sys\modules\Form {
 
 	protected function success()
 	{
+<<<<<<< HEAD
+=======
 		print print_r($this->xhr->context, true);
+>>>>>>> d6a96e0a4e6f64cabab2fc6a9729eb94aa71ea4b
 		return array('message' => "<p>Congratulations!</p><p>That wasn't so easy...</p>");
 	}
 

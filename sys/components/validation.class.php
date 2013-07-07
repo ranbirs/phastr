@@ -60,7 +60,7 @@ class Validation {
 				$valid = (!is_null($param) and $value === \sys\Init::session()->get($param, 'token'));
 				break;
 			case 'match':
-				$valid = (!is_null($param) and $value === $param);
+				$valid = (!is_null($param) and $value == $param);
 				break;
 			case 'required':
 				if (is_array($value))

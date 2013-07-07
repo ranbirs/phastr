@@ -1,7 +1,12 @@
 <?php
 
+<<<<<<< HEAD
+$method = $this->xhr_method;
+$path = \sys\utils\Helper::getPath(array('request', 'request_example'), 'xhr') . "/";
+=======
 $method = $this->request_method;
 $path = \sys\utils\Helper::getPath(array('view', 'request_example'), 'xhr') . "/";
+>>>>>>> d6a96e0a4e6f64cabab2fc6a9729eb94aa71ea4b
 $script = <<<script
 	$(function () {
 		$('#post_example_trigger').click(function () {
