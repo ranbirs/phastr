@@ -10,13 +10,7 @@ class Xhr {
 
 	function __construct()
 	{
-<<<<<<< HEAD
 		Init::view()->assets('script', null,
-=======
-		$this->view = Init::view();
-
-		$this->view->assets('script', null,
->>>>>>> d6a96e0a4e6f64cabab2fc6a9729eb94aa71ea4b
 			'$.ajaxSetup({headers: {"' . Init::session()->key() . '": "' . Init::session()->xid() . '"}});'
 		);
 	}

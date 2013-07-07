@@ -9,15 +9,10 @@ use sys\utils\Html;
 
 class View {
 
-<<<<<<< HEAD
 	public $xhr_method = \app\confs\sys\xhr_method__;
 	public $xhr_layout = \app\confs\sys\xhr_layout__;
 	public $request, $response, $access, $error_msg;
 	private static $assets;
-=======
-	public $request, $response, $request_method, $request_format, $error_msg;
-	protected $access, $assets;
->>>>>>> d6a96e0a4e6f64cabab2fc6a9729eb94aa71ea4b
 
 	function __construct()
 	{
@@ -27,21 +22,12 @@ class View {
 	public function assets($type = 'script', $subj = null, $content = null, $append = \app\confs\app\iteration__)
 	{
 		if (is_null($subj) and is_null($content)) {
-<<<<<<< HEAD
 			if (!isset(self::$assets[$type]))
 				self::$assets[$type] = array();
 			return implode("\n", array_values(self::$assets[$type]));
 		}
 		$key = (!is_null($subj)) ? hash('md5', $subj) : hash('md5', $content);
 		return self::$assets[$type][$key] = Html::getAsset($type, $subj, $content, $append);
-=======
-			if (!isset($this->assets[$type]))
-				$this->assets[$type] = array();
-			return implode("\n", array_values($this->assets[$type]));
-		}
-		$key = (!is_null($subj)) ? hash('md5', $subj) : hash('md5', $content);
-		return $this->assets[$type][$key] = Html::getAsset($type, $subj, $content, $append);
->>>>>>> d6a96e0a4e6f64cabab2fc6a9729eb94aa71ea4b
 	}
 
 	public function block($name)
@@ -56,20 +42,11 @@ class View {
 		return $this->_render($name, 'page');
 	}
 
-<<<<<<< HEAD
-=======
-	public function request($name)
-	{
-		return $this->_render($name, 'request');
-	}
-
->>>>>>> d6a96e0a4e6f64cabab2fc6a9729eb94aa71ea4b
 	public function template($type, $name, $data = null)
 	{
 		$this->$type = $data;
 		return $this->_render($type . "/" . $name, 'template');
 	}
-
 
 	public function request($name)
 	{
