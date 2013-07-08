@@ -38,7 +38,7 @@ class Load extends Loader {
 
 	public static function vocab($path, $lang = "")
 	{
-		return self::resolveInclude((($lang) ? $lang . "/" . $path : $path), 'vocab');
+		return self::resolveInclude((strlen($lang) ? $lang . "/" . $path : $path), 'vocab');
 	}
 
 }
