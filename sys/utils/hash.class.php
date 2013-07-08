@@ -13,23 +13,23 @@ class Hash {
 		return uniqid(mt_rand(), (bool) $entropy);
 	}
 
-	public static function rand($size = 0, $algo = 'sha1')
+	public static function rand($length = 0, $algo = 'sha1')
 	{
 		$hash = hash($algo, self::rid());
-		$size = (int) $size;
-		if ($size > 0)
-			$hash = ($size > strlen($hash)) ? str_pad($hash, $size, $hash) : substr($hash, 0, $size);
+		$length = (int) $length;
+		if ($length > 0)
+			$hash = ($length > strlen($hash)) ? str_pad($hash, $length, $hash) : substr($hash, 0, $length);
 		return str_shuffle($hash);
 	}
 
-	public static function salt($size = 16)
+	public static function salt($length = 16)
 	{
 		$chars = array_merge(range('a', 'z'), range('A', 'Z'), range(0, 9));
 		$scope = count($chars) - 1;
-		$size = (int) $size;
+		$length = (int) $length;
 		$salt = array();
 
-		for ($c = 0; $c < $size; $c++) {
+		for ($c = 0; $c < $length; $c++) {
 			$rand = mt_rand(0, $scope);
 			$salt[] = $chars[$rand];
 		}

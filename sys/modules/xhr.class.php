@@ -42,11 +42,11 @@ class Xhr {
 		if (is_null($key)) {
 			$request = $this->request($method);
 			$names = array_keys($request);
-			$size = strlen($subj . $separator);
+			$length = strlen($subj . $separator);
 			$context = array();
 			foreach ($names as $name) {
-				if (substr($name, 0, $size) === $subj . $separator) {
-					$key = substr($name, $size);
+				if (substr($name, 0, $length) === $subj . $separator) {
+					$key = substr($name, $length);
 					$context[$key] = $request[$name];
 				}
 			}

@@ -17,12 +17,12 @@ class Session {
 			$_SESSION['_sid'] = $this->_sid;
 
 			$this->set('_xid', Hash::rand());
-			$this->set('_gid', Hash::get(Hash::rid(true), 'sha1', false));
+			$this->set('_gid', Hash::rid(true));
 			$this->set('_key', $this->keygen());
-			$this->timestamp(0, true);
+			$this->set(array('_timestamp' => 0), microtime(true));
 			$this->set(array('_client' => 'lang'), \app\confs\app\lang__);
 		}
-		$this->timestamp(1, true);
+		$this->set(array('_timestamp' => 1), microtime(true));
 		if (isset($_SERVER['HTTP_USER_AGENT']))
 			$this->set(array('_client' => 'agent'), $_SERVER['HTTP_USER_AGENT']);
 	}
@@ -57,15 +57,15 @@ class Session {
 		return $this->get('_client', $key);
 	}
 
+	public function timestamp($key = 0)
+	{
+		return $this->get('_timestamp', $key);
+	}
+
 	public function keygen($hash = null)
 	{
 		$key = Hash::get($this->_sid . $this->xid() . $this->get('_gid'), 'sha1');
 		return (!is_null($hash)) ? ($hash === $key) : $key;
-	}
-
-	public function timestamp($key = 0, $set = false)
-	{
-		return ((bool) $set) ? $this->set(array('_timestamp' => $key), microtime(true)) : $this->get('_timestamp', $key);
 	}
 
 	public function get($subj, $key = null)
