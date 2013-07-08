@@ -134,7 +134,7 @@ abstract class Res {
 
 	public static function params($index = null)
 	{
-		return (!empty(self::$params) and is_numeric($index)) ?
+		return (is_numeric($index)) ?
 			((isset(self::$params[$index])) ? self::$params[$index] : null) :
 			self::$params;
 	}
