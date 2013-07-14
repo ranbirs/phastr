@@ -10,8 +10,11 @@ class _scope extends \sys\components\Constructor {
 
 		\sys\Load::vocab('lexicon');
 
-		$this->view->assets('meta', "viewport", "width=device-width, initial-scale=1.0");
-		$this->view->assets('style', "/css/bootstrap-responsive.min.css?2.3.0", array('media' => "screen"), null);
+		$this->view->assets->set('meta', "viewport", "width=device-width, initial-scale=1.0");
+		$this->view->assets->set('style', "/css/bootstrap.min.css", array('media' => "all"), "2.3.0");
+		$this->view->assets->set('style', "/css/bootstrap-responsive.min.css", array('media' => "screen"), "2.3.0");
+		$this->view->assets->set('style', "/css/style.css", array('media' => "all"));
+		$this->view->assets->set('script', "/js/bootstrap.min.js", null, "2.3.2");
 
 		$this->load->nav('top_nav');
 		$this->view->top_nav = $this->nav->top_nav->html($data = null, $title = null, $css = array("nav"));

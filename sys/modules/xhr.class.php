@@ -10,7 +10,8 @@ class Xhr {
 
 	function __construct()
 	{
-		Init::view()->assets('script', null,
+		Init::view()->assets->set('script', '/js/jquery.min.js', null, "1.9.1");
+		Init::view()->assets->set(array('script' => 'inline'),
 			'$.ajaxSetup({headers: {"' . Init::session()->key() . '": "' . Init::session()->xid() . '"}});'
 		);
 	}

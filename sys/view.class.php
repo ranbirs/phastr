@@ -4,6 +4,7 @@ namespace sys;
 
 use sys\components\Loader;
 use sys\components\Access;
+use sys\components\Assets;
 use sys\utils\Helper;
 use sys\utils\Html;
 
@@ -11,23 +12,12 @@ class View {
 
 	public $xhr_method = \app\confs\sys\xhr_method__;
 	public $xhr_layout = \app\confs\sys\xhr_layout__;
-	public $request, $response, $access, $error_msg;
-	private static $assets;
+	public $request, $response, $assets, $access;
+	protected $error_msg;
 
 	function __construct()
 	{
-
-	}
-
-	public function assets($type = 'script', $subj = null, $content = null, $append = \app\confs\app\iteration__)
-	{
-		if (is_null($subj) and is_null($content)) {
-			if (!isset(self::$assets[$type]))
-				self::$assets[$type] = array();
-			return implode("\n", array_values(self::$assets[$type]));
-		}
-		$key = (!is_null($subj)) ? hash('md5', $subj) : hash('md5', $content);
-		return self::$assets[$type][$key] = Html::getAsset($type, $subj, $content, $append);
+		$this->assets = new Assets();
 	}
 
 	public function block($name)

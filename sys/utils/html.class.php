@@ -13,13 +13,21 @@ class Html {
 		return " " . implode(" ", $attrs);
 	}
 
-	public static function getAsset($type = 'script', $subj = null, $content = null, $append = null)
+	public static function getAsset($type = 'script', $context = 'file', $subj = null, $content = null, $append = null)
 	{
 		switch ($type) {
 			case 'script':
-				$asset = (is_null($content)) ?
-					'<script src="' . (($append) ? $subj . "?" . $append : $subj) . '"></script>' :
-					"<script>" . $content . "</script>";
+				switch ($context) {
+					case 'inline':
+						$asset = "<script>" . $subj . "</script>";
+						break 2;
+					case 'file':
+					case null:
+						$asset = '<script src="' . ((!is_null($append)) ? $subj . "?" . $append : $subj) . '"></script>';
+						break 2;
+					default:
+						$asset = null;
+				}
 				break;
 			case 'style':
 				$attrs = "";
@@ -27,9 +35,17 @@ class Html {
 					$attrs = self::getAttr($content);
 					$content = null;
 				}
-				$asset = (is_null($content)) ?
-					'<link href="' . (($append) ? $subj . "?" . $append : $subj) . '" rel="stylesheet"' . "$attrs>" :
-					"<style>" . $content . "</style>";
+				switch ($context) {
+					case 'inline':
+						$asset = "<style>" . $subj . "</style>";
+						break 2;
+					case 'file':
+					case null:
+						$asset = '<link href="' . ((!is_null($append)) ? $subj . "?" . $append : $subj) . '" rel="stylesheet"' . "$attrs>";
+						break 2;
+					default:
+						$asset = null;
+				}
 				break;
 			case 'meta':
 				$asset = '<meta name="' . $subj . '" content="' . $content . '">';

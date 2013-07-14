@@ -7,26 +7,11 @@ $this->full_title = $this->title . " | " . $this->app_title;
 
 	<meta charset="utf-8">
 	<meta name="author" content="5rc.org">
-
-	<?= $this->assets('meta'); ?>
+	<?= $this->assets->get('meta'); ?>
 
 	<title><?= $this->full_title; ?></title>
 
-	<link href="/css/bootstrap.min.css?2.3.0" rel="stylesheet">
-
-	<?= $this->assets('style'); ?>
-
-	<style>
-	<!--
-	nav a {cursor: pointer;}
-	h1 {font-size: 32px;}
-	h1, h2, h3 {font-weight: normal;}
-	#page {margin-top: 0;}
-	#load {padding-top: 96px;}
-	#footer {padding-top: 64px; padding-bottom: 30px;}
-	fieldset > legend, section > h2, article > h2 {font-size: 21px; font-weight: normal; line-height: 40px; margin-bottom: 20px; color: #999; border-bottom: 1px solid #e5e5e5;}
-	-->
-	</style>
+	<?= $this->assets->get('style'); ?>
 
 	<!--[if lt IE 9]>
 	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -70,10 +55,7 @@ $this->full_title = $this->title . " | " . $this->app_title;
 		<hr />
 	</footer>
 
-<script src="/js/jquery-1.9.1.min.js"></script>
-<script src="/js/bootstrap.min.js?2.3.2"></script>
-
-<?= $this->assets('script'); ?>
+<?= $this->assets->get('script'); ?>
 
 </body>
 </html>

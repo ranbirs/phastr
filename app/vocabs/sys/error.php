@@ -9,3 +9,5 @@ namespace app\vocabs\sys\error;
 
 	const view_render__ = "Current [view] could not be found";
 	const view_layout__ = "Current [layout] could not be found";
+
+	const assets_write__ = "Current [assets] could not be optimized as the configured [assets] folder is not writable";

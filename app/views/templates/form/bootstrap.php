@@ -4,7 +4,7 @@ $form = $this->form['build'];
 $fields = $this->form['fields'];
 $hidden = array();
 $action = array();
-$this->assets('script', '/js/form.js');
+$this->assets->set('script', '/js/form.js');
 ?>
 <form id="<?= $form['fid']; ?>" action="<?= $form['action']; ?>" method="<?= $form['method']; ?>" class="<?= $form['css']; ?>">
 <fieldset>

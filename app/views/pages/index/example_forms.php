@@ -17,7 +17,7 @@ $script = <<<script
 		});
 	});
 script;
-$this->assets('script', null, $script);
+$this->assets->set(array('script' => 'inline'), $script);
 ?>
 <section>
 	<div class="body">

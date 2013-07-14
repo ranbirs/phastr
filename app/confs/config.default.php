@@ -4,9 +4,13 @@ namespace app\confs\app;
 
 	const title__ = "Project";
 
-	const rewrite__ = 1;
 	const hash__ = "xid_hash_key_str";
 	const lang__ = "en";
+
+	const rewrite__ = 1;
+
+	const optimize__ = 1;
+	const assets__ = "assets";
 
 	const error_msg__ = 1;
 	const iteration__ = "a0c780df";
@@ -20,8 +24,6 @@ namespace app\confs\sys;
 	const page__ = "index";
 	const action__ = "index";
 	const method__ = "scope";
-
-	const query_str__ = "_q";
 
 	const xhr_param__ = "xhr";
 	const xhr_method__ = "post";

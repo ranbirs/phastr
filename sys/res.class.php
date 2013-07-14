@@ -17,8 +17,14 @@ abstract class Res {
 		Load::conf('constants');
 		Load::vocab('sys/error');
 
-		$key = \app\confs\sys\query_str__;
-		$request = (isset($_GET[$key])) ? Helper::getArray($_GET[$key], "/") : array();
+		$request_uri = $_SERVER['REQUEST_URI'];
+		$script_name = $_SERVER['SCRIPT_NAME'];
+		$script_name_length = strlen($script_name);
+
+		if ($script_name === substr($request_uri, 0, $script_name_length))
+			$request_uri = substr($request_uri, $script_name_length);
+		$path_info = Helper::getArray(current(explode("?", $request_uri, 2)), "/");
+
 		$defaults = array(
 			'master' => \app\confs\sys\master__,
 			'autoload' => \app\confs\sys\autoload__,
@@ -27,7 +33,7 @@ abstract class Res {
 			'action' => \app\confs\sys\action__,
 			'method' => \app\confs\sys\method__
 		);
-		$path = (!empty($request)) ? $request : array($defaults['autoload'], $defaults['homepage'], $defaults['action']);
+		$path = (!empty($path_info)) ? $path_info : array($defaults['autoload'], $defaults['homepage'], $defaults['action']);
 		$route = array_splice($path, 0, 3);
 		$params = $path;
 		$path = array();
@@ -79,7 +85,7 @@ abstract class Res {
 
 		if (!isset(self::$error)) {
 			$resource = array(
-				'request' => $request,
+				'request' => $path_info,
 				'path' => $path,
 				'controller' => $controller,
 				'page' => $page,

@@ -47,7 +47,7 @@ class Helper {
 			case 'route':
 				$path = "/" . $path;
 				if (!\app\confs\app\rewrite__)
-					$path = $_SERVER['SCRIPT_NAME'] . "?" . \app\confs\sys\query_str__ . "=" . $path;
+					$path = $_SERVER['SCRIPT_NAME'] . $path;
 				break;
 			case 'xhr':
 				$path = \sys\Res::route() . "/" . \app\confs\sys\xhr_param__ . "/" . $path;
