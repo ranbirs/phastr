@@ -155,7 +155,9 @@ abstract class Form {
 
 		if ($control == 'input') {
 			$this->_field['attr']['type'] = $type;
-			$this->_field['attr']['value'] = $this->_field['value'];
+			(!is_array($this->_field['value'])) ?
+				$this->_field['attr']['value'] = $this->_field['value'] :
+				$this->_field['stack'] = true;
 		}
 
 		if (isset($this->_field['prop'])) {
@@ -183,8 +185,6 @@ abstract class Form {
 						$key = $type;
 						break;
 				}
-				if (is_array($this->_field['value']))
-					$this->_field['stack'] = true;
 				break;
 			case 'select':
 				$options = array();

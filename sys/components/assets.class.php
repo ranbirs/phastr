@@ -23,7 +23,7 @@ class Assets {
 								null;
 						}
 						if (\app\confs\app\optimize__) {
-							return self::optimize($type, $this->_assets[$type]);
+							return $this->_optimize($type, $this->_assets[$type]);
 						}
 						else {
 							$assets = array();
@@ -82,7 +82,7 @@ class Assets {
 		}
 	}
 
-	public static function optimize($type, $assets = array())
+	private function _optimize($type, $assets = array())
 	{
 		$file_assets = array();
 		$inline_assets = array();
@@ -91,7 +91,8 @@ class Assets {
 			switch ($context) {
 				case 'file':
 					foreach ($asset as $param) {
-						$file_assets[] = $param['value'];
+						$file_assets['asset'][] = $param['asset'];
+						$file_assets['value'][] = $param['value'];
 					}
 					break;
 				case 'inline':
@@ -101,11 +102,11 @@ class Assets {
 					break;
 			}
 		}
-		if (!empty($file_assets)) {
+		if (isset($file_assets['value'])) {
 			$document_root = $_SERVER['DOCUMENT_ROOT'];
 			$content = array();
 
-			foreach ($file_assets as $file) {
+			foreach ($file_assets['value'] as $file) {
 				$content[] = @file_get_contents($document_root . $file);
 			}
 			$ext = array('script' => "js", 'style' => "css");
@@ -122,11 +123,12 @@ class Assets {
 			if (is_writable($dir)) {
 				if (!file_exists($file))
 					@file_put_contents($file, $contents);
+					$file_assets = array(Html::getAsset($type, 'file', "/" . $write_path . "/". $file_name, null, null));
 			}
 			else {
 				trigger_error(\app\vocabs\sys\error\assets_write__);
+				$file_assets = $file_assets['asset'];
 			}
-			$file_assets = array(Html::getAsset($type, 'file', "/" . $write_path . "/". $file_name, null, null));
 		}
 		return implode("\n", array_merge($file_assets, $inline_assets));
 	}

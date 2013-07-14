@@ -8,6 +8,7 @@ class Html {
 	{
 		$attrs = array();
 		foreach ($attr as $key => $val) {
+			//print_r($val);
 			$attrs[] = $key . '="' . $val . '"';
 		}
 		return " " . implode(" ", $attrs);
