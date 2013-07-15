@@ -12,7 +12,7 @@ $(function () {
 			form.removeClass('error success').find('.control-group').removeClass('error success');
 			form.find('.alert').empty().removeClass('alert-error alert-success').hide();
 			form.find('.help').empty().hide();
-			
+
 			if (data.result == false) {
 				if (data.validation.error) {
 					$.each(data.validation.error, function(index, value) {
@@ -42,19 +42,12 @@ $(function () {
 				}
 			}
 			else {
-				form.find('.help').fadeOut();
 				if (data.message) {
-					form.find('.alert').addClass('alert-success').html(data.message).slideDown(function() {
-						if (data.callback) {
-							eval('(' + data.callback + ')');
-						}
-					});
+					form.find('.alert').addClass('alert-success').html(data.message).slideDown();
 				}
-				else {
-					if (data.callback) {
-						eval('(' + data.callback + ')');
-					}
-				}
+			}
+			if (data.callback) {
+				eval('(' + data.callback + ')');
 			}
 		});
 		return false;
