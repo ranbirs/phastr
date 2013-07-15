@@ -38,11 +38,7 @@ class Simple_form extends \sys\modules\Form {
 		);
 
 		$this->expire(false);
-	}
-
-	protected function success()
-	{
-		return array('message' => '<p>Good job...</p>' .
+		$this->success('<p>Good job...</p>' .
 			'<p>The token for this form will not "expire" during the current session (so it may be re-submitted successfully without refreshing the page).</p>'
 		);
 	}

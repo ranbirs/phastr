@@ -32,9 +32,12 @@ class Login_form extends \sys\modules\Form {
 		$this->field(array('button' => 'submit'), "login_submit", "Sign in",
 			$build = array('css' => array("btn", "btn-primary"))
 		);
+
+		$tihs->success("<p>You have successfully signed in.</p>", 'callback' => "location.href = '/user/'");
+		$tihs->fail("Invalid credentials");
 	}
 
-	protected function parse()
+	protected function resolve()
 	{
 		$user = new \app\models\User();
 
@@ -42,14 +45,9 @@ class Login_form extends \sys\modules\Form {
 		$password = $this->xhr->context($this->fid, 'login_password', $this->method);
 
 		if ($user->login($email, $password)) {
-			return array('result' => true);
+			return true;
 		}
-		return array('result' => false, 'message' => "Invalid credentials");
-	}
-
-	protected function success()
-	{
-		return array('message' => "<p>You have successfully signed in.</p>", 'callback' => "location.href = '/user/'");
+		return false;
 	}
 
 }

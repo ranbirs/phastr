@@ -40,9 +40,12 @@ class Register_form extends \sys\modules\Form {
 		$this->field(array('button' => 'submit'), "register_submit", "Submit",
 			$build = array('css' => array("btn", "btn-primary"))
 		);
+
+		$this->fail(\sys\utils\Vocab::t('user\\register_fail'));
+		$this->success(\sys\utils\Vocab::t('user\\register_success'));
 	}
 
-	protected function parse()
+	protected function resolve()
 	{
 		$user = new \app\models\User();
 
@@ -51,15 +54,9 @@ class Register_form extends \sys\modules\Form {
 		$password = $this->xhr->context($this->fid, 'register_password', $this->method);
 
 		if ($user->register($name, $email, $password)) {
-			return array('result' => true);
+			return true;
 		}
-		return array('result' => false, 'message' => \sys\utils\Vocab::t('user\\register_fail'));
-	}
-
-	protected function success()
-	{
-		$msg = \sys\utils\Vocab::t('user\\register_success');
-		return array('message' => $msg, 'callback' => "");
+		return false;
 	}
 
 }

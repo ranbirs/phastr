@@ -173,11 +173,9 @@ class Test_form extends \sys\modules\Form {
 		$this->field(array('button' => 'action'), "cancel_button", "Cancel",
 			$build = array('css' => array("btn"))
 		);
-	}
 
-	protected function success()
-	{
-		return array('message' => "<p>Congratulations!</p><p>That wasn't so easy...</p>");
+		$this->success("<p>Congratulations!</p><p>That wasn't so easy...</p>");
+		$this->error("<p>There are errors that need fixing!</p>");
 	}
 
 }

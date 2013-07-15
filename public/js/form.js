@@ -12,22 +12,33 @@ $(function () {
 			form.removeClass('error success').find('.control-group').removeClass('error success');
 			form.find('.alert').empty().removeClass('alert-error alert-success').hide();
 			form.find('.help').empty().hide();
-			if (data.error) {
-				$.each(data.error.validate, function(index, value) {
-					if (value[0]) {
-						if (value[0] == 'parse') {
-							form.find('.alert').addClass('alert-error').html(value[1]).slideDown();
-						}
-						else {
+			
+			if (data.result == false) {
+				if (data.validation.error) {
+					$.each(data.validation.error, function(index, value) {
+						if (value[0]) {
 							form.addClass('error').find('.field[name^="' + value[0] + '"]').closest('.control-group').addClass('error');
 						}
+						if (value[1]) {
+							form.find('.field[name^="' + value[0] + '"]').closest('.control-group').find('.help').html(value[1]).show();
+						}
+					});
+					if (form.find('.recaptcha-challenge').length) {
+						Recaptcha.reload('t');
 					}
-					if (value[1]) {
-						form.find('.field[name^="' + value[0] + '"]').closest('.control-group').find('.help').html(value[1]).show();
-					}
-				});
-				if (form.find('.recaptcha-challenge').length) {
-					Recaptcha.reload('t');
+				}
+				if (data.validation.success) {
+					$.each(data.validation.success, function(index, value) {
+						if (value[0]) {
+							form.addClass('error').find('.field[name^="' + value[0] + '"]').closest('.control-group').addClass('success');
+						}
+						if (value[1]) {
+							form.find('.field[name^="' + value[0] + '"]').closest('.control-group').find('.help').html(value[1]).show();
+						}
+					});
+				}
+				if (data.message) {
+					form.find('.alert').addClass('alert-error').html(data.message).slideDown();
 				}
 			}
 			else {
@@ -44,16 +55,6 @@ $(function () {
 						eval('(' + data.callback + ')');
 					}
 				}
-			}
-			if (data.success) {
-				$.each(data.success.validate, function(index, value) {
-					if (value[0]) {
-						form.addClass('error').find('.field[name^="' + value[0] + '"]').closest('.control-group').addClass('success');
-					}
-					if (value[1]) {
-						form.find('.field[name^="' + value[0] + '"]').closest('.control-group').find('.help').html(value[1]).show();
-					}
-				});
 			}
 		});
 		return false;

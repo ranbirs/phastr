@@ -18,7 +18,7 @@ class Validation {
 
 	public function set($msg = null, $key = 'error', $subj = 'parse')
 	{
-		$this->_result[$key]['validate'][] = array($subj, $msg);
+		$this->_result[$key][] = array($subj, $msg);
 	}
 
 	public function resolve($id, $validation, $value = null)
