@@ -32,10 +32,9 @@ abstract class Controller extends Constructor {
 		if (empty($process)) {
 			$this->view->error(404, \app\vocabs\sys\error\controller_methods__);
 		}
-		if (isset($params[2]) and $params[0] === \app\confs\sys\xhr_param__) {
+		if (isset($params[2]) and $params[0] === \app\confs\sys\xhr_param__)
 			if ($this->xhr->header() === $this->session->xid())
 				$this->_xhr($params[1], $params[2]);
-		}
 		$this->render($page, $action, $params);
 	}
 

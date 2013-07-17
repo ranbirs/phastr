@@ -16,9 +16,7 @@ class Init extends Res {
 		if (isset(self::$error)) {
 			self::view()->error(404, self::$error);
 		}
-
 		Load::conf('autoload');
-
 		if (self::$defaults['master']) {
 			Load::controller(self::$defaults['master']);
 		}

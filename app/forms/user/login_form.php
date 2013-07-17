@@ -12,25 +12,25 @@ class Login_form extends \sys\modules\Form {
 	protected function build($data = null)
 	{
 		$this->field(array('input' => 'email'), "login_email", "Email",
-			$build = array(
+			$params = array(
 				'validate' => array(
-					'maxlength' => array('value' => 128),
+					'maxlength' => 128,
 					'email'
 				)
 			)
 		);
 
 		$this->field(array('input' => 'password'), "login_password", "Password",
-			$build = array(
+			$params = array(
 				'validate' => array(
-					'maxlength' => array('value' => 32),
+					'maxlength' => 32,
 					'required'
 				)
 			)
 		);
 
 		$this->field(array('button' => 'submit'), "login_submit", "Sign in",
-			$build = array('css' => array("btn", "btn-primary"))
+			$params = array('css' => array("btn", "btn-primary"))
 		);
 
 		$tihs->success("<p>You have successfully signed in.</p>", 'callback' => "location.href = '/user/'");

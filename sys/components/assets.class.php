@@ -27,11 +27,9 @@ class Assets {
 						}
 						else {
 							$assets = array();
-							foreach ($this->_assets[$type] as $context => $asset) {
-								foreach ($asset as $param) {
+							foreach ($this->_assets[$type] as $context => $asset)
+								foreach ($asset as $param)
 									$assets[] = $param['asset'];
-								}
-							}
 							return implode("\n", $assets);
 						}
 						break 2;
@@ -96,19 +94,17 @@ class Assets {
 					}
 					break;
 				case 'inline':
-					foreach ($asset as $param) {
+					foreach ($asset as $param)
 						$inline_assets[] = $param['asset'];
-					}
 					break;
 			}
 		}
 		if (isset($file_assets['value'])) {
 			$document_root = $_SERVER['DOCUMENT_ROOT'];
 			$content = array();
-
-			foreach ($file_assets['value'] as $file) {
+			foreach ($file_assets['value'] as $file)
 				$content[] = @file_get_contents($document_root . $file);
-			}
+
 			$ext = array('script' => "js", 'style' => "css");
 			$contents = implode("\n", $content);
 			$checksum = hash('md5', $contents);
@@ -117,13 +113,12 @@ class Assets {
 			$dir = $document_root . "/" . $write_path;
 			$file = $dir . "/" . $file_name;
 
-			if (!is_dir($dir)) {
+			if (!is_dir($dir))
 				@mkdir($dir);
-			}
 			if (is_writable($dir)) {
 				if (!file_exists($file))
 					@file_put_contents($file, $contents);
-					$file_assets = array(Html::getAsset($type, 'file', "/" . $write_path . "/". $file_name, null, null));
+				$file_assets = array(Html::getAsset($type, 'file', "/" . $write_path . "/". $file_name, null, null));
 			}
 			else {
 				trigger_error(\app\vocabs\sys\error\assets_write__);

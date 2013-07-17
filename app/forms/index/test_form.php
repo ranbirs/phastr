@@ -14,35 +14,36 @@ class Test_form extends \sys\modules\Form {
 		$required_field_msg = "This is a required field";
 
 		$this->field('markup', "", "<em>Example data</em>",
-			$build = array('value' => "<pre>" . print_r($data, true) . "</pre>")
+			$params = array('value' => "<pre>" . print_r($data, true) . "</pre>")
 		);
 
 		$this->field(array('input' =>'email'), "test_email_field", "Email field",
-			$build = array(
+			$params = array(
 				'hint' => "Hint text...this field is validated",
 				'validate' => array(
 					'email' => array(
 						'error' => "That doesn't look like an email address",
 						'success' => "Looking good"
 					),
-					'maxlength' => array('value' => 128),
+					'maxlength' => 128,
 					'required' => array('error' => $required_field_msg)
 				)
 			)
 		);
 
 		$this->field(array('input' => 'text'), "test_text_field_required", "Text field",
-			$build = array(
+			$params = array(
+				'value' => "prefilled text...",
 				'attr' => array('placeholder' => "placeholder text..."),
 				'validate' => array(
-					'maxlength' => array('value' => 32),
+					'maxlength' => 32,
 					'required' => array('error' => $required_field_msg)
 				)
 			)
 		);
 
 		$this->field(array('input' => 'checkbox'), "checkbox_field", "Checkboxes",
-			$build = array(
+			$params = array(
 				'value' => array(
 					array(
 						'value' => "somefeature",
@@ -65,7 +66,7 @@ class Test_form extends \sys\modules\Form {
 		);
 
 		$this->field(array('input' => 'radio'), "radio_field", "Radio buttons",
-			$build = array(
+			$params = array(
 				'value' => array(
 					array(
 						'value' => "fm",
@@ -85,7 +86,7 @@ class Test_form extends \sys\modules\Form {
 		);
 
 		$this->field('select', "select_field", "Select",
-			$build = array(
+			$params = array(
 				'value' => array(
 					array(
 						'value' => "",
@@ -111,7 +112,7 @@ class Test_form extends \sys\modules\Form {
 		);
 
 		$this->field('select', "multiple_select_field", "Le multiple select",
-			$build = array(
+			$params = array(
 				'value' => array(
 					array(
 						'value' => "",
@@ -138,11 +139,11 @@ class Test_form extends \sys\modules\Form {
 		);
 
 		$this->field(array('input' => 'text'), "address_field", "Practically a single field",
-			$build = array(
+			$params = array(
 				'value' => array(
 					array(
 						'value' => "",
-						'label' => "address line 1"
+						'label' => "optional labels..."
 					),
 					array(
 						'value' => "",
@@ -157,21 +158,47 @@ class Test_form extends \sys\modules\Form {
 			)
 		);
 
+		$this->field('input', "simple_field", "A super simple field", $value = "No sweat...");
+
+		$this->field('select', "simple_select", 'That goes for any "array fields" too!',
+			$value = array(
+				array(
+					'label' => "an option",
+					'value' => 'any value'
+				),
+				array(
+					'label' => "sake of example",
+					'value' => "another value"
+				)
+			)
+		);
+
+		$this->field('input', "simple_input", "Simpler even...",
+			$value = array(
+				array("value here" => "label here"),
+				array("and here" => "get some...")
+			)
+		);
+
+		$this->field('input', "simpler_input", "Even simpler!",
+			$value = array("easy peasy", "like a breeze", "how cool...is that?")
+		);
+
 		$this->field('markup', "some_markup", null,
-			$build = array('value' => "<p>Any custom markup...</p>")
+			$params = array('value' => "<p>Any custom markup...because you won't get Forms like this anywhere else!</p>")
 		);
 
 		$this->field(array('input' => 'text'), "test_text_field_optional", "An optional text field");
 
 		$this->field(array('button' => 'submit'), "submit_button", "Submit", 
-			$build = array(
+			$params = array(
 				'css' => array("btn", "btn-primary"),
 				'attr' => array('data-loading-text' => "Loading...")
 			)
 		);
 
 		$this->field(array('button' => 'action'), "cancel_button", "Cancel",
-			$build = array('css' => array("btn"))
+			$params = array('css' => array("btn"))
 		);
 
 		$this->success("<p>Congratulations!</p><p>That wasn't so easy...</p>");

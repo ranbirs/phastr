@@ -11,34 +11,33 @@ class Validation {
 
 	}
 
-	public function get($key = null)
+	public function get($status = null)
 	{
-		return (!is_null($key) and isset($this->_result[$key])) ? $this->_result[$key] : $this->_result;
+		return (!is_null($status)) ?
+			((isset($this->_result[$status])) ? $this->_result[$status] : null) :
+			$this->_result;
 	}
 
-	public function set($msg = null, $key = 'error', $subj = 'parse')
+	public function set($subj, $msg = null, $status = 'error')
 	{
-		$this->_result[$key][] = array($subj, $msg);
+		$this->_result[$status][] = array($subj, $msg);
 	}
 
 	public function resolve($id, $validation, $value = null)
 	{
 		foreach ($validation as $key => $args) {
 			$rule = (!is_int($key)) ? $key : $args;
-			$param = (isset($args['value'])) ? $args['value'] : null;
+			$param = (isset($args['value'])) ? $args['value'] : $args;
 			$valid = ($this->validate($rule, $value, $param)) ? 'success' : 'error';
 
 			if (is_array($args)) {
 				if (array_key_exists($valid, $args)) {
-					$this->set($args[$valid], $valid, $id);
+					$this->set($id, $args[$valid], $valid);
 					continue;
 				}
 			}
-			switch ($valid) {
-				case 'error':
-					$this->set("", $valid, $id);
-					break;
-			}
+			if ($valid == 'error')
+				$this->set($id, "", $valid);
 		}
 	}
 

@@ -49,9 +49,8 @@ class Database extends PDO {
 		$columns = implode(", ", $columns);
 		$q = $this->prepare("SELECT $columns FROM $table $clause");
 
-		foreach ($values as $key => $val) {
+		foreach ($values as $key => $val)
 			$q->bindValue(":$key", $val);
-		}
 		$q->execute();
 		if ($q->rowCount()) {
 			return $q->fetchAll($fetch);
@@ -63,15 +62,13 @@ class Database extends PDO {
 	{
 		$keys = array_keys($values);
 		$binds = array();
-		foreach($keys as $key) {
+		foreach($keys as $key)
 			$binds[] = "$key = :$key";
-		}
 		$binds = implode(", ", $binds);
 		$q = $this->prepare("UPDATE $table SET $binds $clause");
 
-		foreach (array_merge($values, $args) as $key => $val) {
+		foreach (array_merge($values, $args) as $key => $val)
 			$q->bindValue(":$key", $val);
-		}
 		return $q->execute();
 	}
 
@@ -82,9 +79,8 @@ class Database extends PDO {
 		$binds = ":" . implode(", :", $keys);
 		$q = $this->prepare("INSERT INTO $table ($columns) VALUES ($binds)");
 
-		foreach ($values as $key => $val) {
+		foreach ($values as $key => $val)
 			$q->bindValue(":$key", $val);
-		}
 		$q->execute();
 		return $this->lastInsertId();
 	}

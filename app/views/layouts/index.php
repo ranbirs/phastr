@@ -38,7 +38,7 @@ $this->full_title = $this->title . " | " . $this->app_title;
 
 	<div id="page">
 		<div id="load">
-			<div id="node" data-sitetitle="<?= $this->full_title; ?>" data-sitename="<?= $this->app_title; ?>"<? if ($this->callback) { ?> data-callback="<?= $this->callback; ?>"<? } ?>>
+			<div id="node">
 				<section class="container" id="content">
 					<h1 class="title"><?= $this->title; ?></h1>
 					<div id="body">

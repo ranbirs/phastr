@@ -12,33 +12,33 @@ class Register_form extends \sys\modules\Form {
 	protected function build($data = null)
 	{
 		$this->field(array('input' => 'text'), "register_name", "Name",
-			$build = array(
+			$params = array(
 				'validate' => array(
-					'maxlength' => array('value' => 64)
+					'maxlength' => 64
 				)
 			)
 		);
 
 		$this->field(array('input' => 'email'), "register_email", "Email",
-			$build = array(
+			$params = array(
 				'validate' => array(
-					'maxlength' => array('value' => 128),
+					'maxlength' => 128,
 					'email'
 				)
 			)
 		);
 
 		$this->field(array('input' => 'password'), "register_password", "Password",
-			$build = array(
+			$params = array(
 				'validate' => array(
-					'maxlength' => array('value' => 32),
+					'maxlength' => 32,
 					'required'
 				)
 			)
 		);
 
 		$this->field(array('button' => 'submit'), "register_submit", "Submit",
-			$build = array('css' => array("btn", "btn-primary"))
+			$params = array('css' => array("btn", "btn-primary"))
 		);
 
 		$this->fail(\sys\utils\Vocab::t('user\\register_fail'));

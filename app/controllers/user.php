@@ -48,9 +48,8 @@ class User extends \sys\Controller {
 
 	protected function logout_index()
 	{
-		if ($this->session->token()) {
+		if ($this->session->token())
 			$this->session->drop('_user');
-		}
 	}
 
 	protected function render()

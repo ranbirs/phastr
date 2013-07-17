@@ -31,10 +31,8 @@ foreach ($items as $index => &$item) {
 		}
 		if (($val['active']))
 			$val['css'][] = "active";
-
-		if (!empty($val['css'])) {
+		if (!empty($val['css']))
 			$val['attr']['class'] = implode(" ", $val['css']);
-		}
 		$val['attr'] = \sys\utils\Html::getAttr($val['attr']);
 
 		$leaf[] = "<li" . $val['attr'] . ">";
@@ -52,15 +50,13 @@ foreach ($items as $index => &$item) {
 	if (!empty($leaf))
 		$item['css'][] = "dropdown";
 	if (!$active) {
-		if (($item['active'] or $item['path'] === \sys\Res::path()) or
-			($item['path'] == "/" and $item['path'] === \sys\Res::request())) {
-				$item['css'][] = "active";
-				$active = true;
+		if ($item['active'] or in_array($item['path'], array(\sys\Res::path(), \sys\Res::request()))) {
+			$item['css'][] = "active";
+			$active = true;
 		}
 	}
 	if (!empty($item['css']))
 		$item['attr']['class'] = implode(" ", $item['css']);
-
 	$item['attr'] = \sys\utils\Html::getAttr($item['attr']);
 
 	$menu[] = "<li" . $item['attr'] . ">";

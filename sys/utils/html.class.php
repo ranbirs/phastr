@@ -7,10 +7,8 @@ class Html {
 	public static function getAttr($attr)
 	{
 		$attrs = array();
-		foreach ($attr as $key => $val) {
-			//print_r($val);
+		foreach ($attr as $key => $val)
 			$attrs[] = $key . '="' . $val . '"';
-		}
 		return " " . implode(" ", $attrs);
 	}
 
