@@ -17,7 +17,7 @@ class Session {
 			$_SESSION['_sid'] = $this->_sid;
 
 			$this->set('_xid', Hash::rand());
-			$this->set('_gid', Hash::rid(true));
+			$this->set('_gid', Hash::rid());
 			$this->set('_key', $this->keygen());
 			$this->set(array('_timestamp' => 0), microtime(true));
 			$this->set(array('_client' => 'lang'), \app\confs\app\lang__);

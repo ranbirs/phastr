@@ -38,7 +38,10 @@ abstract class Res {
 		$params = $path;
 		$path = array();
 
-		if (!Loader::resolveFile("controllers/" . $route[0]))
+		$controllers = Helper::getArray(\app\confs\sys\controllers__, ",");
+		$controllers[] = $defaults['autoload'];
+
+		if (!in_array(Helper::getPath($route[0]), $controllers))
 			array_unshift($route, $defaults['autoload']);
 
 		if (!isset($route[1]))
@@ -46,7 +49,7 @@ abstract class Res {
 		if (!isset($route[2]))
 			$route[2] = $defaults['action'];
 
-		foreach ($route as $index => $param) {
+		foreach ($route as $index => &$param) {
 
 			if (preg_match('/[^a-z0-9-]/i', $param)) {
 				self::$error = \app\vocabs\sys\error\res_route__;
@@ -64,11 +67,12 @@ abstract class Res {
 			switch ($index) {
 				case 0:
 					$controller = $param;
-					if ($controller === $defaults['master']) {
+					$param = Helper::getPath($param);
+					if ($param === $defaults['master']) {
 						self::$error = \app\vocabs\sys\error\res_controller__;
 						break 2;
 					}
-					if ($controller !== $defaults['autoload'])
+					if ($param !== $defaults['autoload'])
 						$path[] = $controller;
 					break;
 				case 1:
@@ -77,11 +81,13 @@ abstract class Res {
 					break;
 				case 2:
 					$action = $param;
-					if ($action !== $defaults['action'])
+					$param = Helper::getPath($param);
+					if ($param !== $defaults['action'])
 						$path[] = $action;
 					break;
 			}
 		}
+		unset($param);
 
 		if (!isset(self::$error)) {
 			$resource = array(

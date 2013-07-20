@@ -12,7 +12,7 @@ class Html {
 		return " " . implode(" ", $attrs);
 	}
 
-	public static function getAsset($type = 'script', $context = 'file', $subj = null, $content = null, $append = null)
+	public static function getAsset($type = 'script', $context = 'file', $subj = null, $params = null, $append = null)
 	{
 		switch ($type) {
 			case 'script':
@@ -30,9 +30,9 @@ class Html {
 				break;
 			case 'style':
 				$attrs = "";
-				if (is_array($content)) {
-					$attrs = self::getAttr($content);
-					$content = null;
+				if (is_array($params)) {
+					$attrs = self::getAttr($params);
+					$params = null;
 				}
 				switch ($context) {
 					case 'inline':
@@ -47,7 +47,7 @@ class Html {
 				}
 				break;
 			case 'meta':
-				$asset = '<meta name="' . $subj . '" content="' . $content . '">';
+				$asset = '<meta name="' . $subj . '" content="' . $params . '">';
 				break;
 			default:
 				$asset = null;

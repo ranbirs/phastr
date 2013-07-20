@@ -63,7 +63,7 @@ class View {
 	public function error($code, $msg = "")
 	{
 		header(" ", true, $code);
-		$this->error_msg = (\app\confs\app\error_msg__) ? $msg : "";
+		$this->error_msg = (\app\confs\app\error_msg__) ? ((isset($this->error_msg)) ? $this->error_msg : $msg) : "";
 		$this->layout("error/" . $code);
 	}
 

@@ -8,9 +8,11 @@ class Hash {
 	private static $cost = \app\confs\hash\cost__;
 	private static $salt = \app\confs\hash\salt__;
 
-	public static function rid($entropy = false)
+	public static function rid($prefix = "", $algo = 'sha1')
 	{
-		return uniqid(mt_rand(), (bool) $entropy);
+		if (!$prefix)
+			$prefix = mt_rand();
+		return self::get(uniqid($prefix, true), $algo, null);
 	}
 
 	public static function rand($length = 0, $algo = 'sha1')

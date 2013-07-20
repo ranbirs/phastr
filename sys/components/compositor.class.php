@@ -11,7 +11,7 @@ abstract class Compositor {
 		self::$instance = &$this;
 	}
 
-	final public static function instance($context)
+	public static function instance($context)
 	{
 		self::$instance->$context = self::$instance;
 		return self::$instance->$context;

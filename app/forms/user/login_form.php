@@ -33,8 +33,8 @@ class Login_form extends \sys\modules\Form {
 			$params = array('css' => array("btn", "btn-primary"))
 		);
 
-		$tihs->success("<p>You have successfully signed in.</p>", 'callback' => "location.href = '/user/'");
-		$tihs->fail("Invalid credentials");
+		$this->success("<p>You have successfully signed in.</p>", array('callback' => "location.href = '/user/'"));
+		$this->fail("Invalid credentials");
 	}
 
 	protected function resolve()

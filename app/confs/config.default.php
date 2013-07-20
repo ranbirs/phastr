@@ -19,6 +19,8 @@ namespace app\confs\sys;
 
 	const master__ = "_scope";
 	const autoload__ = "index";
+	const controllers__ = "user,example_blog";
+
 	const homepage__ = "index";
 
 	const page__ = "index";

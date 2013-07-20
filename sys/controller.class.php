@@ -13,7 +13,7 @@ abstract class Controller extends Constructor {
 
 	abstract protected function render();
 
-	final public function dispatch($default, $page, $action, $params = array())
+	public function dispatch($default, $page, $action, $params = array())
 	{
 		$methods = array(
 			$default . "_" . $default,

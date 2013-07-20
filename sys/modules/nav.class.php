@@ -16,7 +16,7 @@ abstract class Nav {
 
 	abstract protected function build();
 
-	final public function html($data = null, $title = null, $css = array(), $template = "bootstrap")
+	public function html($data = null, $title = null, $css = array(), $template = "bootstrap")
 	{
 		$this->build($data);
 

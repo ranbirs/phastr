@@ -44,9 +44,9 @@ class Assets {
 		}
 	}
 
-	public function set($type = array('script' => 'file'), $subj = null, $content = null, $append = \app\confs\app\iteration__)
+	public function set($type = array('script' => 'file'), $subj = null, $params = null, $append = \app\confs\app\iteration__)
 	{
-		$context = null;
+		$context = 'file';
 		if (is_array($type)) {
 			$context = current($type);
 			$type = key($type);
@@ -54,20 +54,16 @@ class Assets {
 		switch ($context) {
 			case 'file':
 			case 'inline':
-			case null:
 				$key = hash('md5', $subj);
-				$asset = Html::getAsset($type, $context, $subj, $content, $append);
+				$asset = Html::getAsset($type, $context, trim($subj), $params, $append);
 				switch ($type) {
 					case 'script':
 					case 'style':
-						if (!is_null($context)) {
-							$this->_assets[$type][$context][$key]['value'] = $subj;
-							return $this->_assets[$type][$context][$key]['asset'] = $asset;
-						}
-						else {
-							$this->_assets[$type]['file'][$key]['value'] = $subj;
-							return $this->_assets[$type]['file'][$key]['asset'] = $asset;
-						}
+						return $this->_assets[$type][$context][$key] = array(
+							'value' => $subj,
+							'asset' => $asset,
+							'iteration' => $append
+						);
 						break 2;
 					default:
 						return (isset($this->_assets[$type])) ?
@@ -84,13 +80,15 @@ class Assets {
 	{
 		$file_assets = array();
 		$inline_assets = array();
+		$ext = array('script' => "js", 'style' => "css");
 
 		foreach ($assets as $context => $asset) {
 			switch ($context) {
 				case 'file':
 					foreach ($asset as $param) {
-						$file_assets['asset'][] = $param['asset'];
 						$file_assets['value'][] = $param['value'];
+						$file_assets['asset'][] = $param['asset'];
+						$file_assets['checksum'][] = $param['value'] . $ext[$type] . $param['iteration'];
 					}
 					break;
 				case 'inline':
@@ -101,23 +99,20 @@ class Assets {
 		}
 		if (isset($file_assets['value'])) {
 			$document_root = $_SERVER['DOCUMENT_ROOT'];
-			$content = array();
-			foreach ($file_assets['value'] as $file)
-				$content[] = @file_get_contents($document_root . $file);
-
-			$ext = array('script' => "js", 'style' => "css");
-			$contents = implode("\n", $content);
-			$checksum = hash('md5', $contents);
 			$write_path = \app\confs\app\assets__ . "/" . $type;
-			$file_name = $checksum . "." . $ext[$type];
+			$file_name = hash('md5', implode($file_assets['checksum'])) . "." . $ext[$type];
 			$dir = $document_root . "/" . $write_path;
 			$file = $dir . "/" . $file_name;
 
 			if (!is_dir($dir))
 				@mkdir($dir);
 			if (is_writable($dir)) {
-				if (!file_exists($file))
-					@file_put_contents($file, $contents);
+				if (!file_exists($file)) {
+					$content = array();
+					foreach ($file_assets['value'] as $file_path)
+						$content[] = @file_get_contents($document_root . $file_path);
+					@file_put_contents($file, implode("\n", $content));
+				}
 				$file_assets = array(Html::getAsset($type, 'file', "/" . $write_path . "/". $file_name, null, null));
 			}
 			else {
