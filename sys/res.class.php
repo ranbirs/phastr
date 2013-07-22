@@ -8,22 +8,30 @@ use sys\utils\Helper;
 
 abstract class Res {
 
-	protected static $request, $path, $route;
-	protected static $controller, $page, $action, $params = array();
+	protected static $script, $request, $path, $route;
 	protected static $error, $defaults = array();
 
 	function __construct()
 	{
+		$this->_init();
+	}
+
+	private function _init()
+	{
 		Load::conf('constants');
 		Load::vocab('sys/error');
 
-		$request_uri = $_SERVER['REQUEST_URI'];
-		$script_name = $_SERVER['SCRIPT_NAME'];
-		$script_name_length = strlen($script_name);
+		$request['script'] = trim($_SERVER['SCRIPT_NAME'], "/");
+		$request['uri'] = trim($_SERVER['REQUEST_URI'], "/");
 
-		if ($script_name === substr($request_uri, 0, $script_name_length))
-			$request_uri = substr($request_uri, $script_name_length);
-		$path_info = Helper::getArray(current(explode("?", $request_uri, 2)), "/");
+		if ($request['script'] === substr($request['uri'], 0, strlen($request['script'])))
+			$request['uri'] = substr($request['uri'], strlen($request['script']));
+
+		$request['uri'] = explode("?", $request['uri'], 2);
+		$request['path'] = Helper::getArray($request['uri'][0], "/");
+		$request['qstr'] = array();
+		if (isset($request['uri'][1]))
+			parse_str($request['uri'][1], $request['qstr']);
 
 		$defaults = array(
 			'master' => \app\confs\sys\master__,
@@ -33,15 +41,21 @@ abstract class Res {
 			'action' => \app\confs\sys\action__,
 			'method' => \app\confs\sys\method__
 		);
-		$path = (!empty($path_info)) ? $path_info : array($defaults['autoload'], $defaults['homepage'], $defaults['action']);
-		$route = array_splice($path, 0, 3);
-		$params = $path;
-		$path = array();
+		if (!empty($request['path'])) {
+			$path = $request['path'];
+			$request['path'] = implode("/", $path);
+		}
+		else {
+			$path = array($defaults['autoload'], $defaults['homepage'], $defaults['action']);
+			$request['path'] = "/";
+		}
+		$route = array_map('strtolower', array_splice($path, 0, 3));
+		$request['params'] = $path;
 
-		$controllers = Helper::getArray(\app\confs\sys\controllers__, ",");
-		$controllers[] = $defaults['autoload'];
+		$scope = Helper::getArray(\app\confs\sys\controllers__, ",");
+		$scope[] = $defaults['autoload'];
 
-		if (!in_array(Helper::getPath($route[0]), $controllers))
+		if (!in_array(Helper::getPath($route[0]), $scope))
 			array_unshift($route, $defaults['autoload']);
 
 		if (!isset($route[1]))
@@ -49,74 +63,52 @@ abstract class Res {
 		if (!isset($route[2]))
 			$route[2] = $defaults['action'];
 
-		foreach ($route as $index => &$param) {
+		$request['route'] = Helper::getpath($route, 'route');
+		$path = array();
 
-			if (preg_match('/[^a-z0-9-]/i', $param)) {
-				self::$error = \app\vocabs\sys\error\res_route__;
-				break;
+		foreach ($route as $index => &$arg) {
+
+			if (preg_match('/[^a-z0-9-]/', $arg)) {
+				return self::$error = \app\vocabs\sys\error\res_route__;
 			}
-			if ($param === $defaults['method']) {
-				self::$error = \app\vocabs\sys\error\res_route__;
-				break;
+			if ($arg === $defaults['method']) {
+				return self::$error = \app\vocabs\sys\error\res_route__;
 			}
-			if ((strlen($param) > 128)) {
-				self::$error = \app\vocabs\sys\error\res_route__;
-				break;
+			if ((strlen($arg) > 128)) {
+				return self::$error = \app\vocabs\sys\error\res_route__;
 			}
+			$param = $arg;
+			$arg = Helper::getPath($arg);
 
 			switch ($index) {
 				case 0:
-					$controller = $param;
-					$param = Helper::getPath($param);
-					if ($param === $defaults['master']) {
-						self::$error = \app\vocabs\sys\error\res_controller__;
-						break 2;
+					if ($arg === $defaults['master']) {
+						return self::$error = \app\vocabs\sys\error\res_controller__;
 					}
-					if ($param !== $defaults['autoload'])
-						$path[] = $controller;
+					if ($arg !== $defaults['autoload'])
+						$path[] = $param;
 					break;
 				case 1:
-					$page = $param;
-					$path[] = $page;
+					$path[] = $param;
 					break;
 				case 2:
-					$action = $param;
-					$param = Helper::getPath($param);
-					if ($param !== $defaults['action'])
-						$path[] = $action;
+					if ($arg !== $defaults['action'])
+						$path[] = $param;
 					break;
 			}
 		}
-		unset($param);
+		unset($arg);
 
-		if (!isset(self::$error)) {
-			$resource = array(
-				'request' => $path_info,
-				'path' => $path,
-				'controller' => $controller,
-				'page' => $page,
-				'action' => $action,
-				'params' => $params
-			);
-			self::_init($resource, $defaults);
-		}
-	}
-
-	private static function _init($resource, $defaults)
-	{
-		self::$request = (!empty($resource['request'])) ? implode("/", $resource['request']) : "/";
-		self::$path = (!empty($resource['path'])) ? implode("/", $resource['path']) : $defaults['homepage'];
-		self::$route = Helper::getPath(array($resource['controller'], $resource['page'], $resource['action']), 'route');
-		self::$controller = Helper::getPath($resource['controller']);
-		self::$page = Helper::getPath($resource['page']);
-		self::$action = Helper::getPath($resource['action']);
-		self::$params = $resource['params'];
+		self::$script = $script;
+		self::$request = $request;
+		self::$path = implode("/", $path);
+		self::$route = $route;
 		self::$defaults = $defaults;
 	}
 
-	public static function request()
+	public static function request($context = 'path')
 	{
-		return self::$request;
+		return (isset(self::$request[$context])) ? self::$request[$context] : null;
 	}
 
 	public static function path()
@@ -126,29 +118,29 @@ abstract class Res {
 
 	public static function route()
 	{
-		return self::$route;
+		return self::$request['route'];
 	}
 
 	public static function controller()
 	{
-		return self::$controller;
+		return self::$route[0];
 	}
 
 	public static function page()
 	{
-		return self::$page;
+		return self::$route[1];
 	}
 
 	public static function action()
 	{
-		return self::$action;
+		return self::$route[2];
 	}
 
 	public static function params($index = null)
 	{
 		return (is_numeric($index)) ?
-			((isset(self::$params[$index])) ? self::$params[$index] : null) :
-			self::$params;
+			((isset(self::$request['params'][$index])) ? self::$request['params'][$index] : null) :
+			self::$request['params'];
 	}
 
 }

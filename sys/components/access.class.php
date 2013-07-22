@@ -2,6 +2,8 @@
 
 namespace sys\components;
 
+use sys\Init;
+
 class Access {
 
 	public static function resolveRule($rule, $role)
@@ -13,7 +15,7 @@ class Access {
 			case 'public':
 				switch ($rule) {
 					case 'deny':
-						$access = (!is_null(\sys\Init::session()->token()));
+						$access = (!is_null(Init::session()->token()));
 						break 2;
 				}
 				$access = true;
@@ -21,7 +23,7 @@ class Access {
 			case 'private':
 				switch ($rule) {
 					case 'deny':
-						$access = (is_null(\sys\Init::session()->token()));
+						$access = (is_null(Init::session()->token()));
 						break 2;
 				}
 				$access = true;

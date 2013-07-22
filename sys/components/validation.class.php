@@ -2,6 +2,8 @@
 
 namespace sys\components;
 
+use sys\Init;
+
 class Validation {
 
 	private $_result = array();
@@ -52,11 +54,11 @@ class Validation {
 					$valid = false;
 					break;
 				}
-				$request = \sys\Init::xhr()->$rule(key($param));
+				$request = Init::xhr()->$rule(key($param));
 				$valid = (!is_null($value) and $value === $request and $request === current($param));
 				break;
 			case 'token':
-				$valid = (!is_null($param) and $value === \sys\Init::session()->get($param, 'token'));
+				$valid = (!is_null($param) and $value === Init::session()->get($param, 'token'));
 				break;
 			case 'match':
 				$valid = (!is_null($param) and $value == $param);

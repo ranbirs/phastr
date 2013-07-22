@@ -20,8 +20,8 @@ class Init extends Res {
 		if (self::$defaults['master']) {
 			Load::controller(self::$defaults['master']);
 		}
-		Load::controller(self::$controller)
-			->dispatch(self::$defaults['method'], self::$page, self::$action, self::$params);
+		Load::controller(self::controller())
+			->dispatch(self::$defaults['method'], self::page(), self::action(), self::params());
 		exit();
 	}
 
