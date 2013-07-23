@@ -45,9 +45,10 @@ class Helper {
 				$path = str_replace(array("__", "--", "-"), array("/", "/", "_"), $path);
 				break;
 			case 'route':
-				$path = "/" . $path;
-				if (!\app\confs\app\rewrite__)
-					$path = \sys\Res::request('script') . $path;
+				$base = \app\confs\app\rewrite_base__;
+				if ($base)
+					$base = "/" . $base;
+				$path = (\app\confs\app\rewrite__) ? $base . "/" . $path : $base . "/?" . \app\confs\sys\path_key__ . "=" . $path;
 				break;
 			case 'xhr':
 				$path = \sys\Res::route() . "/" . \app\confs\sys\xhr_param__ . "/" . $path;

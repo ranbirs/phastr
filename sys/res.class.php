@@ -8,7 +8,7 @@ use sys\utils\Helper;
 
 abstract class Res {
 
-	protected static $script, $request, $path, $route;
+	protected static $request, $path, $route;
 	protected static $error, $defaults = array();
 
 	function __construct()
@@ -21,17 +21,9 @@ abstract class Res {
 		Load::conf('constants');
 		Load::vocab('sys/error');
 
-		$request['script'] = trim($_SERVER['SCRIPT_NAME'], "/");
-		$request['uri'] = trim($_SERVER['REQUEST_URI'], "/");
-
-		if ($request['script'] === substr($request['uri'], 0, strlen($request['script'])))
-			$request['uri'] = substr($request['uri'], strlen($request['script']));
-
-		$request['uri'] = explode("?", $request['uri'], 2);
-		$request['path'] = Helper::getArray($request['uri'][0], "/");
-		$request['qstr'] = array();
-		if (isset($request['uri'][1]))
-			parse_str($request['uri'][1], $request['qstr']);
+		$key = \app\confs\sys\path_key__;
+		$request['path'] = (isset($_GET[$key])) ? Helper::getArray($_GET[$key], "/") : array();
+		unset($_GET[$key]);
 
 		$defaults = array(
 			'master' => \app\confs\sys\master__,
@@ -99,7 +91,6 @@ abstract class Res {
 		}
 		unset($arg);
 
-		self::$script = $script;
 		self::$request = $request;
 		self::$path = implode("/", $path);
 		self::$route = $route;
@@ -140,7 +131,7 @@ abstract class Res {
 	{
 		return (is_numeric($index)) ?
 			((isset(self::$request['params'][$index])) ? self::$request['params'][$index] : null) :
-			self::$request['params'];
+			((is_null($index)) ? self::$request['params'] : null);
 	}
 
 }

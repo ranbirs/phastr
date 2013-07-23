@@ -8,6 +8,7 @@ namespace app\confs\app;
 	const lang__ = "en";
 
 	const rewrite__ = 1;
+	const rewrite_base__ = "";
 
 	const optimize__ = 1;
 	const assets__ = "assets";
@@ -16,6 +17,8 @@ namespace app\confs\app;
 	const iteration__ = "a0c780df";
 
 namespace app\confs\sys;
+
+	const path_key__ = "_q";
 
 	const master__ = "_scope";
 	const autoload__ = "index";
