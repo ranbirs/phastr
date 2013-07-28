@@ -2,8 +2,9 @@
 
 namespace sys;
 
-	const app_base__ = "app/";
 	const sys_base__ = "sys/";
+	const app_base__ = "app/";
+	const app_public__ = "public/";
 
 set_include_path(dirname(__DIR__));
 

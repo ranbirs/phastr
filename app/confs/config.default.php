@@ -9,16 +9,15 @@ namespace app\confs\app;
 
 	const rewrite__ = 1;
 	const rewrite_base__ = "";
+	const rewrite_key__ = "q";
 
 	const optimize__ = 1;
 	const assets__ = "assets";
 
-	const error_msg__ = 1;
+	const errors__ = 1;
 	const iteration__ = "a0c780df";
 
 namespace app\confs\sys;
-
-	const path_key__ = "_q";
 
 	const master__ = "_scope";
 	const autoload__ = "index";
@@ -30,9 +29,8 @@ namespace app\confs\sys;
 	const action__ = "index";
 	const method__ = "scope";
 
-	const xhr_param__ = "xhr";
-	const xhr_method__ = "post";
-	const xhr_layout__ = "json";
+	const request_method__ = "post";
+	const request_layout__ = "html";
 
 namespace app\confs\db;
 

@@ -4,9 +4,9 @@ namespace sys\utils;
 
 class Conf {
 
-	public static function k($const, $append = "__")
+	public static function k($const)
 	{
-		return constant("\\app\\confs\\" . $const . $append);
+		return constant("\\app\\confs\\" . $const . "__");
 	}
 
 }

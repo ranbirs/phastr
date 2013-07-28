@@ -6,6 +6,9 @@ use sys\utils\Helper;
 
 class Loader {
 
+	const instance__ = 'instance';
+	const composite__ = 'composite';
+
 	public static function includeFile($path, $ext = ".php")
 	{
 		require_once Helper::getPath($path) . $ext;
@@ -34,11 +37,9 @@ class Loader {
 		$class = Helper::getPathClass("\\$base\\" . $path);
 		$instance = new $class;
 
-		switch ($control) {
-			case 'composite':
-				$subj = Helper::getPathName($path);
-				\sys\components\Compositor::instance($context)->$subj = $instance;
-				break;
+		if ($control === self::composite__) {
+			$subj = Helper::getPathName($path);
+			\sys\components\Compositor::instance($context)->$subj = $instance;
 		}
 		return $instance;
 	}

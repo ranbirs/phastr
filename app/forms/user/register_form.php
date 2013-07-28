@@ -49,9 +49,9 @@ class Register_form extends \sys\modules\Form {
 	{
 		$user = new \app\models\User();
 
-		$name = $this->xhr->context($this->fid, 'register_name', $this->method);
-		$email = $this->xhr->context($this->fid, 'register_email', $this->method);
-		$password = $this->xhr->context($this->fid, 'register_password', $this->method);
+		$name = $this->request->field($this->fid(), 'register_name', $this->method());
+		$email = $this->request->field($this->fid(), 'register_email', $this->method());
+		$password = $this->request->field($this->fid(), 'register_password', $this->method());
 
 		if ($user->register($name, $email, $password)) {
 			return true;

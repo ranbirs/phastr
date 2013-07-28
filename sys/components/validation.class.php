@@ -6,6 +6,9 @@ use sys\Init;
 
 class Validation {
 
+	const error__ = 'error';
+	const success__ = 'success';
+
 	private $_result = array();
 
 	function __construct()
@@ -20,7 +23,7 @@ class Validation {
 			$this->_result;
 	}
 
-	public function set($subj, $msg = null, $status = 'error')
+	public function set($subj, $msg = null, $status = self::error__)
 	{
 		$this->_result[$status][] = array($subj, $msg);
 	}
@@ -30,7 +33,7 @@ class Validation {
 		foreach ($validation as $key => $args) {
 			$rule = (!is_int($key)) ? $key : $args;
 			$param = (isset($args['value'])) ? $args['value'] : $args;
-			$valid = ($this->validate($rule, $value, $param)) ? 'success' : 'error';
+			$valid = ($this->validate($rule, $value, $param)) ? self::success__ : self::error__;
 
 			if (is_array($args)) {
 				if (array_key_exists($valid, $args)) {
@@ -38,7 +41,7 @@ class Validation {
 					continue;
 				}
 			}
-			if ($valid == 'error')
+			if ($valid === self::error__)
 				$this->set($id, "", $valid);
 		}
 	}
@@ -54,7 +57,7 @@ class Validation {
 					$valid = false;
 					break;
 				}
-				$request = Init::xhr()->$rule(key($param));
+				$request = Init::request()->$rule(key($param));
 				$valid = (!is_null($value) and $value === $request and $request === current($param));
 				break;
 			case 'token':

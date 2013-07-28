@@ -21,7 +21,7 @@ class Example_blog extends \sys\Controller {
 
 	protected function render()
 	{
-		$this->view->page = $this->view->page(\sys\Res::path());
+		$this->view->page = $this->view->page(\sys\Init::route()->path());
 		$this->view->layout('index');
 	}
 

@@ -2,18 +2,15 @@
 
 namespace sys;
 
+use sys\Init;
+use sys\components\Assets;
 use sys\components\Loader;
 use sys\components\Access;
-use sys\components\Assets;
 use sys\utils\Helper;
-use sys\utils\Html;
 
 class View {
 
-	public $xhr_method = \app\confs\sys\xhr_method__;
-	public $xhr_layout = \app\confs\sys\xhr_layout__;
-	public $request, $response, $assets, $access;
-	protected $error_msg;
+	public $request, $response, $assets, $access, $error;
 
 	function __construct()
 	{
@@ -28,7 +25,7 @@ class View {
 	public function page($name = null)
 	{
 		if (is_null($name))
-			$name = \sys\Res::controller() . "/" . Helper::getPath(\sys\Res::page(), 'tree');
+			$name = Init::route()->controller() . "/" . Helper::getPath(Init::route()->page(), 'tree');
 		return $this->_render($name, 'page');
 	}
 
@@ -43,9 +40,9 @@ class View {
 		return $this->_render($name, 'request');
 	}
 
-	public function response($layout = \app\confs\sys\xhr_layout__)
+	public function response($layout = \app\confs\sys\request_layout__)
 	{
-		$this->layout(\app\confs\sys\xhr_param__ . "/$layout");
+		$this->layout(\sys\components\Request::param__ . "/" . $layout);
 	}
 
 	public function layout($name)
@@ -63,7 +60,7 @@ class View {
 	public function error($code, $msg = "")
 	{
 		header(" ", true, $code);
-		$this->error_msg = (\app\confs\app\error_msg__) ? ((isset($this->error_msg)) ? $this->error_msg : $msg) : "";
+		$this->error = (\app\confs\app\errors__) ? ((!empty($msg)) ? $msg : ((isset($this->error)) ? $this->error : "")) : "";
 		$this->layout("error/" . $code);
 	}
 

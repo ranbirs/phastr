@@ -13,22 +13,22 @@ class Load extends Loader {
 
 	public function model($path)
 	{
-		return self::resolveInclude($path, 'model', 'composite');
+		return self::resolveInclude($path, 'model', self::composite__);
 	}
 
 	public function form($path)
 	{
-		return self::resolveInclude($path, 'form', 'composite');
+		return self::resolveInclude($path, 'form', self::composite__);
 	}
 
 	public function nav($path)
 	{
-		return self::resolveInclude($path, 'nav', 'composite');
+		return self::resolveInclude($path, 'nav', self::composite__);
 	}
 
 	public static function controller($path)
 	{
-		return self::resolveInclude($path, 'controller', 'instance');
+		return self::resolveInclude($path, 'controller', self::instance__);
 	}
 
 	public static function conf($path)

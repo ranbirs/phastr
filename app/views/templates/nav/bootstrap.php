@@ -24,7 +24,7 @@ foreach ($items as $index => &$item) {
 
 		$val['active'] = false;
 		if (!$active) {
-			if (\sys\Res::path() === $val['path']) {
+			if (\sys\Init::route()->path() === $val['path']) {
 				$val['active'] = true;
 				$item['active'] = true;
 			}
@@ -50,7 +50,7 @@ foreach ($items as $index => &$item) {
 	if (!empty($leaf))
 		$item['css'][] = "dropdown";
 	if (!$active) {
-		if ($item['active'] or in_array($item['path'], array(\sys\Res::path(), \sys\Res::request()))) {
+		if ($item['active'] or in_array($item['path'], array(\sys\Init::route()->path(), \sys\Init::route()->path(true)))) {
 			$item['css'][] = "active";
 			$active = true;
 		}

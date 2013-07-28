@@ -41,8 +41,8 @@ class Login_form extends \sys\modules\Form {
 	{
 		$user = new \app\models\User();
 
-		$email = $this->xhr->context($this->fid, 'login_email', $this->method);
-		$password = $this->xhr->context($this->fid, 'login_password', $this->method);
+		$email = $this->request->field($this->fid(), 'login_email', $this->method());
+		$password = $this->request->field($this->fid(), 'login_password', $this->method());
 
 		if ($user->login($email, $password)) {
 			return true;

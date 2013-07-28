@@ -1,7 +1,7 @@
 <?php
 
-$method = $this->xhr_method;
-$path = \sys\utils\Helper::getPath(array('request', 'request_example'), 'xhr') . "/";
+$method = \sys\Init::request()->method;
+$path = \sys\utils\Helper::getPath(array('request', 'request_example'), 'ajax') . "/";
 
 $script = <<<script
 	$(function () {

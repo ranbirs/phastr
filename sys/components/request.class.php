@@ -1,16 +1,18 @@
 <?php
 
-namespace sys\modules;
+namespace sys\components;
 
 use sys\Init;
 
-class Xhr {
+class Request {
 
-	protected $view;
+	const param__ = 'ajax';
+
+	public $method = \app\confs\sys\request_method__;
+	public $layout = \app\confs\sys\request_layout__;
 
 	function __construct()
 	{
-		Init::view()->assets->set('script', '/js/jquery.min.js', null, "1.9.1");
 		Init::view()->assets->set(array('script' => 'inline'),
 			'$.ajaxSetup({headers: {"' . Init::session()->key() . '": "' . Init::session()->xid() . '"}});'
 		);
@@ -38,7 +40,7 @@ class Xhr {
 		return $this->request('get', $key, $value);
 	}
 
-	public function context($subj, $key = null, $method = 'post', $separator = "_")
+	public function field($subj, $key = null, $method = 'post', $separator = "_")
 	{
 		if (is_null($key)) {
 			$request = $this->request($method);

@@ -58,7 +58,7 @@ class User extends \sys\Model {
 			$host = $_SERVER['SERVER_NAME'];
 			$addr = "noreply@$host";
 			$from = \sys\utils\Conf::k('app\\title');
-			$path = \sys\Res::path();
+			$path = \sys\Init::route()->path();
 			$xid = \sys\Init::session()->xid();
 			$headers = "From: $from <$addr>\n";
 			$subject = \sys\utils\Vocab::t('user\\register_verify_email_subject');

@@ -4,11 +4,9 @@ namespace sys\utils;
 
 class Vocab {
 
-	private static $lang;
-
-	public static function t($const, $lang = null, $append = "__")
+	public static function t($const)
 	{
-		return constant("\\app\\vocabs\\" . $const . $append);
+		return constant("\\app\\vocabs\\" . $const . "__");
 	}
 
 }

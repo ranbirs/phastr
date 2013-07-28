@@ -7,7 +7,7 @@ use sys\components\Compositor;
 
 abstract class Constructor extends Compositor {
 
-	protected $load, $view, $session, $xhr;
+	protected $load, $view, $session, $request;
 
 	function __construct()
 	{
@@ -16,7 +16,7 @@ abstract class Constructor extends Compositor {
 		$this->load = Init::load();
 		$this->view = Init::view();
 		$this->session = Init::session();
-		$this->xhr = Init::xhr();
+		$this->request = Init::request();
 	}
 
 }

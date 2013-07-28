@@ -34,27 +34,32 @@ class Helper {
 	{
 		if (is_array($path))
 			$path = implode("/", $path);
+		$path = strtolower($path);
+
 		switch ($type) {
 			case 'label':
 				$path = str_replace(array("--", "-"), array("__", "_"), $path);
 				break;
 			case 'path':
-				$path = str_replace(array("__", "_"), array("--", "-"), $path);
+				$path = str_replace(array("__", "/", "_"), array("--", "--", "-"), $path);
 				break;
 			case 'tree':
 				$path = str_replace(array("__", "--", "-"), array("/", "/", "_"), $path);
 				break;
 			case 'route':
-				$base = \app\confs\app\rewrite_base__;
-				if ($base)
-					$base = "/" . $base;
-				$path = (\app\confs\app\rewrite__) ? $base . "/" . $path : $base . "/?" . \app\confs\sys\path_key__ . "=" . $path;
+				$path = (\app\confs\app\rewrite__) ? self::getPath($path, 'base') : self::getPath("", 'base') . "?_q=" . $path;
 				break;
-			case 'xhr':
-				$path = \sys\Res::route() . "/" . \app\confs\sys\xhr_param__ . "/" . $path;
+			case 'ajax':
+				$path = \sys\Init::route()->get() . "/" . \sys\components\Request::param__ . "/" . $path;
+				break;
+			case 'base':
+				$base = \app\confs\app\rewrite_base__;
+				$path = ($base) ?
+					(($path) ? "/" . $base . "/" . $path : "/" . $base . "/") :
+					(($path) ? "/" . $path : "/");
 				break;
 		}
-		return strtolower($path);
+		return $path;
 	}
 
 	public static function getArgs($params = null, $delimiter = ":")

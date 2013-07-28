@@ -32,25 +32,26 @@ abstract class Controller extends Constructor {
 		if (empty($process)) {
 			$this->view->error(404, \app\vocabs\sys\error\controller_methods__);
 		}
-		if (isset($params[2]) and $params[0] === \app\confs\sys\xhr_param__)
-			if ($this->xhr->header() === $this->session->xid())
-				$this->_xhr($params[1], $params[2]);
+		if (isset($params[2]) and $params[0] === \sys\components\Request::param__)
+			if ($this->request->header() === $this->session->xid())
+				$this->_request($params[1], $params[2]);
+
 		$this->render($page, $action, $params);
 	}
 
-	private function _xhr($context, $subj)
+	private function _request($context, $subj)
 	{
 		switch ($context) {
 			case 'request':
-				$method = $this->view->xhr_method;
-				$this->view->request = $this->xhr->$method();
+				$method = $this->request->method;
+				$this->view->request = $this->request->$method();
 				$this->view->response = $this->view->request($subj);
-				$this->view->response($this->view->xhr_layout);
+				$this->view->response($this->request->layout);
 				break;
 			case 'form':
 				if ($this->$context->$subj instanceof \sys\modules\Form) {
 					$method = $this->$context->$subj->method();
-					$this->view->request = $this->xhr->$method();
+					$this->view->request = $this->request->$method();
 					$this->view->response = $this->$context->$subj->submit();
 					$this->view->response('json');
 				}

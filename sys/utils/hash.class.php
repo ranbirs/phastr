@@ -4,9 +4,11 @@ namespace sys\utils;
 
 class Hash {
 
-	private static $algo = \app\confs\hash\algo__;
-	private static $cost = \app\confs\hash\cost__;
-	private static $salt = \app\confs\hash\salt__;
+	private static $conf = array(
+		'algo' => \app\confs\hash\algo__,
+		'cost' => \app\confs\hash\cost__,
+		'salt' => \app\confs\hash\salt__
+	);
 
 	public static function rid($prefix = "", $algo = 'sha1')
 	{
@@ -45,7 +47,7 @@ class Hash {
 
 	public static function gen($data)
 	{
-		return crypt($data, self::$algo . self::$cost . '$' . self::salt(self::$salt));
+		return crypt($data, self::$conf['algo'] . self::$conf['cost'] . '$' . self::salt(self::$conf['salt']));
 	}
 
 	public static function resolve($hash, $data, $algo = 'sha512', $key = \app\confs\app\hash__)
@@ -54,7 +56,7 @@ class Hash {
 			$subj = self::get($data, $algo, $key);
 		}
 		else {
-			$salt = substr($hash, 0, strlen(self::$algo . self::$cost) + 1 + self::$salt);
+			$salt = substr($hash, 0, strlen(self::$conf['algo'] . self::$conf['cost']) + 1 + self::$conf['salt']);
 			$subj = crypt($data, $salt);
 		}
 		return ($hash === $subj);

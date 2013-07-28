@@ -12,17 +12,18 @@ class Html {
 		return " " . implode(" ", $attrs);
 	}
 
-	public static function getAsset($type = 'script', $context = 'file', $subj = null, $params = null, $append = null)
+	public static function getAsset($type = 'script', $context = null, $subj = null, $params = null, $append = null)
 	{
 		switch ($type) {
 			case 'script':
 				switch ($context) {
+					case null:
+					case 'file':
+						$subj = \sys\utils\Helper::getPath($subj, 'base');
+						$asset = '<script src="' . ((!is_null($append)) ? $subj . "?" . $append : $subj) . '"></script>';
+						break 2;
 					case 'inline':
 						$asset = "<script>" . $subj . "</script>";
-						break 2;
-					case 'file':
-					case null:
-						$asset = '<script src="' . ((!is_null($append)) ? $subj . "?" . $append : $subj) . '"></script>';
 						break 2;
 					default:
 						$asset = null;
@@ -35,12 +36,13 @@ class Html {
 					$params = null;
 				}
 				switch ($context) {
+					case null:
+					case 'file':
+						$subj = \sys\utils\Helper::getPath($subj, 'base');
+						$asset = '<link href="' . ((!is_null($append)) ? $subj . "?" . $append : $subj) . '" rel="stylesheet"' . $attrs . ">";
+						break 2;
 					case 'inline':
 						$asset = "<style>" . $subj . "</style>";
-						break 2;
-					case 'file':
-					case null:
-						$asset = '<link href="' . ((!is_null($append)) ? $subj . "?" . $append : $subj) . '" rel="stylesheet"' . "$attrs>";
 						break 2;
 					default:
 						$asset = null;

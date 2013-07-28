@@ -10,49 +10,50 @@ use sys\utils\Html;
 
 abstract class Form {
 
-	protected $fid, $method, $xhr, $validation;
+	protected $request, $validation;
+	private $_fid, $_method;
 	private $_field = array(), $_build = array(), $_fields = array();
 	private $_required = array(), $_validated = array(), $_sanitized = array();
 	private $_html, $_success, $_fail, $_error, $_expire;
 
 	function __construct()
 	{
-		$this->fid = strtolower(Helper::getClassName(get_class($this)));
-		if (!Init::session()->get($this->fid, 'token'))
-			Init::session()->set(array($this->fid => 'token'), Hash::rand());
-		$this->xhr = Init::xhr();
+		$this->_fid = strtolower(Helper::getClassName(get_class($this)));
+		if (!Init::session()->get($this->_fid, 'token'))
+			Init::session()->set(array($this->_fid => 'token'), Hash::rand());
+		$this->request = Init::request();
 	}
 
 	abstract protected function build();
 
 	public function fid()
 	{
-		return $this->fid;
+		return $this->_fid;
 	}
 
 	public function method()
 	{
-		return $this->method;
+		return $this->_method;
 	}
 
 	public function submit()
 	{
-		$method = $this->method;
+		$method = $this->_method;
 		$this->validation = new Validation();
 
 		foreach ($this->_sanitized as $id => $filter)
-			$this->xhr->$method($id, $this->validation->sanitize($filter, $this->xhr->$method($id)));
+			$this->requet->$method($id, $this->validation->sanitize($filter, $this->ajax->$method($id)));
 		foreach ($this->_validated as $id => $validation)
-			$this->validation->resolve($id, $validation, $this->xhr->$method($id));
+			$this->validation->resolve($id, $validation, $this->request->$method($id));
 
-		if (array_key_exists('error', $this->validation->get())) {
+		if (array_key_exists(Validation::error__, $this->validation->get())) {
 			if (!isset($this->_error))
 				$this->error();
 			return $this->_error = array_merge($this->_error, array('validation' => $this->validation->get()));
 		}
 		if ($this->resolve()) {
 			if ((isset($this->_expire)) ? $this->_expire : $this->expire())
-				Init::session()->drop($this->fid, 'token');
+				Init::session()->drop($this->_fid, 'token');
 			return (isset($this->_success)) ? $this->_success : $this->success();
 		}
 		return (isset($this->_fail)) ? $this->_fail : $this->fail();
@@ -60,16 +61,16 @@ abstract class Form {
 
 	public function html($data = null, $title = null, $css = array(), $method = 'post', $template = "bootstrap")
 	{
-		$this->method = $method;
+		$this->_method = $method;
 		$this->build($data);
 		$this->_close();
 
 		if (!isset($this->_html)) {
-			$this->_build['fid'] = $this->fid;
+			$this->_build['fid'] = $this->_fid;
 			$this->_build['title'] = $title;
 			$this->_build['css'] = implode(" ", $css);
 			$this->_build['method'] = $method;
-			$this->_build['action'] = Helper::getPath(array('form', $this->fid), 'xhr') . "/";
+			$this->_build['action'] = Helper::getPath(array('form', $this->_fid), 'ajax') . "/";
 			$data = array('build' => $this->_build, 'fields' => $this->_fields);
 			$this->_html = Init::view()->template('form', $template, $data);
 		}
@@ -83,8 +84,8 @@ abstract class Form {
 
 		$this->field(array('input' => 'hidden'), "fid_" . $key, null,
 			$params = array(
-				'value' => $this->fid,
-				'validate' => array($this->method => array($this->fid . "_fid_" . $key => $this->fid))
+				'value' => $this->_fid,
+				'validate' => array($this->_method => array($this->_fid . "_fid_" . $key => $this->_fid))
 			)
 		);
 		$this->field(array('input' => 'hidden'), "xid_" . $key, null,
@@ -95,8 +96,8 @@ abstract class Form {
 		);
 		$this->field(array('input' => 'hidden'), "token_" . $key, null,
 			$params = array(
-				'value' => Init::session()->get($this->fid, 'token'),
-				'validate' => array('token' => $this->fid)
+				'value' => Init::session()->get($this->_fid, 'token'),
+				'validate' => array('token' => $this->_fid)
 			)
 		);
 	}
@@ -135,7 +136,7 @@ abstract class Form {
 		}
 		if ($control == 'input' and is_null($type))
 			$type = 'text';
-		$id = $this->fid . "_" . $id;
+		$id = $this->_fid . "_" . $id;
 
 		if (!is_array($params))
 			$params = array('value' => $params);
@@ -302,7 +303,7 @@ abstract class Form {
 			$this->_field['css'][] = "rule-" . $rule;
 
 			if (is_array($params) and $type != 'hidden')
-				if (array_intersect(array('error', 'success'), array_keys($params)))
+				if (array_intersect(array(Validation::error__, Validation::success__), array_keys($params)))
 					$this->_fields[$id]['help'] = true;
 		}
 	}

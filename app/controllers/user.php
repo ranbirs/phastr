@@ -32,8 +32,8 @@ class User extends \sys\Controller {
 
 	protected function register_verify()
 	{
-		$token = \sys\Res::params(1);
-		if (\sys\Res::params(0) !== $this->session->xid()) {
+		$token = \sys\Init::route()->args(1);
+		if (\sys\Init::route()->args(0) !== $this->session->xid()) {
 			$this->view->error(404);
 		}
 		if ($token) {
