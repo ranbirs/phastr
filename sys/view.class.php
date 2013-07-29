@@ -40,7 +40,7 @@ class View {
 		return $this->_render($name, 'request');
 	}
 
-	public function response($layout = \app\confs\sys\request_layout__)
+	public function response($layout = \app\confs\request\layout__)
 	{
 		$this->layout(\sys\components\Request::param__ . "/" . $layout);
 	}
@@ -52,7 +52,7 @@ class View {
 			$this->_includeFile($file);
 		}
 		else {
-			trigger_error(\app\vocabs\sys\error\view_layout__);
+			trigger_error(\sys\confs\error\view_layout__);
 		}
 		exit();
 	}
@@ -60,7 +60,7 @@ class View {
 	public function error($code, $msg = "")
 	{
 		header(" ", true, $code);
-		$this->error = (\app\confs\app\errors__) ? ((!empty($msg)) ? $msg : ((isset($this->error)) ? $this->error : "")) : "";
+		$this->error = (\app\confs\config\errors__) ? ((!empty($msg)) ? $msg : ((isset($this->error)) ? $this->error : "")) : "";
 		$this->layout("error/" . $code);
 	}
 
@@ -69,7 +69,7 @@ class View {
 		$file = $this->_resolveFile($name, $type);
 
 		if (!$file) {
-			$this->error(404, \app\vocabs\sys\error\view_render__);
+			$this->error(404, \sys\confs\error\view_render__);
 		}
 		ob_start();
 		$this->_includeFile($file);

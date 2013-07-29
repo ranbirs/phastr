@@ -8,12 +8,12 @@ abstract class Model {
 
 	function __construct()
 	{
-
 	}
 
-	public function db()
+	public function database()
 	{
-		if (!\app\confs\db\enabled__) {
+		Load::conf('database');
+		if (!\app\confs\database\enabled__) {
 			return false;
 		}
 		if (!isset(self::$dbh))

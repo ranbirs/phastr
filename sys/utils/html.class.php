@@ -30,16 +30,13 @@ class Html {
 				}
 				break;
 			case 'style':
-				$attrs = "";
-				if (is_array($params)) {
-					$attrs = self::getAttr($params);
-					$params = null;
-				}
+				if (!empty($params))
+					$params = self::getAttr($params);
 				switch ($context) {
 					case null:
 					case 'file':
 						$subj = \sys\utils\Helper::getPath($subj, 'base');
-						$asset = '<link href="' . ((!is_null($append)) ? $subj . "?" . $append : $subj) . '" rel="stylesheet"' . $attrs . ">";
+						$asset = '<link href="' . ((!is_null($append)) ? $subj . "?" . $append : $subj) . '" rel="stylesheet"' . $params . ">";
 						break 2;
 					case 'inline':
 						$asset = "<style>" . $subj . "</style>";

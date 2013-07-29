@@ -24,21 +24,23 @@ class Hash {
 		return str_shuffle($hash);
 	}
 
-	public static function salt($length = 16)
+	public static function salt($length = 16, $range = null)
 	{
-		$chars = array_merge(range('a', 'z'), range('A', 'Z'), range(0, 9));
-		$scope = count($chars) - 1;
+		$range = (empty($range)) ?
+			array_merge(range('a', 'z'), range('A', 'Z'), range(0, 9)) :
+			((is_array($range)) ? array_values($range) : explode($range));
+		$scope = count($range) - 1;
 		$length = (int) $length;
 		$salt = array();
 
 		for ($c = 0; $c < $length; $c++) {
 			$rand = mt_rand(0, $scope);
-			$salt[] = $chars[$rand];
+			$salt[] = $range[$rand];
 		}
 		return implode($salt);
 	}
 
-	public static function get($data, $algo = 'sha512', $key = \app\confs\app\hash__)
+	public static function get($data, $algo = 'sha512', $key = \app\confs\config\hash__)
 	{
 		return ($key) ? hash_hmac($algo, $data, $key) : hash($algo, $data);
 	}
@@ -48,7 +50,7 @@ class Hash {
 		return crypt($data, self::$algo . self::$cost . '$' . self::salt(self::$salt));
 	}
 
-	public static function resolve($hash, $data, $algo = 'sha512', $key = \app\confs\app\hash__)
+	public static function resolve($hash, $data, $algo = 'sha512', $key = \app\confs\config\hash__)
 	{
 		if ($algo) {
 			$subj = self::get($data, $algo, $key);

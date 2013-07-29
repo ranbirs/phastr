@@ -16,8 +16,6 @@ class Init {
 		if (isset(self::$route->error)) {
 			self::view()->error(404, self::$route->error);
 		}
-
-		Load::conf('constants');
 		Load::conf('autoload');
 
 		if (self::$route->defaults['master']) {
@@ -34,31 +32,35 @@ class Init {
 		return self::$route;
 	}
 
-	public static function load($new = false)
+	public static function load()
 	{
-		if (!isset(self::$load) or $new)
+		if (!isset(self::$load))
 			self::$load = new \sys\Load();
 		return self::$load;
 	}
 
-	public static function view($new = false)
+	public static function view()
 	{
-		if (!isset(self::$view) or $new)
+		if (!isset(self::$view))
 			self::$view = new \sys\View();
 		return self::$view;
 	}
 
-	public static function session($new = false)
+	public static function session()
 	{
-		if (!isset(self::$session) or $new)
+		if (!isset(self::$session)) {
+			Load::conf('hash');
 			self::$session = new \sys\Session();
+		}
 		return self::$session;
 	}
 
-	public static function request($new = false)
+	public static function request()
 	{
-		if (!isset(self::$request) or $new)
+		if (!isset(self::$request)) {
+			Load::conf('request');
 			self::$request = new \sys\components\Request();
+		}
 		return self::$request;
 	}
 

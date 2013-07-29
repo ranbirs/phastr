@@ -10,8 +10,8 @@ class Database extends PDO {
 	function __construct()
 	{
 		try {
-			$dsn = \app\confs\db\type__ . ":host=" . \app\confs\db\host__ . ";dbname=" . \app\confs\db\name__;
-			parent::__construct($dsn, \app\confs\db\user__, \app\confs\db\pass__);
+			$dsn = \app\confs\database\type__ . ":host=" . \app\confs\database\host__ . ";dbname=" . \app\confs\database\name__;
+			parent::__construct($dsn, \app\confs\database\user__, \app\confs\database\pass__);
 		}
 		catch(PDOException $e) {
 			trigger_error($e->getMessage());

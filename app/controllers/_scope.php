@@ -25,7 +25,7 @@ class _scope extends \sys\components\Constructor {
 		$this->view->user_nav = $this->nav->user_nav->html($data = null, $title = null, $css = array("nav", "pull-right"));
 
 		$this->view->callback = "";
-		$this->view->app_title = \sys\utils\Conf::k('app\\title');
+		$this->view->app_title = \sys\utils\Conf::k('title');
 
 		$this->load->model('node');
 		$node = $this->model->node->data(array('title', 'body'), \sys\Init::route()->path());

@@ -4,9 +4,19 @@ namespace sys\utils;
 
 class Vocab {
 
-	public static function t($const)
+	public static function t($const, $context, $lang = \app\confs\config\lang__)
 	{
-		return constant("\\app\\vocabs\\" . $const . "__");
+		$constant = self::_get($const, $context);
+		if (is_null($constant)) {
+			\sys\Load::conf($context, $lang);
+			$constant = self::_get($const, $context);
+		}
+		return $constant;
+	}
+
+	private static function _get($const, $context)
+	{
+		return @constant("\\app\\vocabs\\" . $context . "\\" . $const);
 	}
 
 }

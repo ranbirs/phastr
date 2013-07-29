@@ -31,14 +31,14 @@ class Load extends Loader {
 		return self::resolveInclude($path, 'controller', self::instance__);
 	}
 
-	public static function conf($path)
+	public static function conf($path, $base = 'app')
 	{
-		return self::resolveInclude($path, 'conf');
+		return self::resolveInclude($path, 'conf', null, $base);
 	}
 
 	public static function vocab($path, $lang = "")
 	{
-		return self::resolveInclude((strlen($lang) ? $lang . "/" . $path : $path), 'vocab');
+		return self::resolveInclude((($lang) ? $lang . "/" . $path : $path), 'vocab');
 	}
 
 }

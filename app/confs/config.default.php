@@ -1,15 +1,11 @@
 <?php
 
-namespace app\confs\app;
+namespace app\confs\config;
 
 	const title__ = "Project";
 
 	const hash__ = "xid_hash_key_str";
 	const lang__ = "en";
-
-	const rewrite__ = 1;
-	const rewrite_base__ = "";
-	const rewrite_key__ = "q";
 
 	const optimize__ = 1;
 	const assets__ = "assets";
@@ -17,32 +13,11 @@ namespace app\confs\app;
 	const errors__ = 1;
 	const iteration__ = "a0c780df";
 
-namespace app\confs\sys;
-
+	const scope__ = "user,example_blog";
 	const master__ = "_scope";
 	const autoload__ = "index";
-	const controllers__ = "user,example_blog";
-
 	const homepage__ = "index";
 
 	const page__ = "index";
 	const action__ = "index";
 	const method__ = "scope";
-
-	const request_method__ = "post";
-	const request_layout__ = "html";
-
-namespace app\confs\db;
-
-	const enabled__ = 1;
-	const type__ = "mysql";
-	const host__ = "localhost";
-	const name__ = "";
-	const user__ = "";
-	const pass__ = "";
-
-namespace app\confs\hash;
-
-	const algo__ = '$2a$';
-	const cost__ = 10;
-	const salt__ = 22;

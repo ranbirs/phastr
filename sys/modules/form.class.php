@@ -49,7 +49,8 @@ abstract class Form {
 		if (array_key_exists(Validation::error__, $this->validation->get())) {
 			if (!isset($this->_error))
 				$this->error();
-			return $this->_error = array_merge($this->_error, array('validation' => $this->validation->get()));
+			$this->_error['validation'] = $this->validation->get();
+			return $this->_error;
 		}
 		if ($this->resolve()) {
 			if ((isset($this->_expire)) ? $this->_expire : $this->expire())

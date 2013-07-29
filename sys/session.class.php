@@ -20,7 +20,7 @@ class Session {
 			$this->set('_gid', Hash::rid());
 			$this->set('_key', $this->keygen());
 			$this->set(array('_timestamp' => 0), microtime(true));
-			$this->set(array('_client' => 'lang'), \app\confs\app\lang__);
+			$this->set(array('_client' => 'lang'), \app\confs\config\lang__);
 		}
 		$this->set(array('_timestamp' => 1), microtime(true));
 		if (isset($_SERVER['HTTP_USER_AGENT']))

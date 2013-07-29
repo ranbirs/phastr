@@ -16,18 +16,18 @@ class Helper {
 		return strtolower(implode("/", $class));
 	}
 
-	public static function getPathClass($path)
-	{
-		$path = explode("/", strtolower($path));
-		$class = ucfirst(array_pop($path));
-		array_push($path, $class);
-		return implode("\\", $path);
-	}
-
 	public static function getPathName($path)
 	{
 		$path = explode("/", $path);
 		return strtolower(end($path));
+	}
+
+	public static function getPathClass($path)
+	{
+		$path = explode("/", strtolower($path));
+		$class = ucfirst(array_pop($path));
+		$path[] = $class;
+		return implode("\\", $path);
 	}
 
 	public static function getPath($path = "", $type = 'label')
@@ -47,16 +47,21 @@ class Helper {
 				$path = str_replace(array("__", "--", "-"), array("/", "/", "_"), $path);
 				break;
 			case 'route':
-				$path = (\app\confs\app\rewrite__) ? self::getPath($path, 'base') : self::getPath("", 'base') . "?_q=" . $path;
+				$path = (\app\confs\rewrite\enabled__) ?
+					self::getPath($path, 'base') :
+					self::getPath("", 'base') . "?" . \app\confs\rewrite\key__ . "=" . $path;
 				break;
 			case 'ajax':
 				$path = \sys\Init::route()->get() . "/" . \sys\components\Request::param__ . "/" . $path;
 				break;
 			case 'base':
-				$base = \app\confs\app\rewrite_base__;
+				$base = \app\confs\rewrite\base__;
 				$path = ($base) ?
 					(($path) ? "/" . $base . "/" . $path : "/" . $base . "/") :
 					(($path) ? "/" . $path : "/");
+				break;
+			case 'root':
+				$path = ($path) ? $_SERVER['DOCUMENT_ROOT'] . "/" . $path : $_SERVER['DOCUMENT_ROOT'];
 				break;
 		}
 		return $path;

@@ -2,6 +2,7 @@
 
 namespace sys\components;
 
+use sys\utils\Conf;
 use sys\utils\Helper;
 use sys\utils\Html;
 
@@ -14,15 +15,15 @@ class Assets {
 		switch ($type) {
 			case 'script':
 			case 'style':
-				if (\app\confs\app\optimize__) {
+				if (\app\confs\config\optimize__) {
 					return $this->_optimize($type, $this->_assets[$type]);
 				}
 				else {
-					$assets = array();
+					$assets = array('file' => array(), 'inline' => array());
 					foreach ($this->_assets[$type] as $context => $asset)
 						foreach ($asset as $param)
-							$assets[] = $param['asset'];
-					return implode("\n", $assets);
+							$assets[$context][] = $param['asset'];
+					return implode("\n", array_merge($assets['file'], $assets['inline']));
 				}
 				break 2;
 			default:
@@ -32,7 +33,7 @@ class Assets {
 		}
 	}
 
-	public function set($type = array('script' => 'file'), $subj = null, $params = null, $append = \app\confs\app\iteration__)
+	public function set($type = array('script' => 'file'), $subj = null, $params = null, $append = \app\confs\config\iteration__)
 	{
 		$context = null;
 		if (is_array($type)) {
@@ -43,18 +44,19 @@ class Assets {
 		switch ($type) {
 			case 'script':
 			case 'style':
+				$key = hash('md5', $subj);
 				switch ($context) {
 					case null:
 						$context = 'file';
 					case 'file':
-						return $this->_assets[$type][$context][] = array(
+						return $this->_assets[$type][$context][$key] = array(
 							'value' => $subj,
 							'asset' => $asset,
 							'iteration' => $append
 						);
 						break;
 					case 'inline':
-						return $this->_assets[$type][$context][] = $asset;
+						return $this->_assets[$type][$context][$key]['asset'] = $asset;
 						break;
 				}
 				break;
@@ -80,13 +82,13 @@ class Assets {
 					break;
 				case 'inline':
 					foreach ($asset as $param)
-						$inline_assets[] = $param;
+						$inline_assets[] = $param['asset'];
 					break;
 			}
 		}
 		if (isset($file_assets['value'])) {
-			$document_root = $_SERVER['DOCUMENT_ROOT'] . Helper::getPath("", 'base');
-			$write_path = \app\confs\app\assets__ . "/" . $type;
+			$document_root = Helper::getPath("", 'root') . Helper::getPath("", 'base');
+			$write_path = \app\confs\config\assets__ . "/" . $type;
 			$file_name = hash('md5', implode($file_assets['checksum'])) . "." . $ext[$type];
 			$dir = $document_root . $write_path;
 			$file = $dir . "/" . $file_name;
@@ -103,7 +105,7 @@ class Assets {
 				$file_assets = array(Html::getAsset($type, 'file', $write_path . "/". $file_name, null, null));
 			}
 			else {
-				trigger_error(\app\vocabs\sys\error\assets_write__);
+				trigger_error(\sys\confs\error\assets_write__);
 				$file_assets = $file_assets['asset'];
 			}
 		}

@@ -13,7 +13,7 @@ class User extends \sys\Model {
 
 	public function login($email, $password)
 	{
-		$user = $this->db()->select('user', array('uid', 'role', 'authentication'),
+		$user = $this->database()->select('user', array('uid', 'role', 'authentication'),
 			"WHERE email = :email AND status = :status",
 			array('email' => $email, 'status' => 'active')
 		);
@@ -22,7 +22,7 @@ class User extends \sys\Model {
 			if (!\sys\utils\Hash::resolve($user->authentication, $password)) {
 				return false;
 			}
-			$this->db()->update('user', array('sid' => $this->_sid),
+			$this->database()->update('user', array('sid' => $this->_sid),
 				"WHERE uid = :uid",
 				array('uid' => $user->uid)
 			);
@@ -35,7 +35,7 @@ class User extends \sys\Model {
 
 	public function register($name, $email, $password)
 	{
-		$user = $this->db()->select('user', array('uid'),
+		$user = $this->database()->select('user', array('uid'),
 			"WHERE email = :email",
 			array('email' => $email)
 		);
@@ -44,7 +44,7 @@ class User extends \sys\Model {
 		}
 		$hash = \sys\utils\Hash::get($password);
 		$token = \sys\utils\Hash::rand();
-		$register = $this->db()->insert('user',
+		$register = $this->database()->insert('user',
 			array(
 				'name' => $name,
 				'email' => $email,
@@ -57,12 +57,12 @@ class User extends \sys\Model {
 		if ($register) {
 			$host = $_SERVER['SERVER_NAME'];
 			$addr = "noreply@$host";
-			$from = \sys\utils\Conf::k('app\\title');
+			$from = \sys\utils\Conf::k('title');
 			$path = \sys\Init::route()->path();
 			$xid = \sys\Init::session()->xid();
 			$headers = "From: $from <$addr>\n";
-			$subject = \sys\utils\Vocab::t('user\\register_verify_email_subject');
-			$msg = \sys\utils\Vocab::t('user\\register_verify_email_body') .
+			$subject = \sys\utils\Vocab::t('register_verify_email_subject', 'user');
+			$msg = \sys\utils\Vocab::t('register_verify_email_body', 'user') .
 				"http://$host/$path/verify/$xid/$token/";
 
 			mail($email, $subject, $msg, $headers, "-f $addr");
@@ -73,13 +73,13 @@ class User extends \sys\Model {
 
 	public function verify($token)
 	{
-		$verify = $this->db()->select('user', array('uid'),
+		$verify = $this->database()->select('user', array('uid'),
 			"WHERE sid = :sid AND status = :status",
 			array('sid' => $token, 'status' => 'new')
 		);
 		if ($verify) {
 			$user = $verify[0];
-			$this->db()->update('user', array('status' => 'active'),
+			$this->database()->update('user', array('status' => 'active'),
 				"WHERE uid = :uid", array('uid' => $user->uid)
 			);
 			return true;

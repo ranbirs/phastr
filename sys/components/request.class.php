@@ -8,8 +8,8 @@ class Request {
 
 	const param__ = 'ajax';
 
-	public $method = \app\confs\sys\request_method__;
-	public $layout = \app\confs\sys\request_layout__;
+	public $method = \app\confs\request\method__;
+	public $layout = \app\confs\request\layout__;
 
 	function __construct()
 	{

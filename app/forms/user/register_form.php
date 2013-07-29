@@ -41,8 +41,8 @@ class Register_form extends \sys\modules\Form {
 			$params = array('css' => array("btn", "btn-primary"))
 		);
 
-		$this->fail(\sys\utils\Vocab::t('user\\register_fail'));
-		$this->success(\sys\utils\Vocab::t('user\\register_success'));
+		$this->fail(\sys\utils\Vocab::t('register_fail', 'user'));
+		$this->success(\sys\utils\Vocab::t('register_success', 'user'));
 	}
 
 	protected function resolve()

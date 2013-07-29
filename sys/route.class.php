@@ -9,12 +9,12 @@ class Route {
 
 	private static $path, $route;
 	public $defaults = array(
-		'master' => \app\confs\sys\master__,
-		'autoload' => \app\confs\sys\autoload__,
-		'homepage' => \app\confs\sys\homepage__,
-		'page' => \app\confs\sys\page__,
-		'action' => \app\confs\sys\action__,
-		'method' => \app\confs\sys\method__
+		'master' => \app\confs\config\master__,
+		'autoload' => \app\confs\config\autoload__,
+		'homepage' => \app\confs\config\homepage__,
+		'page' => \app\confs\config\page__,
+		'action' => \app\confs\config\action__,
+		'method' => \app\confs\config\method__
 	);
 	public $error;
 
@@ -26,9 +26,7 @@ class Route {
 
 	private function _init()
 	{
-		Load::vocab('sys/error');
-
-		$key = \app\confs\app\rewrite_key__;
+		$key = \app\confs\rewrite\key__;
 		$path['request'] = (isset($_GET[$key])) ? Helper::getArray($_GET[$key], "/") : array();
 		$path['path'] = $path['request'];
 		unset($_GET[$key]);
@@ -37,7 +35,7 @@ class Route {
 			$path['path'] = array($this->defaults['autoload'], $this->defaults['homepage'], $this->defaults['action']);
 			$path['request'] = "/";
 		}
-		$scope = Helper::getArray(\app\confs\sys\controllers__, ",");
+		$scope = Helper::getArray(\app\confs\config\scope__, ",");
 		$scope[] = $this->defaults['autoload'];
 
 		if (!in_array(Helper::getPath($path['path'][0]), $scope))
@@ -61,22 +59,22 @@ class Route {
 		foreach ($route as $index => &$arg) {
 
 			if ((strlen($arg) > 128)) {
-				return $this->error = \app\vocabs\sys\error\route_parse__;
+				return $this->error = \sys\confs\error\route_parse__;
 			}
 			$param = Helper::getPath($arg, 'path');
 			$arg = Helper::getPath($arg);
 			$path['route'][] = $param;
 
 			if (preg_match('/[^a-z0-9-]/', $param)) {
-				return $this->error = \app\vocabs\sys\error\route_parse__;
+				return $this->error = \sys\confs\error\route_parse__;
 			}
 			if ($arg === $this->defaults['method']) {
-				return $this->error = \app\vocabs\sys\error\route_parse__;
+				return $this->error = \sys\confs\error\route_parse__;
 			}
 			switch ($index) {
 				case 0:
 					if ($arg === $this->defaults['master']) {
-						return $this->error = \app\vocabs\sys\error\route_controller__;
+						return $this->error = \sys\confs\error\route_controller__;
 					}
 					if ($arg !== $this->defaults['autoload'])
 						$path['path'][] = $param;

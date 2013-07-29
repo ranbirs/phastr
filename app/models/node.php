@@ -13,7 +13,7 @@ class Node extends \sys\Model {
 
 	public function data($fields, $path)
 	{
-		$data = $this->db()->select('node', $fields,
+		$data = $this->database()->select('node', $fields,
 			"WHERE path = :path", array('path' => $path)
 		);
 		if ($data) {
