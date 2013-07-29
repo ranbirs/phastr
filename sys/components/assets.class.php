@@ -2,7 +2,6 @@
 
 namespace sys\components;
 
-use sys\utils\Conf;
 use sys\utils\Helper;
 use sys\utils\Html;
 
