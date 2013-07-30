@@ -55,7 +55,7 @@ class Assets {
 						);
 						break;
 					case 'inline':
-						return $this->_assets[$type][$context][$key]['asset'] = $asset;
+						return $this->_assets[$type][$context][$key] = array('asset' => $asset);
 						break;
 				}
 				break;
