@@ -32,7 +32,7 @@ abstract class Controller extends Constructor {
 		if (empty($process)) {
 			$this->view->error(404, \sys\confs\error\controller_methods__);
 		}
-		if (isset($params[2]) and $params[0] === \sys\components\Request::param__)
+		if (isset($params[2]) and $params[0] === \sys\modules\Request::param__)
 			if ($this->request->header() === $this->session->xid())
 				$this->_request($params[1], $params[2]);
 
@@ -57,6 +57,7 @@ abstract class Controller extends Constructor {
 				}
 				break;
 		}
+		$this->view->error(404);
 	}
 
 }

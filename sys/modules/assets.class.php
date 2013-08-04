@@ -1,6 +1,6 @@
 <?php
 
-namespace sys\components;
+namespace sys\modules;
 
 use sys\utils\Helper;
 use sys\utils\Html;

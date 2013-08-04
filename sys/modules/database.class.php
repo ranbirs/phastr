@@ -13,7 +13,7 @@ class Database extends PDO {
 			$dsn = \app\confs\database\type__ . ":host=" . \app\confs\database\host__ . ";dbname=" . \app\confs\database\name__;
 			parent::__construct($dsn, \app\confs\database\user__, \app\confs\database\pass__);
 		}
-		catch(PDOException $e) {
+		catch (PDOException $e) {
 			trigger_error($e->getMessage());
 			exit();
 		}

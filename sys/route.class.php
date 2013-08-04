@@ -7,6 +7,8 @@ use sys\utils\Helper;
 
 class Route {
 
+	const length__ = 128;
+
 	private static $path, $route;
 	public $defaults = array(
 		'master' => \app\confs\config\master__,
@@ -26,7 +28,7 @@ class Route {
 
 	private function _init()
 	{
-		$key = \app\confs\rewrite\key__;
+		$key = \app\confs\rewrite\name__;
 		$path['request'] = (isset($_GET[$key])) ? Helper::getArray($_GET[$key], "/") : array();
 		$path['path'] = $path['request'];
 		unset($_GET[$key]);
@@ -58,7 +60,7 @@ class Route {
 
 		foreach ($route as $index => &$arg) {
 
-			if ((strlen($arg) > 128)) {
+			if ((strlen($arg) > self::length__)) {
 				return $this->error = \sys\confs\error\route_parse__;
 			}
 			$param = Helper::getPath($arg, 'path');

@@ -9,17 +9,17 @@ class Test_form extends \sys\modules\Form {
 		parent::__construct();
 	}
 
-	protected function build($data = null)
+	protected function build($import = null)
 	{
 		$required_field_msg = "This is a required field";
 
 		$this->field('markup', "", "<em>Example data</em>",
-			$params = array('value' => "<pre>" . print_r($data, true) . "</pre>")
+			$params = array('value' => "<pre>" . print_r($import, true) . "</pre>")
 		);
 
 		$this->field(array('input' =>'email'), "test_email_field", "Email field",
 			$params = array(
-				'hint' => "Hint text...this field is validated",
+				'help' => "Help block/description...this field is validated",
 				'validate' => array(
 					'email' => array(
 						'error' => "That doesn't look like an email address",
@@ -65,7 +65,7 @@ class Test_form extends \sys\modules\Form {
 			)
 		);
 
-		$this->field(array('input' => 'radio'), "radio_field", "Radio buttons",
+		$this->field(array('input' => 'radio'), "radio_field", "Radios",
 			$params = array(
 				'value' => array(
 					array(
@@ -197,12 +197,21 @@ class Test_form extends \sys\modules\Form {
 			)
 		);
 
-		$this->field(array('button' => 'action'), "cancel_button", "Cancel",
-			$params = array('css' => array("btn"))
+		$this->field(array('button' => 'action'), "cancel_button", "Make everything OK, faster!",
+			$params = array(
+				'css' => array("btn btn-default"),
+				'attr' => array(
+					'data-loading-text' => "Everything is OK!",
+					'onclick' => '$(this).stop().button(\'loading\');
+						$(this).animate({delay: 1}, 2000, function () {
+							$(this).button(\'reset\').text(\'Is everything OK?\');
+						});'
+				)
+			)
 		);
 
-		$this->success("<p>Congratulations!</p><p>That wasn't so easy...</p>");
-		$this->error("<p>There are errors that need fixing!</p>");
+		$this->success("<strong>Congratulations!</strong><br>That wasn't so easy...");
+		$this->error("There are errors that need fixing!");
 	}
 
 }

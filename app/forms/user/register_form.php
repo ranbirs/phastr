@@ -9,7 +9,7 @@ class Register_form extends \sys\modules\Form {
 		parent::__construct();
 	}
 
-	protected function build($data = null)
+	protected function build()
 	{
 		$this->field(array('input' => 'text'), "register_name", "Name",
 			$params = array(
@@ -45,15 +45,11 @@ class Register_form extends \sys\modules\Form {
 		$this->success(\sys\utils\Vocab::t('register_success', 'user'));
 	}
 
-	protected function resolve()
+	protected function resolve($submit = null, $import = null)
 	{
 		$user = new \app\models\User();
 
-		$name = $this->request->field($this->fid(), 'register_name', $this->method());
-		$email = $this->request->field($this->fid(), 'register_email', $this->method());
-		$password = $this->request->field($this->fid(), 'register_password', $this->method());
-
-		if ($user->register($name, $email, $password)) {
+		if ($user->register($submit['register_name'], $submit['register_email'], $submit['register_password'])) {
 			return true;
 		}
 		return false;

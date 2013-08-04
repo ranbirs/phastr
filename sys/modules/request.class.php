@@ -1,6 +1,6 @@
 <?php
 
-namespace sys\components;
+namespace sys\modules;
 
 use sys\Init;
 
@@ -40,7 +40,7 @@ class Request {
 		return $this->request('get', $key, $value);
 	}
 
-	public function field($subj, $key = null, $method = 'post', $separator = "_")
+	public function fields($subj, $method = 'post', $key = null, $separator = "_")
 	{
 		if (is_null($key)) {
 			$request = $this->request($method);
@@ -58,9 +58,9 @@ class Request {
 		return $this->request($method, $subj . $separator . $key);
 	}
 
-	public function request($type = 'post', $key = null, $value = null)
+	public function request($method = 'post', $key = null, $value = null)
 	{
-		switch ($type) {
+		switch ($method) {
 			case 'server':
 				if (!is_null($key) and !is_null($value))
 					$_SERVER[$key] = $value;

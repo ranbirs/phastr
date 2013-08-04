@@ -9,7 +9,7 @@ class Login_form extends \sys\modules\Form {
 		parent::__construct();
 	}
 
-	protected function build($data = null)
+	protected function build($import = null)
 	{
 		$this->field(array('input' => 'email'), "login_email", "Email",
 			$params = array(
@@ -33,18 +33,15 @@ class Login_form extends \sys\modules\Form {
 			$params = array('css' => array("btn", "btn-primary"))
 		);
 
-		$this->success("<p>You have successfully signed in.</p>", array('callback' => "location.href = '/user/'"));
+		$this->success("You have successfully signed in", array('callback' => "location.href = '/user/'"));
 		$this->fail("Invalid credentials");
 	}
 
-	protected function resolve()
+	protected function resolve($submit = null, $import = null)
 	{
 		$user = new \app\models\User();
 
-		$email = $this->request->field($this->fid(), 'login_email', $this->method());
-		$password = $this->request->field($this->fid(), 'login_password', $this->method());
-
-		if ($user->login($email, $password)) {
+		if ($user->login($submit['login_email'], $submit['login_password'])) {
 			return true;
 		}
 		return false;

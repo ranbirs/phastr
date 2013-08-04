@@ -59,7 +59,7 @@ class Init {
 	{
 		if (!isset(self::$request)) {
 			Load::conf('request');
-			self::$request = new \sys\components\Request();
+			self::$request = new \sys\modules\Request();
 		}
 		return self::$request;
 	}

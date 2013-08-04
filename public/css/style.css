@@ -1,7 +1,6 @@
-nav a {cursor: pointer;}
-h1 {font-size: 32px;}
-h1, h2, h3 {font-weight: normal;}
-#page {margin-top: 0;}
-#load {padding-top: 96px;}
-#footer {padding-top: 64px; padding-bottom: 30px;}
-fieldset > legend, section > h2, article > h2 {font-size: 21px; font-weight: normal; line-height: 40px; margin-bottom: 20px; color: #999; border-bottom: 1px solid #e5e5e5;}
+body {
+  padding-top: 50px;
+}
+.starter-template {
+  padding: 40px 15px;
+}

@@ -3,7 +3,7 @@
 namespace sys\modules;
 
 use sys\Init;
-use sys\components\Validation;
+use sys\modules\Validation;
 use sys\utils\Helper;
 use sys\utils\Hash;
 use sys\utils\Html;
@@ -11,7 +11,7 @@ use sys\utils\Html;
 abstract class Form {
 
 	protected $request, $validation;
-	private $_fid, $_method;
+	private $_fid, $_method, $_import;
 	private $_field = array(), $_build = array(), $_fields = array();
 	private $_required = array(), $_validated = array(), $_sanitized = array();
 	private $_html, $_success, $_fail, $_error, $_expire;
@@ -52,7 +52,7 @@ abstract class Form {
 			$this->_error['validation'] = $this->validation->get();
 			return $this->_error;
 		}
-		if ($this->resolve()) {
+		if ($this->resolve($this->request->fields($this->fid(), $this->method()), $this->_import)) {
 			if ((isset($this->_expire)) ? $this->_expire : $this->expire())
 				Init::session()->drop($this->_fid, 'token');
 			return (isset($this->_success)) ? $this->_success : $this->success();
@@ -60,10 +60,11 @@ abstract class Form {
 		return (isset($this->_fail)) ? $this->_fail : $this->fail();
 	}
 
-	public function html($data = null, $title = null, $css = array(), $method = 'post', $template = "bootstrap")
+	public function html($import = null, $title = null, $css = array(), $method = 'post', $template = "bootstrap")
 	{
 		$this->_method = $method;
-		$this->build($data);
+		$this->_import = $import;
+		$this->build($import);
 		$this->_close();
 
 		if (!isset($this->_html)) {
@@ -103,7 +104,7 @@ abstract class Form {
 		);
 	}
 
-	protected function resolve()
+	protected function resolve($submit = null, $import = null)
 	{
 		return true;
 	}
@@ -137,7 +138,6 @@ abstract class Form {
 		}
 		if ($control == 'input' and is_null($type))
 			$type = 'text';
-		$id = $this->_fid . "_" . $id;
 
 		if (!is_array($params))
 			$params = array('value' => $params);
@@ -146,9 +146,11 @@ abstract class Form {
 			$params['value'] = (array_values($params) !== $params) ? "" : $params;
 		$params['label'] = $label;
 
+		$id = $this->_fid . "_" . $id;
+
 		$this->_field = $params;
 
-		$this->_buildField($id, $control, $type);
+		return $this->_buildField($id, $control, $type);
 	}
 
 	private function _buildField($id, $control, $type = null)
@@ -162,6 +164,9 @@ abstract class Form {
 		$this->_field['attr']['id'] = $id;
 		$this->_field['attr']['name'] = (!is_array($this->_field['value'])) ? $id : $id . "[]";
 		$this->_field['css'][] = "field";
+		if ($control != 'button')
+			$this->_field['css'][] = "form-control";
+
 		if ($control == 'input')
 			$this->_field['attr']['type'] = $type;
 
@@ -205,9 +210,8 @@ abstract class Form {
 					case null:
 						$type = 'button';
 				}
-				$group = 'action';
 				$this->_field['attr']['type'] = $type;
-				unset($this->_fields[$id]['label']);
+				$group = 'action';
 				break;
 			case 'textarea':
 				$build = "</" . $control . ">";
@@ -216,15 +220,26 @@ abstract class Form {
 		$this->_field['attr']['class'] = implode(" ", $this->_field['css']);
 		$build = "<" . $control . Html::getAttr($this->_field['attr']) . ">" . $build;
 
+		if (!is_null($group))
+			$id = $group;
+
 		if ($this->_field['label'])
 			$this->_fields[$id]['label'] = $this->_field['label'];
-		if (isset($this->_field['hint']))
-			$this->_fields[$id]['hint'] = $this->_field['hint'];
+		if (isset($this->_field['help']))
+			$this->_fields[$id]['help'] = $this->_field['help'];
 
-		if (!is_null($group)) {
-			return $this->_fields[$group][] = $build;
+		$this->_fields[$id]['type'] = $type;
+		$this->_fields[$id]['control'] = $control;
+
+		switch ($group) {
+			case null:
+				return $this->_fields[$id]['field'] = $build;
+				break;
+			case 'hidden':
+			case 'action':
+				return $this->_fields[$id]['field'][] = $build;
 		}
-		return $this->_fields[$id]['field'] = $build;
+		return $this->_fields[$id]['field'];
 	}
 
 	private function _buildArrayField($id, $control)
@@ -305,7 +320,7 @@ abstract class Form {
 
 			if (is_array($params) and $type != 'hidden')
 				if (array_intersect(array(Validation::error__, Validation::success__), array_keys($params)))
-					$this->_fields[$id]['help'] = true;
+					$this->_fields[$id]['verbose'] = true;
 		}
 	}
 

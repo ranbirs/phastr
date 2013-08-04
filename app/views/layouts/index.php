@@ -6,54 +6,41 @@ $this->full_title = $this->title . " | " . $this->app_title;
 <head>
 
 	<meta charset="utf-8">
-	<meta name="author" content="5rc.org">
+	<meta name="author" content="sourceforce.pro">
 	<?= $this->assets->get('meta'); ?>
 
 	<title><?= $this->full_title; ?></title>
 
 	<?= $this->assets->get('style'); ?>
 
-	<!--[if lt IE 9]>
-	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-	<![endif]-->
-
 </head>
 <body>
-	<div class="navbar navbar-fixed-top">
-		<div class="navbar-inner">
-			<header class="container">
-				<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-				</a>
-				<a class="brand" href="/"><?= $this->app_title; ?></a>
-				<nav class="nav-collapse">
-					<?= $this->top_nav; ?>
-					<?= $this->user_nav; ?>
-				</nav>
-			</header>
-		</div>
-	</div>
 
-	<div id="page">
-		<div id="load">
-			<div id="node">
-				<section class="container" id="content">
-					<h1 class="title"><?= $this->title; ?></h1>
-					<div id="body">
-						<div class="page">
-							<?= $this->page; ?>
-						</div>
-					</div>
-				</section>
+	<div class="navbar navbar-inverse navbar-fixed-top">
+		<div class="container">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="/"><?= $this->app_title; ?></a>
+			<div class="nav-collapse collapse">
+				<?= $this->top_nav; ?>
+				<?= $this->user_nav; ?>
 			</div>
 		</div>
 	</div>
 
-	<footer class="container">
-		<hr />
-	</footer>
+	<div class="container">
+		<div class="starter-template">
+			<h1 class="title"><?= $this->title; ?></h1>
+			<div class="body">
+				<div class="page">
+					<?= $this->page; ?>
+				</div>
+			</div>
+		</div>
+	</div>
 
 <?= $this->assets->get('script'); ?>
 

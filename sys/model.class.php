@@ -8,11 +8,11 @@ abstract class Model {
 
 	function __construct()
 	{
+		Load::conf('database');
 	}
 
 	public function database()
 	{
-		Load::conf('database');
 		if (!\app\confs\database\enabled__) {
 			return false;
 		}

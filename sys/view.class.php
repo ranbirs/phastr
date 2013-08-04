@@ -3,9 +3,9 @@
 namespace sys;
 
 use sys\Init;
-use sys\components\Assets;
+use sys\modules\Access;
+use sys\modules\Assets;
 use sys\components\Loader;
-use sys\components\Access;
 use sys\utils\Helper;
 
 class View {
@@ -42,7 +42,7 @@ class View {
 
 	public function response($layout = \app\confs\request\layout__)
 	{
-		$this->layout(\sys\components\Request::param__ . "/" . $layout);
+		$this->layout(\sys\modules\Request::param__ . "/" . $layout);
 	}
 
 	public function layout($name)

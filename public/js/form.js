@@ -9,41 +9,44 @@ $(function () {
 		request.done(function (data) {
 			$('body, form').css('cursor', '');
 			form.find('.form-actions button').removeAttr('disabled').removeClass('disabled').css('cursor', '');
-			form.removeClass('error success').find('.control-group').removeClass('error success');
-			form.find('.alert').empty().removeClass('alert-error alert-success').hide();
-			form.find('.help').empty().hide();
+			form.find('.form-group').removeClass('has-error has-success');
+			form.find('.message .alert').alert('close');
+			form.find('.form-group').find('.controls[data-toggle="popover"]').popover('destroy');
+			//form.find('.help').empty().hide();
 
 			if (data.result == false) {
-				if (data.validation.error) {
-					$.each(data.validation.error, function(index, value) {
-						if (value[0]) {
-							form.addClass('error').find('.field[name^="' + value[0] + '"]').closest('.control-group').addClass('error');
-						}
-						if (value[1]) {
-							form.find('.field[name^="' + value[0] + '"]').closest('.control-group').find('.help').html(value[1]).show();
-						}
-					});
-					if (form.find('.recaptcha-challenge').length) {
-						Recaptcha.reload('t');
-					}
-				}
-				if (data.validation.success) {
-					$.each(data.validation.success, function(index, value) {
-						if (value[0]) {
-							form.addClass('error').find('.field[name^="' + value[0] + '"]').closest('.control-group').addClass('success');
-						}
-						if (value[1]) {
-							form.find('.field[name^="' + value[0] + '"]').closest('.control-group').find('.help').html(value[1]).show();
-						}
-					});
-				}
 				if (data.message) {
-					form.find('.alert').addClass('alert-error').html(data.message).slideDown();
+					form.find('.message').html('<div class="alert"></div>').find('.alert').addClass('alert-danger').html(data.message).alert();
+				}
+				if ('validation' in data) {
+					if ('error' in data.validation) {
+						$.each(data.validation.error, function(index, value) {
+							if (value[0]) {
+								form.find('.form-control[name^="' + value[0] + '"]').closest('.form-group').addClass('has-error');
+							}
+							if (value[1]) {
+								form.find('.form-control[name^="' + value[0] + '"]').closest('.form-group').find('.controls').attr('data-content', value[1]).popover('show');
+							}
+						});
+						if (form.find('.recaptcha-challenge').length) {
+							Recaptcha.reload('t');
+						}
+					}
+					if ('success' in data.validation) {
+						$.each(data.validation.success, function(index, value) {
+							if (value[0]) {
+								form.find('.form-control[name^="' + value[0] + '"]').closest('.form-group').addClass('has-success');
+							}
+							if (value[1]) {
+								form.find('.form-control[name^="' + value[0] + '"]').closest('.form-group').find('.controls').attr('data-content', value[1]).popover('show');
+							}
+						});
+					}
 				}
 			}
 			else {
 				if (data.message) {
-					form.find('.alert').addClass('alert-success').html(data.message).slideDown();
+					form.find('.message').html('<div class="alert"></div>').find('.alert').addClass('alert-success').html(data.message).alert();
 				}
 			}
 			if (data.callback) {

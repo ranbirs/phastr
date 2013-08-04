@@ -23,7 +23,7 @@ class Index extends \sys\Controller {
 	{
 		$this->load->form('index/test_form');
 		$data = array('example' => array("data"));
-		$this->view->test_form = $this->form->test_form->html($data, $title = "An example form", $css = array("form-horizontal"));
+		$this->view->test_form = $this->form->test_form->html($data, $title = "An example form", $css = array("form-horizontal form-transform"));
 
 		$this->load->form('index/simple_form');
 		$this->view->simple_form = $this->form->simple_form->html($data = null, $title = "A simpler form", $css = array("form-inline"));

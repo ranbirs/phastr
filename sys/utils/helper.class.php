@@ -49,10 +49,10 @@ class Helper {
 			case 'route':
 				$path = (\app\confs\rewrite\enabled__) ?
 					self::getPath($path, 'base') :
-					self::getPath("", 'base') . "?" . \app\confs\rewrite\key__ . "=" . $path;
+					self::getPath("", 'base') . "?" . \app\confs\rewrite\name__ . "=" . $path;
 				break;
 			case 'ajax':
-				$path = \sys\Init::route()->get() . "/" . \sys\components\Request::param__ . "/" . $path;
+				$path = \sys\Init::route()->get() . "/" . \sys\modules\Request::param__ . "/" . $path;
 				break;
 			case 'base':
 				$base = \app\confs\rewrite\base__;
