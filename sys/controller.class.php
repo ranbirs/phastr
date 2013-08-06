@@ -11,8 +11,6 @@ abstract class Controller extends Constructor {
 		parent::__construct();
 	}
 
-	abstract protected function render();
-
 	public function dispatch($default, $page, $action, $params = array())
 	{
 		$methods = array(
@@ -32,32 +30,42 @@ abstract class Controller extends Constructor {
 		if (empty($process)) {
 			$this->view->error(404, \sys\confs\error\controller_methods__);
 		}
-		if (isset($params[2]) and $params[0] === \sys\modules\Request::param__)
-			if ($this->request->header() === $this->session->xid())
-				$this->_request($params[1], $params[2]);
-
+		if (current($params) === \sys\modules\Request::param__) {
+			$request = $this->_request((isset($params[1])) ? $params[1] : null, (isset($params[2])) ? $params[2] : null);
+			if (!$request) {
+				$this->view->error(404, \sys\confs\error\controller_request__);
+			}
+			$this->view->response($request);
+		}
 		$this->render($page, $action, $params);
 	}
 
-	private function _request($context, $subj)
+	protected function render()
 	{
+		$this->view->layout(\app\confs\config\layout__);
+	}
+
+	private function _request($context = null, $subj = null)
+	{
+		if (is_null($context) or is_null($subj) or $this->request->header() !== $this->session->xid()) {
+			return false;
+		}
 		switch ($context) {
 			case 'request':
 				$method = $this->request->method;
 				$this->view->request = $this->request->$method();
 				$this->view->response = $this->view->request($subj);
-				$this->view->response($this->request->layout);
-				break;
+				return $layout = $this->request->layout;
 			case 'form':
 				if ($this->$context->$subj instanceof \sys\modules\Form) {
 					$method = $this->$context->$subj->method();
 					$this->view->request = $this->request->$method();
 					$this->view->response = $this->$context->$subj->submit();
-					$this->view->response('json');
+					return $layout = 'json';
 				}
 				break;
 		}
-		$this->view->error(404);
+		return false;
 	}
 
 }
