@@ -4,7 +4,7 @@ namespace sys\utils;
 
 class Conf {
 
-	public static function k($const, $context = 'config', $base = 'app')
+	public static function k($const, $context = 'config', $base = app__)
 	{
 		$const .= "__";
 		$constant = self::_get($const, $context, $base);

@@ -14,16 +14,16 @@ class Loader {
 		require_once Helper::getPath($path) . $ext;
 	}
 
-	public static function resolveFile($path, $base = 'app', $ext = ".php")
+	public static function resolveFile($path, $base = app__, $ext = ".php")
 	{
-		$path = Helper::getPath($base . "/" . $path) . $ext;
+		$path = Helper::getPath(\sys\base($path, $base)) . $ext;
 		$file = stream_resolve_include_path($path);
 		return ($file !== false) ? $path : false;
 	}
 
-	protected static function resolveInclude($path, $context, $control = null, $base = 'app', $ext = ".php")
+	protected static function resolveInclude($path, $context, $control = null, $base = app__, $ext = ".php")
 	{
-		self::includeFile($base . "/" . $context . "s/". $path, $ext);
+		self::includeFile(\sys\base($context . "s/". $path, $base), $ext);
 
 		if (is_null($control)) {
 			return true;
@@ -31,7 +31,7 @@ class Loader {
 		return self::resolveInstance($path, $context, $control, $base);
 	}
 
-	private static function resolveInstance($path, $context, $control = null, $base = 'app')
+	private static function resolveInstance($path, $context, $control = null, $base = app__)
 	{
 		$path = Helper::getPath($context . "s/" . $path);
 		$class = Helper::getPathClass("\\$base\\" . $path);

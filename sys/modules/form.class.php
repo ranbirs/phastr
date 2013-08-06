@@ -73,8 +73,8 @@ abstract class Form {
 			$this->_build['css'] = implode(" ", $css);
 			$this->_build['method'] = $method;
 			$this->_build['action'] = Helper::getPath(array('form', $this->_fid), 'ajax') . "/";
-			$data = array('build' => $this->_build, 'fields' => $this->_fields);
-			$this->_html = Init::view()->template('form', $template, $data);
+			$form = array('build' => $this->_build, 'fields' => $this->_fields);
+			$this->_html = Init::view()->template('form', $template, $form);
 		}
 		return $this->_html;
 	}

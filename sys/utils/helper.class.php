@@ -75,7 +75,7 @@ class Helper {
 
 		foreach ($params as $param) {
 			$param = array_map('trim', explode($delimiter, $param, 2));
-			if ($param[0])
+			if (strlen($param[0]))
 				$args[$param[0]] = (isset($param[1])) ? $param[1] : "";
 		}
 		return $args;

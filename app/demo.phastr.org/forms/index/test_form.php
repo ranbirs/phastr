@@ -203,6 +203,7 @@ class Test_form extends \sys\modules\Form {
 				'attr' => array(
 					'data-loading-text' => "Everything is OK!",
 					'onclick' => '$(this).stop().button(\'loading\');
+						$(\'.controls\').popover(\'destroy\');
 						$(this).animate({delay: 1}, 2000, function () {
 							$(this).button(\'reset\').text(\'Is everything OK?\');
 						});'

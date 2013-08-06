@@ -31,7 +31,7 @@ class Load extends Loader {
 		return self::resolveInclude($path, 'controller', self::instance__);
 	}
 
-	public static function conf($path, $base = 'app')
+	public static function conf($path, $base = app__)
 	{
 		return self::resolveInclude($path, 'conf', null, $base);
 	}

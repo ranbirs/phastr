@@ -32,14 +32,14 @@ class Login_form extends \sys\modules\Form {
 		$this->field(array('button' => 'submit'), "login_submit", "Sign in",
 			$params = array('css' => array("btn", "btn-primary"))
 		);
-
-		$this->success("You have successfully signed in", array('callback' => "location.href = '/user/'"));
-		$this->fail("Invalid credentials");
 	}
 
 	protected function resolve($submit = null, $import = null)
 	{
 		$user = new \app\models\User();
+
+		$this->success("You have successfully signed in", array('callback' => "location.href = '/user/'"));
+		$this->fail("Invalid credentials");
 
 		if ($user->login($submit['login_email'], $submit['login_password'])) {
 			return true;

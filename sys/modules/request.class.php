@@ -58,9 +58,9 @@ class Request {
 		return $this->request($method, $subj . $separator . $key);
 	}
 
-	public function request($method = 'post', $key = null, $value = null)
+	public function request($global = 'post', $key = null, $value = null)
 	{
-		switch ($method) {
+		switch ($global) {
 			case 'server':
 				if (!is_null($key) and !is_null($value))
 					$_SERVER[$key] = $value;
