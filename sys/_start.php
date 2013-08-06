@@ -3,7 +3,7 @@
 namespace sys;
 
 	function base_def() {
-		$hostdir = app__ . "/" . $_SERVER['SERVER_NAME'];
+		$hostdir = app__ . "/" . $_SERVER[server__];
 		$default = app__ . "/default";
 		define("base_app__", (is_dir(get_include_path() . "/" . $hostdir)) ? $hostdir : $default);
 		define("base_sys__", sys__);
