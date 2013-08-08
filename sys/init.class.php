@@ -8,17 +8,17 @@ use sys\View;
 
 class Init {
 
-	private static $route, $load, $view, $session, $request;
+	private static $route, $view, $load, $session, $request;
 
 	function __construct()
 	{
 		self::$route = new Route();
-		self::$load = new Load();
 		self::$view = new View();
 
 		if (isset(self::$route->error)) {
 			self::$view->error(404, self::$route->error);
 		}
+		self::$load = new Load();
 		self::$load->conf('autoload');
 		self::$load->controller(self::$route->controller())
 			->dispatch(self::$route->defaults['method'], self::$route->page(), self::$route->action(), self::$route->args());
@@ -31,14 +31,14 @@ class Init {
 		return self::$route;
 	}
 
+	public static function view($new = false)
+	{
+		return (!$new) ? self::$view : new View();
+	}
+
 	public static function load()
 	{
 		return self::$load;
-	}
-
-	public static function view()
-	{
-		return self::$view;
 	}
 
 	public static function session($new = false)

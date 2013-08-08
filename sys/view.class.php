@@ -4,12 +4,11 @@ namespace sys;
 
 use sys\Init;
 use sys\modules\Assets;
-use sys\modules\Access;
+use sys\utils\Loader;
+use sys\utils\Access;
 use sys\utils\Helper;
 
 class View {
-
-	use \sys\components\Loader;
 
 	public $request, $response, $assets, $access, $error;
 
@@ -86,7 +85,7 @@ class View {
 
 	private function _resolveFile($name, $type = 'page')
 	{
-		return $this->resolveFile("views/" . $type . "s/" . $name);
+		return Loader::resolveFile("views/" . $type . "s/" . $name);
 	}
 
 	private function _includeFile($file)

@@ -2,9 +2,9 @@
 
 namespace sys;
 
-class Load {
+use \sys\utils\Loader;
 
-	use \sys\components\Loader;
+class Load {
 
 	function __construct()
 	{
@@ -18,32 +18,32 @@ class Load {
 
 	public function model($path)
 	{
-		return $this->resolveInclude($path, 'model');
+		return Loader::resolveInclude($path, 'model');
 	}
 
 	public function form($path)
 	{
-		return $this->resolveInclude($path, 'form');
+		return Loader::resolveInclude($path, 'form');
 	}
 
 	public function nav($path)
 	{
-		return $this->resolveInclude($path, 'nav');
+		return Loader::resolveInclude($path, 'nav');
 	}
 
 	public function controller($path)
 	{
-		return $this->resolveInclude($path, 'controller');
+		return Loader::resolveInclude($path, 'controller');
 	}
 
 	public function conf($path, $base = app__)
 	{
-		return $this->resolveInclude($path, 'conf', false, $base);
+		return Loader::resolveInclude($path, 'conf', false, $base);
 	}
 
 	public function vocab($path, $lang = "")
 	{
-		return $this->resolveInclude(($lang) ? $lang . "/" . $path : $path, 'vocab', false);
+		return Loader::resolveInclude(($lang) ? $lang . "/" . $path : $path, 'vocab', false);
 	}
 
 }

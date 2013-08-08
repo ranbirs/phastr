@@ -7,7 +7,16 @@ use sys\utils\Html;
 
 class Assets {
 
+	const script__ = "js";
+	const style__ = "css";
+	const checksum_algo__ = 'md5';
+
 	private static $assets = array();
+
+	function __construct()
+	{
+
+	}
 
 	public function get($type = 'script')
 	{
@@ -43,7 +52,7 @@ class Assets {
 		switch ($type) {
 			case 'script':
 			case 'style':
-				$key = hash('md5', $subj);
+				$key = hash(self::checksum_algo__, $subj);
 				switch ($context) {
 					case null:
 						$context = 'file';
@@ -68,7 +77,7 @@ class Assets {
 	{
 		$file_assets = array();
 		$inline_assets = array();
-		$ext = array('script' => "js", 'style' => "css");
+		$ext = array('script' => self::script__, 'style' => self::style__);
 
 		foreach ($assets as $context => $asset) {
 			switch ($context) {
@@ -88,7 +97,7 @@ class Assets {
 		if (isset($file_assets['value'])) {
 			$document_root = Helper::getPath("", 'root') . Helper::getPath("", 'base');
 			$write_path = \app\confs\config\assets__ . "/" . $type;
-			$file_name = hash('md5', implode($file_assets['checksum'])) . "." . $ext[$type];
+			$file_name = hash(self::checksum_algo__, implode($file_assets['checksum'])) . "." . $ext[$type];
 			$dir = $document_root . $write_path;
 			$file = $dir . "/" . $file_name;
 

@@ -27,10 +27,10 @@ class Route {
 
 	private function _init()
 	{
-		$key = \app\confs\rewrite\name__;
-		$path['request'] = (isset($_GET[$key])) ? Helper::getArray($_GET[$key], "/") : array();
+		$name = \app\confs\rewrite\name__;
+		$path['request'] = (isset($_GET[$name])) ? Helper::getArray($_GET[$name], "/") : array();
 		$path['path'] = $path['request'];
-		unset($_GET[$key]);
+		unset($_GET[$name]);
 
 		if (empty($path['request'])) {
 			$path['path'] = array($this->defaults['autoload'], $this->defaults['homepage'], $this->defaults['action']);

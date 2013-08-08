@@ -9,8 +9,7 @@ namespace sys;
 	}
 
 	function base($path = null, $base = app__) {
-		$base = constant("base_" . $base . "__");
-		return ($path) ? $base . "/" . $path : $path;
+		return ($path) ? constant("base_" . $base . "__") . "/" . $path : $path;
 	}
 
 	function app_autoload($class) {

@@ -21,7 +21,7 @@ abstract class Nav {
 	{
 		$this->build($data);
 
-		if (!$this->_html) {
+		if (!isset($this->_html)) {
 			if (!empty($css)) {
 				$this->_build['attr']['class'] = implode(" ", $css);
 				$this->_build['attr'] = Html::getAttr($this->_build['attr']);
