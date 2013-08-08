@@ -4,6 +4,7 @@ namespace sys;
 
 use sys\Route;
 use sys\Load;
+use sys\View;
 
 class Init {
 
@@ -11,17 +12,15 @@ class Init {
 
 	function __construct()
 	{
-		self::$route = new Route;
+		self::$route = new Route();
+		self::$load = new Load();
+		self::$view = new View();
 
 		if (isset(self::$route->error)) {
-			self::view()->error(404, self::$route->error);
+			self::$view->error(404, self::$route->error);
 		}
-		Load::conf('autoload');
-
-		if (self::$route->defaults['master']) {
-			Load::controller(self::$route->defaults['master']);
-		}
-		Load::controller(self::$route->controller())
+		self::$load->conf('autoload');
+		self::$load->controller(self::$route->controller())
 			->dispatch(self::$route->defaults['method'], self::$route->page(), self::$route->action(), self::$route->args());
 
 		exit();
@@ -34,22 +33,18 @@ class Init {
 
 	public static function load()
 	{
-		if (!isset(self::$load))
-			self::$load = new \sys\Load();
 		return self::$load;
 	}
 
 	public static function view()
 	{
-		if (!isset(self::$view))
-			self::$view = new \sys\View();
 		return self::$view;
 	}
 
-	public static function session()
+	public static function session($new = false)
 	{
-		if (!isset(self::$session)) {
-			Load::conf('hash');
+		if (!isset(self::$session) or $new) {
+			self::$load->conf('hash');
 			self::$session = new \sys\Session();
 		}
 		return self::$session;
@@ -58,7 +53,7 @@ class Init {
 	public static function request()
 	{
 		if (!isset(self::$request)) {
-			Load::conf('request');
+			self::$load->conf('request');
 			self::$request = new \sys\modules\Request();
 		}
 		return self::$request;

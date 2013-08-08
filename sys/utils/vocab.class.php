@@ -8,7 +8,7 @@ class Vocab {
 	{
 		$constant = self::_get($const, $context);
 		if (is_null($constant)) {
-			\sys\Load::conf($context, $lang);
+			\sys\Init::load()->conf($context, $lang);
 			$constant = self::_get($const, $context);
 		}
 		return $constant;

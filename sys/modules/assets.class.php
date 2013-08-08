@@ -7,7 +7,7 @@ use sys\utils\Html;
 
 class Assets {
 
-	private $_assets = array();
+	private static $assets = array();
 
 	public function get($type = 'script')
 	{
@@ -15,19 +15,19 @@ class Assets {
 			case 'script':
 			case 'style':
 				if (\app\confs\config\optimize__) {
-					return $this->_optimize($type, $this->_assets[$type]);
+					return $this->_optimize($type, self::$assets[$type]);
 				}
 				else {
 					$assets = array('file' => array(), 'inline' => array());
-					foreach ($this->_assets[$type] as $context => $asset)
+					foreach (self::$assets[$type] as $context => $asset)
 						foreach ($asset as $param)
 							$assets[$context][] = $param['asset'];
 					return implode("\n", array_merge($assets['file'], $assets['inline']));
 				}
 				break 2;
 			default:
-				return (isset($this->_assets[$type])) ?
-					implode("\n", array_values($this->_assets[$type])) :
+				return (isset(self::$assets[$type])) ?
+					implode("\n", array_values(self::$assets[$type])) :
 					null;
 		}
 	}
@@ -48,19 +48,19 @@ class Assets {
 					case null:
 						$context = 'file';
 					case 'file':
-						return $this->_assets[$type][$context][$key] = array(
+						return self::$assets[$type][$context][$key] = array(
 							'value' => $subj,
 							'asset' => $asset,
 							'iteration' => $append
 						);
 						break;
 					case 'inline':
-						return $this->_assets[$type][$context][$key] = array('asset' => $asset);
+						return self::$assets[$type][$context][$key] = array('asset' => $asset);
 						break;
 				}
 				break;
 			default:
-				return $this->_assets[$type][] = $asset;
+				return self::$assets[$type][] = $asset;
 		}
 	}
 

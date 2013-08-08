@@ -2,13 +2,21 @@
 
 namespace sys;
 
-use sys\components\Constructor;
+abstract class Controller {
 
-abstract class Controller extends Constructor {
+	protected $view, $session, $request;
 
 	function __construct()
 	{
-		parent::__construct();
+		$this->view = Init::view();
+		$this->session = Init::session();
+		$this->request = Init::request();
+	}
+
+	protected function load($type, $path, $args = null)
+	{
+		$subj = \sys\utils\Helper::getPathName($path);
+		return $this->$subj = \sys\Init::load()->get($type, $path, $args);
 	}
 
 	public function dispatch($default, $page, $action, $params = array())
@@ -42,6 +50,7 @@ abstract class Controller extends Constructor {
 
 	protected function render()
 	{
+		$this->view->page = $this->view->page();
 		$this->view->layout(\app\confs\config\layout__);
 	}
 
@@ -57,10 +66,10 @@ abstract class Controller extends Constructor {
 				$this->view->response = $this->view->request($subj);
 				return $layout = $this->request->layout;
 			case 'form':
-				if ($this->$context->$subj instanceof \sys\modules\Form) {
-					$method = $this->$context->$subj->method();
+				if ($this->$subj instanceof \sys\modules\Form) {
+					$method = $this->$subj->method();
 					$this->view->request = $this->request->$method();
-					$this->view->response = $this->$context->$subj->submit();
+					$this->view->response = $this->$subj->submit();
 					return $layout = 'json';
 				}
 				break;

@@ -11,7 +11,7 @@ class Route {
 
 	private static $path, $route;
 	public $defaults = array(
-		'master' => \app\confs\config\master__,
+		'masters' => \app\confs\config\masters__,
 		'autoload' => \app\confs\config\autoload__,
 		'homepage' => \app\confs\config\homepage__,
 		'page' => \app\confs\config\page__,
@@ -22,12 +22,6 @@ class Route {
 
 	function __construct()
 	{
-		if (!isset(self::$route))
-			$this->_init();
-	}
-
-	private function _init()
-	{
 		$key = \app\confs\rewrite\name__;
 		$path['request'] = (isset($_GET[$key])) ? Helper::getArray($_GET[$key], "/") : array();
 		$path['path'] = $path['request'];
@@ -37,7 +31,7 @@ class Route {
 			$path['path'] = array($this->defaults['autoload'], $this->defaults['homepage'], $this->defaults['action']);
 			$path['request'] = "/";
 		}
-		$scope = Helper::getArray(\app\confs\config\scope__, ",");
+		$scope = Helper::getArray(\app\confs\config\controllers__, ",");
 		$scope[] = $this->defaults['autoload'];
 
 		if (!in_array(Helper::getPath($path['path'][0]), $scope))
@@ -75,7 +69,7 @@ class Route {
 			}
 			switch ($index) {
 				case 0:
-					if ($arg === $this->defaults['master']) {
+					if ($arg === $this->defaults['masters']) {
 						return $this->error = \sys\confs\error\route_controller__;
 					}
 					if ($arg !== $this->defaults['autoload'])

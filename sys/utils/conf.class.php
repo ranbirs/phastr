@@ -9,7 +9,7 @@ class Conf {
 		$const .= "__";
 		$constant = self::_get($const, $context, $base);
 		if (is_null($constant)) {
-			\sys\Load::conf($context, $base);
+			\sys\Init::load()->conf($context, $base);
 			$constant = self::_get($const, $context, $base);
 		}
 		return $constant;

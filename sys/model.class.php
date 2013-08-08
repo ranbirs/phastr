@@ -8,7 +8,7 @@ abstract class Model {
 
 	function __construct()
 	{
-		Load::conf('database');
+		Init::load()->conf('database');
 	}
 
 	public function database()

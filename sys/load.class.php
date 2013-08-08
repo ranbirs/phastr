@@ -2,43 +2,48 @@
 
 namespace sys;
 
-use sys\components\Loader;
+class Load {
 
-class Load extends Loader {
+	use \sys\components\Loader;
 
 	function __construct()
 	{
 
 	}
 
+	public function get($type, $path, $args = null)
+	{
+		return (method_exists($this, $type)) ? $this->$type($path, $args) : false;
+	}
+
 	public function model($path)
 	{
-		return self::resolveInclude($path, 'model', self::composite__);
+		return $this->resolveInclude($path, 'model');
 	}
 
 	public function form($path)
 	{
-		return self::resolveInclude($path, 'form', self::composite__);
+		return $this->resolveInclude($path, 'form');
 	}
 
 	public function nav($path)
 	{
-		return self::resolveInclude($path, 'nav', self::composite__);
+		return $this->resolveInclude($path, 'nav');
 	}
 
-	public static function controller($path)
+	public function controller($path)
 	{
-		return self::resolveInclude($path, 'controller', self::instance__);
+		return $this->resolveInclude($path, 'controller');
 	}
 
-	public static function conf($path, $base = app__)
+	public function conf($path, $base = app__)
 	{
-		return self::resolveInclude($path, 'conf', null, $base);
+		return $this->resolveInclude($path, 'conf', false, $base);
 	}
 
-	public static function vocab($path, $lang = "")
+	public function vocab($path, $lang = "")
 	{
-		return self::resolveInclude((($lang) ? $lang . "/" . $path : $path), 'vocab');
+		return $this->resolveInclude(($lang) ? $lang . "/" . $path : $path, 'vocab', false);
 	}
 
 }
