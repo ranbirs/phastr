@@ -22,6 +22,11 @@ class Route {
 
 	function __construct()
 	{
+		$this->_init();
+	}
+
+	private function _init()
+	{
 		$key = \app\confs\rewrite\name__;
 		$path['request'] = (isset($_GET[$key])) ? Helper::getArray($_GET[$key], "/") : array();
 		$path['path'] = $path['request'];
