@@ -80,7 +80,7 @@ class Request {
 				$request = (!is_null($key)) ? ((isset($_REQUEST[$key])) ? $_REQUEST[$key] : null) : $_REQUEST;
 				break;
 			default:
-				$request = null;
+				return false;
 		}
 		return $request;
 	}

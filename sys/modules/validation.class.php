@@ -92,7 +92,7 @@ class Validation {
 				$valid = (filter_var($value, FILTER_VALIDATE_EMAIL));
 				break;
 			default:
-				$valid = true;
+				return false;
 		}
 		return $valid;
 	}
@@ -109,6 +109,8 @@ class Validation {
 			case 'float':
 				$value = filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT);
 				break;
+			default:
+				return false;
 		}
 		return $value;
 	}

@@ -14,7 +14,7 @@ abstract class Form {
 	private $_fid, $_method, $_import;
 	private $_field = array(), $_build = array(), $_fields = array();
 	private $_required = array(), $_validated = array(), $_sanitized = array();
-	private $_html, $_success, $_fail, $_error, $_expire;
+	private $_expire, $_success, $_fail, $_error, $_html;
 
 	function __construct()
 	{

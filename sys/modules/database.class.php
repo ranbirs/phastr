@@ -7,8 +7,6 @@ use PDOException;
 
 class Database extends PDO {
 
-	//const type__ = \app\confs\database\type__;
-
 	function __construct()
 	{
 		try {

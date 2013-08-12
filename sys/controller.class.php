@@ -2,6 +2,8 @@
 
 namespace sys;
 
+use sys\Init;
+
 abstract class Controller {
 
 	protected $view, $session, $request;
@@ -16,7 +18,7 @@ abstract class Controller {
 	protected function load($type, $path, $args = null)
 	{
 		$subj = \sys\utils\Helper::getPathName($path);
-		return $this->$subj = \sys\Init::load()->get($type, $path, $args);
+		return $this->$subj = Init::load()->get($type, $path, $args);
 	}
 
 	public function dispatch($default, $page, $action, $params = array())
@@ -56,7 +58,7 @@ abstract class Controller {
 
 	private function _request($context = null, $subj = null)
 	{
-		if (is_null($context) or is_null($subj) or $this->request->header() !== $this->session->xid()) {
+		if (is_null($subj) or $this->request->header() !== $this->session->xid()) {
 			return false;
 		}
 		switch ($context) {

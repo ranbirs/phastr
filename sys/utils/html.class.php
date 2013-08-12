@@ -26,7 +26,7 @@ class Html {
 						$asset = "<script>" . $subj . "</script>";
 						break 2;
 					default:
-						$asset = null;
+						return false;
 				}
 				break;
 			case 'style':
@@ -42,14 +42,14 @@ class Html {
 						$asset = "<style>" . $subj . "</style>";
 						break 2;
 					default:
-						$asset = null;
+						return false;
 				}
 				break;
 			case 'meta':
 				$asset = '<meta name="' . $subj . '" content="' . $params . '">';
 				break;
 			default:
-				$asset = null;
+				return false;
 		}
 		return $asset;
 	}

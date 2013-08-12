@@ -28,7 +28,7 @@ class Access {
 				break;
 			case 'role':
 			default:
-				$access = false;
+				return false;
 		}
 		return $access;
 	}
