@@ -2,7 +2,8 @@
 
 define('sys__', "sys");
 define('app__', "app");
-define('server__', 'SERVER_NAME');
+define('pub__', basename(__DIR__));
+define('app_srv__', 'SERVER_NAME');
 
 set_include_path(dirname(__DIR__));
 

@@ -3,8 +3,8 @@
 namespace sys;
 
 	function base_def() {
-		$server = app__ . "/" . $_SERVER[server__];
-		define("base_app__", (is_dir(get_include_path() . "/" . $server)) ? $server : app__ . "/default");
+		$app_dir = app__ . "/" . $_SERVER[app_srv__];
+		define("base_app__", (is_dir(get_include_path() . "/" . $app_dir)) ? $app_dir : app__ . "/default");
 		define("base_sys__", sys__);
 	}
 

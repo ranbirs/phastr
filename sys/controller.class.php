@@ -3,21 +3,21 @@
 namespace sys;
 
 use sys\Init;
+use sys\utils\Helper;
 
 abstract class Controller {
 
-	protected $view, $session, $request;
+	protected $view, $request;
 
 	function __construct()
 	{
 		$this->view = Init::view();
-		$this->session = Init::session();
 		$this->request = Init::request();
 	}
 
 	protected function load($type, $path, $args = null)
 	{
-		$subj = \sys\utils\Helper::getPathName($path);
+		$subj = Helper::getPathName($path);
 		return $this->$subj = Init::load()->get($type, $path, $args);
 	}
 
@@ -58,7 +58,7 @@ abstract class Controller {
 
 	private function _request($context = null, $subj = null)
 	{
-		if (is_null($subj) or $this->request->header() !== $this->session->xid()) {
+		if (is_null($subj) or $this->request->header() !== Init::session()->xid()) {
 			return false;
 		}
 		switch ($context) {

@@ -4,9 +4,9 @@ namespace sys;
 
 use sys\Init;
 use sys\modules\Assets;
+use sys\utils\Helper;
 use sys\utils\Loader;
 use sys\utils\Access;
-use sys\utils\Helper;
 
 class View {
 

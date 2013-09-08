@@ -2,6 +2,8 @@
 
 namespace sys\utils;
 
+use sys\utils\Helper;
+
 class Html {
 
 	public static function getAttr($attr)
@@ -19,7 +21,7 @@ class Html {
 				switch ($context) {
 					case null:
 					case 'file':
-						$subj = \sys\utils\Helper::getPath($subj, 'base');
+						$subj = Helper::getPath($subj, 'base');
 						$asset = '<script src="' . ((!is_null($append)) ? $subj . "?" . $append : $subj) . '"></script>';
 						break 2;
 					case 'inline':
@@ -35,7 +37,7 @@ class Html {
 				switch ($context) {
 					case null:
 					case 'file':
-						$subj = \sys\utils\Helper::getPath($subj, 'base');
+						$subj = Helper::getPath($subj, 'base');
 						$asset = '<link href="' . ((!is_null($append)) ? $subj . "?" . $append : $subj) . '" rel="stylesheet"' . $params . ">";
 						break 2;
 					case 'inline':

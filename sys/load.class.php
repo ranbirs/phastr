@@ -21,6 +21,11 @@ class Load {
 		return Loader::resolveInclude($path, 'model');
 	}
 
+	public function service($path, $data = null)
+	{
+		return Loader::resolveInclude($path, 'service');
+	}
+
 	public function form($path)
 	{
 		return Loader::resolveInclude($path, 'form');

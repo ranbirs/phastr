@@ -2,30 +2,32 @@
 
 namespace sys\utils;
 
+use sys\utils\Helper;
+
 class Loader {
 
-	public static function includeFile($path, $ext = ".php")
+	public static function includeFile($path, $ext = "php")
 	{
-		require_once \sys\utils\Helper::getPath($path) . $ext;
+		require_once Helper::getPath($path) . "." . $ext;
 	}
 
-	public static function resolveFile($path, $base = app__, $ext = ".php")
+	public static function resolveFile($path, $base = app__, $ext = "php")
 	{
-		$path = \sys\utils\Helper::getPath(\sys\base($path, $base)) . $ext;
+		$path = Helper::getPath(\sys\base($path, $base)) . "." . $ext;
 		$file = stream_resolve_include_path($path);
 		return ($file !== false) ? $path : false;
 	}
 
-	public static function resolveInclude($path, $subj, $new = true, $base = app__, $ext = ".php")
+	public static function resolveInclude($path, $subj, $new = true, $base = app__, $ext = "php")
 	{
 		self::includeFile(\sys\base($subj . "s/". $path, $base), $ext);
-		return ($new) ? self::resolveInstance($path, $subj, $base) : true;
+		return ($new) ? self::getInstance($path, $subj, $base) : true;
 	}
 
-	public static function resolveInstance($path, $subj, $base = app__)
+	public static function getInstance($path, $subj, $base = app__)
 	{
-		$path = \sys\utils\Helper::getPath($subj . "s/" . $path);
-		$class = \sys\utils\Helper::getPathClass("\\$base\\" . $path);
+		$path = Helper::getPath($subj . "s/" . $path);
+		$class = Helper::getPathClass("\\$base\\" . $path);
 		return new $class;
 	}
 

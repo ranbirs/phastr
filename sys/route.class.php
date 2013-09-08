@@ -10,22 +10,9 @@ class Route {
 	const length__ = 128;
 
 	private static $path, $route;
-	public $defaults = array(
-		'masters' => \app\confs\config\masters__,
-		'autoload' => \app\confs\config\autoload__,
-		'homepage' => \app\confs\config\homepage__,
-		'page' => \app\confs\config\page__,
-		'action' => \app\confs\config\action__,
-		'method' => \app\confs\config\method__
-	);
 	public $error;
 
 	function __construct()
-	{
-		$this->_init();
-	}
-
-	private function _init()
 	{
 		$name = \app\confs\rewrite\name__;
 		$path['request'] = (isset($_GET[$name])) ? Helper::getArray($_GET[$name], "/") : array();
@@ -33,59 +20,58 @@ class Route {
 		unset($_GET[$name]);
 
 		if (empty($path['request'])) {
-			$path['path'] = array($this->defaults['autoload'], $this->defaults['homepage'], $this->defaults['action']);
+			$path['path'] = array(\app\confs\config\autoload__, \app\confs\config\homepage__, \app\confs\config\action__);
 			$path['request'] = "/";
 		}
 		$scope = Helper::getArray(\app\confs\config\controllers__, ",");
-		$scope[] = $this->defaults['autoload'];
+		$scope[] = \app\confs\config\autoload__;
 
 		if (!in_array(Helper::getPath($path['path'][0]), $scope))
-			array_unshift($path['path'], $this->defaults['autoload']);
+			array_unshift($path['path'], \app\confs\config\autoload__);
 
 		if (!isset($path['path'][1]))
-			$path['path'][1] = $this->defaults['page'];
+			$path['path'][1] = \app\confs\config\page__;
 		if (!isset($path['path'][2]))
-			$path['path'][2] = $this->defaults['action'];
+			$path['path'][2] = \app\confs\config\action__;
 
 		$this->_parse($path);
 	}
 
 	private function _parse($path = array())
 	{
-		$route = array_splice($path['path'], 0, 3);
-		$path['args'] = $path['path'];
+		$path['route'] = array_splice($path['path'], 0, 3);
+		$path['params'] = $path['path'];
 		$path['path'] = array();
-		$path['route'] = array();
+		$route = array();
 
-		foreach ($route as $index => &$arg) {
+		foreach ($path['route'] as $index => $arg) {
 
 			if ((strlen($arg) > self::length__)) {
 				return $this->error = \sys\confs\error\route_parse__;
 			}
-			$param = Helper::getPath($arg, 'path');
-			$arg = Helper::getPath($arg);
-			$path['route'][] = $param;
-
-			if (preg_match('/[^a-z0-9-]/', $param)) {
+			if (preg_match('/[^a-z0-9-]/', $arg)) {
 				return $this->error = \sys\confs\error\route_parse__;
 			}
-			if ($arg === $this->defaults['method']) {
+			$label = Helper::getPath($arg);
+			$route[] = $label;
+
+			if ($label === \app\confs\config\method__) {
 				return $this->error = \sys\confs\error\route_parse__;
 			}
 			switch ($index) {
 				case 0:
-					if ($arg === $this->defaults['masters']) {
+					if ($label === \app\confs\config\masters__) {
 						return $this->error = \sys\confs\error\route_controller__;
 					}
-					if ($arg !== $this->defaults['autoload'])
-						$path['path'][] = $param;
+					if ($label !== \app\confs\config\autoload__)
+						$path['path'][] = $arg;
 					break;
 				case 1:
-					$path['path'][] = $param;
+					$path['path'][] = $arg;
 					break;
 				case 2:
-					if ($arg !== $this->defaults['action'])
-						$path['path'][] = $param;
+					if ($arg !== \app\confs\config\action__)
+						$path['path'][] = $arg;
 					break;
 			}
 		}
@@ -120,11 +106,11 @@ class Route {
 		return self::$route[2];
 	}
 
-	public function args($index = null)
+	public function params($index = null)
 	{
 		return (is_numeric($index)) ?
-			((isset(self::$path['args'][$index])) ? self::$path['args'][$index] : null) :
-			((is_null($index)) ? self::$path['args'] : null);
+			((isset(self::$path['params'][$index])) ? self::$path['params'][$index] : null) :
+			((is_null($index)) ? self::$path['params'] : null);
 	}
 
 }
