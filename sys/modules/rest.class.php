@@ -30,9 +30,9 @@ class Rest {
 			case 'post':
 				curl_setopt($this->client, CURLOPT_POST, true);
 				break;
-			case 'put':
-				//curl_setopt($this->client, CURLOPT_PUT, true);
-				//break;
+			/*case 'put':
+				curl_setopt($this->client, CURLOPT_PUT, true);
+				break;*/
 			case 'get':
 			default:
 				curl_setopt($this->client, CURLOPT_HTTPGET, true);
