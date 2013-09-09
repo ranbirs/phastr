@@ -23,6 +23,8 @@ class Rest {
 	public function init($url, $data = null, $method = 'post', $private = null)
 	{
 		$this->client = curl_init($url);
+		$data = serialize($data);
+		$request = array();
 
 		switch ($method) {
 			case 'post':
@@ -38,9 +40,10 @@ class Rest {
 		if ($private) {
 			$vector = mcrypt_create_iv(mcrypt_get_iv_size(self::algo__, self::mode__), self::rand__);
 			$data = $this->encrypt($data, $private, $vector);
+			$request['vector'] = base64_encode($vector);
 		}
-		$data = array('fields' => base64_encode($data), 'vector' => base64_encode($vector));
-		curl_setopt($this->client, CURLOPT_POSTFIELDS, $data);
+		$request['fields'] = base64_encode($data);
+		curl_setopt($this->client, CURLOPT_POSTFIELDS, $request);
 	}
 
 	public function client()
@@ -65,8 +68,10 @@ class Rest {
 		}
 	}
 
-	public function setHeader($headers = array())
+	public function setHeader($headers = null)
 	{
+		if (!is_array($headers))
+			$headers = array($headers);
 		curl_setopt($this->client, CURLOPT_HTTPHEADER, $headers);
 	}
 
@@ -82,29 +87,34 @@ class Rest {
 
 	public function response($format = 'json')
 	{
-		$response = $this->result();
+		$result = $this->result();
 		switch ($format) {
 			case 'json':
-				$response = json_decode($response);
+				$result = json_decode($result);
 				break;
 		}
-		return $response;
+		return $result;
 	}
 
-	public function resolve($fields = null, $vector = null, $private = null)
+	public function resolve($result = null, $vector = null, $private = null)
 	{
-		$fields = base64_decode($fields);
-		return ($private) ? $this->decrypt($fields, $private, base64_decode($vector)) : $fields;
+		$data = base64_decode($result);
+		if ($private)
+			$data = $this->decrypt($data, $private, base64_decode($vector));
+		return unserialize($data);
 	}
 
 	public function respond($data = null, $private = null)
 	{
-		$vector = null;
+		$data = serialize($data);
+		$response = array();
 		if ($private) {
 			$vector = mcrypt_create_iv(mcrypt_get_iv_size(self::algo__, self::mode__), self::rand__);
 			$data = $this->encrypt($data, $private, $vector);
+			$response['vector'] = base64_encode($vector);
 		}
-		return array('result' => base64_encode($data), 'vector' => base64_encode($vector));
+		$response['result'] = base64_encode($data);
+		return $response;
 	}
 
 	public function privateKey($service, $alias, $public, $host = null, $consumer = null)
