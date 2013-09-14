@@ -4,10 +4,11 @@ namespace sys;
 
 use sys\Init;
 use sys\utils\Helper;
+use sys\utils\Access;
 
 abstract class Controller {
 
-	protected $view, $request;
+	protected $view, $request, $access;
 
 	function __construct()
 	{
@@ -33,6 +34,11 @@ abstract class Controller {
 		foreach ($methods as $method) {
 			if (method_exists($this, $method)) {
 				$this->$method($page, $action, $params);
+				if (is_array($this->access) and isset($this->access[1])) {
+					if (!Access::resolveRule($this->access[0], $this->access[1])) {
+						$this->view->error(403);
+					}
+				}
 				continue;
 			}
 			$process--;

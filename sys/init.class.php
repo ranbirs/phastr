@@ -8,7 +8,7 @@ use sys\View;
 
 class Init {
 
-	private static $route, $view, $load, $session, $request;
+	private static $route, $view, $load, $session, $request, $rest;
 
 	function __construct()
 	{
@@ -57,6 +57,15 @@ class Init {
 			self::$request = new \sys\modules\Request();
 		}
 		return self::$request;
+	}
+
+	public static function rest($new = false)
+	{
+		if (!isset(self::$rest) or $new) {
+			self::$load->conf('rest');
+			self::$rest = new \sys\modules\Rest();
+		}
+		return self::$rest;
 	}
 
 }

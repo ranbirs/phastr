@@ -40,7 +40,7 @@ class Hash {
 		return implode($salt);
 	}
 
-	public static function get($data, $algo = 'sha512', $key = \app\confs\config\hash__)
+	public static function get($data, $algo, $key = \app\confs\config\hash__)
 	{
 		return ($key) ? hash_hmac($algo, $data, $key) : hash($algo, $data);
 	}
@@ -50,7 +50,7 @@ class Hash {
 		return crypt($data, self::$algo . self::$cost . '$' . self::salt(self::$salt));
 	}
 
-	public static function resolve($hash, $data, $algo = 'sha512', $key = \app\confs\config\hash__)
+	public static function resolve($hash, $data, $algo = null, $key = \app\confs\config\hash__)
 	{
 		if ($algo) {
 			$subj = self::get($data, $algo, $key);

@@ -3,17 +3,18 @@
 namespace sys\modules;
 
 use sys\Init;
+use sys\utils\Helper;
 
 class Rest {
 
-	const algo__ = MCRYPT_RIJNDAEL_256;
-	const mode__ = MCRYPT_MODE_CBC;
-	const rand__ = MCRYPT_DEV_URANDOM;
-	const hash__ = 'sha256';
+	private static $algo = \app\confs\rest\algo__;
+	private static $mode = \app\confs\rest\mode__;
+	private static $rand = \app\confs\rest\rand__;
+	private static $hash = \app\confs\rest\hash__;
 
-	protected $client, $result;
+	protected $client, $result, $header, $info;
 
-	function __construct()
+	function construct()
 	{
 		if (!extension_loaded('mcrypt') or !extension_loaded('curl')) {
 			Init::view()->error(404, "");
@@ -30,19 +31,25 @@ class Rest {
 			case 'post':
 				curl_setopt($this->client, CURLOPT_POST, true);
 				break;
-			/*case 'put':
+			/*
+			case 'put':
 				curl_setopt($this->client, CURLOPT_PUT, true);
-				break;*/
+				break;
+			*/
 			case 'get':
 			default:
 				curl_setopt($this->client, CURLOPT_HTTPGET, true);
 		}
 		if ($private) {
-			$vector = mcrypt_create_iv(mcrypt_get_iv_size(self::algo__, self::mode__), self::rand__);
+			$vector = mcrypt_create_iv(mcrypt_get_iv_size(self::$algo, self::$mode), self::$rand);
 			$data = $this->encrypt($data, $private, $vector);
-			$request['vector'] = base64_encode($vector);
+			$this->setHeader(array("_vector: " . base64_encode($vector)));
 		}
-		$request['fields'] = base64_encode($data);
+		$request['body'] = base64_encode($data);
+
+		curl_setopt($this->client, CURLOPT_HEADER, true);
+		curl_setopt($this->client, CURLOPT_VERBOSE, true);
+		curl_setopt($this->client, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($this->client, CURLOPT_POSTFIELDS, $request);
 	}
 
@@ -68,18 +75,45 @@ class Rest {
 		}
 	}
 
-	public function setHeader($headers = null)
+	public function setHeader($headers, $client = true)
 	{
 		if (!is_array($headers))
 			$headers = array($headers);
-		curl_setopt($this->client, CURLOPT_HTTPHEADER, $headers);
+
+		if ($client) {
+			curl_setopt($this->client, CURLOPT_HTTPHEADER, $headers);
+		}
+		else {
+			foreach ($headers as $header)
+				header($header);
+		}
+	}
+
+	public function getHeader($key = null, $client = true)
+	{
+		if ($client) {
+			return (!is_null($key)) ? ((isset($this->header[$key])) ? $this->header[$key] : null) : $this->header;
+		}
+		else {
+			return Init::request()->header($key);
+		}
+	}
+
+	public function getInfo($key = null)
+	{
+		return (!is_null($key)) ? ((isset($this->info[$key])) ? $this->info[$key] : null) : $this->info;
 	}
 
 	public function result()
 	{
 		if (!isset($this->result)) {
-			curl_setopt($this->client, CURLOPT_RETURNTRANSFER, true);
-			$this->result = curl_exec($this->client);
+			$result = curl_exec($this->client);
+			$this->info = curl_getinfo($this->client);
+
+			$header_size = (int) $this->getInfo('header_size');
+			$this->header = array_filter(Helper::getArgs(explode("\n", trim(substr($result, 0, $header_size)))));
+			$this->result = trim(substr($result, $header_size));
+
 			curl_close($this->client);
 		}
 		return $this->result;
@@ -96,11 +130,14 @@ class Rest {
 		return $result;
 	}
 
-	public function resolve($result = null, $vector = null, $private = null)
+	public function resolve($result = null, $private = null, $vector = null)
 	{
 		$data = base64_decode($result);
-		if ($private)
+		if ($private) {
+			if (is_null($vector))
+				$vector = $this->getHeader('_vector');
 			$data = $this->decrypt($data, $private, base64_decode($vector));
+		}
 		return unserialize($data);
 	}
 
@@ -109,7 +146,7 @@ class Rest {
 		$data = serialize($data);
 		$response = array();
 		if ($private) {
-			$vector = mcrypt_create_iv(mcrypt_get_iv_size(self::algo__, self::mode__), self::rand__);
+			$vector = mcrypt_create_iv(mcrypt_get_iv_size(self::$algo, self::$mode), self::$rand);
 			$data = $this->encrypt($data, $private, $vector);
 			$response['vector'] = base64_encode($vector);
 		}
@@ -144,14 +181,14 @@ class Rest {
 	}
 
 	public function encrypt($data = null, $private, $vector) {
-		$private = hash(self::hash__, $private, true);
+		$private = hash(self::$hash, $private, true);
 		$data = base64_encode(serialize($data));
-		return mcrypt_encrypt(self::algo__, $private, $data, self::mode__, $vector);
+		return mcrypt_encrypt(self::$algo, $private, $data, self::$mode, $vector);
 	}
 
 	public function decrypt($data = null, $private, $vector) {
-		$private = hash(self::hash__, $private, true);
-		$data = mcrypt_decrypt(self::algo__, $private, $data, self::mode__, $vector);
+		$private = hash(self::$hash, $private, true);
+		$data = mcrypt_decrypt(self::$algo, $private, $data, self::$mode, $vector);
 		return unserialize(base64_decode(trim($data)));
 	}
 

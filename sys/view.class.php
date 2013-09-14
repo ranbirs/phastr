@@ -6,11 +6,10 @@ use sys\Init;
 use sys\modules\Assets;
 use sys\utils\Helper;
 use sys\utils\Loader;
-use sys\utils\Access;
 
 class View {
 
-	public $request, $response, $assets, $access, $error;
+	public $request, $response, $assets, $error;
 
 	function __construct()
 	{
@@ -73,13 +72,6 @@ class View {
 		}
 		ob_start();
 		$this->_includeFile($file);
-
-		if (isset($this->access[1])) {
-			if (!Access::resolveRule($this->access[0], $this->access[1])) {
-				ob_end_clean();
-				$this->error(403);
-			}
-		}
 		return ob_get_clean();
 	}
 

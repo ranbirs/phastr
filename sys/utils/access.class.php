@@ -16,7 +16,7 @@ class Access {
 						$access = (!is_null(\sys\Init::session()->token()));
 						break 2;
 				}
-				$access = true;
+				$access = false;
 				break;
 			case 'private':
 				switch ($rule) {
@@ -24,7 +24,7 @@ class Access {
 						$access = (is_null(\sys\Init::session()->token()));
 						break 2;
 				}
-				$access = true;
+				$access = false;
 				break;
 			case 'role':
 			default:
