@@ -22,8 +22,6 @@ class Init {
 		self::$load->conf('autoload');
 		self::$load->controller(self::$route->controller())
 			->dispatch(\app\confs\config\method__, self::$route->page(), self::$route->action(), self::$route->params());
-
-		exit();
 	}
 
 	public static function route()

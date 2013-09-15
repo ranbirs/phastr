@@ -10,3 +10,5 @@ require sys__ . "/route.class.php";
 require sys__ . "/init.class.php";
 
 new \sys\Init();
+
+exit();

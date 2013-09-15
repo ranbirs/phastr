@@ -41,12 +41,11 @@ class Rest {
 		if ($private) {
 			$vector = mcrypt_create_iv(mcrypt_get_iv_size(self::$algo, self::$mode), self::$rand);
 			$data = $this->encrypt($data, $private, $vector);
-			$this->setHeader(array('_vector: ' . base64_encode($vector)));
+			$this->setHeader(array('_vector' => base64_encode($vector)));
 		}
 		$request['body'] = base64_encode($data);
 
 		curl_setopt($this->client, CURLOPT_HEADER, true);
-		curl_setopt($this->client, CURLOPT_VERBOSE, true);
 		curl_setopt($this->client, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($this->client, CURLOPT_POSTFIELDS, $request);
 	}
@@ -73,11 +72,9 @@ class Rest {
 		}
 	}
 
-	public function setHeader($headers, $client = true)
+	public function setHeader($headers = array(), $client = true)
 	{
-		if (!is_array($headers))
-			$headers = array($headers);
-
+		$headers = Helper::getStringArray($headers);
 		if ($client) {
 			curl_setopt($this->client, CURLOPT_HTTPHEADER, $headers);
 		}

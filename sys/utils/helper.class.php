@@ -93,4 +93,12 @@ class Helper {
 		return array_values(array_filter(array_map($trim, $array), $filter));
 	}
 
+	public static function getStringArray($array = array(), $glue = ": ")
+	{
+		$string_array = array();
+		foreach ($array as $key => $val)
+			$string_array[] = $key . $glue . $val;
+		return $string_array;
+	}
+
 }
