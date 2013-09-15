@@ -1,10 +1,19 @@
 <?php
 
-namespace sys\utils;
+namespace sys\traits;
 
-class Access {
+use sys\Init;
 
-	public static function resolveRule($rule, $role)
+trait Access {
+
+	protected function permission($rule, $role)
+	{
+		if (!$this->resolvePermission($rule, $role)) {
+			Init::view()->error(403);
+		}
+	}
+
+	protected function resolvePermission($rule, $role)
 	{
 		if (is_array($role)) {
 			return false;
@@ -13,7 +22,7 @@ class Access {
 			case 'public':
 				switch ($rule) {
 					case 'deny':
-						$access = (!is_null(\sys\Init::session()->token()));
+						$access = (!is_null(Init::session()->token()));
 						break 2;
 				}
 				$access = false;
@@ -21,7 +30,7 @@ class Access {
 			case 'private':
 				switch ($rule) {
 					case 'deny':
-						$access = (is_null(\sys\Init::session()->token()));
+						$access = (is_null(Init::session()->token()));
 						break 2;
 				}
 				$access = false;

@@ -31,11 +31,9 @@ class Rest {
 			case 'post':
 				curl_setopt($this->client, CURLOPT_POST, true);
 				break;
-			/*
 			case 'put':
 				curl_setopt($this->client, CURLOPT_PUT, true);
 				break;
-			*/
 			case 'get':
 			default:
 				curl_setopt($this->client, CURLOPT_HTTPGET, true);
@@ -43,7 +41,7 @@ class Rest {
 		if ($private) {
 			$vector = mcrypt_create_iv(mcrypt_get_iv_size(self::$algo, self::$mode), self::$rand);
 			$data = $this->encrypt($data, $private, $vector);
-			$this->setHeader(array("_vector: " . base64_encode($vector)));
+			$this->setHeader(array('_vector: ' . base64_encode($vector)));
 		}
 		$request['body'] = base64_encode($data);
 
@@ -130,17 +128,6 @@ class Rest {
 		return $result;
 	}
 
-	public function resolve($result = null, $private = null, $vector = null)
-	{
-		$data = base64_decode($result);
-		if ($private) {
-			if (is_null($vector))
-				$vector = $this->getHeader('_vector');
-			$data = $this->decrypt($data, $private, base64_decode($vector));
-		}
-		return unserialize($data);
-	}
-
 	public function respond($data = null, $private = null)
 	{
 		$data = serialize($data);
@@ -152,6 +139,17 @@ class Rest {
 		}
 		$response['result'] = base64_encode($data);
 		return $response;
+	}
+
+	public function resolve($result = null, $private = null, $vector = null)
+	{
+		$data = base64_decode($result);
+		if ($private) {
+			if (is_null($vector))
+				$vector = $this->getHeader('_vector');
+			$data = $this->decrypt($data, $private, base64_decode($vector));
+		}
+		return unserialize($data);
 	}
 
 	public function privateKey($service, $alias, $public, $host = null, $consumer = null)

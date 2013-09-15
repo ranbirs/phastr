@@ -18,10 +18,11 @@ abstract class Form {
 
 	function __construct()
 	{
+		$this->request = Init::request();
 		$this->_fid = strtolower(Helper::getClassName(get_class($this)));
+
 		if (!Init::session()->get($this->_fid, 'token'))
 			Init::session()->set(array($this->_fid => 'token'), Hash::rand());
-		$this->request = Init::request();
 	}
 
 	abstract protected function build();
