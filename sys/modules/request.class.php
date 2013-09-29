@@ -50,7 +50,9 @@ class Request {
 			foreach ($names as $name) {
 				if (substr($name, 0, $length) === $subj . $separator) {
 					$key = substr($name, $length);
-					$context[$key] = $request[$name];
+					if (substr($key, 0, 1) !== $separator) {
+						$context[$key] = $request[$name];
+					}
 				}
 			}
 			return $context;

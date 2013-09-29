@@ -53,7 +53,7 @@ class View {
 		else {
 			trigger_error(\sys\confs\error\view_layout__);
 		}
-		exit();
+		exit;
 	}
 
 	public function error($code, $msg = "")

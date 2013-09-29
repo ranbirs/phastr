@@ -85,19 +85,19 @@ abstract class Form {
 		$key = Init::session()->key();
 		$xid = Init::session()->xid();
 
-		$this->field(array('input' => 'hidden'), "fid_" . $key, null,
+		$this->field(array('input' => 'hidden'), "_fid_" . $key, null,
 			$params = array(
 				'value' => $this->_fid,
-				'validate' => array($this->_method => array($this->_fid . "_fid_" . $key => $this->_fid))
+				'validate' => array($this->_method => array($this->_fid . "__fid_" . $key => $this->_fid))
 			)
 		);
-		$this->field(array('input' => 'hidden'), "xid_" . $key, null,
+		$this->field(array('input' => 'hidden'), "_xid_" . $key, null,
 			$params = array(
 				'value' => $xid,
 				'validate' => array('header' => array($key => $xid))
 			)
 		);
-		$this->field(array('input' => 'hidden'), "token_" . $key, null,
+		$this->field(array('input' => 'hidden'), "_token_" . $key, null,
 			$params = array(
 				'value' => Init::session()->get($this->_fid, 'token'),
 				'validate' => array('token' => $this->_fid)

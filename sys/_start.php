@@ -11,4 +11,4 @@ require sys__ . "/init.class.php";
 
 new \sys\Init();
 
-exit();
+exit;

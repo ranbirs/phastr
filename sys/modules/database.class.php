@@ -15,7 +15,7 @@ class Database extends PDO {
 		}
 		catch (PDOException $e) {
 			trigger_error($e->getMessage());
-			exit();
+			exit;
 		}
 	}
 
