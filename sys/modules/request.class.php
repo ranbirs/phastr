@@ -13,7 +13,7 @@ class Request {
 
 	function __construct()
 	{
-		Init::view()->assets->set(array('script' => 'inline'),
+		Init::view()->assets->set(['script' => 'inline'],
 			'$.ajaxSetup({headers: {"' . Init::session()->key() . '": "' . Init::session()->xid() . '"}});'
 		);
 	}
@@ -46,7 +46,7 @@ class Request {
 			$request = $this->request($method);
 			$names = array_keys($request);
 			$length = strlen($subj . $separator);
-			$context = array();
+			$context = [];
 			foreach ($names as $name) {
 				if (substr($name, 0, $length) === $subj . $separator) {
 					$key = substr($name, $length);

@@ -26,12 +26,12 @@ class Rest {
 		$this->client = curl_init($url);
 
 		$data = serialize($data);
-		$request = array();
+		$request = [];
 
 		if ($private) {
 			$vector = mcrypt_create_iv(mcrypt_get_iv_size(self::$algo, self::$mode), self::$rand);
 			$data = $this->encrypt($data, $private, $vector);
-			$this->setHeader(array($this->publicKey($public) => base64_encode($vector)));
+			$this->setHeader([$this->publicKey($public) => base64_encode($vector)]);
 		}
 		$request['body'] = base64_encode($data);
 
@@ -58,7 +58,7 @@ class Rest {
 		return $this->client;
 	}
 
-	public function setOpt($params = array())
+	public function setOpt($params = [])
 	{
 		foreach ($params as $args) {
 			if (!is_array($args)) {
@@ -75,7 +75,7 @@ class Rest {
 		}
 	}
 
-	public function setHeader($headers = array(), $client = true)
+	public function setHeader($headers = [], $client = true)
 	{
 		$headers = Helper::getStringArray($headers, ": ");
 		if ($client) {
@@ -117,12 +117,17 @@ class Rest {
 		return $this->result;
 	}
 
-	public function response($format = 'json')
+	public function response($format = 'json', $result = null)
 	{
-		$result = $this->result();
+		if (is_null($result))
+			$result = $this->result();
+
 		switch ($format) {
 			case 'json':
 				$result = json_decode($result);
+				break;
+			case 'base64':
+				$result = base64_decode($result);
 				break;
 		}
 		return $result;
@@ -131,7 +136,7 @@ class Rest {
 	public function respond($data = null, $private = null)
 	{
 		$data = serialize($data);
-		$response = array();
+		$response = [];
 		if ($private) {
 			$vector = mcrypt_create_iv(mcrypt_get_iv_size(self::$algo, self::$mode), self::$rand);
 			$data = $this->encrypt($data, $private, $vector);
@@ -169,13 +174,13 @@ class Rest {
 			return false;
 		}
 		if (!is_array($consumer['service']))
-			$consumer['service'] = array($consumer['service']);
+			$consumer['service'] = [$consumer['service']];
 		if (!in_array($service, $consumer['service'])) {
 			return false;
 		}
 		if (isset($consumer['host'])) {
 			if (!is_array($consumer['host']))
-				$consumer['host'] = array($consumer['host']);
+				$consumer['host'] = [$consumer['host']];
 			if (empty($host) or !in_array($host, $consumer['host'])) {
 				return false;
 			}

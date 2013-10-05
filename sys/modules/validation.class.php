@@ -9,7 +9,7 @@ class Validation {
 	const error__ = 'error';
 	const success__ = 'success';
 
-	private $_result = array();
+	private $_result = [];
 
 	function __construct()
 	{
@@ -25,7 +25,7 @@ class Validation {
 
 	public function set($subj, $msg = null, $status = self::error__)
 	{
-		$this->_result[$status][] = array($subj, $msg);
+		$this->_result[$status][] = [$subj, $msg];
 	}
 
 	public function resolve($id, $validation, $value = null)
@@ -54,47 +54,43 @@ class Validation {
 			case 'post':
 			case 'get':
 				if (!is_array($param)) {
-					$valid = false;
-					break;
+					return false;
 				}
 				$request = Init::request()->$rule(key($param));
-				$valid = (!is_null($value) and $value === $request and $request === current($param));
+				return (!is_null($value) and $value === $request and $request === current($param));
 				break;
 			case 'token':
-				$valid = (!is_null($param) and $value === Init::session()->get($param, 'token'));
+				return (!is_null($param) and $value === Init::session()->get($param, 'token'));
 				break;
 			case 'match':
-				$valid = (!is_null($param) and $value == $param);
+				return (!is_null($param) and $value == $param);
 				break;
 			case 'required':
 				if (is_array($value))
 					$value = implode($value);
-				$valid = (strlen($value) > 0);
+				return (strlen($value) > 0);
 				break;
 			case 'maxlength':
 				$param = (int) $param;
 				if (!is_array($value)) {
-					$valid = (strlen($value) < $param);
-					break;
+					return (strlen($value) < $param);
 				}
 				foreach ($value as $val) {
 					if (strlen($val) > $param) {
-						$valid = false;
-						break 2;
+						return false;
 					}
 				}
-				$valid = true;
+				return true;
 				break;
 			case 'alnum':
-				$valid = (ctype_alnum($value));
+				return (ctype_alnum($value));
 				break;
 			case 'email':
-				$valid = (filter_var($value, FILTER_VALIDATE_EMAIL));
+				return (filter_var($value, FILTER_VALIDATE_EMAIL));
 				break;
 			default:
 				return false;
 		}
-		return $valid;
 	}
 
 	public function sanitize($filter = 'string', $value = null)

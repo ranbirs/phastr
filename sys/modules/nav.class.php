@@ -7,7 +7,7 @@ use sys\utils\Html;
 
 abstract class Nav {
 
-	private $_build = array(), $_items = array();
+	private $_build = [], $_items = [];
 	private $_html;
 
 	function __construct()
@@ -17,7 +17,7 @@ abstract class Nav {
 
 	abstract protected function build();
 
-	public function html($data = null, $title = null, $css = array(), $template = "bootstrap")
+	public function html($data = null, $title = null, $css = [], $template = "bootstrap")
 	{
 		$this->build($data);
 
@@ -26,13 +26,13 @@ abstract class Nav {
 				$this->_build['attr']['class'] = implode(" ", $css);
 				$this->_build['attr'] = Html::getAttr($this->_build['attr']);
 			}
-			$data = array('title' => $title, 'build' => $this->_build, 'items' => $this->_items);
+			$data = ['title' => $title, 'build' => $this->_build, 'items' => $this->_items];
 			$this->_html = Init::view()->template('nav', $template, $data);
 		}
 		return $this->_html;
 	}
 
-	protected function item($label = null, $path = null, $data = array())
+	protected function item($label = null, $path = null, $data = [])
 	{
 		$count = count($this->_items);
 		$index = ($count > 0) ? $count + 1 : 0;
@@ -45,12 +45,12 @@ abstract class Nav {
 					$this->_items[$index]['data'][] = $val;
 					continue;
 				}
-				$this->_items[] = array('label' => $label, 'path' => $path, 'data' => $data);
+				$this->_items[] = ['label' => $label, 'path' => $path, 'data' => $data];
 				break;
 			}
 		}
 		else {
-			$this->_items[] = array('label' => $label, 'path' => $path, 'data' => $data);
+			$this->_items[] = ['label' => $label, 'path' => $path, 'data' => $data];
 		}
 	}
 

@@ -7,7 +7,7 @@ use sys\utils\Helper;
 
 class Route {
 
-	const length__ = 128;
+	const arg_length__ = 128;
 
 	private static $path, $route;
 	public $error;
@@ -15,12 +15,12 @@ class Route {
 	function __construct()
 	{
 		$name = \app\confs\rewrite\name__;
-		$path['request'] = (isset($_GET[$name])) ? Helper::getArray($_GET[$name], "/") : array();
+		$path['request'] = (isset($_GET[$name])) ? Helper::getArray($_GET[$name], "/") : [];
 		$path['path'] = $path['request'];
 		unset($_GET[$name]);
 
 		if (empty($path['request'])) {
-			$path['path'] = array(\app\confs\config\autoload__, \app\confs\config\homepage__, \app\confs\config\action__);
+			$path['path'] = [\app\confs\config\autoload__, \app\confs\config\homepage__, \app\confs\config\action__];
 			$path['request'] = "/";
 		}
 		$scope = Helper::getArray(\app\confs\config\controllers__, ",");
@@ -37,16 +37,16 @@ class Route {
 		$this->_parse($path);
 	}
 
-	private function _parse($path = array())
+	private function _parse($path = [])
 	{
 		$path['route'] = array_splice($path['path'], 0, 3);
 		$path['params'] = $path['path'];
-		$path['path'] = array();
-		$route = array();
+		$path['path'] = [];
+		$route = [];
 
 		foreach ($path['route'] as $index => $arg) {
 
-			if ((strlen($arg) > self::length__)) {
+			if ((strlen($arg) > self::arg_length__)) {
 				return $this->error = \sys\confs\error\route_parse__;
 			}
 			if (preg_match('/[^a-z0-9-]/', $arg)) {

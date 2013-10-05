@@ -38,13 +38,13 @@ class Helper {
 
 		switch ($type) {
 			case 'label':
-				$path = str_replace(array("--", "-"), array("__", "_"), $path);
+				$path = str_replace(["--", "-"], ["__", "_"], $path);
 				break;
 			case 'path':
-				$path = str_replace(array("__", "/", "_"), array("--", "--", "-"), $path);
+				$path = str_replace(["__", "/", "_"], ["--", "--", "-"], $path);
 				break;
 			case 'tree':
-				$path = str_replace(array("__", "--", "-"), array("/", "/", "_"), $path);
+				$path = str_replace(["__", "--", "-"], ["/", "/", "_"], $path);
 				break;
 			case 'route':
 				$path = (\app\confs\rewrite\enabled__) ?
@@ -69,9 +69,9 @@ class Helper {
 
 	public static function getArgs($params = null, $delimiter = ":")
 	{
-		$args = array();
+		$args = [];
 		if (!is_array($params))
-			$params = array($params);
+			$params = [$params];
 
 		foreach ($params as $param) {
 			$param = array_map('trim', explode($delimiter, $param, 2));
@@ -93,9 +93,9 @@ class Helper {
 		return array_values(array_filter(array_map($trim, $array), $filter));
 	}
 
-	public static function getStringArray($array = array(), $glue = ": ")
+	public static function getStringArray($array = [], $glue = ": ")
 	{
-		$string_array = array();
+		$string_array = [];
 		foreach ($array as $key => $val)
 			$string_array[] = $key . $glue . $val;
 		return $string_array;

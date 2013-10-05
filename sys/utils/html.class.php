@@ -8,10 +8,10 @@ class Html {
 
 	public static function getAttr($attr)
 	{
-		$attrs = array();
+		$attrs = [];
 		foreach ($attr as $key => $val)
 			$attrs[] = $key . '="' . $val . '"';
-		return " " . implode(" ", $attrs);
+		return (!empty($attrs)) ? " " . implode(" ", $attrs) : "";
 	}
 
 	public static function getAsset($type = 'script', $context = null, $subj = null, $params = null, $append = null)
@@ -22,6 +22,7 @@ class Html {
 					case null:
 					case 'file':
 						$subj = Helper::getPath($subj, 'base');
+					case 'remote':
 						$asset = '<script src="' . ((!is_null($append)) ? $subj . "?" . $append : $subj) . '"></script>';
 						break 2;
 					case 'inline':
@@ -38,6 +39,7 @@ class Html {
 					case null:
 					case 'file':
 						$subj = Helper::getPath($subj, 'base');
+					case 'remote':
 						$asset = '<link href="' . ((!is_null($append)) ? $subj . "?" . $append : $subj) . '" rel="stylesheet"' . $params . ">";
 						break 2;
 					case 'inline':

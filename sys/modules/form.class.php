@@ -12,8 +12,8 @@ abstract class Form {
 
 	protected $request, $validation;
 	private $_fid, $_method, $_import;
-	private $_field = array(), $_build = array(), $_fields = array();
-	private $_required = array(), $_validated = array(), $_sanitized = array();
+	private $_field = [], $_build = [], $_fields = [];
+	private $_required = [], $_validated = [], $_sanitized = [];
 	private $_expire, $_success, $_fail, $_error, $_html;
 
 	function __construct()
@@ -22,7 +22,7 @@ abstract class Form {
 		$this->_fid = strtolower(Helper::getClassName(get_class($this)));
 
 		if (!Init::session()->get($this->_fid, 'token'))
-			Init::session()->set(array($this->_fid => 'token'), Hash::rand());
+			Init::session()->set([$this->_fid => 'token'], Hash::rand());
 	}
 
 	abstract protected function build();
@@ -61,7 +61,7 @@ abstract class Form {
 		return (isset($this->_fail)) ? $this->_fail : $this->fail();
 	}
 
-	public function html($import = null, $title = null, $css = array(), $method = 'post', $template = "bootstrap")
+	public function html($import = null, $title = null, $css = [], $method = 'post', $template = "bootstrap")
 	{
 		$this->_method = $method;
 		$this->_import = $import;
@@ -73,8 +73,8 @@ abstract class Form {
 			$this->_build['title'] = $title;
 			$this->_build['css'] = implode(" ", $css);
 			$this->_build['method'] = $method;
-			$this->_build['action'] = Helper::getPath(array('form', $this->_fid), 'ajax') . "/";
-			$form = array('build' => $this->_build, 'fields' => $this->_fields);
+			$this->_build['action'] = Helper::getPath(['form', $this->_fid], 'ajax') . "/";
+			$form = ['build' => $this->_build, 'fields' => $this->_fields];
 			$this->_html = Init::view()->template('form', $template, $form);
 		}
 		return $this->_html;
@@ -85,23 +85,23 @@ abstract class Form {
 		$key = Init::session()->key();
 		$xid = Init::session()->xid();
 
-		$this->field(array('input' => 'hidden'), "_fid_" . $key, null,
-			$params = array(
+		$this->field(['input' => 'hidden'], "_fid_" . $key, null,
+			$params = [
 				'value' => $this->_fid,
-				'validate' => array($this->_method => array($this->_fid . "__fid_" . $key => $this->_fid))
-			)
+				'validate' => [$this->_method => [$this->_fid . "__fid_" . $key => $this->_fid]]
+			]
 		);
-		$this->field(array('input' => 'hidden'), "_xid_" . $key, null,
-			$params = array(
+		$this->field(['input' => 'hidden'], "_xid_" . $key, null,
+			$params = [
 				'value' => $xid,
-				'validate' => array('header' => array($key => $xid))
-			)
+				'validate' => ['header' => [$key => $xid]]
+			]
 		);
-		$this->field(array('input' => 'hidden'), "_token_" . $key, null,
-			$params = array(
+		$this->field(['input' => 'hidden'], "_token_" . $key, null,
+			$params = [
 				'value' => Init::session()->get($this->_fid, 'token'),
-				'validate' => array('token' => $this->_fid)
-			)
+				'validate' => ['token' => $this->_fid]
+			]
 		);
 	}
 
@@ -112,17 +112,17 @@ abstract class Form {
 
 	protected function error($msg = "", $callback = "")
 	{
-		return $this->_error = array('result' => false, 'callback' => $callback, 'message' => $msg);
+		return $this->_error = ['result' => false, 'callback' => $callback, 'message' => $msg];
 	}
 
 	protected function fail($msg = "", $callback = "")
 	{
-		return $this->_fail = array('result' => false, 'callback' => $callback, 'message' => $msg);
+		return $this->_fail = ['result' => false, 'callback' => $callback, 'message' => $msg];
 	}
 
 	protected function success($msg = "", $callback = "")
 	{
-		return $this->_success = array('result' => true, 'callback' => $callback, 'message' => $msg);
+		return $this->_success = ['result' => true, 'callback' => $callback, 'message' => $msg];
 	}
 
 	protected function expire($expire = true)
@@ -141,7 +141,7 @@ abstract class Form {
 			$type = 'text';
 
 		if (!is_array($params))
-			$params = array('value' => $params);
+			$params = ['value' => $params];
 
 		if (!isset($params['value']))
 			$params['value'] = (array_values($params) !== $params) ? "" : $params;
@@ -195,7 +195,7 @@ abstract class Form {
 					$group = $id;
 				break;
 			case 'select':
-				$options = array();
+				$options = [];
 				foreach ($this->_fields[$id]['field'] as $field)
 					$options[] = $field['field'];
 				$build = "\n\t" . implode("\n\t", $options) . "</" . $control . ">";
@@ -210,6 +210,7 @@ abstract class Form {
 					case 'action':
 					case null:
 						$type = 'button';
+						break;
 				}
 				$this->_field['attr']['type'] = $type;
 				$group = 'action';
@@ -239,6 +240,7 @@ abstract class Form {
 			case 'hidden':
 			case 'action':
 				return $this->_fields[$id]['field'][] = $build;
+				break;
 		}
 		return $this->_fields[$id]['field'];
 	}
@@ -247,7 +249,7 @@ abstract class Form {
 	{
 		foreach ($this->_field['value'] as $index => &$field) {
 			if (!is_array($field))
-				$field = array($field);
+				$field = [$field];
 
 			if (!isset($field['value'])) {
 				if (array_values($field) !== $field) {
@@ -262,7 +264,7 @@ abstract class Form {
 			if (!isset($field['label']))
 				$field['label'] = "";
 			if (!isset($field['css']))
-				$field['css'] = array();
+				$field['css'] = [];
 
 			$field['attr']['value'] = $field['value'];
 
@@ -289,10 +291,10 @@ abstract class Form {
 			}
 			$build = "<" . $field['control'] . Html::getAttr($field['attr']) . ">" . $build;
 
-			$this->_fields[$id]['field'][] = array(
+			$this->_fields[$id]['field'][] = [
 				'label' => $field['label'],
 				'field' => $build
-			);
+			];
 		}
 		unset($field);
 	}
@@ -303,6 +305,7 @@ abstract class Form {
 		$this->_field['css'][] = "validated";
 
 		foreach ($this->_field['validate'] as $rule => $params) {
+
 			if (is_int($rule))
 				$rule = $params;
 
@@ -320,7 +323,7 @@ abstract class Form {
 			$this->_field['css'][] = "rule-" . $rule;
 
 			if (is_array($params) and $type != 'hidden')
-				if (array_intersect(array(Validation::error__, Validation::success__), array_keys($params)))
+				if (array_intersect([Validation::error__, Validation::success__], array_keys($params)))
 					$this->_fields[$id]['verbose'] = true;
 		}
 	}

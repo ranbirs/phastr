@@ -31,7 +31,7 @@ class Hash {
 			((is_array($range)) ? array_values($range) : explode($range));
 		$scope = count($range) - 1;
 		$length = (int) $length;
-		$salt = array();
+		$salt = [];
 
 		for ($c = 0; $c < $length; $c++) {
 			$rand = mt_rand(0, $scope);

@@ -22,24 +22,19 @@ trait Access {
 			case 'public':
 				switch ($rule) {
 					case 'deny':
-						$access = (!is_null(Init::session()->token()));
-						break 2;
+						return (Init::session()->token() and Init::session()->uid());
 				}
-				$access = false;
 				break;
 			case 'private':
 				switch ($rule) {
 					case 'deny':
-						$access = (is_null(Init::session()->token()));
-						break 2;
+						return (!Init::session()->token() or !Init::session()->uid());
 				}
-				$access = false;
 				break;
 			case 'role':
 			default:
 				return false;
 		}
-		return $access;
 	}
 
 }

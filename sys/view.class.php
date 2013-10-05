@@ -3,17 +3,17 @@
 namespace sys;
 
 use sys\Init;
-use sys\modules\Assets;
 use sys\utils\Helper;
-use sys\utils\Loader;
 
 class View {
 
-	public $request, $response, $assets, $error;
+	use \sys\traits\Loader;
+
+	public $request, $response, $assets, $error, $type, $body, $title;
 
 	function __construct()
 	{
-		$this->assets = new Assets();
+
 	}
 
 	public function block($name)
@@ -77,7 +77,7 @@ class View {
 
 	private function _resolveFile($name, $type = 'page')
 	{
-		return Loader::resolveFile("views/" . $type . "s/" . $name);
+		return $this->resolveFile("views/" . $type . "s/" . $name);
 	}
 
 	private function _includeFile($file)

@@ -19,12 +19,12 @@ class Session {
 			$this->set('_xid', Hash::rand());
 			$this->set('_gid', Hash::rid());
 			$this->set('_key', $this->keygen());
-			$this->set(array('_timestamp' => 0), microtime(true));
-			$this->set(array('_client' => 'lang'), \app\confs\config\lang__);
+			$this->set(['_timestamp' => 0], microtime(true));
+			$this->set(['_client' => 'lang'], \app\confs\config\lang__);
 		}
-		$this->set(array('_timestamp' => 1), microtime(true));
+		$this->set(['_timestamp' => 1], microtime(true));
 		if (isset($_SERVER['HTTP_USER_AGENT']))
-			$this->set(array('_client' => 'agent'), $_SERVER['HTTP_USER_AGENT']);
+			$this->set(['_client' => 'agent'], $_SERVER['HTTP_USER_AGENT']);
 	}
 
 	public function sid()
