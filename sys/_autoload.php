@@ -2,7 +2,7 @@
 
 namespace sys;
 
-	function base_def() {
+	function def_base() {
 		$app_dir = app__ . "/" . $_SERVER[app_srv__];
 		define("base_app__", (is_dir(get_include_path() . "/" . $app_dir)) ? $app_dir : app__ . "/default");
 		define("base_sys__", sys__);
@@ -18,7 +18,7 @@ namespace sys;
 		require_once strtolower(\sys\base($path, $class[0])) . ".php";
 	}
 
-\sys\base_def();
+\sys\def_base();
 
 spl_autoload_extensions(".class.php,.php");
 spl_autoload_register();

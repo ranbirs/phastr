@@ -82,7 +82,7 @@ class Assets {
 		$file_assets = [];
 		$inline_assets = [];
 		$remote_assets = [];
-		$exts = ['script' => self::script_ext__, 'style' => self::style_ext__];
+		$ext = ['script' => self::script_ext__, 'style' => self::style_ext__];
 
 		foreach ($assets as $context => $asset) {
 			switch ($context) {
@@ -90,7 +90,7 @@ class Assets {
 					foreach ($asset as $param) {
 						$file_assets['value'][] = $param['value'];
 						$file_assets['asset'][] = $param['asset'];
-						$file_assets['checksum'][] = $param['value'] . $exts[$type] . $param['iteration'];
+						$file_assets['checksum'][] = $param['value'] . $ext[$type] . $param['iteration'];
 					}
 					break;
 				case 'inline':
@@ -106,7 +106,7 @@ class Assets {
 		if (isset($file_assets['value'])) {
 			$root_path = Helper::getPath("", 'root') . Helper::getPath("", 'base');
 			$write_path = \app\confs\config\assets__ . "/" . $type;
-			$file_name = hash(self::checksum_algo__, implode($file_assets['checksum'])) . "." . $exts[$type];
+			$file_name = hash(self::checksum_algo__, implode($file_assets['checksum'])) . "." . $ext[$type];
 			$dir = $root_path . $write_path;
 			$file = $dir . "/" . $file_name;
 

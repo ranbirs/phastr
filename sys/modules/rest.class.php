@@ -78,6 +78,7 @@ class Rest {
 	public function setHeader($headers = [], $client = true)
 	{
 		$headers = Helper::getStringArray($headers, ": ");
+
 		if ($client) {
 			curl_setopt($this->client, CURLOPT_HTTPHEADER, $headers);
 		}
@@ -137,6 +138,7 @@ class Rest {
 	{
 		$data = serialize($data);
 		$response = [];
+
 		if ($private) {
 			$vector = mcrypt_create_iv(mcrypt_get_iv_size(self::$algo, self::$mode), self::$rand);
 			$data = $this->encrypt($data, $private, $vector);
@@ -149,6 +151,7 @@ class Rest {
 	public function resolve($result = null, $private = null, $public = null, $vector = null)
 	{
 		$data = base64_decode($result);
+
 		if ($private) {
 			if (is_null($vector))
 				$vector = $this->getHeader($this->publicKey($public));

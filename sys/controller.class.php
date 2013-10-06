@@ -29,6 +29,7 @@ abstract class Controller {
 			$page . "_" . $action
 		];
 		$process = count($methods);
+
 		foreach ($methods as $method) {
 			if (method_exists($this, $method)) {
 				$this->$method($page, $action, $params);
