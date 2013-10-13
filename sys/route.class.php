@@ -14,25 +14,25 @@ class Route {
 
 	function __construct()
 	{
-		$name = \app\confs\rewrite\name__;
+		$name = \app\confs\route\name__;
 		$path['request'] = (isset($_GET[$name])) ? Helper::getArray($_GET[$name], "/") : [];
 		$path['path'] = $path['request'];
 		unset($_GET[$name]);
 
 		if (empty($path['request'])) {
-			$path['path'] = [\app\confs\config\autoload__, \app\confs\config\homepage__, \app\confs\config\action__];
+			$path['path'] = [\app\confs\route\autoload__, \app\confs\route\homepage__, \app\confs\route\action__];
 			$path['request'] = "/";
 		}
-		$scope = Helper::getArray(\app\confs\config\controllers__, ",");
-		$scope[] = \app\confs\config\autoload__;
+		$scope = Helper::getArray(\app\confs\route\controllers__, ",");
+		$scope[] = \app\confs\route\autoload__;
 
 		if (!in_array(Helper::getPath($path['path'][0]), $scope))
-			array_unshift($path['path'], \app\confs\config\autoload__);
+			array_unshift($path['path'], \app\confs\route\autoload__);
 
 		if (!isset($path['path'][1]))
-			$path['path'][1] = \app\confs\config\page__;
+			$path['path'][1] = \app\confs\route\page__;
 		if (!isset($path['path'][2]))
-			$path['path'][2] = \app\confs\config\action__;
+			$path['path'][2] = \app\confs\route\action__;
 
 		$this->_parse($path);
 	}
@@ -55,22 +55,22 @@ class Route {
 			$label = Helper::getPath($arg);
 			$route[] = $label;
 
-			if ($label === \app\confs\config\method__) {
+			if ($label === \app\confs\route\method__) {
 				return $this->error = \sys\confs\error\route_parse__;
 			}
 			switch ($index) {
 				case 0:
-					if ($label === \app\confs\config\masters__) {
+					if ($label === \app\confs\route\masters__) {
 						return $this->error = \sys\confs\error\route_controller__;
 					}
-					if ($label !== \app\confs\config\autoload__)
+					if ($label !== \app\confs\route\autoload__)
 						$path['path'][] = $arg;
 					break;
 				case 1:
 					$path['path'][] = $arg;
 					break;
 				case 2:
-					if ($arg !== \app\confs\config\action__)
+					if ($arg !== \app\confs\route\action__)
 						$path['path'][] = $arg;
 					break;
 			}

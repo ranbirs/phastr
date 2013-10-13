@@ -14,7 +14,7 @@ class Request {
 	function __construct()
 	{
 		Init::view()->assets->set(['script' => 'inline'],
-			'$.ajaxSetup({headers: {"' . Init::session()->key() . '": "' . Init::session()->xid() . '"}});'
+			'$.ajaxSetup({headers: {"' . Init::session()->key() . '": "' . Init::session()->token() . '"}});'
 		);
 	}
 

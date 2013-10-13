@@ -6,18 +6,16 @@ use sys\utils\Hash;
 
 class Session {
 
-	private $_sid;
+	protected $session_id;
 
 	function __construct()
 	{
 		session_start();
-		$this->_sid = session_id();
+		$this->session_id = session_id();
 
-		if (!isset($_SESSION['_sid']) or $this->_sid !== $_SESSION['_sid']) {
-			$_SESSION['_sid'] = $this->_sid;
-
-			$this->set('_xid', Hash::rand());
-			$this->set('_gid', Hash::rid());
+		if (!isset($_SESSION[$this->session_id])) {
+			$this->set('_id', Hash::id());
+			$this->set('_token', Hash::rand());
 			$this->set('_key', $this->keygen());
 			$this->set(['_timestamp' => 0], microtime(true));
 			$this->set(['_client' => 'lang'], \app\confs\config\lang__);
@@ -27,14 +25,14 @@ class Session {
 			$this->set(['_client' => 'agent'], $_SERVER['HTTP_USER_AGENT']);
 	}
 
-	public function sid()
+	public function id()
 	{
-		return $this->_sid;
+		return $this->get('_id');
 	}
 
-	public function xid()
+	public function token()
 	{
-		return $this->get('_xid');
+		return $this->get('_token');
 	}
 
 	public function key()
@@ -42,14 +40,9 @@ class Session {
 		return $this->get('_key');
 	}
 
-	public function uid()
+	public function timestamp($key = 0)
 	{
-		return $this->get('_user', 'uid');
-	}
-
-	public function token()
-	{
-		return $this->get('_user', 'token');
+		return $this->get('_timestamp', $key);
 	}
 
 	public function client($key = 'agent')
@@ -57,22 +50,22 @@ class Session {
 		return $this->get('_client', $key);
 	}
 
-	public function timestamp($key = 0)
+	public function user($key = 'token')
 	{
-		return $this->get('_timestamp', $key);
+		return $this->get('_user', $key);
 	}
 
 	public function keygen($hash = null)
 	{
-		$key = Hash::get($this->_sid . $this->xid() . $this->get('_gid'), 'sha1');
+		$key = Hash::get($this->session_id . $this->id() . $this->token(), 'sha1');
 		return (!is_null($hash)) ? ($hash === $key) : $key;
 	}
 
 	public function get($subj, $key = null)
 	{
 		return (!is_null($key)) ?
-			((isset($_SESSION[$this->_sid][$subj][$key])) ? $_SESSION[$this->_sid][$subj][$key] : null) :
-			((isset($_SESSION[$this->_sid][$subj])) ? $_SESSION[$this->_sid][$subj] : null);
+			((isset($_SESSION[$this->session_id][$subj][$key])) ? $_SESSION[$this->session_id][$subj][$key] : null) :
+			((isset($_SESSION[$this->session_id][$subj])) ? $_SESSION[$this->session_id][$subj] : null);
 	}
 
 	public function set($subj, $value = null)
@@ -83,18 +76,18 @@ class Session {
 			$subj = key($subj);
 		}
 		return (!is_null($key)) ?
-			$_SESSION[$this->_sid][$subj][$key] = $value :
-			$_SESSION[$this->_sid][$subj] = $value;
+			$_SESSION[$this->session_id][$subj][$key] = $value :
+			$_SESSION[$this->session_id][$subj] = $value;
 	}
 
 	public function drop($subj, $key = null)
 	{
 		if ($this->get($subj, $key)) {
 			if (!is_null($key)) {
-				unset($_SESSION[$this->_sid][$subj][$key]);
+				unset($_SESSION[$this->session_id][$subj][$key]);
 			}
 			else {
-				unset($_SESSION[$this->_sid][$subj]);
+				unset($_SESSION[$this->session_id][$subj]);
 			}
 			return true;
 		}

@@ -22,13 +22,13 @@ trait Access {
 			case 'public':
 				switch ($rule) {
 					case 'deny':
-						return (Init::session()->token() and Init::session()->uid());
+						return (Init::session()->user('id') and Init::session()->user('token'));
 				}
 				break;
 			case 'private':
 				switch ($rule) {
 					case 'deny':
-						return (!Init::session()->token() or !Init::session()->uid());
+						return (!Init::session()->user('id') or !Init::session()->user('token'));
 				}
 				break;
 			case 'role':

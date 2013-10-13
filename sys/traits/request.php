@@ -8,7 +8,7 @@ trait Request {
 
 	protected function submitRequest($context = null, $subj = null)
 	{
-		if (is_null($subj) or Init::request()->header() !== Init::session()->xid()) {
+		if (is_null($subj) or Init::request()->header() !== Init::session()->token()) {
 			return false;
 		}
 		switch ($context) {

@@ -1,9 +1,12 @@
 <?php
 
+//define('dir__', DIRECTORY_SEPARATOR);
+define('eol__', PHP_EOL);
+
 define('sys__', "sys");
 define('app__', "app");
-define('pub__', basename(__DIR__));
-define('app_srv__', 'SERVER_NAME');
+define('public__', basename(__DIR__));
+define('app_server__', 'SERVER_NAME');
 
 set_include_path(dirname(__DIR__));
 

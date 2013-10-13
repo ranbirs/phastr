@@ -4,20 +4,20 @@ namespace sys\utils;
 
 class Hash {
 
-	private static $algo = \app\confs\hash\algo__;
+	private static $cipher = \app\confs\hash\cipher__;
 	private static $cost = \app\confs\hash\cost__;
 	private static $salt = \app\confs\hash\salt__;
 
-	public static function rid($prefix = "", $algo = 'sha1')
+	public static function id($id = "", $algo = 'sha1')
 	{
-		if (!$prefix)
-			$prefix = mt_rand();
-		return self::get(uniqid($prefix, true), $algo, null);
+		if (!$id)
+			$id = uniqid(mt_rand(), true);
+		return self::get($id, $algo, false);
 	}
 
 	public static function rand($length = 0, $algo = 'sha1')
 	{
-		$hash = hash($algo, self::rid());
+		$hash = hash($algo, self::salt());
 		$length = (int) $length;
 		if ($length > 0)
 			$hash = ($length > strlen($hash)) ? str_pad($hash, $length, $hash) : substr($hash, 0, $length);
@@ -40,23 +40,23 @@ class Hash {
 		return implode($salt);
 	}
 
-	public static function get($data, $algo, $key = \app\confs\config\hash__)
+	public static function get($data = "", $algo = \app\confs\hash\algo__, $key = \app\confs\hash\key__)
 	{
 		return ($key) ? hash_hmac($algo, $data, $key) : hash($algo, $data);
 	}
 
-	public static function gen($data)
+	public static function cipher($data = "")
 	{
-		return crypt($data, self::$algo . self::$cost . '$' . self::salt(self::$salt));
+		return crypt($data, self::$cipher . self::$cost . '$' . self::salt(self::$salt));
 	}
 
-	public static function resolve($hash, $data, $algo = null, $key = \app\confs\config\hash__)
+	public static function resolve($hash, $data = "", $algo = \app\confs\hash\algo__, $key = \app\confs\hash\key__)
 	{
 		if ($algo) {
 			$subj = self::get($data, $algo, $key);
 		}
 		else {
-			$salt = substr($hash, 0, strlen(self::$algo . self::$cost) + 1 + self::$salt);
+			$salt = substr($hash, 0, strlen(self::$cipher . self::$cost) + 1 + self::$salt);
 			$subj = crypt($data, $salt);
 		}
 		return ($hash === $subj);

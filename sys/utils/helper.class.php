@@ -47,18 +47,18 @@ class Helper {
 				$path = str_replace(["__", "--", "-"], ["/", "/", "_"], $path);
 				break;
 			case 'route':
-				$path = (\app\confs\rewrite\enabled__) ?
-					self::getPath($path, 'base') :
-					self::getPath("", 'base') . "?" . \app\confs\rewrite\name__ . "=" . $path;
+				$path = (\app\confs\route\rewrite__) ?
+					"/" . self::getPath($path, 'base') :
+					"/" . self::getPath("", 'base') . "?" . \app\confs\route\name__ . "=" . $path;
 				break;
 			case 'ajax':
 				$path = \sys\Init::route()->get() . "/" . \sys\modules\Request::param__ . "/" . $path;
 				break;
 			case 'base':
-				$base = \app\confs\rewrite\base__;
+				$base = \app\confs\route\base__;
 				$path = ($base) ?
-					(($path) ? "/" . $base . "/" . $path : "/" . $base . "/") :
-					(($path) ? "/" . $path : "/");
+					(($path) ? $base . "/" . $path : $base) :
+					(($path) ? $path : "");
 				break;
 			case 'root':
 				$path = ($path) ? $_SERVER['DOCUMENT_ROOT'] . "/" . $path : $_SERVER['DOCUMENT_ROOT'];

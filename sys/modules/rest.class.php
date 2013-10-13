@@ -7,7 +7,7 @@ use sys\utils\Helper;
 
 class Rest {
 
-	private static $algo = \app\confs\rest\algo__;
+	private static $cipher = \app\confs\rest\cipher__;
 	private static $mode = \app\confs\rest\mode__;
 	private static $rand = \app\confs\rest\rand__;
 	private static $hash = \app\confs\rest\hash__;
@@ -29,7 +29,7 @@ class Rest {
 		$request = [];
 
 		if ($private) {
-			$vector = mcrypt_create_iv(mcrypt_get_iv_size(self::$algo, self::$mode), self::$rand);
+			$vector = mcrypt_create_iv(mcrypt_get_iv_size(self::$cipher, self::$mode), self::$rand);
 			$data = $this->encrypt($data, $private, $vector);
 			$this->setHeader([$this->publicKey($public) => base64_encode($vector)]);
 		}
@@ -110,7 +110,7 @@ class Rest {
 			$this->info = curl_getinfo($this->client);
 
 			$header_size = (int) $this->getInfo('header_size');
-			$this->header = array_filter(Helper::getArgs(explode("\n", trim(substr($result, 0, $header_size)))));
+			$this->header = array_filter(Helper::getArgs(explode(eol__, trim(substr($result, 0, $header_size)))));
 			$this->result = trim(substr($result, $header_size));
 
 			curl_close($this->client);
@@ -140,7 +140,7 @@ class Rest {
 		$response = [];
 
 		if ($private) {
-			$vector = mcrypt_create_iv(mcrypt_get_iv_size(self::$algo, self::$mode), self::$rand);
+			$vector = mcrypt_create_iv(mcrypt_get_iv_size(self::$cipher, self::$mode), self::$rand);
 			$data = $this->encrypt($data, $private, $vector);
 			$response['vector'] = base64_encode($vector);
 		}
@@ -194,12 +194,12 @@ class Rest {
 	public function encrypt($data = null, $private, $vector) {
 		$private = hash(self::$hash, $private, true);
 		$data = base64_encode(serialize($data));
-		return mcrypt_encrypt(self::$algo, $private, $data, self::$mode, $vector);
+		return mcrypt_encrypt(self::$cipher, $private, $data, self::$mode, $vector);
 	}
 
 	public function decrypt($data = null, $private, $vector) {
 		$private = hash(self::$hash, $private, true);
-		$data = mcrypt_decrypt(self::$algo, $private, $data, self::$mode, $vector);
+		$data = mcrypt_decrypt(self::$cipher, $private, $data, self::$mode, $vector);
 		return unserialize(base64_decode(trim($data)));
 	}
 

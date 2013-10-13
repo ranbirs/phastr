@@ -10,36 +10,35 @@ use sys\utils\Html;
 
 abstract class Form {
 
-	protected $request, $validation;
-	private $_fid, $_method, $_import;
+	protected $form_id, $method, $import, $request, $validation;
 	private $_field = [], $_build = [], $_fields = [];
 	private $_required = [], $_validated = [], $_sanitized = [];
-	private $_expire, $_success, $_fail, $_error, $_html;
+	private $_expire, $_success, $_fail, $_error;
 
 	function __construct()
 	{
 		$this->request = Init::request();
-		$this->_fid = strtolower(Helper::getClassName(get_class($this)));
+		$this->form_id = strtolower(Helper::getClassName(get_class($this)));
 
-		if (!Init::session()->get($this->_fid, 'token'))
-			Init::session()->set([$this->_fid => 'token'], Hash::rand());
+		if (!Init::session()->get($this->form_id, 'token'))
+			Init::session()->set([$this->form_id => 'token'], Hash::rand());
 	}
 
 	abstract protected function build();
 
-	public function fid()
+	public function id()
 	{
-		return $this->_fid;
+		return $this->form_id;
 	}
 
 	public function method()
 	{
-		return $this->_method;
+		return $this->method;
 	}
 
 	public function submit()
 	{
-		$method = $this->_method;
+		$method = $this->method;
 		$this->validation = new Validation();
 
 		foreach ($this->_sanitized as $id => $filter)
@@ -53,9 +52,9 @@ abstract class Form {
 			$this->_error['validation'] = $this->validation->get();
 			return $this->_error;
 		}
-		if ($this->resolve($this->request->fields($this->fid(), $this->method()), $this->_import)) {
+		if ($this->resolve($this->request->fields($this->form_id, $this->method), $this->import)) {
 			if ((isset($this->_expire)) ? $this->_expire : $this->expire())
-				Init::session()->drop($this->_fid, 'token');
+				Init::session()->drop($this->form_id, 'token');
 			return (isset($this->_success)) ? $this->_success : $this->success();
 		}
 		return (isset($this->_fail)) ? $this->_fail : $this->fail();
@@ -63,44 +62,42 @@ abstract class Form {
 
 	public function html($import = null, $title = null, $css = [], $method = 'post', $template = "bootstrap")
 	{
-		$this->_method = $method;
-		$this->_import = $import;
+		$this->method = $method;
+		$this->import = $import;
 		$this->build($import);
-		$this->_close();
+		$this->close();
 
-		if (!isset($this->_html)) {
-			$this->_build['fid'] = $this->_fid;
-			$this->_build['title'] = $title;
-			$this->_build['css'] = implode(" ", $css);
-			$this->_build['method'] = $method;
-			$this->_build['action'] = Helper::getPath(['form', $this->_fid], 'ajax') . "/";
-			$form = ['build' => $this->_build, 'fields' => $this->_fields];
-			$this->_html = Init::view()->template('form', $template, $form);
-		}
-		return $this->_html;
+		$this->_build['id'] = $this->form_id;
+		$this->_build['title'] = $title;
+		$this->_build['css'] = implode(" ", $css);
+		$this->_build['method'] = $method;
+		$this->_build['action'] = Helper::getPath(['form', $this->form_id], 'ajax') . "/";
+
+		$form = ['build' => $this->_build, 'fields' => $this->_fields];
+		return Init::view()->template('form', $template, $form);
 	}
 
-	private function _close()
+	protected function close()
 	{
-		$key = Init::session()->key();
-		$xid = Init::session()->xid();
+		$header_id = Init::session()->token();
+		$session_key = Init::session()->key();
 
-		$this->field(['input' => 'hidden'], "_fid_" . $key, null,
+		$this->field(['input' => 'hidden'], "_form_id_" . $session_key, null,
 			$params = [
-				'value' => $this->_fid,
-				'validate' => [$this->_method => [$this->_fid . "__fid_" . $key => $this->_fid]]
+				'value' => $this->form_id,
+				'validate' => [$this->method => [$this->form_id . "__form_id_" . $session_key => $this->form_id]]
 			]
 		);
-		$this->field(['input' => 'hidden'], "_xid_" . $key, null,
+		$this->field(['input' => 'hidden'], "_header_id_" . $session_key, null,
 			$params = [
-				'value' => $xid,
-				'validate' => ['header' => [$key => $xid]]
+				'value' => $header_id,
+				'validate' => ['header' => [$session_key => $header_id]]
 			]
 		);
-		$this->field(['input' => 'hidden'], "_token_" . $key, null,
+		$this->field(['input' => 'hidden'], "_token_" . $session_key, null,
 			$params = [
-				'value' => Init::session()->get($this->_fid, 'token'),
-				'validate' => ['token' => $this->_fid]
+				'value' => Init::session()->get($this->form_id, 'token'),
+				'validate' => ['token' => $this->form_id]
 			]
 		);
 	}
@@ -147,7 +144,7 @@ abstract class Form {
 			$params['value'] = (array_values($params) !== $params) ? "" : $params;
 		$params['label'] = $label;
 
-		$id = $this->_fid . "_" . $id;
+		$id = $this->form_id . "_" . $id;
 
 		$this->_field = $params;
 
@@ -198,7 +195,7 @@ abstract class Form {
 				$options = [];
 				foreach ($this->_fields[$id]['field'] as $field)
 					$options[] = $field['field'];
-				$build = "\n\t" . implode("\n\t", $options) . "</" . $control . ">";
+				$build = eol__ . implode(eol__, $options) . eol__ . "</" . $control . ">";
 				break;
 			case 'button':
 				$build = $this->_field['label'] . "</" . $control . ">";

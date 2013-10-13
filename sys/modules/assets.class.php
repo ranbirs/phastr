@@ -31,12 +31,12 @@ class Assets {
 					foreach (self::$assets[$type] as $context => $asset)
 						foreach ($asset as $param)
 							$assets[$context][] = $param['asset'];
-					return implode("\n", array_merge($assets['remote'], $assets['file'], $assets['inline']));
+					return implode(eol__, array_merge($assets['remote'], $assets['file'], $assets['inline']));
 				}
 				break;
 			default:
 				return (isset(self::$assets[$type])) ?
-					implode("\n", array_values(self::$assets[$type])) :
+					implode(eol__, array_values(self::$assets[$type])) :
 					null;
 		}
 	}
@@ -104,7 +104,7 @@ class Assets {
 			}
 		}
 		if (isset($file_assets['value'])) {
-			$root_path = Helper::getPath("", 'root') . Helper::getPath("", 'base');
+			$root_path = Helper::getPath("", 'root') . "/" . Helper::getPath("", 'base');
 			$write_path = \app\confs\config\assets__ . "/" . $type;
 			$file_name = hash(self::checksum_algo__, implode($file_assets['checksum'])) . "." . $ext[$type];
 			$dir = $root_path . $write_path;
@@ -117,7 +117,7 @@ class Assets {
 					$content = [];
 					foreach ($file_assets['value'] as $file_path)
 						$content[] = @file_get_contents($root_path . $file_path);
-					@file_put_contents($file, implode("\n", $content));
+					@file_put_contents($file, implode(eol__, $content));
 				}
 				$file_assets = [Html::getAsset($type, 'file', $write_path . "/". $file_name, null, null)];
 			}
@@ -126,7 +126,7 @@ class Assets {
 				$file_assets = $file_assets['asset'];
 			}
 		}
-		return implode("\n", array_merge($remote_assets, $file_assets, $inline_assets));
+		return implode(eol__, array_merge($remote_assets, $file_assets, $inline_assets));
 	}
 
 }

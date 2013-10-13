@@ -8,16 +8,16 @@ abstract class Model {
 
 	function __construct()
 	{
-		Init::load()->conf('database');
+
 	}
 
 	public function database()
 	{
-		if (!\app\confs\database\enabled__) {
-			return false;
-		}
-		if (!isset(self::$dbh))
+
+		if (!isset(self::$dbh)) {
+			Init::load()->conf('database');
 			self::$dbh = new \sys\modules\Database();
+		}
 		return self::$dbh;
 	}
 
