@@ -40,6 +40,12 @@ class Session {
 		return $this->get('_key');
 	}
 
+	public function keygen($hash = null)
+	{
+		$key = Hash::get($this->session_id . $this->id() . $this->token(), 'sha1');
+		return (!is_null($hash)) ? ($hash === $key) : $key;
+	}
+
 	public function timestamp($key = 0)
 	{
 		return $this->get('_timestamp', $key);
@@ -53,12 +59,6 @@ class Session {
 	public function user($key = 'token')
 	{
 		return $this->get('_user', $key);
-	}
-
-	public function keygen($hash = null)
-	{
-		$key = Hash::get($this->session_id . $this->id() . $this->token(), 'sha1');
-		return (!is_null($hash)) ? ($hash === $key) : $key;
 	}
 
 	public function get($subj, $key = null)

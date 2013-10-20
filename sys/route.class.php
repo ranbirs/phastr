@@ -9,7 +9,7 @@ class Route {
 
 	const arg_length__ = 128;
 
-	private static $path, $route;
+	private static $route, $path;
 	public $error;
 
 	function __construct()

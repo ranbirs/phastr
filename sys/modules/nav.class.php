@@ -18,13 +18,13 @@ abstract class Nav {
 
 	abstract protected function build();
 
-	public function html($import = null, $title = null, $css = [], $template = "bootstrap")
+	public function html($import = null, $title = null, $attr = [], $template = "bootstrap")
 	{
 		$this->build($import);
 
-		$this->_build['id'] = $this->nav_id;
+		$attr['id'] = $this->nav_id;
 		$this->_build['title'] = $title;
-		$this->_build['css'] = implode(" ", $css);
+		$this->_build['attr'] = Html::getAttr($attr);
 
 		$nav = ['build' => $this->_build, 'items' => $this->_items];
 		return Init::view()->template('nav', $template, $nav);

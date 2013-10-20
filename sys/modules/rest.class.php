@@ -21,7 +21,7 @@ class Rest {
 		}
 	}
 
-	public function init($url, $data = null, $method = 'post', $private = null, $public = null)
+	public function init($url, $data = null, $method = 'post', $private = null, $public = null, $passphrase = null)
 	{
 		$this->client = curl_init($url);
 
@@ -31,7 +31,7 @@ class Rest {
 		if ($private) {
 			$vector = mcrypt_create_iv(mcrypt_get_iv_size(self::$cipher, self::$mode), self::$rand);
 			$data = $this->encrypt($data, $private, $vector);
-			$this->setHeader([$this->publicKey($public) => base64_encode($vector)]);
+			$this->setHeader([$this->publicKey($public, $passphrase) => base64_encode($vector)]);
 		}
 		$request['body'] = base64_encode($data);
 
@@ -160,12 +160,12 @@ class Rest {
 		return unserialize($data);
 	}
 
-	public function publicKey($public, $algo = \app\confs\rest\hash__)
+	public function publicKey($public, $passphrase, $algo = \app\confs\rest\hash__)
 	{
-		return hash($algo, $public);
+		return hash_hmac($algo, $public, $passphrase);
 	}
 
-	public function privateKey($public, $service, $alias, $host = null, $consumer = null)
+	public function privateKey($public, $service, $alias, $host = null, $consumer = [])
 	{
 		if (empty($public) or empty($service) or empty($alias) or empty($consumer)) {
 			return false;
@@ -173,7 +173,7 @@ class Rest {
 		if (!isset($consumer['private']) or !isset($consumer['public']) or !isset($consumer['service']) or !isset($consumer['alias'])) {
 			return false;
 		}
-		if ($consumer['alias'] !== $alias or $this->publicKey($consumer['public']) !== $public) {
+		if ($public !== $this->publicKey($consumer['public'], $consumer['passphrase']) or $alias !== $consumer['alias']) {
 			return false;
 		}
 		if (!is_array($consumer['service']))

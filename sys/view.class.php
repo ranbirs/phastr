@@ -9,7 +9,7 @@ class View {
 
 	use \sys\traits\Loader;
 
-	public $request, $response, $assets, $error, $type, $body, $title;
+	public $request, $response, $error, $type, $page, $body, $title, $assets;
 
 	function __construct()
 	{
@@ -68,7 +68,7 @@ class View {
 		$file = $this->_resolveFile($name, $type);
 
 		if (!$file) {
-			$this->error(404, \sys\confs\error\view_render__);
+			return false;
 		}
 		ob_start();
 		$this->_includeFile($file);

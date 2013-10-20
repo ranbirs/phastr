@@ -40,17 +40,20 @@ abstract class Controller {
 		if (empty($process)) {
 			$this->view->error(404, \sys\confs\error\controller_methods__);
 		}
-		if (current($params) === \sys\modules\Request::param__) {
+		$this->render($page, $action, $params);
+	}
+
+	public function render($page, $action, $params)
+	{
+		if (isset($params[0]) and $params[0] === \sys\modules\Request::param__) {
 			if (!$this->submitRequest((isset($params[1])) ? $params[1] : null, (isset($params[2])) ? $params[2] : null)) {
 				$this->view->error(404, \sys\confs\error\controller_request__);
 			}
 		}
-		$this->render($page, $action, $params);
-	}
-
-	public function render()
-	{
 		$this->view->page = $this->view->page();
+		if ($this->view->page === false) {
+			$this->error(404, \sys\confs\error\controller_render__);
+		}
 		$this->view->layout(\app\confs\config\layout__);
 	}
 

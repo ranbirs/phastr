@@ -4,14 +4,23 @@ namespace sys\modules;
 
 use PDO;
 use PDOException;
+use sys\utils\Helper;
 
 class Database extends PDO {
 
-	function __construct()
+	const type__ = \app\confs\database\type__;
+	const host__ = \app\confs\database\host__;
+	const name__ = \app\confs\database\name__;
+	const user__ = \app\confs\database\user__;
+	const pass__ = \app\confs\database\pass__;
+
+	protected $dsn, $sth;
+
+	function __construct($dsn, $user, $pass)
 	{
+		$this->dsn = $dsn;
 		try {
-			$dsn = \app\confs\database\type__ . ":host=" . \app\confs\database\host__ . ";dbname=" . \app\confs\database\name__;
-			parent::__construct($dsn, \app\confs\database\user__, \app\confs\database\pass__);
+			parent::__construct($dsn, $user, $pass);
 		}
 		catch (PDOException $e) {
 			trigger_error($e->getMessage());
@@ -19,68 +28,78 @@ class Database extends PDO {
 		}
 	}
 
+	public function dsn()
+	{
+		return $this->dsn;
+	}
+
+	public function sth()
+	{
+		return $this->sth;
+	}
+
 	public function query($statement, $values = [])
 	{
-		$q = $this->prepare($statement);
+		$this->sth = $this->prepare($statement);
 
+		if ($values === arary_values($values)) {
+			array_unshift($values, $values[0]);
+			unset($values[0]);
+		}
 		foreach ($values as $key => $val) {
 
-			if (!is_array($val)) {
+			if (!is_array($val))
 				$val = [$val];
-			}
+
 			switch (count($val)) {
 				case 2:
-					$q->bindValue(":" . $key, $val[0], $val[1]);
+					$this->sth->bindValue($key, $val[0], $val[1]);
 					break;
 				case 1:
-					$q->bindValue(":" . $key, $val[0]);
+					$this->sth->bindValue($key, $val[0]);
 					break;
 				default:
 					return false;
 			}
 		}
-		$q->execute();
+		$this->sth->execute();
 		return $q;
 	}
 
-	public function select($table, $cols = [], $clause = null, $values = [], $fetch = PDO::FETCH_OBJ)
+	public function select($table, $cols = [], $clause = "", $params = [], $fetch = PDO::FETCH_OBJ)
 	{
 		$cols = implode(", ", $cols);
-		$q = $this->prepare("SELECT $cols FROM $table $clause");
+		$this->sth = $this->prepare("SELECT $cols FROM $table $clause");
 
-		foreach ($values as $key => $val)
-			$q->bindValue(":" . $key, $val);
-		$q->execute();
-		if ($q->rowCount()) {
-			return $q->fetchAll($fetch);
+		foreach ($params as $key => $val)
+			$this->sth->bindValue($key, $val);
+		$this->sth->execute();
+		if ($this->sth->rowCount()) {
+			return $this->sth->fetchAll($fetch);
 		}
 		return false;
 	}
 
-	public function update($table, $values = [], $clause = null, $params = [])
+	public function update($table, $values = [], $clause = "", $params = [])
 	{
-		$keys = array_keys($values);
-		$args = [];
-		foreach($keys as $key)
-			$args[] = $key . "= :" . $key;
-		$args = implode(", ", $args);
-		$q = $this->prepare("UPDATE $table SET $args $clause");
+		$values = Helper::getStringArray($values, " = ");
+		$values = implode(", ", $args);
+		$this->sth = $this->prepare("UPDATE $table SET $values $clause");
 
-		foreach (array_merge($values, $params) as $key => $val)
-			$q->bindValue(":" . $key, $val);
-		return $q->execute();
+		foreach ($params as $key => $val)
+			$this->sth->bindValue($key, $val);
+		return $this->sth->execute();
 	}
 
-	public function insert($table, $values = [])
+	public function insert($table, $values = [], $params = [])
 	{
-		$keys = array_keys($values);
-		$cols = implode(", ", $keys);
-		$args = ":" . implode(", :", $keys);
-		$q = $this->prepare("INSERT INTO $table ($cols) VALUES ($args)");
+		$cols = implode(", ", array_keys($values));
+		$values = implode(", ", array_values($values));
+		$this->sth = $this->prepare("INSERT INTO $table ($cols) VALUES ($values)");
 
-		foreach ($values as $key => $val)
-			$q->bindValue(":" . $key, $val);
-		$q->execute();
+		foreach ($params as $key => $val)
+			$this->sth->bindValue($key, $val);
+		$this->sth->execute();
 		return $this->lastInsertId();
 	}
 

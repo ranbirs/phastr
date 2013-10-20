@@ -9,8 +9,13 @@ class Html {
 	public static function getAttr($attr)
 	{
 		$attrs = [];
-		foreach ($attr as $key => $val)
-			$attrs[] = $key . '="' . $val . '"';
+		foreach ($attr as $key => $val) {
+			if (is_int($key)){
+				$attrs[] = $val;
+				continue;
+			}
+			$attrs[] = $key . '="' . ((!is_array($val)) ? $val : implode(" ", $val)) . '"';
+		}
 		return (!empty($attrs)) ? " " . implode(" ", $attrs) : "";
 	}
 
