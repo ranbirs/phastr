@@ -7,10 +7,10 @@ use sys\utils\Helper;
 
 class Rest {
 
-	private static $cipher = \app\confs\rest\cipher__;
-	private static $mode = \app\confs\rest\mode__;
-	private static $rand = \app\confs\rest\rand__;
-	private static $hash = \app\confs\rest\hash__;
+	const cipher__ = \app\confs\rest\cipher__;
+	const mode__ = \app\confs\rest\mode__;
+	const rand__ = \app\confs\rest\rand__;
+	const hash__ = \app\confs\rest\hash__;
 
 	protected $client, $result, $header, $info;
 
@@ -29,7 +29,7 @@ class Rest {
 		$request = [];
 
 		if ($private) {
-			$vector = mcrypt_create_iv(mcrypt_get_iv_size(self::$cipher, self::$mode), self::$rand);
+			$vector = mcrypt_create_iv(mcrypt_get_iv_size(self::cipher__, self::mode__), self::rand__);
 			$data = $this->encrypt($data, $private, $vector);
 			$this->setHeader([$this->publicKey($public, $passphrase) => base64_encode($vector)]);
 		}
@@ -140,7 +140,7 @@ class Rest {
 		$response = [];
 
 		if ($private) {
-			$vector = mcrypt_create_iv(mcrypt_get_iv_size(self::$cipher, self::$mode), self::$rand);
+			$vector = mcrypt_create_iv(mcrypt_get_iv_size(self::cipher__, self::mode__), self::rand__);
 			$data = $this->encrypt($data, $private, $vector);
 			$response['vector'] = base64_encode($vector);
 		}
@@ -148,13 +148,13 @@ class Rest {
 		return $response;
 	}
 
-	public function resolve($result = null, $private = null, $public = null, $vector = null)
+	public function resolve($result = null, $private = null, $public = null, $passphrase = null, $vector = null)
 	{
 		$data = base64_decode($result);
 
 		if ($private) {
 			if (is_null($vector))
-				$vector = $this->getHeader($this->publicKey($public));
+				$vector = $this->getHeader($this->publicKey($public, $passphrase));
 			$data = $this->decrypt($data, $private, base64_decode($vector));
 		}
 		return unserialize($data);
@@ -192,14 +192,14 @@ class Rest {
 	}
 
 	public function encrypt($data = null, $private, $vector) {
-		$private = hash(self::$hash, $private, true);
+		$private = hash(self::hash__, $private, true);
 		$data = base64_encode(serialize($data));
-		return mcrypt_encrypt(self::$cipher, $private, $data, self::$mode, $vector);
+		return mcrypt_encrypt(self::cipher__, $private, $data, self::mode__, $vector);
 	}
 
 	public function decrypt($data = null, $private, $vector) {
-		$private = hash(self::$hash, $private, true);
-		$data = mcrypt_decrypt(self::$cipher, $private, $data, self::$mode, $vector);
+		$private = hash(self::hash__, $private, true);
+		$data = mcrypt_decrypt(self::cipher__, $private, $data, self::mode__, $vector);
 		return unserialize(base64_decode(trim($data)));
 	}
 

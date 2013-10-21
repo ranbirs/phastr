@@ -3,8 +3,8 @@
 namespace sys;
 
 use sys\Route;
-use sys\Load;
 use sys\View;
+use sys\Load;
 
 class Init {
 
@@ -21,7 +21,7 @@ class Init {
 		self::$load = new Load();
 		self::$load->conf('autoload');
 		self::$load->controller(self::$route->controller())
-			->dispatch(\app\confs\route\method__, self::$route->page(), self::$route->action(), self::$route->params());
+			->dispatch(Route::method__, self::$route->page(), self::$route->action(), self::$route->params());
 	}
 
 	public static function route()
@@ -41,28 +41,22 @@ class Init {
 
 	public static function session($new = false)
 	{
-		if (!isset(self::$session) or $new) {
-			self::$load->conf('hash');
+		if (!isset(self::$session) or $new)
 			self::$session = new \sys\Session();
-		}
 		return self::$session;
 	}
 
 	public static function request()
 	{
-		if (!isset(self::$request)) {
-			self::$load->conf('request');
+		if (!isset(self::$request))
 			self::$request = new \sys\modules\Request();
-		}
 		return self::$request;
 	}
 
 	public static function rest($new = false)
 	{
-		if (!isset(self::$rest) or $new) {
-			self::$load->conf('rest');
+		if (!isset(self::$rest) or $new)
 			self::$rest = new \sys\modules\Rest();
-		}
 		return self::$rest;
 	}
 

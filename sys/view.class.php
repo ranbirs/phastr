@@ -16,37 +16,37 @@ class View {
 
 	}
 
-	public function block($name)
+	public function request($path)
 	{
-		return $this->_render($name, 'block');
+		return $this->_render($path, 'request');
 	}
 
-	public function page($name = null)
-	{
-		if (is_null($name))
-			$name = Init::route()->controller() . "/" . Helper::getPath(Init::route()->page(), 'tree');
-		return $this->_render($name, 'page');
-	}
-
-	public function template($type, $name, $data = null)
-	{
-		$this->$type = $data;
-		return $this->_render($type . "/" . $name, 'template');
-	}
-
-	public function request($name)
-	{
-		return $this->_render($name, 'request');
-	}
-
-	public function response($layout = \app\confs\request\layout__)
+	public function response($layout = \sys\modules\Request::layout__)
 	{
 		$this->layout(\sys\modules\Request::param__ . "/" . $layout);
 	}
 
-	public function layout($name)
+	public function block($path)
 	{
-		$file = $this->_resolveFile($name, 'layout');
+		return $this->_render($path, 'block');
+	}
+
+	public function page($path = null)
+	{
+		if (is_null($path))
+			$path = Init::route()->controller() . "/" . Helper::getPath(Init::route()->page(), 'tree');
+		return $this->_render($path, 'page');
+	}
+
+	public function template($type, $path, $data = null)
+	{
+		$this->$type = $data;
+		return $this->_render($type . "/" . $path, 'template');
+	}
+
+	public function layout($path = \app\confs\config\layout__)
+	{
+		$file = $this->_resolveFile($path, 'layout');
 		if ($file) {
 			$this->_includeFile($file);
 		}
@@ -63,9 +63,9 @@ class View {
 		$this->layout("error/" . $code);
 	}
 
-	private function _render($name, $type = 'page')
+	private function _render($path, $type = 'page')
 	{
-		$file = $this->_resolveFile($name, $type);
+		$file = $this->_resolveFile($path, $type);
 
 		if (!$file) {
 			return false;
@@ -75,9 +75,9 @@ class View {
 		return ob_get_clean();
 	}
 
-	private function _resolveFile($name, $type = 'page')
+	private function _resolveFile($path, $type = 'page')
 	{
-		return $this->resolveFile("views/" . $type . "s/" . $name);
+		return $this->resolveFile("views/" . $type . "s/" . $path);
 	}
 
 	private function _includeFile($file)

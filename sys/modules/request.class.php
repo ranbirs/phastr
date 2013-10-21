@@ -6,6 +6,9 @@ use sys\Init;
 
 class Request {
 
+	const method__ = \app\confs\request\method__;
+	const layout__ = \app\confs\request\layout__;
+
 	const param__ = 'ajax';
 
 	public $method = \app\confs\request\method__;

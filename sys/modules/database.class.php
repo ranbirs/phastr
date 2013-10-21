@@ -18,9 +18,8 @@ class Database extends PDO {
 
 	function __construct($dsn, $user, $pass)
 	{
-		$this->dsn = $dsn;
 		try {
-			parent::__construct($dsn, $user, $pass);
+			parent::__construct($this->dsn = $dsn, $user, $pass);
 		}
 		catch (PDOException $e) {
 			trigger_error($e->getMessage());
@@ -42,8 +41,8 @@ class Database extends PDO {
 	{
 		$this->sth = $this->prepare($statement);
 
-		if ($values === arary_values($values)) {
-			array_unshift($values, $values[0]);
+		if ($values === array_values($values)) {
+			array_unshift($values, "");
 			unset($values[0]);
 		}
 		foreach ($values as $key => $val) {
@@ -63,7 +62,7 @@ class Database extends PDO {
 			}
 		}
 		$this->sth->execute();
-		return $q;
+		return $this->sth;
 	}
 
 	public function select($table, $cols = [], $clause = "", $params = [], $fetch = PDO::FETCH_OBJ)
@@ -83,7 +82,7 @@ class Database extends PDO {
 	public function update($table, $values = [], $clause = "", $params = [])
 	{
 		$values = Helper::getStringArray($values, " = ");
-		$values = implode(", ", $args);
+		$values = implode(", ", $values);
 		$this->sth = $this->prepare("UPDATE $table SET $values $clause");
 
 		foreach ($params as $key => $val)

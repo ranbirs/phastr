@@ -9,7 +9,7 @@ use sys\utils\Html;
 abstract class Nav {
 
 	protected $nav_id;
-	private $_build = [], $_items = [];
+	protected $build = [], $items = [];
 
 	function __construct()
 	{
@@ -23,32 +23,32 @@ abstract class Nav {
 		$this->build($import);
 
 		$attr['id'] = $this->nav_id;
-		$this->_build['title'] = $title;
-		$this->_build['attr'] = Html::getAttr($attr);
+		$this->build['title'] = $title;
+		$this->build['attr'] = Html::getAttr($attr);
 
-		$nav = ['build' => $this->_build, 'items' => $this->_items];
+		$nav = ['build' => $this->build, 'items' => $this->items];
 		return Init::view()->template('nav', $template, $nav);
 	}
 
 	protected function item($label = null, $path = null, $params = [])
 	{
-		$count = count($this->_items);
+		$count = count($this->items);
 		$index = ($count > 0) ? $count + 1 : 0;
 
 		if (!empty($params)) {
 			foreach ($params as $key => $val) {
 				if (is_int($key)) {
-					$this->_items[$index]['label'] = $label;
-					$this->_items[$index]['path'] = $path;
-					$this->_items[$index]['item'][] = $val;
+					$this->items[$index]['label'] = $label;
+					$this->items[$index]['path'] = $path;
+					$this->items[$index]['item'][] = $val;
 					continue;
 				}
-				$this->_items[] = ['label' => $label, 'path' => $path, 'item' => $params];
+				$this->items[] = ['label' => $label, 'path' => $path, 'item' => $params];
 				break;
 			}
 		}
 		else {
-			$this->_items[] = ['label' => $label, 'path' => $path, 'item' => $params];
+			$this->items[] = ['label' => $label, 'path' => $path, 'item' => $params];
 		}
 	}
 

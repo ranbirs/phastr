@@ -9,7 +9,7 @@ class Validation {
 	const error__ = 'error';
 	const success__ = 'success';
 
-	private $_result = [];
+	protected $result = [];
 
 	function __construct()
 	{
@@ -19,13 +19,13 @@ class Validation {
 	public function get($status = null)
 	{
 		return (!is_null($status)) ?
-			((isset($this->_result[$status])) ? $this->_result[$status] : null) :
-			$this->_result;
+			((isset($this->result[$status])) ? $this->result[$status] : null) :
+			$this->result;
 	}
 
 	public function set($subj, $msg = null, $status = self::error__)
 	{
-		$this->_result[$status][] = [$subj, $msg];
+		$this->result[$status][] = [$subj, $msg];
 	}
 
 	public function resolve($id, $validation, $value = null)

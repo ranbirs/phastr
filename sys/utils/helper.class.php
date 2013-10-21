@@ -47,15 +47,15 @@ class Helper {
 				$path = str_replace(["__", "--", "-"], ["/", "/", "_"], $path);
 				break;
 			case 'route':
-				$path = (\app\confs\route\rewrite__) ?
+				$path = (\sys\Route::rewrite__) ?
 					"/" . self::getPath($path, 'base') :
-					"/" . self::getPath("", 'base') . "?" . \app\confs\route\name__ . "=" . $path;
+					"/" . self::getPath("", 'base') . "?" . \sys\Route::name__ . "=" . $path;
 				break;
 			case 'ajax':
 				$path = \sys\Init::route()->get() . "/" . \sys\modules\Request::param__ . "/" . $path;
 				break;
 			case 'base':
-				$base = \app\confs\route\base__;
+				$base = \sys\Route::base__;
 				$path = ($base) ?
 					(($path) ? $base . "/" . $path : $base) :
 					(($path) ? $path : "");
@@ -81,6 +81,19 @@ class Helper {
 		return $args;
 	}
 
+	public static function getAttr($attr = [], $glue = " ")
+	{
+		$attrs = [];
+		foreach ($attr as $key => $val) {
+			if (is_int($key)) {
+				$attrs[$val] = $val;
+				continue;
+			}
+			$attrs[$key] = (!is_array($val)) ? $val : implode($glue, $val);
+		}
+		return $attrs;
+	}
+
 	public static function getArray($string = null, $delimiter = ",")
 	{
 		$array = explode($delimiter, $string);
@@ -93,11 +106,11 @@ class Helper {
 		return array_values(array_filter(array_map($trim, $array), $filter));
 	}
 
-	public static function getStringArray($array = [], $glue = ": ")
+	public static function getStringArray($array = [], $glue = ": ", $prepend = "", $append = "")
 	{
 		$string_array = [];
 		foreach ($array as $key => $val)
-			$string_array[] = $key . $glue . $val;
+			$string_array[] = $prepend . $key . $glue . $val . $append;
 		return $string_array;
 	}
 

@@ -6,17 +6,10 @@ use sys\utils\Helper;
 
 class Html {
 
-	public static function getAttr($attr)
+	public static function getAttr($attr = [])
 	{
-		$attrs = [];
-		foreach ($attr as $key => $val) {
-			if (is_int($key)){
-				$attrs[] = $val;
-				continue;
-			}
-			$attrs[] = $key . '="' . ((!is_array($val)) ? $val : implode(" ", $val)) . '"';
-		}
-		return (!empty($attrs)) ? " " . implode(" ", $attrs) : "";
+		$attr = Helper::getAttr($attr);
+		return (!empty($attr)) ? " " . implode(" ", Helper::getStringArray($attr, '="', "", '"')) : "";
 	}
 
 	public static function getAsset($type = 'script', $context = null, $subj = null, $params = null, $append = null)
