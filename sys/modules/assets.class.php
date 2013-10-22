@@ -7,9 +7,9 @@ use sys\utils\Html;
 
 class Assets {
 
-	const script_ext__ = "js";
-	const style_ext__ = "css";
-	const checksum_algo__ = 'md5';
+	const script__ = "js";
+	const style__ = "css";
+	const hash__ = 'md5';
 
 	private static $assets = [];
 
@@ -26,14 +26,11 @@ class Assets {
 				if (\app\confs\config\optimize__) {
 					return $this->_optimize($type, self::$assets[$type]);
 				}
-				else {
-					$assets = ['remote' => [], 'file' => [], 'inline' => []];
-					foreach (self::$assets[$type] as $context => $asset)
-						foreach ($asset as $param)
-							$assets[$context][] = $param['asset'];
-					return implode(eol__, array_merge($assets['remote'], $assets['file'], $assets['inline']));
-				}
-				break;
+				$assets = ['remote' => [], 'file' => [], 'inline' => []];
+				foreach (self::$assets[$type] as $context => $asset)
+					foreach ($asset as $param)
+						$assets[$context][] = $param['asset'];
+				return implode(eol__, array_merge($assets['remote'], $assets['file'], $assets['inline']));
 			default:
 				return (isset(self::$assets[$type])) ?
 					implode(eol__, array_values(self::$assets[$type])) :
@@ -55,7 +52,7 @@ class Assets {
 		switch ($type) {
 			case 'script':
 			case 'style':
-				$key = hash(self::checksum_algo__, $subj);
+				$key = hash(self::hash__, $subj);
 				switch ($context) {
 					case null:
 						$context = 'file';
@@ -66,10 +63,8 @@ class Assets {
 							'asset' => $asset,
 							'iteration' => $append
 						];
-						break;
 					case 'inline':
 						return self::$assets[$type][$context][$key] = ['asset' => $asset];
-						break;
 				}
 				break;
 			default:
@@ -82,7 +77,7 @@ class Assets {
 		$file_assets = [];
 		$inline_assets = [];
 		$remote_assets = [];
-		$ext = ['script' => self::script_ext__, 'style' => self::style_ext__];
+		$ext = ['script' => self::script__, 'style' => self::style__];
 
 		foreach ($assets as $context => $asset) {
 			switch ($context) {
@@ -106,7 +101,7 @@ class Assets {
 		if (isset($file_assets['value'])) {
 			$root_path = Helper::getPath("", 'root') . "/" . Helper::getPath("", 'base');
 			$write_path = \app\confs\config\assets__ . "/" . $type;
-			$file_name = hash(self::checksum_algo__, implode($file_assets['checksum'])) . "." . $ext[$type];
+			$file_name = hash(self::hash__, implode($file_assets['checksum'])) . "." . $ext[$type];
 			$dir = $root_path . $write_path;
 			$file = $dir . "/" . $file_name;
 

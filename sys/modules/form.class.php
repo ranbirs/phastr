@@ -18,7 +18,7 @@ abstract class Form {
 	function __construct()
 	{
 		$this->request = Init::request();
-		$this->form_id = strtolower(Helper::getClassName(get_class($this)));
+		$this->form_id = strtolower(Helper::getInstanceClassName($this));
 
 		if (!Init::session()->get($this->form_id, 'token'))
 			Init::session()->set([$this->form_id => 'token'], Hash::rand());
@@ -42,14 +42,14 @@ abstract class Form {
 		$this->validation = new Validation();
 
 		foreach ($this->sanitized as $id => $filter)
-			$this->requet->$method($id, $this->validation->sanitize($filter, $this->ajax->$method($id)));
+			$this->request->$method($id, $this->validation->sanitize($this->request->$method($id), $filter));
 		foreach ($this->validated as $id => $validation)
 			$this->validation->resolve($id, $validation, $this->request->$method($id));
 
-		if (array_key_exists(Validation::error__, $this->validation->get())) {
+		if (array_key_exists(Validation::error__, $this->validation->getResult())) {
 			if (!isset($this->error))
 				$this->error();
-			$this->error['validation'] = $this->validation->get();
+			$this->error['validation'] = $this->validation->getResult();
 			return $this->error;
 		}
 		if ($this->resolve($this->request->fields($this->form_id, $this->method), $this->import)) {
@@ -143,7 +143,11 @@ abstract class Form {
 		if (!is_array($params))
 			$params = ['value' => $params];
 		if (!isset($params['value']))
-			$params['value'] = (array_values($params) !== $params) ? "" : $params;
+			$params['value'] = ($params !== array_values($params)) ? "" : $params;
+
+		if (isset($params['attr']) and !is_array($params['attr']))
+			$params['attr'] = [$params['attr']];
+
 		$params['label'] = $label;
 		$params['control'] = "";
 
@@ -156,13 +160,13 @@ abstract class Form {
 	{
 		if ($control == 'markup') {
 			$this->field['control'] = $this->field['value'];
-			return $this->fields[$id]['field'] = $this->field;
+			return $this->fields[$id] = $this->field;
 		}
 		$build = "";
 		$group = null;
 
 		$this->field['attr']['id'] = $id;
-		$this->field['attr']['name'] = (!is_array($this->field['value'])) ? $id : $id . "[]";
+
 		if (!is_null($type))
 			$this->field['attr']['type'] = $type;
 
@@ -170,8 +174,10 @@ abstract class Form {
 			$this->field['attr']['class'] = [$this->field['attr']['class']];
 
 		if ($control != 'button') {
-			$this->field['attr']['class'][] = "field";
+			$this->field['attr']['name'] = (!is_array($this->field['value'])) ? $id : $id . "[]";
 			$this->field['attr']['class'][] = "form-control";
+			if (!isset($this->field['sanitize']))
+				$this->field['sanitize'] = ['strip' => FILTER_FLAG_ENCODE_LOW];
 		}
 		if (isset($this->field['sanitize']))
 			$this->sanitized[$id] = $this->field['sanitize'];
@@ -183,7 +189,7 @@ abstract class Form {
 					$this->field['verbose'] = true;
 		}
 		if (is_array($this->field['value']))
-			$this->field['control'] = $this->_buildArrayField($id, $control);
+			$this->field['control'] = $this->_parseArrayField($id, $control, $this->field['value']);
 
 		switch ($control) {
 			case 'input':
@@ -199,7 +205,7 @@ abstract class Form {
 			case 'select':
 				$options = [];
 				foreach ($this->field['control'] as $field)
-					$options[] = $field['field']['control'];
+					$options[] = $field['control'];
 				$build = eol__ . implode(eol__, $options) . eol__ . "</" . $control . ">";
 				break;
 			case 'button':
@@ -220,21 +226,19 @@ abstract class Form {
 			case 'hidden':
 			case 'action':
 				$this->field['control'] = $build;
-				$this->fields[$id]['field']['control'][] = $this->field['control'];
+				$this->fields[$id]['control'][] = $this->field['control'];
 				break;
 			case null:
 				$this->field['control'] = $build;
 			default:
-				$this->fields[$id]['field'] = $this->field;
+				$this->fields[$id] = $this->field;
 		}
-		return $this->fields[$id]['field'];
+		return $this->fields[$id];
 	}
 
-	private function _buildArrayField($id, $control)
+	private function _parseArrayField($id, $control, &$fields)
 	{
-		$fields = [];
-
-		foreach ($this->field['value'] as $index => &$field) {
+		foreach ($fields as $index => &$field) {
 
 			if (!is_array($field))
 				$field = [$field];
@@ -251,6 +255,9 @@ abstract class Form {
 			}
 			if (!isset($field['label']))
 				$field['label'] = "";
+
+			if (isset($field['attr']) and !is_array($field['attr']))
+				$field['attr'] = [$field['attr']];
 
 			$field['attr']['value'] = $field['value'];
 
@@ -271,9 +278,6 @@ abstract class Form {
 			}
 			$build = "<" . $field['control'] . Html::getAttr($field['attr']) . ">" . $build;
 			$field['control'] = $build;
-
-			$field = ['field' => $field];
-			$fields[] = $field;
 		}
 		unset($field);
 		return $fields;

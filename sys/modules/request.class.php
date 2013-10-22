@@ -11,8 +11,8 @@ class Request {
 
 	const param__ = 'ajax';
 
-	public $method = \app\confs\request\method__;
-	public $layout = \app\confs\request\layout__;
+	public $method = self::method__;
+	public $layout = self::layout__;
 
 	function __construct()
 	{

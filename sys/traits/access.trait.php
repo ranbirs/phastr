@@ -6,32 +6,38 @@ use sys\Init;
 
 trait Access {
 
-	protected function permission($rule, $role)
+	protected function isAuth()
 	{
-		if (!$this->resolvePermission($rule, $role)) {
+		return (Init::session()->user('id') and Init::session()->user('token'));
+	}
+
+	protected function setAccess($rule, $role = null, $user_role = null)
+	{
+		if (!$this->getAccess($rule, $role, $user_role)) {
 			Init::view()->error(403);
 		}
 	}
 
-	protected function resolvePermission($rule, $role)
+	protected function getAccess($rule, $role = null, $user_role = null)
 	{
-		if (is_array($role)) {
-			return false;
-		}
-		switch ($role) {
+		switch ($rule) {
 			case 'public':
-				switch ($rule) {
-					case 'deny':
-						return (Init::session()->user('id') and Init::session()->user('token'));
-				}
-				break;
+				return ($this->isAuth() === false);
 			case 'private':
-				switch ($rule) {
-					case 'deny':
-						return (!Init::session()->user('id') or !Init::session()->user('token'));
-				}
-				break;
+				return ($this->isAuth() === true);
 			case 'role':
+				if (is_null($role) or is_null($user_role) or $this->isAuth() === false) {
+					return false;
+				}
+				if (!is_array($role))
+					$role = [$role];
+				if (!is_array($user_role))
+					$user_role = [$user_role];
+				$perm_role = array_intersect($role, $user_role);
+				if (!empty($perm_role)) {
+					return $perm_role;
+				}
+				return false;
 			default:
 				return false;
 		}

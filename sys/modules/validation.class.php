@@ -16,14 +16,14 @@ class Validation {
 
 	}
 
-	public function get($status = null)
+	public function getResult($status = null)
 	{
 		return (!is_null($status)) ?
 			((isset($this->result[$status])) ? $this->result[$status] : null) :
 			$this->result;
 	}
 
-	public function set($subj, $msg = null, $status = self::error__)
+	public function setStatus($subj, $msg = null, $status = self::error__)
 	{
 		$this->result[$status][] = [$subj, $msg];
 	}
@@ -31,22 +31,23 @@ class Validation {
 	public function resolve($id, $validation, $value = null)
 	{
 		foreach ($validation as $key => $args) {
+
 			$rule = (!is_int($key)) ? $key : $args;
 			$param = (isset($args['value'])) ? $args['value'] : $args;
-			$valid = ($this->validate($rule, $value, $param)) ? self::success__ : self::error__;
+			$valid = ($this->validate($value, $rule, $param)) ? self::success__ : self::error__;
 
 			if (is_array($args)) {
 				if (array_key_exists($valid, $args)) {
-					$this->set($id, $args[$valid], $valid);
+					$this->setStatus($id, $args[$valid], $valid);
 					continue;
 				}
 			}
 			if ($valid === self::error__)
-				$this->set($id, "", $valid);
+				$this->setStatus($id, "", $valid);
 		}
 	}
 
-	public function validate($rule, $value = null, $param = null)
+	public function validate($value = null, $rule = null, $param = null)
 	{
 		switch($rule) {
 			case 'header':
@@ -58,18 +59,14 @@ class Validation {
 				}
 				$request = Init::request()->$rule(key($param));
 				return (!is_null($value) and $value === $request and $request === current($param));
-				break;
 			case 'token':
 				return (!is_null($param) and $value === Init::session()->get($param, 'token'));
-				break;
 			case 'match':
-				return (!is_null($param) and $value == $param);
-				break;
+				return (!is_null($param) and strcmp($value, $param) == 0);
 			case 'required':
 				if (is_array($value))
 					$value = implode($value);
 				return (strlen($value) > 0);
-				break;
 			case 'maxlength':
 				$param = (int) $param;
 				if (!is_array($value)) {
@@ -81,34 +78,89 @@ class Validation {
 					}
 				}
 				return true;
-				break;
+			case 'minlength':
+				$param = (int) $param;
+				if (!is_array($value)) {
+					return (strlen($value) > $param);
+				}
+				foreach ($value as $val) {
+					if (strlen($val) < $param) {
+						return false;
+					}
+				}
+				return true;
+			case 'alpha':
+				return ctype_alpha($value);
 			case 'alnum':
-				return (ctype_alnum($value));
-				break;
+				return ctype_alnum($value);
+			case 'int':
+				return (filter_var($value, FILTER_VALIDATE_INT, ['options' => $params]) !== false);
+			case 'float':
+				return (filter_var($value, FILTER_VALIDATE_FLOAT) !== false);
 			case 'email':
-				return (filter_var($value, FILTER_VALIDATE_EMAIL));
-				break;
+				return (filter_var($value, FILTER_VALIDATE_EMAIL) !== false);
+			case 'ip':
+				return (filter_var($value, FILTER_VALIDATE_IP, $param) !== false);
+			case 'regexp':
+				return (filter_var($value, FILTER_VALIDATE_REGEXP, ['options' => [$rule => $param]]) !== false);
+			case null:
+				return true;
 			default:
 				return false;
 		}
 	}
 
-	public function sanitize($filter = 'string', $value = null)
+	public function sanitize($value = null, $filter = null, $param = null)
 	{
+		if (is_array($filter)) {
+			$param = current($filter);
+			$filter = key($filter);
+		}
 		switch ($filter) {
-			case 'string':
-				$value = filter_var($value, FILTER_SANITIZE_STRING, FILTER_FLAG_ENCODE_HIGH);
-				break;
 			case 'int':
-				$value = filter_var($value, FILTER_SANITIZE_NUMBER_INT);
+				$filter = FILTER_SANITIZE_NUMBER_INT;
 				break;
 			case 'float':
-				$value = filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT);
+				$filter = FILTER_SANITIZE_NUMBER_FLOAT;
+				break;
+			case 'strip':
+			case 'string':
+				$filter = FILTER_SANITIZE_STRING;
+				break;
+			case 'specialchars':
+				$filter = FILTER_SANITIZE_SPECIAL_CHARS;
+				break;
+			case 'addslashes':
+				$filter = FILTER_SANITIZE_MAGIC_QUOTES;
+				break;
+			case 'urlencode':
+				$filter = FILTER_SANITIZE_ENCODED;
+				break;
+			case 'url':
+				$filter = FILTER_SANITIZE_URL;
+				break;
+			case null:
+				$filter = FILTER_UNSAFE_RAW;
 				break;
 			default:
 				return false;
 		}
-		return $value;
+		$filter_var = function ($value) use ($filter, $param) {
+			if (!is_null($param)) {
+				return filter_var($value, $filter, $param);
+			}
+			return filter_var($value, $filter);
+		};
+		$sanitize = function ($value) use ($filter_var) {
+			if (!is_array($value)) {
+				return $value = $filter_var($value);
+			}
+			foreach ($value as &$val) {
+				$val = $filter_var($val);
+			}
+			return $value;
+		};
+		return $sanitize($value);
 	}
 
 }

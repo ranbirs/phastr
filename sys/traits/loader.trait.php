@@ -20,14 +20,14 @@ trait Loader {
 
 	protected function resolveFile($path, $base = app__, $ext = "php")
 	{
-		$path = Helper::getPath(\sys\path_base($path, $base)) . "." . $ext;
+		$path = Helper::getPath(\sys\base_path($path, $base)) . "." . $ext;
 		$file = stream_resolve_include_path($path);
 		return ($file !== false) ? $path : false;
 	}
 
 	protected function resolveInclude($path, $type, $new = true, $base = app__, $ext = "php")
 	{
-		$this->includeFile(\sys\path_base($type . "s/". $path, $base), $ext);
+		$this->includeFile(\sys\base_path($type . "s/". $path, $base), $ext);
 		return ($new) ? $this->resolveInstance($path, $type, $base) : true;
 	}
 

@@ -4,9 +4,8 @@ namespace sys\utils;
 
 class Hash {
 
-	const key__ = \app\confs\hash\key__;
 	const algo__ = \app\confs\hash\algo__;
-
+	const key__ = \app\confs\hash\key__;
 	const cipher__ = \app\confs\hash\cipher__;
 	const cost__ = \app\confs\hash\cost__;
 	const salt__ = \app\confs\hash\salt__;

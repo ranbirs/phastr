@@ -4,6 +4,11 @@ namespace sys\utils;
 
 class Helper {
 
+	public static function getInstanceClassName($instance)
+	{
+		return self::getClassName(get_class($instance));
+	}
+
 	public static function getClassName($class)
 	{
 		$class = explode("\\", $class);
@@ -52,7 +57,7 @@ class Helper {
 					"/" . self::getPath("", 'base') . "?" . \sys\Route::name__ . "=" . $path;
 				break;
 			case 'ajax':
-				$path = \sys\Init::route()->get() . "/" . \sys\modules\Request::param__ . "/" . $path;
+				$path = \sys\Init::route()->route() . "/" . \sys\modules\Request::param__ . "/" . $path;
 				break;
 			case 'base':
 				$base = \sys\Route::base__;
@@ -63,6 +68,8 @@ class Helper {
 			case 'root':
 				$path = ($path) ? $_SERVER['DOCUMENT_ROOT'] . "/" . $path : $_SERVER['DOCUMENT_ROOT'];
 				break;
+			default:
+				return false;
 		}
 		return $path;
 	}

@@ -45,10 +45,8 @@ abstract class Controller {
 
 	public function render()
 	{
-		$params = Init::route()->params();
-
-		if (isset($params[0]) and $params[0] === \sys\modules\Request::param__) {
-			if (!$this->submitRequest((isset($params[1])) ? $params[1] : null, (isset($params[2])) ? $params[2] : null)) {
+		if (Init::route()->params(0) === \sys\modules\Request::param__) {
+			if (!$this->submitRequest()) {
 				$this->view->error(404, \sys\confs\error\controller_request__);
 			}
 		}

@@ -13,7 +13,7 @@ abstract class Nav {
 
 	function __construct()
 	{
-		$this->nav_id = strtolower(Helper::getClassName(get_class($this)));
+		$this->nav_id = strtolower(Helper::getInstanceClassName($this));
 	}
 
 	abstract protected function build();
