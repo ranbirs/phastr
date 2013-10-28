@@ -146,6 +146,7 @@ class Validation {
 				return false;
 		}
 		$filter_var = function ($value) use ($filter, $param) {
+			$value = trim($value);
 			if (!is_null($param)) {
 				return filter_var($value, $filter, $param);
 			}

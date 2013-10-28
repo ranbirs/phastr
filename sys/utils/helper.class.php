@@ -35,11 +35,10 @@ class Helper {
 		return implode("\\", $path);
 	}
 
-	public static function getPath($path = "", $type = 'label')
+	public static function getPath($path = null, $type = 'label')
 	{
 		if (is_array($path))
 			$path = implode("/", $path);
-		$path = strtolower($path);
 
 		switch ($type) {
 			case 'label':
@@ -59,9 +58,11 @@ class Helper {
 			case 'ajax':
 				$path = \sys\Init::route()->route() . "/" . \sys\modules\Request::param__ . "/" . $path;
 				break;
+			case 'page':
+				$path = \sys\Init::route()->controller() . "/" . self::getPath(($path) ? $path : \sys\Init::route()->page(), 'tree');
+				break;
 			case 'base':
-				$base = \sys\Route::base__;
-				$path = ($base) ?
+				$path = ($base = \sys\Route::base__) ?
 					(($path) ? $base . "/" . $path : $base) :
 					(($path) ? $path : "");
 				break;
@@ -82,8 +83,10 @@ class Helper {
 
 		foreach ($params as $param) {
 			$param = array_map('trim', explode($delimiter, $param, 2));
-			if (strlen($param[0]))
-				$args[$param[0]] = (isset($param[1])) ? $param[1] : null;
+			if (!strlen($param[0])) {
+				continue;
+			}
+			$args[$param[0]] = (isset($param[1])) ? $param[1] : null;
 		}
 		return $args;
 	}
@@ -92,28 +95,29 @@ class Helper {
 	{
 		$attrs = [];
 		foreach ($attr as $key => $val) {
+			if (!strlen($val = (!is_array($val)) ? $val : implode($glue, $val))) {
+				continue;
+			}
 			if (is_int($key)) {
 				$attrs[$val] = $val;
 				continue;
 			}
-			$attrs[$key] = (!is_array($val)) ? $val : implode($glue, $val);
+			$attrs[$key] = $val;
 		}
 		return $attrs;
 	}
 
-	public static function getArray($string = null, $delimiter = ",")
+	public static function getArray($delimiter, $string = "", $limit = null)
 	{
-		$array = explode($delimiter, $string);
+		$limit = (int) $limit;
+		$array = (!$limit) ? explode($delimiter, $string) : explode($delimiter, $string, $limit);
 		$trim = function ($arg) use ($delimiter) {
 			return trim($arg, $delimiter . " ");
 		};
-		$filter = function ($arg) {
-			return ($arg or is_numeric($arg));
-		};
-		return array_values(array_filter(array_map($trim, $array), $filter));
+		return array_values(array_filter(array_map($trim, $array), 'strlen'));
 	}
 
-	public static function getStringArray($array = [], $glue = ": ", $prepend = "", $append = "")
+	public static function getStringArray($glue, $array = [], $prepend = "", $append = "")
 	{
 		$string_array = [];
 		foreach ($array as $key => $val)

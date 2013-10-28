@@ -2,38 +2,34 @@
 
 namespace sys;
 
+use sys\utils\Helper;
+
 class Load {
 
 	use \sys\traits\Loader;
 
-	function __construct()
-	{
-
-	}
-
-	public function get($type, $path, $args = null)
-	{
-		return (method_exists($this, $type)) ? $this->$type($path, $args) : false;
-	}
-
 	public function model($path)
 	{
-		return $this->resolveInclude($path, 'model');
+		$subj = Helper::getPathName($path);
+		return $this->$subj = $this->resolveInclude($path, 'model');
 	}
 
 	public function service($path, $data = null)
 	{
-		return $this->resolveInclude($path, 'service');
+		$subj = Helper::getPathName($path);
+		return $this->$subj = $this->resolveInclude($path, 'service');
 	}
 
 	public function form($path)
 	{
-		return $this->resolveInclude($path, 'form');
+		$subj = Helper::getPathName($path);
+		return $this->$subj = $this->resolveInclude($path, 'form');
 	}
 
 	public function nav($path)
 	{
-		return $this->resolveInclude($path, 'nav');
+		$subj = Helper::getPathName($path);
+		return $this->$subj = $this->resolveInclude($path, 'nav');
 	}
 
 	public function controller($path)

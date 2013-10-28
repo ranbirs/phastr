@@ -77,7 +77,7 @@ class Rest {
 
 	public function setHeader($headers = [], $client = true)
 	{
-		$headers = Helper::getStringArray($headers, ": ");
+		$headers = Helper::getStringArray(": ", $headers);
 
 		if ($client) {
 			curl_setopt($this->client, CURLOPT_HTTPHEADER, $headers);

@@ -2,7 +2,6 @@
 
 namespace sys;
 
-use sys\Load;
 use sys\utils\Helper;
 
 class Route {
@@ -20,21 +19,30 @@ class Route {
 
 	const length__ = 128;
 
-	private static $route, $path;
+	private static $path;
 	public $error;
 
 	function __construct()
 	{
 		$name = self::name__;
-		$path['request'] = (isset($_GET[$name])) ? Helper::getArray($_GET[$name], "/") : [];
-		$path['path'] = $path['request'];
+		$path = (isset($_GET[$name])) ? Helper::getArray("/", $_GET[$name], 4) : [];
 		unset($_GET[$name]);
+
+		$this->_parsePath($path);
+		$this->_parseRoute($path);
+
+		self::$path = $path;
+	}
+
+	private function _parsePath(&$path = [])
+	{
+		$path = ['request' => $path, 'path' => $path];
 
 		if (empty($path['request'])) {
 			$path['path'] = [self::autoload__, self::homepage__, self::action__];
 			$path['request'] = "/";
 		}
-		$scope = Helper::getArray(self::controllers__, ",");
+		$scope = Helper::getArray(",", self::controllers__);
 		$scope[] = self::autoload__;
 
 		if (!in_array(Helper::getPath($path['path'][0]), $scope))
@@ -45,36 +53,33 @@ class Route {
 		if (!isset($path['path'][2]))
 			$path['path'][2] = self::action__;
 
-		$this->_parse($path);
+		$path['route'] = array_slice($path['path'], 0, 3);
+		$path['params'] = (isset($path['path'][3])) ? Helper::getArray("/", $path['path'][3]) : [];
+		$path['path'] = [];
+		$path['label'] = [];
 	}
 
-	private function _parse($path = [])
+	private function _parseRoute(&$path = [])
 	{
-		$path['route'] = array_map('strtolower', array_splice($path['path'], 0, 3));
-		$path['params'] = $path['path'];
-		$path['path'] = [];
-		$route = [];
-
-		foreach ($path['route'] as $index => $arg) {
+		foreach ($path['route'] as $index => &$arg) {
 
 			if ((strlen($arg) > self::length__)) {
 				return $this->error = \sys\confs\error\route_parse__;
 			}
-			if (preg_match('/[^a-z0-9-]/', $arg)) {
+			if (preg_match('/[^a-z0-9-]/i', $arg)) {
 				return $this->error = \sys\confs\error\route_parse__;
 			}
-			$label = Helper::getPath($arg);
-			$route[] = $label;
+			$path['label'][$index] = Helper::getPath($arg = strtolower($arg));
 
-			if ($label === self::method__) {
+			if ($path['label'][$index] === self::method__) {
 				return $this->error = \sys\confs\error\route_parse__;
 			}
 			switch ($index) {
 				case 0:
-					if ($label === self::masters__) {
+					if ($path['label'][$index] === self::masters__) {
 						return $this->error = \sys\confs\error\route_controller__;
 					}
-					if ($label !== self::autoload__)
+					if ($path['label'][$index] !== self::autoload__)
 						$path['path'][] = $arg;
 					break;
 				case 1:
@@ -86,10 +91,10 @@ class Route {
 					break;
 			}
 		}
-		$path['path'] = implode("/", $path['path']);
+		unset($arg);
+
 		$path['route'] = Helper::getPath($path['route'], 'route');
-		self::$path = $path;
-		self::$route = $route;
+		$path['path'] = implode("/", $path['path']);
 	}
 
 	public function path($request = false)
@@ -97,24 +102,24 @@ class Route {
 		return (!$request) ? self::$path['path'] : self::$path['request'];
 	}
 
-	public function route($labels = false)
+	public function route($label = false)
 	{
-		return (!$labels) ? self::$path['route'] : self::$route;
+		return (!$label) ? self::$path['route'] : self::$path['label'];
 	}
 
 	public function controller()
 	{
-		return self::$route[0];
+		return self::$path['label'][0];
 	}
 
 	public function page()
 	{
-		return self::$route[1];
+		return self::$path['label'][1];
 	}
 
 	public function action()
 	{
-		return self::$route[2];
+		return self::$path['label'][2];
 	}
 
 	public function params($index = null)

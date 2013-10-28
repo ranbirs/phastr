@@ -10,24 +10,25 @@ use sys\utils\Html;
 
 abstract class Form {
 
-	protected $form_id, $method, $import, $request, $validation;
-	protected $field = [], $build = [], $fields = [];
+	use \sys\traits\View;
+	use \sys\traits\Request;
+
+	protected $form_id, $method, $import, $validation;
+	protected $build = [], $fields = [];
 	protected $validated = [], $sanitized = [];
 	protected $expire, $success, $fail, $error;
 
 	function __construct()
 	{
-		$this->request = Init::request();
-		$this->form_id = strtolower(Helper::getInstanceClassName($this));
 
-		if (!Init::session()->get($this->form_id, 'token'))
-			Init::session()->set([$this->form_id => 'token'], Hash::rand());
 	}
 
 	abstract protected function build();
 
 	public function id()
 	{
+		if (!isset($this->form_id))
+			$this->form_id = strtolower(Helper::getInstanceClassName($this));
 		return $this->form_id;
 	}
 
@@ -42,9 +43,9 @@ abstract class Form {
 		$this->validation = new Validation();
 
 		foreach ($this->sanitized as $id => $filter)
-			$this->request->$method($id, $this->validation->sanitize($this->request->$method($id), $filter));
+			$this->request()->$method($id, $this->validation->sanitize($this->request()->$method($id), $filter));
 		foreach ($this->validated as $id => $validation)
-			$this->validation->resolve($id, $validation, $this->request->$method($id));
+			$this->validation->resolve($id, $validation, $this->request()->$method($id));
 
 		if (array_key_exists(Validation::error__, $this->validation->getResult())) {
 			if (!isset($this->error))
@@ -52,9 +53,9 @@ abstract class Form {
 			$this->error['validation'] = $this->validation->getResult();
 			return $this->error;
 		}
-		if ($this->resolve($this->request->fields($this->form_id, $this->method), $this->import)) {
+		if ($this->resolve($this->request()->fields($this->id(), $this->method), $this->import)) {
 			if ((isset($this->expire)) ? $this->expire : $this->expire())
-				Init::session()->drop($this->form_id, 'token');
+				Init::session()->drop($this->id(), 'token');
 			return (isset($this->success)) ? $this->success : $this->success();
 		}
 		return (isset($this->fail)) ? $this->fail : $this->fail();
@@ -67,18 +68,21 @@ abstract class Form {
 		$this->build($import);
 		$this->close();
 
-		$attr['id'] = $this->form_id;
+		$attr['id'] = $this->id();
 		$attr['method'] = $method;
-		$attr['action'] = Helper::getPath(['form', $this->form_id], Request::param__) . "/";
+		$attr['action'] = Helper::getPath(['form', $this->id()], Request::param__) . "/";
 		$this->build['title'] = $title;
 		$this->build['attr'] = $attr;
 
 		$form = ['build' => $this->build, 'fields' => $this->fields];
-		return Init::view()->template('form', $template, $form);
+		return $this->view()->template('form', $template, $form);
 	}
 
 	protected function close()
 	{
+		if (!Init::session()->get($this->id(), 'token'))
+			Init::session()->set([$this->id() => 'token'], Hash::rand());
+
 		$header_id = Init::session()->token();
 		$session_key = Init::session()->key();
 
@@ -90,14 +94,14 @@ abstract class Form {
 		);
 		$this->field(['input' => 'hidden'], "_form_id_" . $session_key, null,
 			$params = [
-				'value' => $this->form_id,
-				'validate' => [$this->method => [$this->form_id . "__form_id_" . $session_key => $this->form_id]]
+				'value' => $this->id(),
+				'validate' => [$this->method => [$this->id() . "__form_id_" . $session_key => $this->id()]]
 			]
 		);
 		$this->field(['input' => 'hidden'], "_form_token_" . $session_key, null,
 			$params = [
-				'value' => Init::session()->get($this->form_id, 'token'),
-				'validate' => ['token' => $this->form_id]
+				'value' => Init::session()->get($this->id(), 'token'),
+				'validate' => ['token' => $this->id()]
 			]
 		);
 	}
@@ -144,80 +148,74 @@ abstract class Form {
 			$params = ['value' => $params];
 		if (!isset($params['value']))
 			$params['value'] = ($params !== array_values($params)) ? "" : $params;
-
-		if (isset($params['attr']) and !is_array($params['attr']))
+		if (!isset($params['attr']))
+			$params['attr'] = [];
+		if (!is_array($params['attr']))
 			$params['attr'] = [$params['attr']];
 
 		$params['label'] = $label;
 		$params['control'] = "";
 
-		$this->field = $params;
-
-		return $this->_buildField($this->form_id . "_" . $id, $control, $type);
+		return $this->_parseField($this->id() . "_" . $id, $control, $type, $params);
 	}
 
-	private function _buildField($id, $control, $type = null)
+	private function _parseField($id, $control, $type = null, $field = [])
 	{
 		if ($control == 'markup') {
-			$this->field['control'] = $this->field['value'];
-			return $this->fields[$id] = $this->field;
+			$field['control'] = $field['value'];
+			return $this->fields[$id] = $field;
 		}
 		$build = "";
 		$group = null;
 
-		$this->field['attr']['id'] = $id;
-
+		$field['attr']['id'] = $id;
 		if (!is_null($type))
-			$this->field['attr']['type'] = $type;
-
-		if (isset($this->field['attr']['class']) and !is_array($this->field['attr']['class']))
-			$this->field['attr']['class'] = [$this->field['attr']['class']];
+			$field['attr']['type'] = $type;
+		if (isset($field['attr']['class']) and !is_array($field['attr']['class']))
+			$field['attr']['class'] = [$field['attr']['class']];
 
 		if ($control != 'button') {
-			$this->field['attr']['name'] = (!is_array($this->field['value'])) ? $id : $id . "[]";
-			$this->field['attr']['class'][] = "form-control";
-			if (!isset($this->field['sanitize']))
-				$this->field['sanitize'] = ['strip' => FILTER_FLAG_ENCODE_LOW];
+			$field['attr']['name'] = (!is_array($field['value'])) ? $id : $id . "[]";
+			$field['attr']['class'][] = "form-control";
+			if (!isset($field['sanitize']))
+				$field['sanitize'] = ['strip' => FILTER_FLAG_ENCODE_LOW];
 		}
-		if (isset($this->field['sanitize']))
-			$this->sanitized[$id] = $this->field['sanitize'];
+		if (isset($field['sanitize']))
+			$this->sanitized[$id] = $field['sanitize'];
 
-		if (isset($this->field['validate'])) {
-			$this->validated[$id] = $this->field['validate'];
-			foreach ($this->field['validate'] as $rule => $params)
+		if (isset($field['validate'])) {
+			$this->validated[$id] = $field['validate'];
+			foreach ($field['validate'] as $rule => $params)
 				if (is_array($params) and array_intersect([Validation::error__, Validation::success__], array_keys($params)))
-					$this->field['verbose'] = true;
+					$field['verbose'] = true;
 		}
-		if (is_array($this->field['value']))
-			$this->field['control'] = $this->_parseArrayField($id, $control, $this->field['value']);
+		if (is_array($field['value']))
+			$this->_parseArrayField($id, $control, $field['value'], $field);
 
 		switch ($control) {
 			case 'input':
-				switch ($type) {
-					case 'hidden':
-						$group = $type;
-						break;
-				}
-				(!is_array($this->field['control'])) ?
-					$this->field['attr']['value'] = $this->field['value'] :
+				if ($type == 'hidden')
+					$group = $type;
+				(!is_array($field['control'])) ?
+					$field['attr']['value'] = $field['value'] :
 					$group = $id;
 				break;
 			case 'select':
 				$options = [];
-				foreach ($this->field['control'] as $field)
-					$options[] = $field['control'];
+				foreach ($field['control'] as $option)
+					$options[] = $option['control'];
 				$build = eol__ . implode(eol__, $options) . eol__ . "</" . $control . ">";
 				break;
 			case 'button':
-				$build = $this->field['label'] . "</" . $control . ">";
-				$this->field['label'] = "";
+				$build = $field['label'] . "</" . $control . ">";
+				$field['label'] = "";
 				$group = 'action';
 				break;
 			case 'textarea':
 				$build = "</" . $control . ">";
 				break;
 		}
-		$build = "<" . $control . Html::getAttr($this->field['attr']) . ">" . $build;
+		$build = "<" . $control . Html::getAttr($field['attr']) . ">" . $build;
 
 		if (!is_null($group))
 			$id = $group;
@@ -225,19 +223,22 @@ abstract class Form {
 		switch ($group) {
 			case 'hidden':
 			case 'action':
-				$this->field['control'] = $build;
-				$this->fields[$id]['control'][] = $this->field['control'];
+				$field['control'] = $build;
+				$this->fields[$id]['control'][] = $field['control'];
 				break;
 			case null:
-				$this->field['control'] = $build;
+				$field['control'] = $build;
 			default:
-				$this->fields[$id] = $this->field;
+				$this->fields[$id] = $field;
 		}
 		return $this->fields[$id];
 	}
 
-	private function _parseArrayField($id, $control, &$fields)
+	private function _parseArrayField($id, $control, &$values, &$parent)
 	{
+		$fields = $values;
+		$values = [];
+
 		foreach ($fields as $index => &$field) {
 
 			if (!is_array($field))
@@ -253,10 +254,13 @@ abstract class Form {
 					$field['label'] = "";
 				}
 			}
+			$values[] = $field['value'];
+
 			if (!isset($field['label']))
 				$field['label'] = "";
-
-			if (isset($field['attr']) and !is_array($field['attr']))
+			if (!isset($field['attr']))
+				$field['attr'] = [];
+			if (!is_array($field['attr']))
 				$field['attr'] = [$field['attr']];
 
 			$field['attr']['value'] = $field['value'];
@@ -273,14 +277,14 @@ abstract class Form {
 				default:
 					$field['attr']['id'] = $id . "-" . $index;
 					$field['attr']['name'] = $id . "[]";
-					$field['attr'] = Helper::getAttr(array_merge($this->field['attr'], $field['attr']));
+					$field['attr'] = Helper::getAttr(array_merge($parent['attr'], $field['attr']));
 					$field['active'] = (isset($field['attr']['checked'])) ? true : false;
 			}
 			$build = "<" . $field['control'] . Html::getAttr($field['attr']) . ">" . $build;
 			$field['control'] = $build;
 		}
 		unset($field);
-		return $fields;
+		$parent['control'] = $fields;
 	}
 
 }

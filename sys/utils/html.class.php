@@ -9,7 +9,7 @@ class Html {
 	public static function getAttr($attr = [])
 	{
 		$attr = Helper::getAttr($attr);
-		return (!empty($attr)) ? " " . implode(" ", Helper::getStringArray($attr, '="', "", '"')) : "";
+		return (!empty($attr)) ? " " . implode(" ", Helper::getStringArray('="', $attr, "", '"')) : "";
 	}
 
 	public static function getAsset($type = 'script', $context = null, $subj = null, $params = null, $append = null)

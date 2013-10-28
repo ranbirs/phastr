@@ -3,21 +3,19 @@
 namespace sys;
 
 use sys\Init;
-use sys\modules\Assets;
+use sys\modules\Request;
 use sys\utils\Helper;
 
 abstract class Controller {
 
-	use \sys\traits\Loader;
+	use \sys\traits\View;
+	use \sys\traits\Load;
 	use \sys\traits\Access;
 	use \sys\traits\Request;
 
-	protected $view;
-
 	function __construct()
 	{
-		$this->view = Init::view();
-		$this->view->assets = new Assets();
+
 	}
 
 	public function dispatch($default, $page, $action, $params = [])
@@ -38,23 +36,23 @@ abstract class Controller {
 			$process--;
 		}
 		if (empty($process)) {
-			$this->view->error(404, \sys\confs\error\controller_methods__);
+			$this->view()->error(404, \sys\confs\error\controller_methods__);
 		}
 		$this->render($page, $action, $params);
 	}
 
 	public function render()
 	{
-		if (Init::route()->params(0) === \sys\modules\Request::param__) {
+		if (Init::route()->params(0) === Request::param__) {
 			if (!$this->submitRequest()) {
-				$this->view->error(404, \sys\confs\error\controller_request__);
+				$this->view()->error(404, \sys\confs\error\controller_request__);
 			}
 		}
-		$this->view->page = $this->view->page();
-		if ($this->view->page === false) {
+		$this->view()->page = $this->view()->page();
+		if ($this->view()->page === false) {
 			$this->error(404, \sys\confs\error\controller_render__);
 		}
-		$this->view->layout();
+		$this->view()->layout();
 	}
 
 }

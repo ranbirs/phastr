@@ -2,7 +2,8 @@
 
 namespace sys;
 
-use sys\Init;
+use sys\modules\Request;
+use sys\modules\Assets;
 use sys\utils\Helper;
 
 class View {
@@ -13,7 +14,7 @@ class View {
 
 	function __construct()
 	{
-
+		$this->assets = new Assets();
 	}
 
 	public function request($path)
@@ -21,9 +22,9 @@ class View {
 		return $this->_render($path, 'request');
 	}
 
-	public function response($layout = \sys\modules\Request::layout__)
+	public function response($layout = Request::layout__)
 	{
-		$this->layout(\sys\modules\Request::param__ . "/" . $layout);
+		$this->layout(Request::param__ . "/" . $layout);
 	}
 
 	public function block($path)
@@ -33,8 +34,7 @@ class View {
 
 	public function page($path = null)
 	{
-		if (is_null($path))
-			$path = Init::route()->controller() . "/" . Helper::getPath(Init::route()->page(), 'tree');
+		$path = Helper::getPath($path, 'page');
 		return $this->_render($path, 'page');
 	}
 
@@ -58,8 +58,11 @@ class View {
 
 	public function error($code, $msg = "")
 	{
+		$code = (int) $code;
 		header(" ", true, $code);
-		$this->error = (\app\confs\config\errors__) ? ((!empty($msg)) ? $msg : ((isset($this->error)) ? $this->error : "")) : "";
+		$this->error = (\app\confs\config\errors__) ?
+			((!empty($msg)) ? $msg : ((isset($this->error)) ? $this->error : "")) :
+			"";
 		$this->layout("error/" . $code);
 	}
 
