@@ -27,8 +27,6 @@ abstract class Form {
 
 	public function id()
 	{
-		if (!isset($this->form_id))
-			$this->form_id = strtolower(Helper::getInstanceClassName($this));
 		return $this->form_id;
 	}
 
@@ -53,9 +51,9 @@ abstract class Form {
 			$this->error['validation'] = $this->validation->getResult();
 			return $this->error;
 		}
-		if ($this->resolve($this->request()->fields($this->id(), $this->method), $this->import)) {
+		if ($this->resolve($this->request()->fields($this->form_id, $this->method), $this->import)) {
 			if ((isset($this->expire)) ? $this->expire : $this->expire())
-				Init::session()->drop($this->id(), 'token');
+				Init::session()->drop($this->form_id, 'token');
 			return (isset($this->success)) ? $this->success : $this->success();
 		}
 		return (isset($this->fail)) ? $this->fail : $this->fail();
@@ -63,14 +61,15 @@ abstract class Form {
 
 	public function html($import = null, $title = null, $attr = [], $method = 'post', $template = "bootstrap")
 	{
+		$this->form_id = strtolower(Helper::getInstanceClassName($this));
 		$this->method = $method;
 		$this->import = $import;
 		$this->build($import);
 		$this->close();
 
-		$attr['id'] = $this->id();
+		$attr['id'] = $this->form_id;
 		$attr['method'] = $method;
-		$attr['action'] = Helper::getPath(['form', $this->id()], Request::param__) . "/";
+		$attr['action'] = Helper::getPath(['form', $this->form_id], Request::param__) . "/";
 		$this->build['title'] = $title;
 		$this->build['attr'] = $attr;
 
@@ -80,8 +79,8 @@ abstract class Form {
 
 	protected function close()
 	{
-		if (!Init::session()->get($this->id(), 'token'))
-			Init::session()->set([$this->id() => 'token'], Hash::rand());
+		if (!Init::session()->get($this->form_id, 'token'))
+			Init::session()->set([$this->form_id => 'token'], Hash::rand());
 
 		$header_id = Init::session()->token();
 		$session_key = Init::session()->key();
@@ -94,14 +93,14 @@ abstract class Form {
 		);
 		$this->field(['input' => 'hidden'], "_form_id_" . $session_key, null,
 			$params = [
-				'value' => $this->id(),
-				'validate' => [$this->method => [$this->id() . "__form_id_" . $session_key => $this->id()]]
+				'value' => $this->form_id,
+				'validate' => [$this->method => [$this->form_id . "__form_id_" . $session_key => $this->form_id]]
 			]
 		);
 		$this->field(['input' => 'hidden'], "_form_token_" . $session_key, null,
 			$params = [
-				'value' => Init::session()->get($this->id(), 'token'),
-				'validate' => ['token' => $this->id()]
+				'value' => Init::session()->get($this->form_id, 'token'),
+				'validate' => ['token' => $this->form_id]
 			]
 		);
 	}
@@ -156,7 +155,7 @@ abstract class Form {
 		$params['label'] = $label;
 		$params['control'] = "";
 
-		return $this->_parseField($this->id() . "_" . $id, $control, $type, $params);
+		return $this->_parseField($this->form_id . "_" . $id, $control, $type, $params);
 	}
 
 	private function _parseField($id, $control, $type = null, $field = [])

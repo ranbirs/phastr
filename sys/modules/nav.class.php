@@ -21,16 +21,15 @@ abstract class Nav {
 
 	public function id()
 	{
-		if (!isset($this->nav_id))
-			$this->nav_id = strtolower(Helper::getInstanceClassName($this));
 		return $this->nav_id;
 	}
 
 	public function html($import = null, $title = null, $attr = [], $template = "bootstrap")
 	{
+		$this->nav_id = strtolower(Helper::getInstanceClassName($this));
 		$this->build($import);
 
-		$attr['id'] = $this->id();
+		$attr['id'] = $this->nav_id;
 		$this->build['title'] = $title;
 		$this->build['attr'] = Helper::getAttr($attr);
 
