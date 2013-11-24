@@ -25,7 +25,7 @@ class Rest {
 	{
 		$path = explode('?', $url, 2);
 		(isset($path[1])) ? parse_str($path[1], $query) : $query = [];
-		$this->token = hash(self::hash__, uniqid(microtime(), true));
+		$this->token = hash(self::hash__, uniqid(microtime() . mt_rand(), true));
 
 		if (isset($params['public'])) {
 			$params['public'] = (isset($params['passphrase'])) ?
@@ -37,12 +37,11 @@ class Rest {
 			$query['_alias'] = $params['consumer'];
 		
 		$query = http_build_query($query);
-		$url = $path[0] . "?" . $query;
+		$url = $path[0] . (strlen($query)) ? "?" . $query : "";
 
 		$this->client = curl_init($url);
 
 		$data = serialize($data);
-		$request = [];
 
 		if (isset($params['private']) and isset($params['public'])) {
 			$vector = mcrypt_create_iv(mcrypt_get_iv_size(self::cipher__, self::mode__), self::rand__);

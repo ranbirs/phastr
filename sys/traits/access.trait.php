@@ -9,7 +9,7 @@ trait Access {
 	public function access()
 	{
 		if (!isset(self::$access))
-			self::$access = new \sys\modules\Access();
+			self::$access = new \sys\modules\Access;
 		return self::$access;
 	}
 

@@ -9,7 +9,7 @@ trait Rest {
 	public function rest($new = false)
 	{
 		if (!isset(self::$rest) or $new)
-			self::$rest = new \sys\modules\Rest();
+			self::$rest = new \sys\modules\Rest;
 		return self::$rest;
 	}
 

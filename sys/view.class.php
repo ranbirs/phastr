@@ -13,7 +13,7 @@ class View {
 
 	function __construct()
 	{
-		$this->assets = new Assets;
+		$this->assets = new Assets();
 	}
 
 	public function request($path)
