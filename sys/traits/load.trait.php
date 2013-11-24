@@ -2,18 +2,16 @@
 
 namespace sys\traits;
 
-use sys\Init;
-
 trait Load {
 
 	function __get($name)
 	{
-		return $this->$name = (isset($this->load()->$name)) ? $this->load()->$name : null;
+		return (isset($this->load()->$name)) ? $this->$name = $this->load()->$name : false;
 	}
 
-	protected function load()
+	public function load()
 	{
-		return Init::load();
+		return \sys\Init::load();
 	}
 
 }

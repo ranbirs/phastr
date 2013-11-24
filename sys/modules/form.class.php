@@ -11,9 +11,10 @@ use sys\utils\Html;
 abstract class Form {
 
 	use \sys\traits\View;
+	use \sys\traits\Load;
 	use \sys\traits\Request;
 
-	protected $form_id, $method, $import, $validation;
+	protected $form_id, $method, $import, $submit;
 	protected $build = [], $fields = [];
 	protected $validated = [], $sanitized = [];
 	protected $expire, $success, $fail, $error;
@@ -35,15 +36,20 @@ abstract class Form {
 		return $this->method;
 	}
 
-	public function submit()
+	public function resolve($response = 'json')
 	{
+		$this->load()->module('validation', sys__);
+
 		$method = $this->method;
-		$this->validation = new Validation();
+		$this->submit = $this->request()->fields($this->form_id, $this->method);
+		$this->request()->layout = $response;
 
 		foreach ($this->sanitized as $id => $filter)
 			$this->request()->$method($id, $this->validation->sanitize($this->request()->$method($id), $filter));
 		foreach ($this->validated as $id => $validation)
 			$this->validation->resolve($id, $validation, $this->request()->$method($id));
+
+		$valid = $this->validate($this->submit, $this->import);
 
 		if (array_key_exists(Validation::error__, $this->validation->getResult())) {
 			if (!isset($this->error))
@@ -51,19 +57,22 @@ abstract class Form {
 			$this->error['validation'] = $this->validation->getResult();
 			return $this->error;
 		}
-		if ($this->resolve($this->request()->fields($this->form_id, $this->method), $this->import)) {
-			if ((isset($this->expire)) ? $this->expire : $this->expire())
-				Init::session()->drop($this->form_id, 'token');
-			return (isset($this->success)) ? $this->success : $this->success();
+		if (!$valid) {
+			return (isset($this->fail)) ? $this->fail : $this->fail();
 		}
-		return (isset($this->fail)) ? $this->fail : $this->fail();
+		$this->submit($this->submit, $this->import);
+
+		if ((isset($this->expire)) ? $this->expire : $this->expire())
+			Init::session()->drop($this->form_id, 'token');
+
+		return (isset($this->success)) ? $this->success : $this->success();
 	}
 
 	public function html($import = null, $title = null, $attr = [], $method = 'post', $template = "bootstrap")
 	{
 		$this->form_id = strtolower(Helper::getInstanceClassName($this));
-		$this->method = $method;
 		$this->import = $import;
+		$this->method = $method;
 		$this->build($import);
 		$this->close();
 
@@ -105,9 +114,25 @@ abstract class Form {
 		);
 	}
 
-	protected function resolve($submit = null, $import = null)
+
+	protected function getValidation($name = null)
+	{
+		return $this->validation->getResult();
+	}
+
+	public function setValidation($id, $msg = null, $status = Validation::error__)
+	{
+		return $this->validation->setStatus($this->form_id . "_" . $id, $msg, $status);
+	}
+
+	protected function validate($submit = null, $import = null)
 	{
 		return true;
+	}
+
+	protected function submit($submit = null, $import = null)
+	{
+
 	}
 
 	protected function error($msg = "", $callback = "")
@@ -147,10 +172,7 @@ abstract class Form {
 			$params = ['value' => $params];
 		if (!isset($params['value']))
 			$params['value'] = ($params !== array_values($params)) ? "" : $params;
-		if (!isset($params['attr']))
-			$params['attr'] = [];
-		if (!is_array($params['attr']))
-			$params['attr'] = [$params['attr']];
+		$params['attr'] = (isset($params['attr'])) ? (array) $params['attr'] : [];
 
 		$params['label'] = $label;
 		$params['control'] = "";
@@ -170,8 +192,8 @@ abstract class Form {
 		$field['attr']['id'] = $id;
 		if (!is_null($type))
 			$field['attr']['type'] = $type;
-		if (isset($field['attr']['class']) and !is_array($field['attr']['class']))
-			$field['attr']['class'] = [$field['attr']['class']];
+		if (isset($field['attr']['class']))
+			$field['attr']['class'] = (array) $field['attr']['class'];
 
 		if ($control != 'button') {
 			$field['attr']['name'] = (!is_array($field['value'])) ? $id : $id . "[]";
@@ -240,8 +262,7 @@ abstract class Form {
 
 		foreach ($fields as $index => &$field) {
 
-			if (!is_array($field))
-				$field = [$field];
+			$field = (array) $field;
 
 			if (!isset($field['value'])) {
 				if (array_values($field) !== $field) {
@@ -257,14 +278,11 @@ abstract class Form {
 
 			if (!isset($field['label']))
 				$field['label'] = "";
-			if (!isset($field['attr']))
-				$field['attr'] = [];
-			if (!is_array($field['attr']))
-				$field['attr'] = [$field['attr']];
 
+			$field['attr'] = (isset($field['attr'])) ? (array) $field['attr'] : [];
 			$field['attr']['value'] = $field['value'];
-
 			$field['control'] = $control;
+
 			$build = "";
 
 			switch ($control) {

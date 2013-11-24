@@ -53,8 +53,8 @@ class Route {
 		if (!isset($path['path'][2]))
 			$path['path'][2] = self::action__;
 
-		$path['route'] = array_slice($path['path'], 0, 3);
-		$path['params'] = (isset($path['path'][3])) ? Helper::getArray("/", $path['path'][3]) : [];
+		$path['route'] = array_splice($path['path'], 0, 3);
+		$path['params'] = current($path['path']);
 		$path['path'] = [];
 		$path['label'] = [];
 	}
@@ -66,10 +66,10 @@ class Route {
 			if ((strlen($arg) > self::length__)) {
 				return $this->error = \sys\confs\error\route_parse__;
 			}
-			if (preg_match('/[^a-z0-9-]/i', $arg)) {
+			if (preg_match('/[^a-z0-9-]/', $arg = strtolower($arg))) {
 				return $this->error = \sys\confs\error\route_parse__;
 			}
-			$path['label'][$index] = Helper::getPath($arg = strtolower($arg));
+			$path['label'][$index] = Helper::getPath($arg);
 
 			if ($path['label'][$index] === self::method__) {
 				return $this->error = \sys\confs\error\route_parse__;
@@ -124,9 +124,22 @@ class Route {
 
 	public function params($index = null)
 	{
+		if (!is_array(self::$path['params']))
+			self::$path['params'] = Helper::getArray("/", self::$path['params']);
+
 		return (is_numeric($index)) ?
 			((isset(self::$path['params'][$index])) ? self::$path['params'][$index] : null) :
 			((is_null($index)) ? self::$path['params'] : false);
+	}
+
+	public function error($code, $msg = "")
+	{
+		http_response_code($code = (int) $code);
+		if ($msg and \app\confs\config\errors__) {
+			trigger_error($msg);
+		}
+		require \sys\base_path("views/layouts/error/" . $code . ".php");
+		exit;
 	}
 
 }

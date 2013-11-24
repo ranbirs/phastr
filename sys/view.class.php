@@ -2,29 +2,23 @@
 
 namespace sys;
 
+use sys\Init;
 use sys\modules\Request;
 use sys\modules\Assets;
 use sys\utils\Helper;
 
 class View {
 
-	use \sys\traits\Loader;
-
-	public $request, $response, $error, $type, $page, $body, $title, $assets;
+	public $request, $response, $assets, $error, $type, $page, $body, $title;
 
 	function __construct()
 	{
-		$this->assets = new Assets();
+		$this->assets = new Assets;
 	}
 
 	public function request($path)
 	{
 		return $this->_render($path, 'request');
-	}
-
-	public function response($layout = Request::layout__)
-	{
-		$this->layout(Request::param__ . "/" . $layout);
 	}
 
 	public function block($path)
@@ -44,26 +38,16 @@ class View {
 		return $this->_render($type . "/" . $path, 'template');
 	}
 
+	public function response($layout = Request::layout__)
+	{
+		$this->layout(Request::param__ . "/" . $layout);
+	}
+
 	public function layout($path = \app\confs\config\layout__)
 	{
 		$file = $this->_resolveFile($path, 'layout');
-		if ($file) {
-			$this->_includeFile($file);
-		}
-		else {
-			trigger_error(\sys\confs\error\view_layout__);
-		}
+		$this->_includeFile($file, true);
 		exit;
-	}
-
-	public function error($code, $msg = "")
-	{
-		$code = (int) $code;
-		header(" ", true, $code);
-		$this->error = (\app\confs\config\errors__) ?
-			((!empty($msg)) ? $msg : ((isset($this->error)) ? $this->error : "")) :
-			"";
-		$this->layout("error/" . $code);
 	}
 
 	private function _render($path, $type = 'page')
@@ -80,12 +64,17 @@ class View {
 
 	private function _resolveFile($path, $type = 'page')
 	{
-		return $this->resolveFile("views/" . $type . "s/" . $path);
+		return Init::load()->resolveFile("views/" . $type . "s/" . $path);
 	}
 
-	private function _includeFile($file)
+	private function _includeFile($file, $require = false)
 	{
-		include $file;
+		if (!$require) {
+			include $file;
+		}
+		else {
+			require $file;
+		}
 	}
 
 }

@@ -4,13 +4,13 @@ namespace sys\traits;
 
 trait Rest {
 
-	private $_rest;
+	private static $rest;
 
-	protected function rest($new = false)
+	public function rest($new = false)
 	{
-		if (!isset($this->_rest) or $new)
-			$this->_rest = new \sys\modules\Rest();
-		return $this->_rest;
+		if (!isset(self::$rest) or $new)
+			self::$rest = new \sys\modules\Rest();
+		return self::$rest;
 	}
 
 }

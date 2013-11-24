@@ -22,7 +22,7 @@ class Database extends PDO {
 			parent::__construct($this->dsn = $dsn, $user, $pass);
 		}
 		catch (PDOException $e) {
-			trigger_error($e->getMessage());
+			throw $e;
 			exit;
 		}
 	}
@@ -47,8 +47,7 @@ class Database extends PDO {
 		}
 		foreach ($values as $key => $val) {
 
-			if (!is_array($val))
-				$val = [$val];
+			$val = (array) $val;
 
 			switch (count($val)) {
 				case 2:
@@ -61,8 +60,7 @@ class Database extends PDO {
 					return false;
 			}
 		}
-		$this->sth->execute();
-		return $this->sth;
+		return $this->sth->execute();
 	}
 
 	public function select($table, $cols = [], $clause = "", $params = [], $fetch = PDO::FETCH_OBJ)

@@ -2,13 +2,11 @@
 
 namespace sys\traits;
 
-use sys\Init;
-
 trait View {
 
-	protected function view()
+	public function view()
 	{
-		return Init::view();
+		return \sys\Init::view();
 	}
 
 }

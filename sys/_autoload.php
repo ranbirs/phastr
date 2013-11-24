@@ -10,12 +10,13 @@ namespace sys;
 
 		$class = strtolower(ltrim($class, "\\"));
 		$namespace = explode("\\", $class, 2);
-		$path = explode("\\", $namespace[1]);
+		$path = (isset($namespace[1])) ? explode("\\", $namespace[1]) : [];
+		$subj = rtrim(current($path), 's');
 
-		switch ($namespace[0]) {
+		switch ($base = current($namespace)) {
 			case app__:
 				$path = implode("/", $path);
-				require_once \sys\base_path($path, $namespace[0]) . ".php";
+				require_once \sys\base_path($path, $base) . "." . $subj . ".php";
 				break;
 			case sys__:
 				$conf_file = \sys\base_path('confs/' . end($path)) . ".php";
@@ -25,7 +26,7 @@ namespace sys;
 				$path = implode("/", explode("\\", $class));
 				$file = $path . ".class.php";
 				if (stream_resolve_include_path($file) === false)
-					$file = $path . "." . rtrim(current(explode("\\", $namespace[1], 2)), "s") . ".php";
+					$file = $path . "." . $subj . ".php";
 				require_once $file;
 				break;
 		}

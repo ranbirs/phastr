@@ -2,7 +2,7 @@
 
 namespace sys;
 
-use sys\Route;
+//use sys\Route;
 use sys\View;
 use sys\Load;
 
@@ -12,12 +12,12 @@ class Init {
 
 	function __construct()
 	{
-		self::$route = new Route();
-		self::$view = new View();
+		self::$route = new \sys\Route();
 
 		if (isset(self::$route->error)) {
-			self::$view->error(404, self::$route->error);
+			self::$route->error(404, self::$route->error);
 		}
+		self::$view = new View();
 		self::$load = new Load();
 		self::$load->conf('autoload');
 		self::$load->controller(self::$route->controller())

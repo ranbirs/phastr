@@ -4,10 +4,10 @@ namespace sys;
 
 use sys\Init;
 use sys\modules\Request;
-use sys\utils\Helper;
 
 abstract class Controller {
 
+	use \sys\traits\Route;
 	use \sys\traits\View;
 	use \sys\traits\Load;
 	use \sys\traits\Access;
@@ -36,23 +36,24 @@ abstract class Controller {
 			$process--;
 		}
 		if (empty($process)) {
-			$this->view()->error(404, \sys\confs\error\controller_methods__);
+			$this->route()->error(404, \sys\confs\error\controller_methods__);
 		}
 		$this->render($page, $action, $params);
 	}
 
 	public function render()
 	{
-		if (Init::route()->params(0) === Request::param__) {
-			if (!$this->submitRequest()) {
-				$this->view()->error(404, \sys\confs\error\controller_request__);
+		if ($this->route()->params(0) !== Request::param__) {
+			$this->view()->page = $this->view()->page();
+			if ($this->view()->page !== false) {
+				$this->view()->layout();
 			}
+			$this->route()->error(404, \sys\confs\error\controller_render__);
 		}
-		$this->view()->page = $this->view()->page();
-		if ($this->view()->page === false) {
-			$this->error(404, \sys\confs\error\controller_render__);
+		if ($this->resolveRequest()) {
+			$this->view()->response($this->request()->layout);
 		}
-		$this->view()->layout();
+		$this->route()->error(404, \sys\confs\error\controller_request__);
 	}
 
 }

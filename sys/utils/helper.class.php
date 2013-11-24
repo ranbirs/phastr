@@ -78,8 +78,7 @@ class Helper {
 	public static function getArgs($params = null, $delimiter = ":")
 	{
 		$args = [];
-		if (!is_array($params))
-			$params = [$params];
+		$params = (array) $params;
 
 		foreach ($params as $param) {
 			$param = array_map('trim', explode($delimiter, $param, 2));
@@ -121,7 +120,7 @@ class Helper {
 	{
 		$string_array = [];
 		foreach ($array as $key => $val)
-			$string_array[] = $prepend . $key . $glue . $val . $append;
+			$string_array[] = $prepend . $key . $glue . (string) $val . $append;
 		return $string_array;
 	}
 

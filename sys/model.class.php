@@ -6,6 +6,9 @@ use sys\modules\Database;
 
 abstract class Model {
 
+	use \sys\traits\Load;
+	use \sys\traits\Route;
+	
 	protected $dbh;
 
 	function __construct()
