@@ -12,7 +12,7 @@ class Rest {
 	const rand__ = \app\confs\rest\rand__;
 	const hash__ = \app\confs\rest\hash__;
 
-	protected $token, $headers, $client, $response, $result, $header, $info, $consumer;
+	protected $token, $client, $params, $format, $headers, $response, $result, $header, $info, $consumer;
 
 	function construct()
 	{
@@ -21,16 +21,16 @@ class Rest {
 		}
 	}
 
-	public function init($url, $data = null, $method = 'post', $params = [])
+	public function init($url, $data = null, $params = [], $method = 'post', $format = 'json')
 	{
 		$path = explode('?', $url, 2);
 		(isset($path[1])) ? parse_str($path[1], $query) : $query = [];
 		$this->token = hash(self::hash__, uniqid(microtime() . mt_rand(), true));
+		$this->params = $params;
+		$this->format = $format;
 
-		if (isset($params['public'])) {
-			$params['public'] = (isset($params['passphrase'])) ?
-				$this->publicKey($this->token, $params['public'], $params['passphrase']) :
-				$this->publicKey($this->token, $params['public']);
+		if (isset($params['public']) and isset($params['passphrase'])) {
+			$params['public'] = $this->publicKey($this->token, $params['public'], $params['passphrase']);
 			$query['_public'] = $params['public'];
 		}
 		if (isset($params['consumer']))
@@ -128,8 +128,7 @@ class Rest {
 			$this->response = curl_exec($this->client);
 			$this->info = curl_getinfo($this->client);
 
-			$header_size = (int) $this->getInfo('header_size');
-			$this->header = Helper::getArgs(array_values(array_filter(explode(eol__, trim(substr($this->response, 0, $header_size))))), ":");
+			$this->header = Helper::getArgs(Helper::getArray(eol__, trim(substr($this->response, 0, $header_size = (int) $this->getInfo('header_size')))));
 			$this->result = trim(substr($this->response, $header_size));
 
 			curl_close($this->client);
@@ -165,14 +164,16 @@ class Rest {
 
 	public function resolve($result = null, $params = [], $token = null, $vector = null)
 	{
-		$data = base64_decode($result);
+		$data = (is_null($result)) ? base64_decode($this->response($this->format)) : base64_decode($result);
+		if (empty($params))
+			$params = $this->params;
 
 		if (isset($params['private']) and isset($params['public'])) {
 			if (is_null($vector)) {
 				$public = $this->publicKey($token = (is_null($token)) ? $this->token : $token, $params['public'], $params['passphrase']);
-				$vector = $this->getHeader($public);
+				$vector = base64_decode($this->getHeader($public));
 			}
-			$data = $this->decrypt($data, $params['private'], base64_decode($vector));
+			$data = $this->decrypt($data, $params['private'], $vector);
 		}
 		return unserialize($data);
 	}
@@ -218,4 +219,4 @@ class Rest {
 		return unserialize(base64_decode(trim($data)));
 	}
 
-} 
+}

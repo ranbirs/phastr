@@ -15,7 +15,7 @@ abstract class Form {
 	use \sys\traits\Request;
 
 	protected $form_id, $method, $import, $submit;
-	protected $build = [], $fields = [];
+	protected $build = [], $fields = [], $hidden = [], $action = [];
 	protected $validated = [], $sanitized = [];
 	protected $expire, $success, $fail, $error;
 
@@ -82,7 +82,7 @@ abstract class Form {
 		$this->build['title'] = $title;
 		$this->build['attr'] = $attr;
 
-		$form = ['build' => $this->build, 'fields' => $this->fields];
+		$form = ['build' => $this->build, 'fields' => $this->fields, 'action' => $this->action, 'hidden' => $this->hidden];
 		return $this->view()->template('form', $template, $form);
 	}
 
@@ -238,21 +238,18 @@ abstract class Form {
 		}
 		$build = "<" . $control . Html::getAttr($field['attr']) . ">" . $build;
 
-		if (!is_null($group))
-			$id = $group;
-
 		switch ($group) {
 			case 'hidden':
 			case 'action':
 				$field['control'] = $build;
-				$this->fields[$id]['control'][] = $field['control'];
+				$this->{$group}[] = $field;
 				break;
 			case null:
 				$field['control'] = $build;
 			default:
 				$this->fields[$id] = $field;
 		}
-		return $this->fields[$id];
+		//return $this->fields[$id];
 	}
 
 	private function _parseArrayField($id, $control, &$values, &$parent)

@@ -14,7 +14,7 @@ class Database extends PDO {
 	const user__ = \app\confs\database\user__;
 	const pass__ = \app\confs\database\pass__;
 
-	protected $dsn, $sth;
+	protected $dsn, $sth, $client;
 
 	function __construct($dsn, $user, $pass)
 	{
@@ -35,6 +35,11 @@ class Database extends PDO {
 	public function sth()
 	{
 		return $this->sth;
+	}
+
+	public function client()
+	{
+		return $this->client = &$this;
 	}
 
 	public function query($statement, $values = [])

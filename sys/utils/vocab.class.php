@@ -16,7 +16,7 @@ class Vocab {
 
 	public static function getConst($const, $context)
 	{
-		return @constant("\\app\\vocabs\\" . $context . "\\" . $const);
+		return constant("\\app\\vocabs\\" . $context . "\\" . $const);
 	}
 
 }

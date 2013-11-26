@@ -2,7 +2,6 @@
 
 namespace sys;
 
-use sys\Init;
 use sys\modules\Request;
 
 abstract class Controller {
@@ -51,7 +50,7 @@ abstract class Controller {
 			$this->route()->error(404, \sys\confs\error\controller_render__);
 		}
 		if ($this->resolveRequest()) {
-			$this->view()->response($this->request()->layout);
+			$this->view()->layout(Request::param__ . "/" . $this->request()->layout);
 		}
 		$this->route()->error(404, \sys\confs\error\controller_request__);
 	}

@@ -3,9 +3,9 @@
 namespace sys;
 
 use sys\Init;
-use sys\modules\Request;
 use sys\modules\Assets;
 use sys\utils\Helper;
+use sys\utils\Loader;
 
 class View {
 
@@ -38,11 +38,6 @@ class View {
 		return $this->_render($type . "/" . $path, 'template');
 	}
 
-	public function response($layout = Request::layout__)
-	{
-		$this->layout(Request::param__ . "/" . $layout);
-	}
-
 	public function layout($path = \app\confs\config\layout__)
 	{
 		$file = $this->_resolveFile($path, 'layout');
@@ -64,7 +59,7 @@ class View {
 
 	private function _resolveFile($path, $type = 'page')
 	{
-		return Init::load()->resolveFile("views/" . $type . "s/" . $path);
+		return Loader::resolveFile("views/" . $type . "s/" . $path);
 	}
 
 	private function _includeFile($file, $require = false)

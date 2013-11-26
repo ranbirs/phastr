@@ -106,13 +106,13 @@ class Assets {
 			$file = $dir . "/" . $file_name;
 
 			if (!is_dir($dir))
-				@mkdir($dir);
+				mkdir($dir);
 			if (is_writable($dir)) {
 				if (!file_exists($file)) {
 					$content = [];
 					foreach ($file_assets['value'] as $file_path)
-						$content[] = @file_get_contents($root_path . $file_path);
-					@file_put_contents($file, implode(eol__, $content));
+						$content[] = file_get_contents($root_path . $file_path);
+					file_put_contents($file, implode(eol__, $content));
 				}
 				$file_assets = [Html::getAsset($type, 'file', $write_path . "/". $file_name, null, null)];
 			}
