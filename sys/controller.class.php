@@ -49,7 +49,7 @@ abstract class Controller {
 			}
 			$this->route()->error(404, \sys\confs\error\controller_render__);
 		}
-		if ($this->resolveRequest()) {
+		if ($this->request()->resolve()) {
 			$this->view()->layout(Request::param__ . "/" . $this->request()->layout);
 		}
 		$this->route()->error(404, \sys\confs\error\controller_request__);

@@ -110,54 +110,54 @@ class Validation {
 		}
 	}
 
-	public function sanitize($value = null, $filter = null, $param = null)
+	public function sanitize($value = null, $rule = null, $param = null)
 	{
-		if (is_array($filter)) {
-			$param = current($filter);
-			$filter = key($filter);
+		if (is_array($rule)) {
+			$param = current($rule);
+			$rule = key($rule);
 		}
-		switch ($filter) {
+		switch ($rule) {
 			case 'int':
-				$filter = FILTER_SANITIZE_NUMBER_INT;
+				$rule = FILTER_SANITIZE_NUMBER_INT;
 				break;
 			case 'float':
-				$filter = FILTER_SANITIZE_NUMBER_FLOAT;
+				$rule = FILTER_SANITIZE_NUMBER_FLOAT;
 				break;
 			case 'strip':
 			case 'string':
-				$filter = FILTER_SANITIZE_STRING;
+				$rule = FILTER_SANITIZE_STRING;
 				break;
 			case 'specialchars':
-				$filter = FILTER_SANITIZE_SPECIAL_CHARS;
+				$rule = FILTER_SANITIZE_SPECIAL_CHARS;
 				break;
 			case 'addslashes':
-				$filter = FILTER_SANITIZE_MAGIC_QUOTES;
+				$rule = FILTER_SANITIZE_MAGIC_QUOTES;
 				break;
 			case 'urlencode':
-				$filter = FILTER_SANITIZE_ENCODED;
+				$rule = FILTER_SANITIZE_ENCODED;
 				break;
 			case 'url':
-				$filter = FILTER_SANITIZE_URL;
+				$rule = FILTER_SANITIZE_URL;
 				break;
 			case null:
-				$filter = FILTER_UNSAFE_RAW;
+				$rule = FILTER_UNSAFE_RAW;
 				break;
 			default:
 				return false;
 		}
-		$filter_var = function ($value) use ($filter, $param) {
+		$filter = function ($value) use ($rule, $param) {
 			$value = trim($value);
 			if (!is_null($param)) {
-				return filter_var($value, $filter, $param);
+				return filter_var($value, $rule, $param);
 			}
-			return filter_var($value, $filter);
+			return filter_var($value, $rule);
 		};
-		$sanitize = function ($value) use ($filter_var) {
+		$sanitize = function ($value) use ($filter) {
 			if (!is_array($value)) {
-				return $value = $filter_var($value);
+				return $value = $filter($value);
 			}
 			foreach ($value as &$val) {
-				$val = $filter_var($val);
+				$val = $filter($val);
 			}
 			return $value;
 		};

@@ -12,7 +12,7 @@ class Rest {
 	const rand__ = \app\confs\rest\rand__;
 	const hash__ = \app\confs\rest\hash__;
 
-	protected $token, $client, $params, $format, $headers, $response, $result, $header, $info, $consumer;
+	protected $token, $client, $params, $headers, $response, $body, $header, $info, $consumer;
 
 	function construct()
 	{
@@ -21,35 +21,31 @@ class Rest {
 		}
 	}
 
-	public function init($url, $data = null, $params = [], $method = 'post', $format = 'json')
+	public function init($url, $data = null, $params = [], $method = 'post')
 	{
-		$path = explode('?', $url, 2);
-		(isset($path[1])) ? parse_str($path[1], $query) : $query = [];
-		$this->token = hash(self::hash__, uniqid(microtime() . mt_rand(), true));
+		if (filter_var($url, FILTER_VALIDATE_URL) === false) {
+			return false;
+		}
+		$url = explode('?', $url, 2);
+		(isset($url[1])) ? parse_str($url[1], $url[1]) : $url[1] = [];
 		$this->params = $params;
-		$this->format = $format;
+		$this->token = hash(self::hash__, uniqid(microtime() . mt_rand(), true));
 
 		if (isset($params['public']) and isset($params['passphrase'])) {
 			$params['public'] = $this->publicKey($this->token, $params['public'], $params['passphrase']);
-			$query['_public'] = $params['public'];
+			$url[1]['_public'] = $params['public'];
 		}
-		if (isset($params['consumer']))
-			$query['_alias'] = $params['consumer'];
-		
-		$query = http_build_query($query);
-		$url = $path[0] . (strlen($query)) ? "?" . $query : "";
+		if (isset($params['alias']))
+			$url[1]['_alias'] = $params['alias'];
+
+		$url[1] = http_build_query($url[1]);
+		$url = $url[0] . ((strlen($url[1])) ? "?" . $url[1] : "");
 
 		$this->client = curl_init($url);
 
-		$data = serialize($data);
+		$data = $this->transfer($data, $params['private'], $params['public'], $this->token);
 
-		if (isset($params['private']) and isset($params['public'])) {
-			$vector = mcrypt_create_iv(mcrypt_get_iv_size(self::cipher__, self::mode__), self::rand__);
-			$data = $this->encrypt($data, $params['private'], $vector);
-			$this->setHeader([$params['public'] => base64_encode($vector)]);
-		}
-		$this->setHeader(['_token' => $this->token]);
-		$request['body'] = base64_encode($data);
+		$request[$method] = base64_encode($data);
 
 		curl_setopt($this->client, CURLOPT_HEADER, true);
 		curl_setopt($this->client, CURLOPT_RETURNTRANSFER, true);
@@ -122,60 +118,47 @@ class Rest {
 		return (!is_null($key)) ? ((isset($this->info[$key])) ? $this->info[$key] : null) : $this->info;
 	}
 
-	public function result()
-	{
-		if (!isset($this->result)) {
-			$this->response = curl_exec($this->client);
-			$this->info = curl_getinfo($this->client);
-
-			$this->header = Helper::getArgs(Helper::getArray(eol__, trim(substr($this->response, 0, $header_size = (int) $this->getInfo('header_size')))));
-			$this->result = trim(substr($this->response, $header_size));
-
-			curl_close($this->client);
-		}
-		return $this->result;
-	}
-
-	public function response($format = 'json')
-	{
-		$result = $this->result();
-
-		switch ($format) {
-			case 'json':
-				$result = json_decode($result);
-				break;
-		}
-		return $result;
-	}
-
-	public function respond($data = null, $private = null)
+	public function transfer($data = null, $private = null, $public = null, $token = null, $client = true)
 	{
 		$data = serialize($data);
-		$response = [];
 
-		if ($private) {
+		if ($private and $public) {
 			$vector = mcrypt_create_iv(mcrypt_get_iv_size(self::cipher__, self::mode__), self::rand__);
 			$data = $this->encrypt($data, $private, $vector);
-			$response['vector'] = base64_encode($vector);
+			$this->setHeader([$public => base64_encode($vector)], $client);
+			$this->setHeader(['_token' => base64_encode($token)], $client);
 		}
-		$response['result'] = base64_encode($data);
-		return $response;
+		return $data;
 	}
 
 	public function resolve($result = null, $params = [], $token = null, $vector = null)
 	{
-		$data = (is_null($result)) ? base64_decode($this->response($this->format)) : base64_decode($result);
+		$data = (is_null($result)) ? base64_decode($this->response()) : $result;
 		if (empty($params))
 			$params = $this->params;
 
 		if (isset($params['private']) and isset($params['public'])) {
 			if (is_null($vector)) {
-				$public = $this->publicKey($token = (is_null($token)) ? $this->token : $token, $params['public'], $params['passphrase']);
+				$public = $this->publicKey((is_null($token)) ? $this->token : $token, $params['public'], $params['passphrase']);
 				$vector = base64_decode($this->getHeader($public));
 			}
 			$data = $this->decrypt($data, $params['private'], $vector);
 		}
 		return unserialize($data);
+	}
+
+	public function response()
+	{
+		if (!isset($this->response)) {
+			$this->response = curl_exec($this->client);
+			$this->info = curl_getinfo($this->client);
+
+			$this->header = Helper::getArgs(Helper::getArray(eol__, trim(substr($this->response, 0, $header_size = (int) $this->getInfo('header_size')))));
+			$this->body = trim(substr($this->response, $header_size));
+
+			curl_close($this->client);
+		}
+		return $this->body;
 	}
 
 	public function publicKey($token, $public, $passphrase = "", $algo = \app\confs\rest\hash__)

@@ -115,7 +115,7 @@ abstract class Form {
 	}
 
 
-	protected function getValidation($name = null)
+	protected function getValidation($id = null)
 	{
 		return $this->validation->getResult();
 	}

@@ -47,16 +47,15 @@ class Request {
 	{
 		if (is_null($key)) {
 			$request = $this->globals($method);
-			$names = array_keys($request);
+			$labels = array_keys($request);
 			$length = strlen($subj . $separator);
 			$fields = [];
-			foreach ($names as $name) {
-				if (substr($name, 0, $length) === $subj . $separator) {
-					$key = substr($name, $length);
-					if (substr($key, 0, 1) !== $separator) {
-						$fields[$key] = $request[$name];
-					}
+			foreach ($labels as $label) {
+				if (substr($label, 0, $length) !== $subj . $separator) {
+					continue;
 				}
+				if (substr($key = substr($label, $length), 0, 1) !== $separator)
+					$fields[$key] = $request[$label];
 			}
 			return $fields;
 		}
@@ -72,6 +71,34 @@ class Request {
 		if (!is_null($key) and !is_null($value))
 			$GLOBALS[$global][$key] = $value;
 		return (!is_null($key)) ? ((isset($GLOBALS[$global][$key])) ? $GLOBALS[$global][$key] : false) : $GLOBALS[$global];
+	}
+
+	public function resolve()
+	{
+		$context = Init::route()->params(1);
+		$subj = Init::route()->params(2);
+	
+		if (is_null($subj) or $this->header() !== Init::session()->token()) {
+			return false;
+		}
+		switch ($context) {
+			case 'request':
+				Init::view()->request = $this->globals($this->method);
+				Init::view()->response = Init::view()->request($subj);
+				if (Init::view()->response !== false) {
+					return true;
+				}
+				return false;
+			case 'form':
+				if (Init::load()->$subj instanceof \sys\modules\Form) {
+					Init::view()->request = $this->globals(Init::load()->$subj->method());
+					Init::view()->response = Init::load()->$subj->resolve('json');
+					return true;
+				}
+				return false;
+			default:
+				return false;
+		}
 	}
 
 }
