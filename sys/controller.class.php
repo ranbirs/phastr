@@ -20,16 +20,16 @@ abstract class Controller {
 	public function dispatch($default, $page, $action, $params = [])
 	{
 		$methods = [
-			$default . "_" . $default,
-			$default . "_" . $action,
-			$page . "_" . $default,
-			$page . "_" . $action
+			$default . '_' . $default,
+			$default . '_' . $action,
+			$page . '_' . $default,
+			$page . '_' . $action
 		];
 		$process = count($methods);
 
 		foreach ($methods as $method) {
 			if (method_exists($this, $method)) {
-				$this->$method($page, $action, $params);
+				$this->{$method}($page, $action, $params);
 				continue;
 			}
 			$process--;
@@ -50,7 +50,7 @@ abstract class Controller {
 			$this->route()->error(404, \sys\confs\error\controller_render__);
 		}
 		if ($this->request()->resolve()) {
-			$this->view()->layout(Request::param__ . "/" . $this->request()->layout);
+			$this->view()->layout(Request::param__ . '/' . $this->request()->layout);
 		}
 		$this->route()->error(404, \sys\confs\error\controller_request__);
 	}

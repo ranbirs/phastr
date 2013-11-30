@@ -9,7 +9,7 @@ class Html {
 	public static function getAttr($attr = [])
 	{
 		$attr = Helper::getAttr($attr);
-		return (!empty($attr)) ? " " . implode(" ", Helper::getStringArray('="', $attr, "", '"')) : "";
+		return (!empty($attr)) ? ' ' . implode(' ', Helper::getStringArray('="', $attr, '', '"')) : '';
 	}
 
 	public static function getAsset($type = 'script', $context = null, $subj = null, $params = null, $append = null)
@@ -19,12 +19,12 @@ class Html {
 				switch ($context) {
 					case null:
 					case 'file':
-						$subj = "/" . Helper::getPath($subj, 'base');
+						$subj = '/' . Helper::getPath($subj, 'base');
 					case 'remote':
-						$asset = '<script src="' . ((!is_null($append)) ? $subj . "?" . $append : $subj) . '"></script>';
+						$asset = '<script src="' . ((!is_null($append)) ? $subj . '?' . $append : $subj) . '"></script>';
 						break 2;
 					case 'inline':
-						$asset = "<script>" . eol__ . $subj . eol__ . "</script>";
+						$asset = '<script>' . eol__ . $subj . eol__ . '</script>';
 						break 2;
 					default:
 						return false;
@@ -36,12 +36,12 @@ class Html {
 				switch ($context) {
 					case null:
 					case 'file':
-						$subj = "/" . Helper::getPath($subj, 'base');
+						$subj = '/' . Helper::getPath($subj, 'base');
 					case 'remote':
-						$asset = '<link href="' . ((!is_null($append)) ? $subj . "?" . $append : $subj) . '" rel="stylesheet"' . $params . ">";
+						$asset = '<link href="' . ((!is_null($append)) ? $subj . '?' . $append : $subj) . '" rel="stylesheet"' . $params . '>';
 						break 2;
 					case 'inline':
-						$asset = "<style>" . eol__ . $subj . eol__ . "</style>";
+						$asset = '<style>' . eol__ . $subj . eol__ . '</style>';
 						break 2;
 					default:
 						return false;

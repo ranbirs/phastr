@@ -34,12 +34,12 @@ class Load {
 	public function module($path, $base = app__)
 	{
 		$subj = Helper::getPathName($path);
-		return $this->$subj = Loader::resolveInclude($path, 'module', true, $base, ($base == app__) ? "module.php" : "class.php");
+		return $this->$subj = Loader::resolveInclude($path, 'module', true, $base, ($base == app__) ? 'module.php' : 'class.php');
 	}
 
 	public function controller($path)
 	{
-		return Loader::resolveInclude($path, 'controller', true, app__, "controller.php");
+		return Loader::resolveInclude($path, 'controller', true, app__, 'controller.php');
 	}
 
 	public function conf($path, $base = app__)
@@ -47,9 +47,9 @@ class Load {
 		return Loader::resolveInclude($path, 'conf', false, $base);
 	}
 
-	public function vocab($path, $lang = "")
+	public function vocab($path, $lang = '')
 	{
-		return Loader::resolveInclude(($lang) ? $lang . "/" . $path : $path, 'vocab', false);
+		return Loader::resolveInclude(($lang) ? $lang . '/' . $path : $path, 'vocab', false);
 	}
 
 }

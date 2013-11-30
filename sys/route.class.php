@@ -25,7 +25,7 @@ class Route {
 	function __construct()
 	{
 		$name = self::name__;
-		$path = (isset($_GET[$name])) ? Helper::getArray("/", $_GET[$name], 4) : [];
+		$path = (isset($_GET[$name])) ? Helper::getArray('/', $_GET[$name], 4) : [];
 		unset($_GET[$name]);
 
 		$this->_parsePath($path);
@@ -40,9 +40,9 @@ class Route {
 
 		if (empty($path['request'])) {
 			$path['path'] = [self::autoload__, self::homepage__, self::action__];
-			$path['request'] = "/";
+			$path['request'] = '/';
 		}
-		$scope = Helper::getArray(",", self::controllers__);
+		$scope = Helper::getArray(',', self::controllers__);
 		$scope[] = self::autoload__;
 
 		if (!in_array(Helper::getPath($path['path'][0]), $scope))
@@ -94,7 +94,7 @@ class Route {
 		unset($arg);
 
 		$path['route'] = Helper::getPath($path['route'], 'route');
-		$path['path'] = implode("/", $path['path']);
+		$path['path'] = implode('/', $path['path']);
 	}
 
 	public function path($request = false)
@@ -125,20 +125,20 @@ class Route {
 	public function params($index = null)
 	{
 		if (!is_array(self::$path['params']))
-			self::$path['params'] = Helper::getArray("/", self::$path['params']);
+			self::$path['params'] = Helper::getArray('/', self::$path['params']);
 
 		return (is_numeric($index)) ?
 			((isset(self::$path['params'][$index])) ? self::$path['params'][$index] : null) :
 			((is_null($index)) ? self::$path['params'] : false);
 	}
 
-	public function error($code, $msg = "")
+	public function error($code, $msg = '')
 	{
 		http_response_code($code = (int) $code);
 		if ($msg and \app\confs\config\errors__) {
 			trigger_error($msg);
 		}
-		require \sys\base_path("views/layouts/error/" . $code . ".php");
+		require \sys\base_path('views/layouts/error/' . $code) . '.php';
 		exit;
 	}
 

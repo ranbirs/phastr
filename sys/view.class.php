@@ -13,7 +13,7 @@ class View {
 
 	function __construct()
 	{
-		$this->assets = new Assets();
+		$this->assets = new Assets;
 	}
 
 	public function request($path)
@@ -35,7 +35,7 @@ class View {
 	public function template($type, $path, $data = null)
 	{
 		$this->$type = $data;
-		return $this->_render($type . "/" . $path, 'template');
+		return $this->_render($type . '/' . $path, 'template');
 	}
 
 	public function layout($path = \app\confs\config\layout__)
@@ -59,7 +59,7 @@ class View {
 
 	private function _resolveFile($path, $type = 'page')
 	{
-		return Loader::resolveFile("views/" . $type . "s/" . $path);
+		return Loader::resolveFile('views/' . $type . 's/' . $path);
 	}
 
 	private function _includeFile($file, $require = false)

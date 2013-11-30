@@ -11,63 +11,63 @@ class Helper {
 
 	public static function getClassName($class)
 	{
-		$class = explode("\\", $class);
+		$class = explode('\\', $class);
 		return ucfirst(strtolower(end($class)));
 	}
 
 	public static function getClassPath($class)
 	{
-		$class = explode("\\", $class);
-		return strtolower(implode("/", $class));
+		$class = explode('\\', $class);
+		return strtolower(implode('/', $class));
 	}
 
 	public static function getPathName($path)
 	{
-		$path = explode("/", $path);
+		$path = explode('/', $path);
 		return strtolower(end($path));
 	}
 
 	public static function getPathClass($path)
 	{
-		$path = explode("/", strtolower($path));
+		$path = explode('/', strtolower($path));
 		$class = ucfirst(array_pop($path));
 		$path[] = $class;
-		return implode("\\", $path);
+		return implode('\\', $path);
 	}
 
 	public static function getPath($path = null, $type = 'label')
 	{
 		if (is_array($path))
-			$path = implode("/", $path);
+			$path = implode('/', $path);
 
 		switch ($type) {
 			case 'label':
-				$path = str_replace(["--", "-"], ["__", "_"], $path);
+				$path = str_replace(['--', '-'], ['__', '_'], $path);
 				break;
 			case 'path':
-				$path = str_replace(["__", "/", "_"], ["--", "--", "-"], $path);
+				$path = str_replace(['__', '/', '_'], ['--', '--', '-'], $path);
 				break;
 			case 'tree':
-				$path = str_replace(["__", "--", "-"], ["/", "/", "_"], $path);
+				$path = str_replace(['__', '--', '-'], ['/', '/', '_'], $path);
 				break;
 			case 'route':
 				$path = (\sys\Route::rewrite__) ?
-					"/" . self::getPath($path, 'base') :
-					"/" . self::getPath("", 'base') . "?" . \sys\Route::name__ . "=" . $path;
+					'/' . self::getPath($path, 'base') :
+					'/' . self::getPath('', 'base') . '?' . \sys\Route::name__ . '=' . $path;
 				break;
 			case 'ajax':
-				$path = \sys\Init::route()->route() . "/" . \sys\modules\Request::param__ . "/" . $path;
+				$path = \sys\Init::route()->route() . '/' . \sys\modules\Request::param__ . '/' . $path;
 				break;
 			case 'page':
-				$path = \sys\Init::route()->controller() . "/" . self::getPath(($path) ? $path : \sys\Init::route()->page(), 'tree');
+				$path = \sys\Init::route()->controller() . '/' . self::getPath(($path) ? $path : \sys\Init::route()->page(), 'tree');
 				break;
 			case 'base':
 				$path = ($base = \sys\Route::base__) ?
-					(($path) ? $base . "/" . $path : $base) :
-					(($path) ? $path : "");
+					(($path) ? $base . '/' . $path : $base) :
+					(($path) ? $path : '');
 				break;
 			case 'root':
-				$path = ($path) ? $_SERVER['DOCUMENT_ROOT'] . "/" . $path : $_SERVER['DOCUMENT_ROOT'];
+				$path = ($path) ? $_SERVER['DOCUMENT_ROOT'] . '/' . $path : $_SERVER['DOCUMENT_ROOT'];
 				break;
 			default:
 				return false;
@@ -75,7 +75,7 @@ class Helper {
 		return $path;
 	}
 
-	public static function getArgs($params = null, $delimiter = ":")
+	public static function getArgs($params = null, $delimiter = ':')
 	{
 		$args = [];
 		$params = (array) $params;
@@ -90,13 +90,11 @@ class Helper {
 		return $args;
 	}
 
-	public static function getAttr($attr = [], $glue = " ")
+	public static function getAttr($attr = [], $glue = ' ')
 	{
 		$attrs = [];
 		foreach ($attr as $key => $val) {
-			if (!strlen($val = (!is_array($val)) ? $val : implode($glue, $val))) {
-				continue;
-			}
+			$val = (!is_array($val)) ? $val : implode($glue, $val);
 			if (is_int($key)) {
 				$attrs[$val] = $val;
 				continue;
@@ -106,17 +104,17 @@ class Helper {
 		return $attrs;
 	}
 
-	public static function getArray($delimiter, $string = "", $limit = null)
+	public static function getArray($delimiter, $string = '', $limit = null)
 	{
 		$limit = (int) $limit;
 		$array = (!$limit) ? explode($delimiter, $string) : explode($delimiter, $string, $limit);
 		$trim = function ($arg) use ($delimiter) {
-			return trim($arg, $delimiter . " ");
+			return trim($arg, $delimiter . ' ');
 		};
 		return array_values(array_filter(array_map($trim, $array), 'strlen'));
 	}
 
-	public static function getStringArray($glue, $array = [], $prepend = "", $append = "")
+	public static function getStringArray($glue, $array = [], $prepend = '', $append = '')
 	{
 		$string_array = [];
 		foreach ($array as $key => $val)

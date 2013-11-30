@@ -24,7 +24,7 @@ abstract class Nav {
 		return $this->nav_id;
 	}
 
-	public function html($import = null, $title = null, $attr = [], $template = "bootstrap")
+	public function html($import = null, $title = null, $attr = [], $template = 'bootstrap')
 	{
 		$this->nav_id = strtolower(Helper::getInstanceClassName($this));
 		$this->build($import);

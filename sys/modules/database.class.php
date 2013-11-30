@@ -47,7 +47,7 @@ class Database extends PDO {
 		$this->sth = $this->prepare($statement);
 
 		if ($values === array_values($values)) {
-			array_unshift($values, "");
+			array_unshift($values, '');
 			unset($values[0]);
 		}
 		foreach ($values as $key => $val) {
@@ -68,9 +68,9 @@ class Database extends PDO {
 		return $this->sth->execute();
 	}
 
-	public function select($table, $cols = [], $clause = "", $params = [], $fetch = PDO::FETCH_OBJ)
+	public function select($table, $cols = [], $clause = '', $params = [], $fetch = PDO::FETCH_OBJ)
 	{
-		$cols = implode(", ", $cols);
+		$cols = implode(', ', $cols);
 		$this->sth = $this->prepare("SELECT $cols FROM $table $clause");
 
 		foreach ($params as $key => $val)
@@ -82,10 +82,10 @@ class Database extends PDO {
 		return false;
 	}
 
-	public function update($table, $values = [], $clause = "", $params = [])
+	public function update($table, $values = [], $clause = '', $params = [])
 	{
-		$values = Helper::getStringArray(" = ", $values);
-		$values = implode(", ", $values);
+		$values = Helper::getStringArray(' = ', $values);
+		$values = implode(', ', $values);
 		$this->sth = $this->prepare("UPDATE $table SET $values $clause");
 
 		foreach ($params as $key => $val)
@@ -95,8 +95,8 @@ class Database extends PDO {
 
 	public function insert($table, $values = [], $params = [])
 	{
-		$cols = implode(", ", array_keys($values));
-		$values = implode(", ", array_values($values));
+		$cols = implode(', ', array_keys($values));
+		$values = implode(', ', array_values($values));
 		$this->sth = $this->prepare("INSERT INTO $table ($cols) VALUES ($values)");
 
 		foreach ($params as $key => $val)

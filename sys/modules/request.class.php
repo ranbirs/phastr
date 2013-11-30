@@ -17,7 +17,7 @@ class Request {
 	function __construct()
 	{
 		Init::view()->assets->set(['script' => 'inline'],
-			'$.ajaxSetup({headers: {"' . Init::session()->key() . '": "' . Init::session()->token() . '"}});'
+			'$.ajaxSetup({headers: {\'' . Init::session()->key() . '\': \'' . Init::session()->token() . '\'}});'
 		);
 	}
 
@@ -25,7 +25,7 @@ class Request {
 	{
 		if (is_null($key))
 			$key = Init::session()->key();
-		return $this->server("HTTP_" . strtoupper($key));
+		return $this->server('HTTP_' . strtoupper($key));
 	}
 
 	public function server($key = null, $value = null)
@@ -43,7 +43,7 @@ class Request {
 		return $this->globals('get', $key, $value);
 	}
 
-	public function fields($subj, $method = 'post', $key = null, $separator = "_")
+	public function fields($subj, $method = 'post', $key = null, $separator = '_')
 	{
 		if (is_null($key)) {
 			$request = $this->globals($method);
@@ -64,7 +64,7 @@ class Request {
 
 	public function globals($global = 'post', $key = null, $value = null)
 	{
-		$global = "_" . strtoupper($global);
+		$global = '_' . strtoupper($global);
 		if (!isset($GLOBALS[$global])) {
 			return false;
 		}

@@ -12,7 +12,7 @@ class Hash {
 
 	private static $range;
 
-	public static function id($id = "", $algo = 'sha1')
+	public static function id($id = '', $algo = 'sha1')
 	{
 		return self::get((!$id) ? uniqid(self::salt(), true) : $id, $algo, false);
 	}
@@ -47,17 +47,17 @@ class Hash {
 		return implode($salt);
 	}
 
-	public static function get($data = "", $algo = self::algo__, $key = self::key__)
+	public static function get($data = '', $algo = self::algo__, $key = self::key__)
 	{
 		return ($key) ? hash_hmac($algo, $data, $key) : hash($algo, $data);
 	}
 
-	public static function cipher($data = "")
+	public static function cipher($data = '')
 	{
 		return crypt($data, self::cipher__ . self::cost__ . '$' . self::salt(self::salt__));
 	}
 
-	public static function resolve($hash, $data = "", $algo = self::algo__, $key = self::key__)
+	public static function resolve($hash, $data = '', $algo = self::algo__, $key = self::key__)
 	{
 		if ($algo) {
 			$subj = self::get($data, $algo, $key);

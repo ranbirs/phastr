@@ -6,7 +6,7 @@ class Conf {
 
 	public static function k($const, $context = 'config', $base = app__)
 	{
-		$const .= "__";
+		$const .= '__';
 		$constant = self::getConst($const, $context, $base);
 		if (is_null($constant)) {
 			\sys\Init::load()->conf($context, $base);
@@ -17,13 +17,13 @@ class Conf {
 
 	public static function ini($path, $sections = true)
 	{
-		$path = get_include_path() . "/" . \sys\base_path("confs/" . $path) . ".ini";
+		$path = get_include_path() . '/' . \sys\base_path('confs/' . $path) . '.ini';
 		return parse_ini_file($path, $sections);
 	}
 
 	public static function getConst($const, $context, $base)
 	{
-		return constant($base . "\\confs\\" . $context . "\\" . $const);
+		return constant($base . '\\confs\\' . $context . '\\' . $const);
 	}
 
 }

@@ -43,7 +43,7 @@ class Validation {
 				}
 			}
 			if ($valid === self::error__)
-				$this->setStatus($id, "", $valid);
+				$this->setStatus($id, '', $valid);
 		}
 	}
 
@@ -57,7 +57,7 @@ class Validation {
 				if (!is_array($param)) {
 					return false;
 				}
-				$request = Init::request()->$rule(key($param));
+				$request = Init::request()->{$rule}(key($param));
 				return (!is_null($value) and $value === $request and $request === current($param));
 			case 'token':
 				return (!is_null($param) and $value === Init::session()->get($param, 'token'));

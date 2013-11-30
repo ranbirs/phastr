@@ -13,11 +13,13 @@ class Rest {
 	const hash__ = \app\confs\rest\hash__;
 
 	protected $token, $client, $params, $headers, $response, $body, $header, $info, $consumer;
+	
+	private $_public, $_private, $_token, $_passphrase;
 
 	function construct()
 	{
-		if (!extension_loaded('mcrypt') or !extension_loaded('curl')) {
-			Init::route()->error(404, "");
+		if (!extension_loaded('mcrypt') or !extension_loaded('curl') or !function_exists('mcrypt_create_iv')) {
+			Init::route()->error(404, '');
 		}
 	}
 
@@ -33,17 +35,20 @@ class Rest {
 
 		if (isset($params['public']) and isset($params['passphrase'])) {
 			$params['public'] = $this->publicKey($this->token, $params['public'], $params['passphrase']);
-			$url[1]['_public'] = $params['public'];
+			$params['query']['_public'] = $params['public'];
 		}
 		if (isset($params['alias']))
-			$url[1]['_alias'] = $params['alias'];
+			$params['query']['_alias'] = $params['alias'];
 
+		if (isset($params['query']))
+			$url[1] = array_merge($url[1], $params['query']);
+		
 		$url[1] = http_build_query($url[1]);
-		$url = $url[0] . ((strlen($url[1])) ? "?" . $url[1] : "");
+		$url = $url[0] . ((strlen($url[1])) ? '?' . $url[1] : '');
 
 		$this->client = curl_init($url);
 
-		$data = $this->transfer($data, $params['private'], $params['public'], $this->token);
+		$data = $this->transfer($data, $this->token, $params['public'], $params['private']);
 
 		$request[$method] = base64_encode($data);
 
@@ -89,7 +94,7 @@ class Rest {
 
 	public function setHeader($headers = [], $client = true)
 	{
-		$headers = Helper::getStringArray(": ", $headers);
+		$headers = Helper::getStringArray(': ', $headers);
 
 		if ($client) {
 			if (!isset($this->headers))
@@ -118,26 +123,13 @@ class Rest {
 		return (!is_null($key)) ? ((isset($this->info[$key])) ? $this->info[$key] : null) : $this->info;
 	}
 
-	public function transfer($data = null, $private = null, $public = null, $token = null, $client = true)
-	{
-		$data = serialize($data);
-
-		if ($private and $public) {
-			$vector = mcrypt_create_iv(mcrypt_get_iv_size(self::cipher__, self::mode__), self::rand__);
-			$data = $this->encrypt($data, $private, $vector);
-			$this->setHeader([$public => base64_encode($vector)], $client);
-			$this->setHeader(['_token' => base64_encode($token)], $client);
-		}
-		return $data;
-	}
-
 	public function resolve($result = null, $params = [], $token = null, $vector = null)
 	{
 		$data = (is_null($result)) ? base64_decode($this->response()) : $result;
 		if (empty($params))
 			$params = $this->params;
 
-		if (isset($params['private']) and isset($params['public'])) {
+		if (isset($params['public']) and isset($params['passphrase']) and isset($params['private'])) {
 			if (is_null($vector)) {
 				$public = $this->publicKey((is_null($token)) ? $this->token : $token, $params['public'], $params['passphrase']);
 				$vector = base64_decode($this->getHeader($public));
@@ -161,7 +153,19 @@ class Rest {
 		return $this->body;
 	}
 
-	public function publicKey($token, $public, $passphrase = "", $algo = \app\confs\rest\hash__)
+	public function transfer($data = null, $token, $public, $private, $client = true)
+	{
+		$data = serialize($data);
+		$vector = mcrypt_create_iv(mcrypt_get_iv_size(self::cipher__, self::mode__), self::rand__);
+		$data = $this->encrypt($data, $private, $vector);
+
+		$this->setHeader([$public => base64_encode($vector)], $client);
+		$this->setHeader(['_token' => base64_encode($token)], $client);
+
+		return $data;
+	}
+
+	public function publicKey($token, $public, $passphrase, $algo = \app\confs\rest\hash__)
 	{
 		return hash_hmac($algo, $public, hash($algo, $passphrase . $token));
 	}

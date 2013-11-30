@@ -11,14 +11,14 @@ class Access {
 		return (Init::session()->user('id') and Init::session()->user('token'));
 	}
 
-	public function setRule($rule, $role = null, $user_role = null)
+	public function setRule($rule, $perm = null, $role = null)
 	{
-		if (!$this->resolve($rule, $role, $user_role)) {
+		if (!$this->resolve($rule, $perm, $role)) {
 			Init::route()->error(403);
 		}
 	}
 
-	public function resolve($rule, $role = null, $user_role = null)
+	public function resolve($rule, $perm = null, $role = null)
 	{
 		switch ($rule) {
 			case 'public':
@@ -26,14 +26,12 @@ class Access {
 			case 'private':
 				return ($this->isAuth() === true);
 			case 'role':
-				if (is_null($role) or is_null($user_role) or $this->isAuth() === false) {
+				if (is_null($perm) or is_null($role) or $this->isAuth() === false) {
 					return false;
 				}
-				$role = (array) $role;
-				$user_role = (array) $user_role;
-				$perm_role = array_intersect($role, $user_role);
-				if (!empty($perm_role)) {
-					return $perm_role;
+				$role = array_intersect((array) $perm, (array) $role);
+				if (!empty($role)) {
+					return $role;
 				}
 				return false;
 			default:

@@ -7,8 +7,8 @@ use sys\utils\Html;
 
 class Assets {
 
-	const script__ = "js";
-	const style__ = "css";
+	const script__ = 'js';
+	const style__ = 'css';
 	const hash__ = 'md5';
 
 	private static $assets = [];
@@ -99,11 +99,11 @@ class Assets {
 			}
 		}
 		if (isset($file_assets['value'])) {
-			$root_path = Helper::getPath("", 'root') . "/" . Helper::getPath("", 'base');
-			$write_path = \app\confs\config\assets__ . "/" . $type;
-			$file_name = hash(self::hash__, implode($file_assets['checksum'])) . "." . $ext[$type];
+			$root_path = Helper::getPath('', 'root') . '/' . Helper::getPath('', 'base');
+			$write_path = \app\confs\config\assets__ . '/' . $type;
+			$file_name = hash(self::hash__, implode($file_assets['checksum'])) . '.' . $ext[$type];
 			$dir = $root_path . $write_path;
-			$file = $dir . "/" . $file_name;
+			$file = $dir . '/' . $file_name;
 
 			if (!is_dir($dir))
 				mkdir($dir);
@@ -114,7 +114,7 @@ class Assets {
 						$content[] = file_get_contents($root_path . $file_path);
 					file_put_contents($file, implode(eol__, $content));
 				}
-				$file_assets = [Html::getAsset($type, 'file', $write_path . "/". $file_name, null, null)];
+				$file_assets = [Html::getAsset($type, 'file', $write_path . '/'. $file_name, null, null)];
 			}
 			else {
 				trigger_error(\sys\confs\error\assets_write__);
