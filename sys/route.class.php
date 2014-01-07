@@ -19,8 +19,7 @@ class Route {
 
 	const length__ = 128;
 
-	private static $path;
-	public $error;
+	public $path, $error;
 
 	function __construct()
 	{
@@ -31,7 +30,7 @@ class Route {
 		$this->_parsePath($path);
 		$this->_parseRoute($path);
 
-		self::$path = $path;
+		$this->path = $path;
 	}
 
 	private function _parsePath(&$path = [])
@@ -71,22 +70,22 @@ class Route {
 			}
 			$path['label'][$index] = Helper::getPath($arg);
 
-			if ($path['label'][$index] === self::method__) {
+			if ($path['label'][$index] == self::method__) {
 				return $this->error = \sys\confs\error\route_parse__;
 			}
 			switch ($index) {
 				case 0:
-					if ($path['label'][$index] === self::masters__) {
+					if ($path['label'][$index] == self::masters__) {
 						return $this->error = \sys\confs\error\route_controller__;
 					}
-					if ($path['label'][$index] !== self::autoload__)
+					if ($path['label'][$index] != self::autoload__)
 						$path['path'][] = $arg;
 					break;
 				case 1:
 					$path['path'][] = $arg;
 					break;
 				case 2:
-					if ($arg !== self::action__)
+					if ($arg != self::action__)
 						$path['path'][] = $arg;
 					break;
 			}
@@ -99,37 +98,37 @@ class Route {
 
 	public function path($request = false)
 	{
-		return (!$request) ? self::$path['path'] : self::$path['request'];
+		return (!$request) ? $this->path['path'] : $this->path['request'];
 	}
 
 	public function route($label = false)
 	{
-		return (!$label) ? self::$path['route'] : self::$path['label'];
+		return (!$label) ? $this->path['route'] : $this->path['label'];
 	}
 
 	public function controller()
 	{
-		return self::$path['label'][0];
+		return $this->path['label'][0];
 	}
 
 	public function page()
 	{
-		return self::$path['label'][1];
+		return $this->path['label'][1];
 	}
 
 	public function action()
 	{
-		return self::$path['label'][2];
+		return $this->path['label'][2];
 	}
 
 	public function params($index = null)
 	{
-		if (!is_array(self::$path['params']))
-			self::$path['params'] = Helper::getArray('/', self::$path['params']);
+		if (!is_array($this->path['params']))
+			$this->path['params'] = Helper::getArray('/', $this->path['params']);
 
 		return (is_numeric($index)) ?
-			((isset(self::$path['params'][$index])) ? self::$path['params'][$index] : null) :
-			((is_null($index)) ? self::$path['params'] : false);
+			((isset($this->path['params'][$index])) ? $this->path['params'][$index] : null) :
+			((is_null($index)) ? $this->path['params'] : false);
 	}
 
 	public function error($code, $msg = '')

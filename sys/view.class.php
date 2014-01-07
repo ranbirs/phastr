@@ -2,7 +2,6 @@
 
 namespace sys;
 
-use sys\Init;
 use sys\modules\Assets;
 use sys\utils\Helper;
 use sys\utils\Loader;
@@ -59,6 +58,8 @@ class View {
 
 	private function _resolveFile($path, $type = 'page')
 	{
+		if (is_array($path))
+			$path = implode('/', $path);
 		return Loader::resolveFile('views/' . $type . 's/' . $path);
 	}
 
