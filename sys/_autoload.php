@@ -13,16 +13,16 @@ namespace sys;
 		$path = (isset($namespace[1])) ? explode('\\', $namespace[1]) : [];
 		$subj = rtrim(current($path), 's');
 
+		$conf = \sys\base_path('confs/' . end($path)) . '.php';
+		if (stream_resolve_include_path($conf) !== false) {
+			require_once $conf;
+		}
 		switch ($base = current($namespace)) {
 			case app__:
 				$path = implode('/', $path);
 				require_once \sys\base_path($path, $base) . '.' . $subj . '.php';
 				break;
 			case sys__:
-				$conf_file = \sys\base_path('confs/' . end($path)) . '.php';
-				if (stream_resolve_include_path($conf_file) !== false) {
-					require_once $conf_file;
-				}
 				$path = implode('/', explode('\\', $class));
 				$file = $path . '.class.php';
 				if (stream_resolve_include_path($file) === false)
