@@ -41,13 +41,14 @@ abstract class Form {
 		$this->load()->module('validation', sys__);
 
 		$this->request()->layout = $layout;
-		$this->submit = $this->request()->fields($this->form_id, $method = $this->method);
+		$method = $this->method;
 
 		foreach ($this->sanitized as $id => $filter)
 			$this->request()->{$method}($id, $this->validation->sanitize($this->request()->{$method}($id), $filter));
 		foreach ($this->validated as $id => $validation)
 			$this->validation->resolve($id, $validation, $this->request()->{$method}($id));
 
+		$this->submit = $this->request()->fields($this->form_id, $this->method);
 		$validate = $this->validate($this->submit, $this->import);
 
 		if (array_key_exists(Validation::error__, $result = $this->validation->getResult())) {
