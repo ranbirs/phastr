@@ -36,7 +36,7 @@ class Init {
 
 	public static function session($new = false)
 	{
-		if (!isset(self::$session) or $new)
+		if (!isset(self::$session) || $new)
 			self::$session = new \sys\Session;
 		return self::$session;
 	}

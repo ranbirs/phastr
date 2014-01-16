@@ -2,7 +2,7 @@
 
 namespace sys\utils;
 
-class Hash {
+class Hash extends \sys\Utils {
 
 	const algo__ = \app\confs\hash\algo__;
 	const key__ = \app\confs\hash\key__;
@@ -10,28 +10,28 @@ class Hash {
 	const cost__ = \app\confs\hash\cost__;
 	const salt__ = \app\confs\hash\salt__;
 
-	private static $range;
+	public $range;
 
-	public static function id($id = '', $algo = 'sha1')
+	public function id($id = '', $algo = 'sha1')
 	{
-		return self::get((!$id) ? uniqid(self::salt(), true) : $id, $algo, false);
+		return $this->get((!$id) ? uniqid($this->salt(), true) : $id, $algo, false);
 	}
 
-	public static function rand($length = 0, $algo = 'sha1')
+	public function rand($length = 0, $algo = 'sha1')
 	{
-		$hash = hash($algo, self::salt());
+		$hash = hash($algo, $this->salt());
 		$length = (int) $length;
 		if ($length > 0)
 			$hash = ($length > strlen($hash)) ? str_pad($hash, $length, $hash) : substr($hash, 0, $length);
 		return str_shuffle($hash);
 	}
 
-	public static function salt($length = 16, $range = null)
+	public function salt($length = 16, $range = null)
 	{
 		if (empty($range)) {
-			if (!isset(self::$range))
-				self::$range = array_merge(range('a', 'z'), range('A', 'Z'), range(0, 9));
-			$range = self::$range;
+			if (!isset($this->range))
+				$this->range = array_merge(range('a', 'z'), range('A', 'Z'), range(0, 9));
+			$range = $this->range;
 		}
 		else {
 			$range = (is_array($range)) ? array_values($range) : explode($range);
@@ -47,20 +47,20 @@ class Hash {
 		return implode($salt);
 	}
 
-	public static function get($data = '', $algo = self::algo__, $key = self::key__)
+	public function get($data = '', $algo = self::algo__, $key = self::key__)
 	{
 		return ($key) ? hash_hmac($algo, $data, $key) : hash($algo, $data);
 	}
 
-	public static function cipher($data = '')
+	public function cipher($data = '')
 	{
-		return crypt($data, self::cipher__ . self::cost__ . '$' . self::salt(self::salt__));
+		return crypt($data, self::cipher__ . self::cost__ . '$' . $this->salt(self::salt__));
 	}
 
-	public static function resolve($hash, $data = '', $algo = self::algo__, $key = self::key__)
+	public function resolve($hash, $data = '', $algo = self::algo__, $key = self::key__)
 	{
 		if ($algo) {
-			$subj = self::get($data, $algo, $key);
+			$subj = $this->get($data, $algo, $key);
 		}
 		else {
 			$salt = substr($hash, 0, strlen(self::cipher__ . self::cost__) + 1 + self::salt__);

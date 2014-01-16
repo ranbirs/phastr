@@ -4,13 +4,13 @@ namespace sys\traits;
 
 trait Access {
 
-	private static $access;
+	private $_access;
 
 	public function access()
 	{
-		if (!isset(self::$access))
-			self::$access = new \sys\modules\Access;
-		return self::$access;
+		if (!isset($this->_access))
+			$this->_access = new \sys\modules\Access;
+		return $this->_access;
 	}
 
 }

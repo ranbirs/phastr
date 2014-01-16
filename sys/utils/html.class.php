@@ -2,29 +2,27 @@
 
 namespace sys\utils;
 
-use sys\utils\Helper;
+class Html extends \sys\Utils {
 
-class Html {
-
-	public static function getAttr($attr = [])
+	public function getAttr($attr = [])
 	{
-		$attr = Helper::getAttr($attr);
-		return (!empty($attr)) ? ' ' . implode(' ', Helper::getStringArray('="', $attr, '', '"')) : '';
+		$attr = $this->helper->getAttr($attr);
+		return (!empty($attr)) ? ' ' . implode(' ', $this->helper->getStringArray('="', $attr, '', '"')) : '';
 	}
 
-	public static function getAsset($type = 'script', $context = null, $subj = null, $params = null, $append = null)
+	public function getAsset($type = 'script', $context = null, $subj = null, $params = null, $append = null)
 	{
 		switch ($type) {
 			case 'script':
 				switch ($context) {
 					case null:
 					case 'file':
-						$subj = '/' . Helper::getPath($subj, 'base');
+						$subj = '/' . $this->helper->getPath($subj, 'base');
 					case 'remote':
 						$asset = '<script src="' . ((!is_null($append)) ? $subj . '?' . $append : $subj) . '"></script>';
 						break 2;
 					case 'inline':
-						$asset = '<script>' . eol__ . $subj . eol__ . '</script>';
+						$asset = '<script>' . $subj . '</script>';
 						break 2;
 					default:
 						return false;
@@ -32,16 +30,16 @@ class Html {
 				break;
 			case 'style':
 				if (!empty($params))
-					$params = self::getAttr($params);
+					$params = $this->getAttr($params);
 				switch ($context) {
 					case null:
 					case 'file':
-						$subj = '/' . Helper::getPath($subj, 'base');
+						$subj = '/' . $this->helper->getPath($subj, 'base');
 					case 'remote':
 						$asset = '<link href="' . ((!is_null($append)) ? $subj . '?' . $append : $subj) . '" rel="stylesheet"' . $params . '>';
 						break 2;
 					case 'inline':
-						$asset = '<style>' . eol__ . $subj . eol__ . '</style>';
+						$asset = '<style>' . $subj . '</style>';
 						break 2;
 					default:
 						return false;

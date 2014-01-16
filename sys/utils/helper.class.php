@@ -2,40 +2,38 @@
 
 namespace sys\utils;
 
-class Helper {
+class Helper extends \sys\Utils {
 
-	public static function getInstanceClassName($instance)
+	public function getInstanceClassName($instance)
 	{
-		return self::getClassName(get_class($instance));
+		return $this->getClassName(get_class($instance));
 	}
 
-	public static function getClassName($class)
+	public function getClassName($class)
 	{
 		$class = explode('\\', $class);
-		return ucfirst(strtolower(end($class)));
+		return end($class);
 	}
 
-	public static function getClassPath($class)
+	public function getClassPath($class)
 	{
 		$class = explode('\\', $class);
 		return strtolower(implode('/', $class));
 	}
 
-	public static function getPathName($path)
+	public function getPathName($path)
 	{
 		$path = explode('/', $path);
-		return strtolower(end($path));
+		return end($path);
 	}
 
-	public static function getPathClass($path)
+	public function getPathClass($path)
 	{
-		$path = explode('/', strtolower($path));
-		$class = ucfirst(array_pop($path));
-		$path[] = $class;
+		$path = explode('/', $path);
 		return implode('\\', $path);
 	}
 
-	public static function getPath($path = null, $type = 'label')
+	public function getPath($path = null, $type = 'label')
 	{
 		if (is_array($path))
 			$path = implode('/', $path);
@@ -52,14 +50,14 @@ class Helper {
 				break;
 			case 'route':
 				$path = (\sys\Route::rewrite__) ?
-					'/' . self::getPath($path, 'base') :
-					'/' . self::getPath('', 'base') . '?' . \sys\Route::name__ . '=' . $path;
+					'/' . $this->getPath($path, 'base') :
+					'/' . $this->getPath('', 'base') . '?' . \sys\Route::name__ . '=' . $path;
 				break;
 			case 'ajax':
 				$path = \sys\Init::route()->route() . '/' . \sys\modules\Request::param__ . '/' . $path;
 				break;
 			case 'page':
-				$path = \sys\Init::route()->controller() . '/' . self::getPath(($path) ? $path : \sys\Init::route()->page(), 'tree');
+				$path = \sys\Init::route()->controller() . '/' . $this->getPath(($path) ? $path : \sys\Init::route()->page(), 'tree');
 				break;
 			case 'base':
 				$path = ($base = \sys\Route::base__) ?
@@ -75,7 +73,7 @@ class Helper {
 		return $path;
 	}
 
-	public static function getArgs($params = null, $delimiter = ':')
+	public function getArgs($params = null, $delimiter = ':')
 	{
 		$args = [];
 		$params = (array) $params;
@@ -90,7 +88,7 @@ class Helper {
 		return $args;
 	}
 
-	public static function getAttr($attr = [], $glue = ' ')
+	public function getAttr($attr = [], $glue = ' ')
 	{
 		$attrs = [];
 		foreach ($attr as $key => $val) {
@@ -104,7 +102,7 @@ class Helper {
 		return $attrs;
 	}
 
-	public static function getArray($delimiter, $string = '', $limit = null)
+	public function getArray($delimiter, $string = '', $limit = null)
 	{
 		$limit = (int) $limit;
 		$array = (!$limit) ? explode($delimiter, $string) : explode($delimiter, $string, $limit);
@@ -114,7 +112,7 @@ class Helper {
 		return array_values(array_filter(array_map($trim, $array), 'strlen'));
 	}
 
-	public static function getStringArray($glue, $array = [], $prepend = '', $append = '')
+	public function getStringArray($glue, $array = [], $prepend = '', $append = '')
 	{
 		$string_array = [];
 		foreach ($array as $key => $val)

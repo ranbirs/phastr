@@ -8,6 +8,8 @@ use sys\utils\Loader;
 
 class View {
 
+	use \sys\traits\Utils;
+
 	public $request, $response, $assets, $error, $type, $page, $body, $title;
 
 	function __construct()
@@ -27,7 +29,7 @@ class View {
 
 	public function page($path = null)
 	{
-		$path = Helper::getPath($path, 'page');
+		$path = $this->utils()->helper->getPath($path, 'page');
 		return $this->_render($path, 'page');
 	}
 
@@ -60,7 +62,7 @@ class View {
 	{
 		if (is_array($path))
 			$path = implode('/', $path);
-		return Loader::resolveFile('views/' . $type . 's/' . $path);
+		return $this->utils()->loader->resolveFile('views/' . $type . 's/' . $path);
 	}
 
 	private function _includeFile($file, $require = false)

@@ -8,11 +8,7 @@ use sys\utils\Helper;
 use sys\utils\Hash;
 use sys\utils\Html;
 
-abstract class Form {
-
-	use \sys\traits\View;
-	use \sys\traits\Load;
-	use \sys\traits\Request;
+abstract class Form extends \sys\Module {
 
 	protected $form_id, $method, $import, $submit;
 	protected $build = [], $fields = [], $hidden = [], $action = [];
@@ -70,7 +66,7 @@ abstract class Form {
 
 	public function html($import = null, $title = null, $attr = [], $method = 'post', $template = 'bootstrap')
 	{
-		$this->form_id = strtolower(Helper::getInstanceClassName($this));
+		$this->form_id = strtolower($this->utils()->helper->getInstanceClassName($this));
 		$this->import = $import;
 		$this->method = $method;
 		$this->build($import);
@@ -78,7 +74,7 @@ abstract class Form {
 
 		$attr['id'] = $this->form_id;
 		$attr['method'] = $method;
-		$attr['action'] = Helper::getPath(['form', $this->form_id], Request::param__) . '/';
+		$attr['action'] = $this->utils()->helper->getPath(['form', $this->form_id], Request::param__) . '/';//
 		$this->build['title'] = $title;
 		$this->build['attr'] = $attr;
 
@@ -89,7 +85,7 @@ abstract class Form {
 	protected function close()
 	{
 		if (!Init::session()->get($this->form_id, 'token'))
-			Init::session()->set([$this->form_id => 'token'], Hash::rand());
+			Init::session()->set([$this->form_id => 'token'], $this->utils()->hash->rand());
 
 		$header_id = Init::session()->token();
 		$session_key = Init::session()->key();
@@ -207,7 +203,7 @@ abstract class Form {
 		if (isset($field['validate'])) {
 			$this->validated[$id] = $field['validate'];
 			foreach ($field['validate'] as $rule => $params)
-				if (is_array($params) and array_intersect([Validation::error__, Validation::success__], array_keys($params)))
+				if (is_array($params) && array_intersect([Validation::error__, Validation::success__], array_keys($params)))
 					$field['verbose'] = true;
 		}
 		if (is_array($field['value']))
@@ -236,7 +232,7 @@ abstract class Form {
 				$build = '</' . $control . '>';
 				break;
 		}
-		$build = '<' . $control . Html::getAttr($field['attr']) . '>' . $build;
+		$build = '<' . $control . $this->utils()->html->getAttr($field['attr']) . '>' . $build;
 
 		switch ($group) {
 			case 'hidden':
@@ -291,10 +287,10 @@ abstract class Form {
 				default:
 					$field['attr']['id'] = $id . '-' . $index;
 					$field['attr']['name'] = $id . '[]';
-					$field['attr'] = Helper::getAttr(array_merge($parent['attr'], $field['attr']));
+					$field['attr'] = $this->utils()->helper->getAttr(array_merge($parent['attr'], $field['attr']));
 					$field['active'] = (isset($field['attr']['checked'])) ? true : false;
 			}
-			$build = '<' . $field['control'] . Html::getAttr($field['attr']) . '>' . $build;
+			$build = '<' . $field['control'] . $this->utils()->html->getAttr($field['attr']) . '>' . $build;
 			$field['control'] = $build;
 		}
 		unset($field);

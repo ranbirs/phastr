@@ -4,11 +4,11 @@ namespace sys\modules;
 
 use sys\Init;
 
-class Access {
+class Access extends \sys\Module {
 
 	public function isAuth()
 	{
-		return (Init::session()->user('id') and Init::session()->user('token'));
+		return (Init::session()->user('id') && Init::session()->user('token'));
 	}
 
 	public function setRule($rule, $perm = null, $role = null)
@@ -26,7 +26,7 @@ class Access {
 			case 'private':
 				return ($this->isAuth() === true);
 			case 'role':
-				if (is_null($perm) or is_null($role) or $this->isAuth() === false) {
+				if (is_null($perm) || is_null($role) || $this->isAuth() === false) {
 					return false;
 				}
 				$role = array_intersect((array) $perm, (array) $role);

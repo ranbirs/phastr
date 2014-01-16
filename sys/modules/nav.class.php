@@ -2,12 +2,7 @@
 
 namespace sys\modules;
 
-use sys\utils\Helper;
-use sys\utils\Html;
-
-abstract class Nav {
-
-	use \sys\traits\View;
+abstract class Nav extends \sys\Module {
 
 	protected $nav_id;
 	protected $build = [], $items = [];
@@ -26,12 +21,12 @@ abstract class Nav {
 
 	public function html($import = null, $title = null, $attr = [], $template = 'bootstrap')
 	{
-		$this->nav_id = strtolower(Helper::getInstanceClassName($this));
+		$this->nav_id = strtolower($this->utils()->helper->getInstanceClassName($this));
 		$this->build($import);
 
 		$attr['id'] = $this->nav_id;
 		$this->build['title'] = $title;
-		$this->build['attr'] = Helper::getAttr($attr);
+		$this->build['attr'] = $this->utils()->helper->getAttr($attr);
 
 		$nav = ['build' => $this->build, 'items' => $this->items];
 		return $this->view()->template('nav', $template, $nav);

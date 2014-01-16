@@ -6,6 +6,8 @@ use sys\utils\Helper;
 
 class Route {
 
+	use \sys\traits\Utils;
+
 	const rewrite__ = \app\confs\route\rewrite__;
 	const name__ = \app\confs\route\name__;
 	const base__ = \app\confs\route\base__;
@@ -24,7 +26,7 @@ class Route {
 	function __construct()
 	{
 		$name = self::name__;
-		$path = (isset($_GET[$name])) ? Helper::getArray('/', $_GET[$name], 4) : [];
+		$path = (isset($_GET[$name])) ? $this->utils()->helper->getArray('/', $_GET[$name], 4) : [];
 		unset($_GET[$name]);
 
 		$this->_parsePath($path);
@@ -41,10 +43,10 @@ class Route {
 			$path['path'] = [self::autoload__, self::homepage__, self::action__];
 			$path['request'] = '/';
 		}
-		$scope = Helper::getArray(',', self::controllers__);
+		$scope = $this->utils()->helper->getArray(',', self::controllers__);
 		$scope[] = self::autoload__;
 
-		if (!in_array(Helper::getPath($path['path'][0]), $scope))
+		if (!in_array($this->utils()->helper->getPath($path['path'][0]), $scope))
 			array_unshift($path['path'], self::autoload__);
 
 		if (!isset($path['path'][1]))
@@ -68,7 +70,7 @@ class Route {
 			if (preg_match('/[^a-z0-9-]/', $arg = strtolower($arg))) {
 				return $this->error = \sys\confs\error\route_parse__;
 			}
-			$path['label'][$index] = Helper::getPath($arg);
+			$path['label'][$index] = $this->utils()->helper->getPath($arg);
 
 			if ($path['label'][$index] == self::method__) {
 				return $this->error = \sys\confs\error\route_parse__;
@@ -92,7 +94,7 @@ class Route {
 		}
 		unset($arg);
 
-		$path['route'] = Helper::getPath($path['route'], 'route');
+		$path['route'] = $this->utils()->helper->getPath($path['route'], 'route');
 		$path['path'] = implode('/', $path['path']);
 	}
 
@@ -124,7 +126,7 @@ class Route {
 	public function params($index = null)
 	{
 		if (!is_array($this->path['params']))
-			$this->path['params'] = Helper::getArray('/', $this->path['params']);
+			$this->path['params'] = $this->utils()->helper->getArray('/', $this->path['params']);
 
 		return (is_numeric($index)) ?
 			((isset($this->path['params'][$index])) ? $this->path['params'][$index] : null) :
@@ -134,7 +136,7 @@ class Route {
 	public function error($code, $msg = '')
 	{
 		http_response_code($code = (int) $code);
-		if ($msg and \app\confs\config\errors__) {
+		if ($msg && \app\confs\config\errors__) {
 			trigger_error($msg);
 		}
 		require \sys\base_path('views/layouts/error/' . $code) . '.php';

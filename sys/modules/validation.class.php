@@ -4,7 +4,7 @@ namespace sys\modules;
 
 use sys\Init;
 
-class Validation {
+class Validation extends \sys\Module {
 
 	const error__ = 'error';
 	const success__ = 'success';
@@ -58,11 +58,11 @@ class Validation {
 					return false;
 				}
 				$request = Init::request()->{$rule}(key($param));
-				return (!is_null($value) and $value === $request and $request === current($param));
+				return (!is_null($value) && $value === $request && $request === current($param));
 			case 'token':
-				return (!is_null($param) and $value === Init::session()->get($param, 'token'));
+				return (!is_null($param) && $value === Init::session()->get($param, 'token'));
 			case 'match':
-				return (!is_null($param) and strcmp($value, $param) == 0);
+				return (!is_null($param) && strcmp($value, $param) == 0);
 			case 'required':
 				if (is_array($value))
 					$value = implode($value);

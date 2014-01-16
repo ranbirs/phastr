@@ -4,7 +4,7 @@ namespace sys\modules;
 
 use \sys\Init;
 
-class Request {
+class Request extends \sys\Module {
 
 	const method__ = \app\confs\request\method__;
 	const layout__ = \app\confs\request\layout__;
@@ -68,7 +68,7 @@ class Request {
 		if (!isset($GLOBALS[$global])) {
 			return false;
 		}
-		if (!is_null($key) and !is_null($value))
+		if (!is_null($key) && !is_null($value))
 			$GLOBALS[$global][$key] = $value;
 		return (!is_null($key)) ? ((isset($GLOBALS[$global][$key])) ? $GLOBALS[$global][$key] : false) : $GLOBALS[$global];
 	}
@@ -78,7 +78,7 @@ class Request {
 		$context = Init::route()->params(1);
 		$subj = Init::route()->params(2);
 	
-		if (is_null($subj) or $this->header() !== Init::session()->token()) {
+		if (is_null($subj) || $this->header() !== Init::session()->token()) {
 			return false;
 		}
 		switch ($context) {
