@@ -2,7 +2,9 @@
 
 namespace sys\utils;
 
-class Hash extends \sys\Utils {
+use sys\Util;
+
+class Hash extends Util {
 
 	const algo__ = \app\confs\hash\algo__;
 	const key__ = \app\confs\hash\key__;

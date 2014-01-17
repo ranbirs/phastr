@@ -2,7 +2,11 @@
 
 namespace sys\utils;
 
-class Helper extends \sys\Utils {
+use sys\Util;
+
+class Helper extends Util {
+
+	use \sys\traits\Route;
 
 	public function getInstanceClassName($instance)
 	{
@@ -54,10 +58,10 @@ class Helper extends \sys\Utils {
 					'/' . $this->getPath('', 'base') . '?' . \sys\Route::name__ . '=' . $path;
 				break;
 			case 'ajax':
-				$path = \sys\Init::route()->route() . '/' . \sys\modules\Request::param__ . '/' . $path;
+				$path = $this->route()->route() . '/' . \sys\modules\Request::param__ . '/' . $path;
 				break;
 			case 'page':
-				$path = \sys\Init::route()->controller() . '/' . $this->getPath(($path) ? $path : \sys\Init::route()->page(), 'tree');
+				$path = $this->route()->controller() . '/' . $this->getPath(($path) ? $path : $this->route()->page(), 'tree');
 				break;
 			case 'base':
 				$path = ($base = \sys\Route::base__) ?

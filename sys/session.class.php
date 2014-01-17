@@ -4,7 +4,7 @@ namespace sys;
 
 class Session {
 
-	use \sys\traits\Utils;
+	use \sys\traits\Util;
 
 	protected $session_id;
 
@@ -14,8 +14,8 @@ class Session {
 		$this->session_id = session_id();
 
 		if (!isset($_SESSION[$this->session_id])) {
-			$this->set('_id', $this->utils()->hash->id());
-			$this->set('_token', $this->utils()->hash->rand());
+			$this->set('_id', $this->util()->hash->id());
+			$this->set('_token', $this->util()->hash->rand());
 			$this->set('_key', $this->keygen());
 			$this->set(['_timestamp' => 0], microtime(true));
 			$this->set(['_client' => 'lang'], \app\confs\config\lang__);
@@ -42,7 +42,7 @@ class Session {
 
 	public function keygen($hash = null)
 	{
-		$key = $this->utils()->hash->get($this->session_id . $this->id() . $this->token(), 'sha1');
+		$key = $this->util()->hash->get($this->session_id . $this->id() . $this->token(), 'sha1');
 		return (!is_null($hash)) ? ($hash === $key) : $key;
 	}
 

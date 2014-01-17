@@ -2,13 +2,11 @@
 
 namespace sys\modules;
 
-use sys\Init;
+use sys\Module;
+use sys\modules\Request;
 use sys\modules\Validation;
-use sys\utils\Helper;
-use sys\utils\Hash;
-use sys\utils\Html;
 
-abstract class Form extends \sys\Module {
+abstract class Form extends Module {
 
 	protected $form_id, $method, $import, $submit;
 	protected $build = [], $fields = [], $hidden = [], $action = [];
@@ -59,14 +57,14 @@ abstract class Form extends \sys\Module {
 		$this->submit($this->submit, $this->import);
 
 		if ((isset($this->expire)) ? $this->expire : $this->expire())
-			Init::session()->drop($this->form_id, 'token');
+			$this->session()->drop($this->form_id, 'token');
 
 		return (isset($this->success)) ? $this->success : $this->success();
 	}
 
 	public function html($import = null, $title = null, $attr = [], $method = 'post', $template = 'bootstrap')
 	{
-		$this->form_id = strtolower($this->utils()->helper->getInstanceClassName($this));
+		$this->form_id = strtolower($this->util()->helper->getInstanceClassName($this));
 		$this->import = $import;
 		$this->method = $method;
 		$this->build($import);
@@ -74,7 +72,7 @@ abstract class Form extends \sys\Module {
 
 		$attr['id'] = $this->form_id;
 		$attr['method'] = $method;
-		$attr['action'] = $this->utils()->helper->getPath(['form', $this->form_id], Request::param__) . '/';//
+		$attr['action'] = $this->util()->helper->getPath(['form', $this->form_id], Request::param__) . '/';//
 		$this->build['title'] = $title;
 		$this->build['attr'] = $attr;
 
@@ -84,11 +82,11 @@ abstract class Form extends \sys\Module {
 
 	protected function close()
 	{
-		if (!Init::session()->get($this->form_id, 'token'))
-			Init::session()->set([$this->form_id => 'token'], $this->utils()->hash->rand());
+		if (!$this->session()->get($this->form_id, 'token'))
+			$this->session()->set([$this->form_id => 'token'], $this->util()->hash->rand());
 
-		$header_id = Init::session()->token();
-		$session_key = Init::session()->key();
+		$header_id = $this->session()->token();
+		$session_key = $this->session()->key();
 
 		$this->field(['input' => 'hidden'], '_header_id_' . $session_key, null,
 			$params = [
@@ -104,7 +102,7 @@ abstract class Form extends \sys\Module {
 		);
 		$this->field(['input' => 'hidden'], '_form_token_' . $session_key, null,
 			$params = [
-				'value' => Init::session()->get($this->form_id, 'token'),
+				'value' => $this->session()->get($this->form_id, 'token'),
 				'validate' => ['token' => $this->form_id]
 			]
 		);
@@ -232,7 +230,7 @@ abstract class Form extends \sys\Module {
 				$build = '</' . $control . '>';
 				break;
 		}
-		$build = '<' . $control . $this->utils()->html->getAttr($field['attr']) . '>' . $build;
+		$build = '<' . $control . $this->util()->html->getAttr($field['attr']) . '>' . $build;
 
 		switch ($group) {
 			case 'hidden':
@@ -287,10 +285,10 @@ abstract class Form extends \sys\Module {
 				default:
 					$field['attr']['id'] = $id . '-' . $index;
 					$field['attr']['name'] = $id . '[]';
-					$field['attr'] = $this->utils()->helper->getAttr(array_merge($parent['attr'], $field['attr']));
+					$field['attr'] = $this->util()->helper->getAttr(array_merge($parent['attr'], $field['attr']));
 					$field['active'] = (isset($field['attr']['checked'])) ? true : false;
 			}
-			$build = '<' . $field['control'] . $this->utils()->html->getAttr($field['attr']) . '>' . $build;
+			$build = '<' . $field['control'] . $this->util()->html->getAttr($field['attr']) . '>' . $build;
 			$field['control'] = $build;
 		}
 		unset($field);

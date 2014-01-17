@@ -2,9 +2,9 @@
 
 namespace sys\modules;
 
-use \sys\Init;
+use sys\Module;
 
-class Request extends \sys\Module {
+class Request extends Module {
 
 	const method__ = \app\confs\request\method__;
 	const layout__ = \app\confs\request\layout__;
@@ -16,15 +16,15 @@ class Request extends \sys\Module {
 
 	function __construct()
 	{
-		Init::view()->assets->set(['script' => 'inline'],
-			'$.ajaxSetup({headers: {\'' . Init::session()->key() . '\': \'' . Init::session()->token() . '\'}});'
+		$this->view()->assets->set(['script' => 'inline'],
+			'$.ajaxSetup({headers: {\'' . $this->session()->key() . '\': \'' . $this->session()->token() . '\'}});'
 		);
 	}
 
 	public function header($key = null)
 	{
 		if (is_null($key))
-			$key = Init::session()->key();
+			$key = $this->session()->key();
 		return $this->server('HTTP_' . strtoupper($key));
 	}
 
@@ -75,24 +75,24 @@ class Request extends \sys\Module {
 
 	public function resolve()
 	{
-		$context = Init::route()->params(1);
-		$subj = Init::route()->params(2);
+		$context = $this->route()->params(1);
+		$subj = $this->route()->params(2);
 	
-		if (is_null($subj) || $this->header() !== Init::session()->token()) {
+		if (is_null($subj) || $this->header() !== $this->session()->token()) {
 			return false;
 		}
 		switch ($context) {
 			case 'request':
-				Init::view()->request = $this->globals($this->method);
-				Init::view()->response = Init::view()->request($subj);
-				if (Init::view()->response !== false) {
+				$this->view()->request = $this->globals($this->method);
+				$this->view()->response = $this->view()->request($subj);
+				if ($this->view()->response !== false) {
 					return true;
 				}
 				return false;
 			case 'form':
-				if (Init::load()->$subj instanceof \sys\modules\Form) {
-					Init::view()->request = $this->globals(Init::load()->$subj->method());
-					Init::view()->response = Init::load()->$subj->resolve('json');
+				if ($this->load()->$subj instanceof \sys\modules\Form) {
+					$this->view()->request = $this->globals($this->load()->$subj->method());
+					$this->view()->response = $this->load()->$subj->resolve('json');
 					return true;
 				}
 				return false;

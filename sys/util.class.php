@@ -2,7 +2,7 @@
 
 namespace sys;
 
-class Utils {
+class Util {
 
 	function __get($name)
 	{

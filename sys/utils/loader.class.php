@@ -2,7 +2,9 @@
 
 namespace sys\utils;
 
-class Loader extends \sys\Utils {
+use sys\Util;
+
+class Loader extends Util {
 
 	public function includeFile($path, $ext = 'php')
 	{

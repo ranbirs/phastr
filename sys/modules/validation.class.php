@@ -2,9 +2,9 @@
 
 namespace sys\modules;
 
-use sys\Init;
+use sys\Module;
 
-class Validation extends \sys\Module {
+class Validation extends Module {
 
 	const error__ = 'error';
 	const success__ = 'success';
@@ -57,10 +57,10 @@ class Validation extends \sys\Module {
 				if (!is_array($param)) {
 					return false;
 				}
-				$request = Init::request()->{$rule}(key($param));
+				$request = $this->request()->{$rule}(key($param));
 				return (!is_null($value) && $value === $request && $request === current($param));
 			case 'token':
-				return (!is_null($param) && $value === Init::session()->get($param, 'token'));
+				return (!is_null($param) && $value === $this->session()->get($param, 'token'));
 			case 'match':
 				return (!is_null($param) && strcmp($value, $param) == 0);
 			case 'required':

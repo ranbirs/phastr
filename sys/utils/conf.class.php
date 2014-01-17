@@ -2,12 +2,14 @@
 
 namespace sys\utils;
 
-class Conf extends \sys\Utils {
+use sys\Util;
+
+class Conf extends Util {
 
 	public function k($const, $context = 'config', $base = app__)
 	{
 		if (is_null($constant = $this->getConst($const .= '__', $context, $base))) {
-			\sys\Init::load()->conf($context, $base);
+			$this->loader->resolveInclude($context, 'conf', false, app__);//
 			$constant = $this->getConst($const, $context, $base);
 		}
 		return $constant;

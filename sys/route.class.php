@@ -2,11 +2,9 @@
 
 namespace sys;
 
-use sys\utils\Helper;
-
 class Route {
 
-	use \sys\traits\Utils;
+	use \sys\traits\Util;
 
 	const rewrite__ = \app\confs\route\rewrite__;
 	const name__ = \app\confs\route\name__;
@@ -26,7 +24,7 @@ class Route {
 	function __construct()
 	{
 		$name = self::name__;
-		$path = (isset($_GET[$name])) ? $this->utils()->helper->getArray('/', $_GET[$name], 4) : [];
+		$path = (isset($_GET[$name])) ? $this->util()->helper->getArray('/', $_GET[$name], 4) : [];
 		unset($_GET[$name]);
 
 		$this->_parsePath($path);
@@ -43,10 +41,10 @@ class Route {
 			$path['path'] = [self::autoload__, self::homepage__, self::action__];
 			$path['request'] = '/';
 		}
-		$scope = $this->utils()->helper->getArray(',', self::controllers__);
+		$scope = $this->util()->helper->getArray(',', self::controllers__);
 		$scope[] = self::autoload__;
 
-		if (!in_array($this->utils()->helper->getPath($path['path'][0]), $scope))
+		if (!in_array($this->util()->helper->getPath($path['path'][0]), $scope))
 			array_unshift($path['path'], self::autoload__);
 
 		if (!isset($path['path'][1]))
@@ -70,7 +68,7 @@ class Route {
 			if (preg_match('/[^a-z0-9-]/', $arg = strtolower($arg))) {
 				return $this->error = \sys\confs\error\route_parse__;
 			}
-			$path['label'][$index] = $this->utils()->helper->getPath($arg);
+			$path['label'][$index] = $this->util()->helper->getPath($arg);
 
 			if ($path['label'][$index] == self::method__) {
 				return $this->error = \sys\confs\error\route_parse__;
@@ -94,7 +92,7 @@ class Route {
 		}
 		unset($arg);
 
-		$path['route'] = $this->utils()->helper->getPath($path['route'], 'route');
+		$path['route'] = $this->util()->helper->getPath($path['route'], 'route');
 		$path['path'] = implode('/', $path['path']);
 	}
 
@@ -126,7 +124,7 @@ class Route {
 	public function params($index = null)
 	{
 		if (!is_array($this->path['params']))
-			$this->path['params'] = $this->utils()->helper->getArray('/', $this->path['params']);
+			$this->path['params'] = $this->util()->helper->getArray('/', $this->path['params']);
 
 		return (is_numeric($index)) ?
 			((isset($this->path['params'][$index])) ? $this->path['params'][$index] : null) :

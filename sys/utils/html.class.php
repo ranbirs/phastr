@@ -2,7 +2,9 @@
 
 namespace sys\utils;
 
-class Html extends \sys\Utils {
+use sys\Util;
+
+class Html extends Util {
 
 	public function getAttr($attr = [])
 	{

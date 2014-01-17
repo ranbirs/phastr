@@ -4,9 +4,10 @@ namespace sys\modules;
 
 use PDO;
 use PDOException;
-use sys\utils\Helper;
 
 class Database extends PDO {
+
+	use \sys\traits\Util;
 
 	const type__ = \app\confs\database\type__;
 	const host__ = \app\confs\database\host__;
@@ -84,7 +85,7 @@ class Database extends PDO {
 
 	public function update($table, $values = [], $clause = '', $params = [])
 	{
-		$values = $this->utils()->helper->getStringArray(' = ', $values);
+		$values = $this->util()->helper->getStringArray(' = ', $values);
 		$values = implode(', ', $values);
 		$this->sth = $this->prepare("UPDATE $table SET $values $clause");
 

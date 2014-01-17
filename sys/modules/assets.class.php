@@ -2,10 +2,9 @@
 
 namespace sys\modules;
 
-use sys\utils\Helper;
-use sys\utils\Html;
+use sys\Module;
 
-class Assets extends \sys\Module {
+class Assets extends Module {
 
 	const script__ = 'js';
 	const style__ = 'css';
@@ -47,7 +46,7 @@ class Assets extends \sys\Module {
 		}
 		if (filter_var($subj, FILTER_VALIDATE_URL))
 			$context = 'remote';
-		$asset = $this->utils()->html->getAsset($type, $context, trim($subj), $params, $append);
+		$asset = $this->util()->html->getAsset($type, $context, trim($subj), $params, $append);
 
 		switch ($type) {
 			case 'script':
@@ -99,7 +98,7 @@ class Assets extends \sys\Module {
 			}
 		}
 		if (isset($file_assets['value'])) {
-			$root_path = $this->utils()->helper->getPath('', 'root') . '/' . $this->utils()->helper->getPath('', 'base');
+			$root_path = $this->util()->helper->getPath('', 'root') . '/' . $this->util()->helper->getPath('', 'base');
 			$write_path = \app\confs\config\assets__ . '/' . $type;
 			$file_name = hash(self::hash__, implode($file_assets['checksum'])) . '.' . $ext[$type];
 			$dir = $root_path . $write_path;
@@ -114,7 +113,7 @@ class Assets extends \sys\Module {
 						$content[] = file_get_contents($root_path . $file_path);
 					file_put_contents($file, implode(eol__, $content));
 				}
-				$file_assets = [$this->utils()->html->getAsset($type, 'file', $write_path . '/'. $file_name, null, null)];
+				$file_assets = [$this->util()->html->getAsset($type, 'file', $write_path . '/'. $file_name, null, null)];
 			}
 			else {
 				trigger_error(\sys\confs\error\assets_write__);

@@ -6,13 +6,13 @@ use sys\modules\Database;
 
 abstract class Model {
 
-	use \sys\traits\Utils;
 	use \sys\traits\Route;
-	use \sys\traits\View;
+	use \sys\traits\Util;
 	use \sys\traits\Load;
-	use \sys\traits\Access;
+	use \sys\traits\View;
+	use \sys\traits\Session;
 	use \sys\traits\Request;
-	
+
 	private $_database;
 
 	function __construct()
