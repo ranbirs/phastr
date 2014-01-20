@@ -14,9 +14,28 @@ class Hash extends Util {
 
 	public $range;
 
-	public function id($id = '', $algo = 'sha1')
+	public function gen($data = '', $algo = self::algo__, $key = self::key__)
 	{
-		return $this->get((!$id) ? uniqid($this->salt(), true) : $id, $algo, false);
+		if (empty($data))
+			$data = uniqid($this->salt(), true);
+		return ($key) ? hash_hmac($algo, $data, $key) : hash($algo, $data);
+	}
+	
+	public function cipher($data = '')
+	{
+		return crypt($data, self::cipher__ . self::cost__ . '$' . $this->salt(self::salt__));
+	}
+	
+	public function resolve($hash, $data = '', $algo = self::algo__, $key = self::key__)
+	{
+		if ($algo) {
+			$subj = $this->gen($data, $algo, $key);
+		}
+		else {
+			$salt = substr($hash, 0, strlen(self::cipher__ . self::cost__) + 1 + self::salt__);
+			$subj = crypt($data, $salt);
+		}
+		return ($hash === $subj);
 	}
 
 	public function rand($length = 0, $algo = 'sha1')
@@ -25,7 +44,7 @@ class Hash extends Util {
 		$length = (int) $length;
 		if ($length > 0)
 			$hash = ($length > strlen($hash)) ? str_pad($hash, $length, $hash) : substr($hash, 0, $length);
-		return str_shuffle($hash);
+		return $hash;
 	}
 
 	public function salt($length = 16, $range = null)
@@ -47,28 +66,6 @@ class Hash extends Util {
 			$salt[] = $range[$rand];
 		}
 		return implode($salt);
-	}
-
-	public function get($data = '', $algo = self::algo__, $key = self::key__)
-	{
-		return ($key) ? hash_hmac($algo, $data, $key) : hash($algo, $data);
-	}
-
-	public function cipher($data = '')
-	{
-		return crypt($data, self::cipher__ . self::cost__ . '$' . $this->salt(self::salt__));
-	}
-
-	public function resolve($hash, $data = '', $algo = self::algo__, $key = self::key__)
-	{
-		if ($algo) {
-			$subj = $this->get($data, $algo, $key);
-		}
-		else {
-			$salt = substr($hash, 0, strlen(self::cipher__ . self::cost__) + 1 + self::salt__);
-			$subj = crypt($data, $salt);
-		}
-		return ($hash === $subj);
 	}
 
 }

@@ -4,9 +4,9 @@ namespace sys\traits;
 
 trait Session {
 
-	public function session($new = false)
+	public function session()
 	{
-		return \sys\Init::session($new);
+		return \sys\Init::session();
 	}
 
 }

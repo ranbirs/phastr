@@ -8,8 +8,8 @@ class Html extends Util {
 
 	public function getAttr($attr = [])
 	{
-		$attr = $this->helper->getAttr($attr);
-		return (!empty($attr)) ? ' ' . implode(' ', $this->helper->getStringArray('="', $attr, '', '"')) : '';
+		$attr = $this->helper()->getAttr($attr);
+		return (!empty($attr)) ? ' ' . implode(' ', $this->helper()->getStringArray('="', $attr, '', '"')) : '';
 	}
 
 	public function getAsset($type = 'script', $context = null, $subj = null, $params = null, $append = null)
@@ -19,7 +19,7 @@ class Html extends Util {
 				switch ($context) {
 					case null:
 					case 'file':
-						$subj = '/' . $this->helper->getPath($subj, 'base');
+						$subj = '/' . $this->helper()->getPath($subj, 'base');
 					case 'remote':
 						$asset = '<script src="' . ((!is_null($append)) ? $subj . '?' . $append : $subj) . '"></script>';
 						break 2;
@@ -36,7 +36,7 @@ class Html extends Util {
 				switch ($context) {
 					case null:
 					case 'file':
-						$subj = '/' . $this->helper->getPath($subj, 'base');
+						$subj = '/' . $this->helper()->getPath($subj, 'base');
 					case 'remote':
 						$asset = '<link href="' . ((!is_null($append)) ? $subj . '?' . $append : $subj) . '" rel="stylesheet"' . $params . '>';
 						break 2;

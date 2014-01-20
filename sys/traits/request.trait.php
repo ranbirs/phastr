@@ -6,7 +6,7 @@ trait Request {
 
 	public function request()
 	{
-		return \sys\Init::request();
+		return \sys\Init::request()->instance($this);
 	}
 
 }

@@ -85,7 +85,7 @@ class Database extends PDO {
 
 	public function update($table, $values = [], $clause = '', $params = [])
 	{
-		$values = $this->util()->helper->getStringArray(' = ', $values);
+		$values = $this->util()->helper()->getStringArray(' = ', $values);
 		$values = implode(', ', $values);
 		$this->sth = $this->prepare("UPDATE $table SET $values $clause");
 

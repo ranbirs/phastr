@@ -2,21 +2,18 @@
 
 namespace sys;
 
-use sys\Route;
-
 class Init {
 
-	private static $route, $util, $load, $view, $session, $request;
+	private static $route, $session, $load, $util, $view, $request;
 
 	function __construct()
 	{
-		self::$route = new Route;
+		self::$route = new \sys\Route;
+		self::$session = new \sys\Session;
+		self::$load = new \sys\Load;
 
-		if (isset(self::$route->error)) {
-			self::$route->error(404, self::$route->error);
-		}
-		self::load()->controller(self::$route->controller())
-			->dispatch(Route::method__, self::$route->page(), self::$route->action(), self::$route->params());
+		self::$load->controller(self::$route->controller())
+			->dispatch(\sys\Route::method__, self::$route->page(), self::$route->action(), self::$route->params());
 	}
 
 	public static function route()
@@ -24,39 +21,29 @@ class Init {
 		return self::$route;
 	}
 
-	public static function util()
+	public static function session()
 	{
-		if (!isset(self::$util))
-			self::$util = new \sys\Util;
-		return self::$util;
+		return self::$session;
 	}
 
 	public static function load()
 	{
-		if (!isset(self::$load))
-			self::$load = new \sys\Load;
 		return self::$load;
+	}
+
+	public static function util()
+	{
+		return (isset(self::$util)) ? self::$util : self::$util = new \sys\Util;
 	}
 
 	public static function view()
 	{
-		if (!isset(self::$view))
-			self::$view = new \sys\View;
-		return self::$view;
-	}
-
-	public static function session($new = false)
-	{
-		if (!isset(self::$session) || $new)
-			self::$session = new \sys\Session;
-		return self::$session;
+		return (isset(self::$view)) ? self::$view : self::$view = new \sys\View;
 	}
 
 	public static function request()
 	{
-		if (!isset(self::$request))
-			self::$request = new \sys\modules\Request;
-		return self::$request;
+		return (isset(self::$request)) ? self::$request : self::$request = new \sys\modules\Request;
 	}
 
 }

@@ -48,7 +48,7 @@ abstract class Form extends Module {
 		if (array_key_exists(Validation::error__, $result = $this->validation->getResult())) {
 			if (!isset($this->error))
 				$this->error();
-			$this->error['validation'] = $result;
+			$this->error['validation'] = $result;//
 			return $this->error;
 		}
 		if (!$validate) {
@@ -64,7 +64,7 @@ abstract class Form extends Module {
 
 	public function html($import = null, $title = null, $attr = [], $method = 'post', $template = 'bootstrap')
 	{
-		$this->form_id = strtolower($this->util()->helper->getInstanceClassName($this));
+		$this->form_id = strtolower($this->util()->helper()->getInstanceClassName($this));
 		$this->import = $import;
 		$this->method = $method;
 		$this->build($import);
@@ -72,7 +72,7 @@ abstract class Form extends Module {
 
 		$attr['id'] = $this->form_id;
 		$attr['method'] = $method;
-		$attr['action'] = $this->util()->helper->getPath(['form', $this->form_id], Request::param__) . '/';//
+		$attr['action'] = $this->util()->helper()->getPath(['form', $this->form_id], Request::param__) . '/';//
 		$this->build['title'] = $title;
 		$this->build['attr'] = $attr;
 
@@ -83,7 +83,7 @@ abstract class Form extends Module {
 	protected function close()
 	{
 		if (!$this->session()->get($this->form_id, 'token'))
-			$this->session()->set([$this->form_id => 'token'], $this->util()->hash->rand());
+			$this->session()->set([$this->form_id => 'token'], $this->util()->hash()->rand());
 
 		$header_id = $this->session()->token();
 		$session_key = $this->session()->key();
@@ -230,7 +230,7 @@ abstract class Form extends Module {
 				$build = '</' . $control . '>';
 				break;
 		}
-		$build = '<' . $control . $this->util()->html->getAttr($field['attr']) . '>' . $build;
+		$build = '<' . $control . $this->util()->html()->getAttr($field['attr']) . '>' . $build;
 
 		switch ($group) {
 			case 'hidden':
@@ -285,10 +285,10 @@ abstract class Form extends Module {
 				default:
 					$field['attr']['id'] = $id . '-' . $index;
 					$field['attr']['name'] = $id . '[]';
-					$field['attr'] = $this->util()->helper->getAttr(array_merge($parent['attr'], $field['attr']));
+					$field['attr'] = $this->util()->helper()->getAttr(array_merge($parent['attr'], $field['attr']));
 					$field['active'] = (isset($field['attr']['checked'])) ? true : false;
 			}
-			$build = '<' . $field['control'] . $this->util()->html->getAttr($field['attr']) . '>' . $build;
+			$build = '<' . $field['control'] . $this->util()->html()->getAttr($field['attr']) . '>' . $build;
 			$field['control'] = $build;
 		}
 		unset($field);

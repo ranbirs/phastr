@@ -10,7 +10,6 @@ class Route {
 	const name__ = \app\confs\route\name__;
 	const base__ = \app\confs\route\base__;
 	const controllers__ = \app\confs\route\controllers__;
-	const masters__ = \app\confs\route\masters__;
 	const autoload__ = \app\confs\route\autoload__;
 	const homepage__ = \app\confs\route\homepage__;
 	const page__ = \app\confs\route\page__;
@@ -19,21 +18,18 @@ class Route {
 
 	const length__ = 128;
 
-	public $path, $error;
+	protected $path;
 
 	function __construct()
 	{
 		$name = self::name__;
-		$path = (isset($_GET[$name])) ? $this->util()->helper->getArray('/', $_GET[$name], 4) : [];
+		$path = (isset($_GET[$name])) ? $this->util()->helper()->getArray('/', $_GET[$name], 4) : [];
 		unset($_GET[$name]);
 
-		$this->_parsePath($path);
-		$this->_parseRoute($path);
-
-		$this->path = $path;
+		$this->path = $this->_parsePath($path);
 	}
 
-	private function _parsePath(&$path = [])
+	private function _parsePath($path = [])
 	{
 		$path = ['request' => $path, 'path' => $path];
 
@@ -41,10 +37,10 @@ class Route {
 			$path['path'] = [self::autoload__, self::homepage__, self::action__];
 			$path['request'] = '/';
 		}
-		$scope = $this->util()->helper->getArray(',', self::controllers__);
+		$scope = $this->util()->helper()->getArray(',', self::controllers__);
 		$scope[] = self::autoload__;
 
-		if (!in_array($this->util()->helper->getPath($path['path'][0]), $scope))
+		if (!in_array($this->util()->helper()->getPath($path['path'][0]), $scope))
 			array_unshift($path['path'], self::autoload__);
 
 		if (!isset($path['path'][1]))
@@ -56,28 +52,17 @@ class Route {
 		$path['params'] = current($path['path']);
 		$path['path'] = [];
 		$path['label'] = [];
-	}
 
-	private function _parseRoute(&$path = [])
-	{
 		foreach ($path['route'] as $index => &$arg) {
 
-			if ((strlen($arg) > self::length__)) {
-				return $this->error = \sys\confs\error\route_parse__;
+			if ((strlen($arg) > self::length__) || preg_match('/[^a-z0-9-]/', $arg = strtolower($arg))) {
+				return $this->error(404);
 			}
-			if (preg_match('/[^a-z0-9-]/', $arg = strtolower($arg))) {
-				return $this->error = \sys\confs\error\route_parse__;
-			}
-			$path['label'][$index] = $this->util()->helper->getPath($arg);
-
-			if ($path['label'][$index] == self::method__) {
-				return $this->error = \sys\confs\error\route_parse__;
+			if ($path['label'][$index] = $this->util()->helper()->getPath($arg) == self::method__) {
+				return $this->error(404);
 			}
 			switch ($index) {
 				case 0:
-					if ($path['label'][$index] == self::masters__) {
-						return $this->error = \sys\confs\error\route_controller__;
-					}
 					if ($path['label'][$index] != self::autoload__)
 						$path['path'][] = $arg;
 					break;
@@ -92,8 +77,10 @@ class Route {
 		}
 		unset($arg);
 
-		$path['route'] = $this->util()->helper->getPath($path['route'], 'route');
+		$path['route'] = $this->util()->helper()->getPath($path['route'], 'route');
 		$path['path'] = implode('/', $path['path']);
+
+		return $path;
 	}
 
 	public function path($request = false)
@@ -124,18 +111,23 @@ class Route {
 	public function params($index = null)
 	{
 		if (!is_array($this->path['params']))
-			$this->path['params'] = $this->util()->helper->getArray('/', $this->path['params']);
+			$this->path['params'] = $this->util()->helper()->getArray('/', $this->path['params']);
 
 		return (is_numeric($index)) ?
 			((isset($this->path['params'][$index])) ? $this->path['params'][$index] : null) :
 			((is_null($index)) ? $this->path['params'] : false);
 	}
 
-	public function error($code, $msg = '')
+	public function error($code = 404, $msg = '')
 	{
 		http_response_code($code = (int) $code);
-		if ($msg && \app\confs\config\errors__) {
-			trigger_error($msg);
+		if (\app\confs\config\errors__) {
+			if ($msg) {
+				trigger_error($msg);
+			}
+			else {
+				trigger_error(print_r(debug_backtrace(), true));
+			}
 		}
 		require \sys\base_path('views/layouts/error/' . $code) . '.php';
 		exit;

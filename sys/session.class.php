@@ -10,19 +10,44 @@ class Session {
 
 	function __construct()
 	{
+		$this->start();
+	}
+
+	public function start()
+	{
 		session_start();
 		$this->session_id = session_id();
 
-		if (!isset($_SESSION[$this->session_id])) {
-			$this->set('_id', $this->util()->hash->id());
-			$this->set('_token', $this->util()->hash->rand());
-			$this->set('_key', $this->keygen());
-			$this->set(['_timestamp' => 0], microtime(true));
-			$this->set(['_client' => 'lang'], \app\confs\config\lang__);
-		}
+		if (!isset($_SESSION[$this->session_id]))
+			$this->gen();
+		$this->reg();
+	}
+
+	public function destroy()
+	{
+		session_unset();
+		session_destroy();
+	}
+
+	public function reset()
+	{
+		$this->destroy();
+		$this->start();
+	}
+
+	protected function gen()
+	{
+		$this->set('_id', $this->util()->hash()->gen());
+		$this->set('_token', $this->util()->hash()->rand());
+		$this->set('_key', $this->keygen());
+		$this->set(['_timestamp' => 0], microtime(true));
+		$this->set(['_client' => 'lang'], \app\confs\config\lang__);
+	}
+	
+	protected function reg()
+	{
 		$this->set(['_timestamp' => 1], microtime(true));
-		if (isset($_SERVER['HTTP_USER_AGENT']))
-			$this->set(['_client' => 'agent'], $_SERVER['HTTP_USER_AGENT']);
+		$this->set(['_client' => 'agent'], (isset($_SERVER['HTTP_USER_AGENT'])) ? $_SERVER['HTTP_USER_AGENT'] : null);
 	}
 
 	public function id()
@@ -42,7 +67,7 @@ class Session {
 
 	public function keygen($hash = null)
 	{
-		$key = $this->util()->hash->get($this->session_id . $this->id() . $this->token(), 'sha1');
+		$key = $this->util()->hash()->gen($this->session_id . $this->id() . $this->token(), 'sha1');
 		return (!is_null($hash)) ? ($hash === $key) : $key;
 	}
 
@@ -92,12 +117,6 @@ class Session {
 			return true;
 		}
 		return false;
-	}
-
-	public function quit()
-	{
-		session_unset();
-		session_destroy();
 	}
 
 }

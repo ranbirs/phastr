@@ -36,13 +36,13 @@ abstract class Controller {
 			$process--;
 		}
 		if (empty($process)) {
-			$this->route()->error(404, \sys\confs\error\controller_methods__);
+			$this->route()->error(404);
 		}
-		if (isset($params[0]) && $params[0] === Request::param__) {
+		if (isset($params[0]) && $params[0] == Request::param__) {
 			if ($this->request()->resolve()) {
 				$this->view()->layout([Request::param__, $this->request()->layout]);
 			}
-			$this->route()->error(404, \sys\confs\error\controller_request__);
+			$this->route()->error(404);
 		}
 		$this->render($page, $action, $params);
 	}
@@ -56,7 +56,7 @@ abstract class Controller {
 		if ($this->view()->page !== false) {
 			$this->view()->layout();
 		}
-		$this->route()->error(404, \sys\confs\error\controller_render__);
+		$this->route()->error(404);
 	}
 
 }

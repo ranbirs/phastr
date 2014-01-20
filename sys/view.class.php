@@ -28,7 +28,7 @@ class View {
 
 	public function page($path = null)
 	{
-		$path = $this->util()->helper->getPath($path, 'page');
+		$path = $this->util()->helper()->getPath($path, 'page');
 		return $this->_render($path, 'page');
 	}
 
@@ -61,7 +61,7 @@ class View {
 	{
 		if (is_array($path))
 			$path = implode('/', $path);
-		return $this->util()->loader->resolveFile('views/' . $type . 's/' . $path);
+		return $this->util()->loader()->resolveFile('views/' . $type . 's/' . $path);
 	}
 
 	private function _includeFile($file, $require = false)

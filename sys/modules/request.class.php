@@ -6,6 +6,8 @@ use sys\Module;
 
 class Request extends Module {
 
+	use \sys\traits\Instance;
+
 	const method__ = \app\confs\request\method__;
 	const layout__ = \app\confs\request\layout__;
 
@@ -90,9 +92,9 @@ class Request extends Module {
 				}
 				return false;
 			case 'form':
-				if ($this->load()->$subj instanceof \sys\modules\Form) {
-					$this->view()->request = $this->globals($this->load()->$subj->method());
-					$this->view()->response = $this->load()->$subj->resolve('json');
+				if ($this->instance()->$subj instanceof \sys\modules\Form) {
+					$this->view()->request = $this->globals($this->instance()->$subj->method());
+					$this->view()->response = $this->instance()->$subj->resolve('json');
 					return true;
 				}
 				return false;
