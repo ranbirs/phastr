@@ -122,12 +122,7 @@ class Route {
 	{
 		http_response_code($code = (int) $code);
 		if (\app\confs\config\errors__) {
-			if ($msg) {
-				trigger_error($msg);
-			}
-			else {
-				trigger_error(print_r(debug_backtrace(), true));
-			}
+			trigger_error(($msg) ? $msg : print_r(debug_backtrace(), true));
 		}
 		require \sys\base_path('views/layouts/error/' . $code) . '.php';
 		exit;
