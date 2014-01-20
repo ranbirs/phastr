@@ -58,7 +58,7 @@ class Route {
 			if ((strlen($arg) > self::length__) || preg_match('/[^a-z0-9-]/', $arg = strtolower($arg))) {
 				return $this->error(404);
 			}
-			if ($path['label'][$index] = $this->util()->helper()->getPath($arg) == self::method__) {
+			if (($path['label'][$index] = $this->util()->helper()->getPath($arg)) == self::method__) {
 				return $this->error(404);
 			}
 			switch ($index) {
