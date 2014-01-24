@@ -17,7 +17,7 @@ class Conf extends Util {
 
 	public function ini($path, $sections = true)
 	{
-		$path = get_include_path() . '/' . \sys\base_path('confs/' . $path) . '.ini';
+		$path = get_include_path() . '/' . app__ . '/confs/' . $path . '.ini';
 		return parse_ini_file($path, $sections);
 	}
 

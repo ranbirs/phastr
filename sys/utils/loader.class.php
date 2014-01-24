@@ -13,14 +13,14 @@ class Loader extends Util {
 
 	public function resolveFile($path, $base = app__, $ext = 'php')
 	{
-		$path = $this->helper()->getPath(\sys\base_path($path, $base)) . '.' . $ext;
+		$path = $this->helper()->getPath($base . '/' . $path) . '.' . $ext;
 		$file = stream_resolve_include_path($path);
 		return ($file !== false) ? $path : false;
 	}
 
 	public function resolveInclude($path, $type, $new = true, $instance = null, $base = app__, $ext = 'php')
 	{
-		$this->includeFile(\sys\base_path($type . 's/'. $path, $base), $ext);
+		$this->includeFile($base . '/' . $type . 's/'. $path, $ext);
 		return ($new) ? $this->resolveInstance($path, $type, $instance, $base) : true;
 	}
 

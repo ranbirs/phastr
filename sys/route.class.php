@@ -105,7 +105,7 @@ class Route {
 		if (\app\confs\config\errors__) {
 			trigger_error(($msg) ? $msg : print_r(debug_backtrace(), true));
 		}
-		require \sys\base_path('views/layouts/error/' . $code) . '.php';
+		require app__ . 'views/layouts/error/' . $code . '.php';
 		exit;
 	}
 
