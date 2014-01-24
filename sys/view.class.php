@@ -6,16 +6,22 @@ use sys\modules\Assets;
 
 class View {
 
-	use \sys\traits\Route;//
 	use \sys\traits\Util;
 
-	public $assets, $request, $response, $error, $type, $page, $body, $title;
+	public $request, $response, $error, $type, $page, $body, $title;
+
+	private $_assets;
 
 	function __construct()
 	{
-		$this->assets = new Assets;
+
 	}
 
+	public function assets()
+	{
+		return (isset($this->_assets)) ? $this->_assets : $this->_assets = new \sys\modules\Assets;
+	}
+	
 	public function request($path)
 	{
 		return $this->_render($path, 'request');

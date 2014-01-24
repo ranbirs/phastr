@@ -6,7 +6,7 @@ use sys\modules\Database;
 
 abstract class Model {
 
-	use \sys\traits\Route;
+	use \sys\traits\Route;//
 	use \sys\traits\Util;
 	use \sys\traits\Load;
 	use \sys\traits\View;

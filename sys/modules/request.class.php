@@ -18,7 +18,7 @@ class Request extends Module {
 
 	function __construct()
 	{
-		$this->view()->assets->set(['script' => 'inline'],
+		$this->view()->assets()->set(['script' => 'inline'],
 			'$.ajaxSetup({headers: {\'' . $this->session()->key() . '\': \'' . $this->session()->token() . '\'}});'
 		);
 	}
@@ -75,15 +75,16 @@ class Request extends Module {
 		return (!is_null($key)) ? ((isset($GLOBALS[$global][$key])) ? $GLOBALS[$global][$key] : false) : $GLOBALS[$global];
 	}
 
-	public function resolve()
+	public function resolve($params = [])
 	{
-		$context = $this->route()->params(1);
-		$subj = $this->route()->params(2);
-	
-		if (is_null($subj) || $this->header() !== $this->session()->token()) {
+		if (!isset($params[2]) || $params[0] !== self::param__) {
 			return false;
 		}
-		switch ($context) {
+		if ($this->header() !== $this->session()->token()) {
+			return false;
+		}
+		$subj = $params[2];
+		switch ($context = $params[1]) {
 			case 'request':
 				$this->view()->request = $this->globals($this->method);
 				$this->view()->response = $this->view()->request($subj);

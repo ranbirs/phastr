@@ -40,7 +40,7 @@ class Database extends PDO {
 
 	public function client()
 	{
-		return $this->client = &$this;
+		return $this->client = $this;
 	}
 
 	public function query($statement, $values = [])

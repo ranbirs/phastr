@@ -31,54 +31,38 @@ class Route {
 
 	private function _parsePath($path = [])
 	{
-		$path = ['request' => $path, 'path' => $path];
+		$path = ['request' => $path, 'path' => $path, 'route' => $path];
 
 		if (empty($path['request'])) {
-			$path['path'] = [self::autoload__, self::homepage__, self::action__];
-			$path['request'] = '/';
+			$path['path'] = [self::homepage__];
+			$path['route'] = [self::autoload__, self::homepage__, self::action__];
 		}
-		$scope = $this->util()->helper()->getArray(',', self::controllers__);
-		$scope[] = self::autoload__;
+		$controllers = $this->util()->helper()->getArray(',', self::controllers__);
+		$controllers[] = self::autoload__;
 
-		if (!in_array($this->util()->helper()->getPath($path['path'][0]), $scope))
-			array_unshift($path['path'], self::autoload__);
+		if (!in_array($this->util()->helper()->getPath($path['route'][0]), $controllers))
+			array_unshift($path['route'], self::autoload__);
 
-		if (!isset($path['path'][1]))
-			$path['path'][1] = self::page__;
-		if (!isset($path['path'][2]))
-			$path['path'][2] = self::action__;
+		if (!isset($path['route'][1]))
+			$path['route'][1] = self::page__;
+		if (!isset($path['route'][2]))
+			$path['route'][2] = self::action__;
 
-		$path['route'] = array_splice($path['path'], 0, 3);
-		$path['params'] = current($path['path']);
-		$path['path'] = [];
-		$path['label'] = [];
+		$path['params'] = current(array_slice($path['route'], 3));
+		$path['route'] = array_slice($path['route'], 0, 3);
 
 		foreach ($path['route'] as $index => &$arg) {
-
 			if ((strlen($arg) > self::length__) || preg_match('/[^a-z0-9-]/', $arg = strtolower($arg))) {
 				return $this->error(404);
 			}
 			if (($path['label'][$index] = $this->util()->helper()->getPath($arg)) == self::method__) {
 				return $this->error(404);
 			}
-			switch ($index) {
-				case 0:
-					if ($path['label'][$index] != self::autoload__)
-						$path['path'][] = $arg;
-					break;
-				case 1:
-					$path['path'][] = $arg;
-					break;
-				case 2:
-					if ($arg != self::action__)
-						$path['path'][] = $arg;
-					break;
-			}
 		}
 		unset($arg);
-
-		$path['route'] = $this->util()->helper()->getPath($path['route'], 'route');
 		$path['path'] = implode('/', $path['path']);
+		$path['route'] = $this->util()->helper()->getPath($path['route'], 'route');
+		$path['params'] = $this->util()->helper()->getArray('/', $path['params']);
 
 		return $path;
 	}
@@ -110,9 +94,6 @@ class Route {
 
 	public function params($index = null)
 	{
-		if (!is_array($this->path['params']))
-			$this->path['params'] = $this->util()->helper()->getArray('/', $this->path['params']);
-
 		return (is_numeric($index)) ?
 			((isset($this->path['params'][$index])) ? $this->path['params'][$index] : null) :
 			((is_null($index)) ? $this->path['params'] : false);

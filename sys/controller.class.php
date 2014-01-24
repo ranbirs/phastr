@@ -7,10 +7,10 @@ use sys\modules\Request;
 abstract class Controller {
 
 	use \sys\traits\Route;
-	use \sys\traits\Util;
+	use \sys\traits\Session;
 	use \sys\traits\Load;
 	use \sys\traits\View;
-	use \sys\traits\Session;
+	use \sys\traits\Util;
 	use \sys\traits\Request;
 
 	function __construct()
@@ -20,40 +20,32 @@ abstract class Controller {
 
 	public function dispatch($default, $page, $action, $params = [])
 	{
-		$methods = [
-			$default . '_' . $default,
+		$dispatch = [
+			$default,
 			$default . '_' . $action,
 			$page . '_' . $default,
 			$page . '_' . $action
 		];
-		$process = count($methods);
+		$render = false;
 
-		foreach ($methods as $method) {
+		foreach ($dispatch as $method) {
 			if (method_exists($this, $method)) {
 				$this->{$method}($page, $action, $params);
-				continue;
+				$render = true;
 			}
-			$process--;
 		}
-		if (empty($process)) {
+		if (!$render) {
 			$this->route()->error(404);
 		}
-		if (isset($params[0]) && $params[0] == Request::param__) {
-			if ($this->request()->resolve()) {
-				$this->view()->layout([Request::param__, $this->request()->layout]);
-			}
-			$this->route()->error(404);
+		if ($this->request()->resolve($params)) {
+			$this->view()->layout(['request', $this->request()->layout]);
 		}
 		$this->render($page, $action, $params);
 	}
 
-
-	
 	public function render()
 	{
-		$this->view()->page = $this->view()->page();
-
-		if ($this->view()->page !== false) {
+		if (($this->view()->page = $this->view()->page()) !== false) {
 			$this->view()->layout();
 		}
 		$this->route()->error(404);

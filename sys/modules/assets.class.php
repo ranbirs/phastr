@@ -10,7 +10,7 @@ class Assets extends Module {
 	const style__ = 'css';
 	const hash__ = 'md5';
 
-	private static $assets = [];
+	protected $assets = [];
 
 	function __construct()
 	{
@@ -23,16 +23,16 @@ class Assets extends Module {
 			case 'script':
 			case 'style':
 				if (\app\confs\config\optimize__) {
-					return $this->_optimize($type, self::$assets[$type]);
+					return $this->_optimize($type, $this->assets[$type]);
 				}
 				$assets = ['remote' => [], 'file' => [], 'inline' => []];
-				foreach (self::$assets[$type] as $context => $asset)
+				foreach ($this->assets[$type] as $context => $asset)
 					foreach ($asset as $param)
 						$assets[$context][] = $param['asset'];
 				return implode(eol__, array_merge($assets['remote'], $assets['file'], $assets['inline']));
 			default:
-				return (isset(self::$assets[$type])) ?
-					implode(eol__, array_values(self::$assets[$type])) :
+				return (isset($this->assets[$type])) ?
+					implode(eol__, array_values($this->assets[$type])) :
 					null;
 		}
 	}
@@ -57,17 +57,17 @@ class Assets extends Module {
 						$context = 'file';
 					case 'file':
 					case 'remote':
-						return self::$assets[$type][$context][$key] = [
+						return $this->assets[$type][$context][$key] = [
 							'value' => $subj,
 							'asset' => $asset,
 							'iteration' => $append
 						];
 					case 'inline':
-						return self::$assets[$type][$context][$key] = ['asset' => $asset];
+						return $this->assets[$type][$context][$key] = ['asset' => $asset];
 				}
 				break;
 			default:
-				return self::$assets[$type][] = $asset;
+				return $this->assets[$type][] = $asset;
 		}
 	}
 
@@ -98,7 +98,6 @@ class Assets extends Module {
 			}
 		}
 		if (isset($file_assets['value'])) {
-
 			$root_path = $this->util()->helper()->getPath('', 'root') . '/' . $this->util()->helper()->getPath('', 'base');
 			$write_path = \app\confs\config\assets__ . '/' . $type;
 			$file_name = hash(self::hash__, implode($file_assets['checksum'])) . '.' . $ext[$type];
