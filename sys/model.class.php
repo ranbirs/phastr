@@ -9,9 +9,9 @@ abstract class Model {
 	use \sys\traits\Route;//
 	use \sys\traits\Util;
 	use \sys\traits\Load;
-	use \sys\traits\View;
-	use \sys\traits\Session;
-	use \sys\traits\Request;
+	use \sys\traits\View;//
+	use \sys\traits\Session;//
+	use \sys\traits\Request;//
 
 	private $_database;
 

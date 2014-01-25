@@ -9,8 +9,7 @@ function autoload($class) {
 	$path = (isset($namespace[1])) ? explode('\\', $namespace[1]) : [];
 	$subj = rtrim(current($path), 's');
 
-	$conf = app__ . '/confs/' . end($path) . '.php';
-	if (stream_resolve_include_path($conf) !== false) {
+	if (stream_resolve_include_path($conf = app__ . '/confs/' . end($path) . '.php') !== false) {
 		require_once $conf;
 	}
 	switch ($base = current($namespace)) {

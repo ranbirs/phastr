@@ -23,7 +23,7 @@ class Route {
 	function __construct()
 	{
 		$name = self::name__;
-		$path = (isset($_GET[$name])) ? $this->util()->helper()->getArray('/', $_GET[$name], 4) : [];
+		$path = (isset($_GET[$name])) ? $this->util()->helper()->splitString('/', $_GET[$name], 4) : [];
 		unset($_GET[$name]);
 
 		$this->path = $this->_parsePath($path);
@@ -37,10 +37,10 @@ class Route {
 			$path['path'] = [self::homepage__];
 			$path['route'] = [self::autoload__, self::homepage__, self::action__];
 		}
-		$controllers = $this->util()->helper()->getArray(',', self::controllers__);
+		$controllers = $this->util()->helper()->splitString(',', self::controllers__);
 		$controllers[] = self::autoload__;
 
-		if (!in_array($this->util()->helper()->getPath($path['route'][0]), $controllers))
+		if (!in_array($this->util()->helper()->path($path['route'][0]), $controllers))
 			array_unshift($path['route'], self::autoload__);
 
 		if (!isset($path['route'][1]))
@@ -55,14 +55,14 @@ class Route {
 			if ((strlen($arg) > self::length__) || preg_match('/[^a-z0-9-]/', $arg = strtolower($arg))) {
 				return $this->error(404);
 			}
-			if (($path['label'][$index] = $this->util()->helper()->getPath($arg)) == self::method__) {
+			if (($path['label'][$index] = $this->util()->helper()->path($arg)) == self::method__) {
 				return $this->error(404);
 			}
 		}
 		unset($arg);
 		$path['path'] = implode('/', $path['path']);
-		$path['route'] = $this->util()->helper()->getPath($path['route'], 'route');
-		$path['params'] = $this->util()->helper()->getArray('/', $path['params']);
+		$path['route'] = $this->util()->helper()->path($path['route'], 'route');
+		$path['params'] = $this->util()->helper()->splitString('/', $path['params']);
 
 		return $path;
 	}

@@ -34,7 +34,7 @@ class View {
 
 	public function page($path = null)
 	{
-		$path = $this->util()->helper()->getPath($path, 'page');
+		$path = $this->util()->helper()->path($path, 'page');
 		return $this->_render($path, 'page');
 	}
 

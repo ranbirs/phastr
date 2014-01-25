@@ -8,12 +8,12 @@ class Loader extends Util {
 	
 	public function includeFile($path, $ext = 'php')
 	{
-		require_once $this->helper()->getPath($path) . '.' . $ext;
+		require_once $this->helper()->path($path) . '.' . $ext;
 	}
 
 	public function resolveFile($path, $base = app__, $ext = 'php')
 	{
-		$path = $this->helper()->getPath($base . '/' . $path) . '.' . $ext;
+		$path = $this->helper()->path($base . '/' . $path) . '.' . $ext;
 		$file = stream_resolve_include_path($path);
 		return ($file !== false) ? $path : false;
 	}
@@ -26,11 +26,11 @@ class Loader extends Util {
 
 	public function resolveInstance($path, $type, $instance = null, $base = app__)
 	{
-		$path = $this->helper()->getPath($type . 's/' . $path);
-		$class = $this->helper()->getPathClass('\\'. $base . '\\' . $path);
+		$path = $this->helper()->path($type . 's/' . $path);
+		$class = $this->helper()->pathClass('\\'. $base . '\\' . $path);
 
 		if (is_object($instance)) {
-			$prop = $this->helper()->getPathName($path);
+			$prop = $this->helper()->pathName($path);
 			return $instance->$prop = new $class;
 		}
 		return new $class;

@@ -23,7 +23,7 @@ class Assets extends Module {
 			case 'script':
 			case 'style':
 				if (\app\confs\config\optimize__) {
-					return $this->_optimize($type, $this->assets[$type]);
+					return $this->optimize($type, $this->assets[$type]);
 				}
 				$assets = ['remote' => [], 'file' => [], 'inline' => []];
 				foreach ($this->assets[$type] as $context => $asset)
@@ -46,7 +46,7 @@ class Assets extends Module {
 		}
 		if (filter_var($subj, FILTER_VALIDATE_URL))
 			$context = 'remote';
-		$asset = $this->util()->html()->getAsset($type, $context, trim($subj), $params, $append);
+		$asset = $this->util()->html()->asset($type, $context, trim($subj), $params, $append);
 
 		switch ($type) {
 			case 'script':
@@ -71,7 +71,7 @@ class Assets extends Module {
 		}
 	}
 
-	private function _optimize($type, $assets = [])
+	protected function optimize($type, $assets = [])
 	{
 		$file_assets = [];
 		$inline_assets = [];
@@ -98,7 +98,7 @@ class Assets extends Module {
 			}
 		}
 		if (isset($file_assets['value'])) {
-			$root_path = $this->util()->helper()->getPath('', 'root') . '/' . $this->util()->helper()->getPath('', 'base');
+			$root_path = $this->util()->helper()->path('', 'root') . '/' . $this->util()->helper()->path('', 'base');
 			$write_path = \app\confs\config\assets__ . '/' . $type;
 			$file_name = hash(self::hash__, implode($file_assets['checksum'])) . '.' . $ext[$type];
 			$dir = $root_path . $write_path;
@@ -113,7 +113,7 @@ class Assets extends Module {
 						$content[] = file_get_contents($root_path . $file_path);
 					file_put_contents($file, implode(eol__, $content));
 				}
-				$file_assets = [$this->util()->html()->getAsset($type, 'file', $write_path . '/'. $file_name, null, null)];
+				$file_assets = [$this->util()->html()->asset($type, 'file', $write_path . '/'. $file_name, null, null)];
 			}
 			else {
 				$file_assets = $file_assets['asset'];

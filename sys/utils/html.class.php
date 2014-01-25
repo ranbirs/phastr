@@ -6,20 +6,20 @@ use sys\Util;
 
 class Html extends Util {
 
-	public function getAttr($attr = [])
+	public function attr($attr = [])
 	{
-		$attr = $this->helper()->getAttr($attr);
-		return (!empty($attr)) ? ' ' . implode(' ', $this->helper()->getStringArray('="', $attr, '', '"')) : '';
+		$attr = $this->helper()->attr($attr);
+		return (!empty($attr)) ? ' ' . implode(' ', $this->helper()->composeArray('="', $attr, '', '"')) : '';
 	}
 
-	public function getAsset($type = 'script', $context = null, $subj = null, $params = null, $append = null)
+	public function asset($type = 'script', $context = null, $subj = null, $params = null, $append = null)
 	{
 		switch ($type) {
 			case 'script':
 				switch ($context) {
 					case null:
 					case 'file':
-						$subj = '/' . $this->helper()->getPath($subj, 'base');
+						$subj = '/' . $this->helper()->path($subj, 'base');
 					case 'remote':
 						$asset = '<script src="' . ((!is_null($append)) ? $subj . '?' . $append : $subj) . '"></script>';
 						break 2;
@@ -32,11 +32,11 @@ class Html extends Util {
 				break;
 			case 'style':
 				if (!empty($params))
-					$params = $this->getAttr($params);
+					$params = $this->attr($params);
 				switch ($context) {
 					case null:
 					case 'file':
-						$subj = '/' . $this->helper()->getPath($subj, 'base');
+						$subj = '/' . $this->helper()->path($subj, 'base');
 					case 'remote':
 						$asset = '<link href="' . ((!is_null($append)) ? $subj . '?' . $append : $subj) . '" rel="stylesheet"' . $params . '>';
 						break 2;

@@ -23,10 +23,8 @@ class Request extends Module {
 		);
 	}
 
-	public function header($key = null)
+	public function header($key)
 	{
-		if (is_null($key))
-			$key = $this->session()->key();
 		return $this->server('HTTP_' . strtoupper($key));
 	}
 
@@ -80,7 +78,7 @@ class Request extends Module {
 		if (!isset($params[2]) || $params[0] !== self::param__) {
 			return false;
 		}
-		if ($this->header() !== $this->session()->token()) {
+		if ($this->header($this->session()->key()) !== $this->session()->token()) {
 			return false;
 		}
 		$subj = $params[2];

@@ -8,36 +8,36 @@ class Helper extends Util {
 
 	use \sys\traits\Route;
 
-	public function getInstanceClassName($instance)
+	public function instanceClassName($instance)
 	{
-		return $this->getClassName(get_class($instance));
+		return $this->className(get_class($instance));
 	}
 
-	public function getClassName($class)
+	public function className($class)
 	{
 		$class = explode('\\', $class);
 		return end($class);
 	}
 
-	public function getClassPath($class)
+	public function classPath($class)
 	{
 		$class = explode('\\', $class);
 		return strtolower(implode('/', $class));
 	}
 
-	public function getPathName($path)
+	public function pathName($path)
 	{
 		$path = explode('/', $path);
 		return end($path);
 	}
 
-	public function getPathClass($path)
+	public function pathClass($path)
 	{
 		$path = explode('/', $path);
 		return implode('\\', $path);
 	}
 
-	public function getPath($path = null, $type = 'label')
+	public function path($path = null, $type = 'label')
 	{
 		if (is_array($path))
 			$path = implode('/', $path);
@@ -54,14 +54,14 @@ class Helper extends Util {
 				break;
 			case 'route':
 				$path = (\sys\Route::rewrite__) ?
-					'/' . $this->getPath($path, 'base') :
-					'/' . $this->getPath('', 'base') . '?' . \sys\Route::name__ . '=' . $path;
+					'/' . $this->path($path, 'base') :
+					'/' . $this->path('', 'base') . '?' . \sys\Route::name__ . '=' . $path;
 				break;
 			case 'ajax':
 				$path = $this->route()->route() . '/' . \sys\modules\Request::param__ . '/' . $path;
 				break;
 			case 'page':
-				$path = $this->route()->controller() . '/' . $this->getPath(($path) ? $path : $this->route()->page(), 'tree');
+				$path = $this->route()->controller() . '/' . $this->path(($path) ? $path : $this->route()->page(), 'tree');
 				break;
 			case 'base':
 				$path = ($base = \sys\Route::base__) ?
@@ -77,7 +77,7 @@ class Helper extends Util {
 		return $path;
 	}
 
-	public function getArgs($params = null, $delimiter = ':')
+	public function args($params = null, $delimiter = ':')
 	{
 		$args = [];
 		$params = (array) $params;
@@ -92,7 +92,7 @@ class Helper extends Util {
 		return $args;
 	}
 
-	public function getAttr($attr = [], $glue = ' ')
+	public function attr($attr = [], $glue = ' ')
 	{
 		$attrs = [];
 		foreach ($attr as $key => $val) {
@@ -106,7 +106,7 @@ class Helper extends Util {
 		return $attrs;
 	}
 
-	public function getArray($delimiter, $string = '', $limit = null)
+	public function splitString($delimiter, $string = '', $limit = null)
 	{
 		$limit = (int) $limit;
 		$array = (!$limit) ? explode($delimiter, $string) : explode($delimiter, $string, $limit);
@@ -116,12 +116,12 @@ class Helper extends Util {
 		return array_values(array_filter(array_map($trim, $array), 'strlen'));
 	}
 
-	public function getStringArray($glue, $array = [], $prepend = '', $append = '')
+	public function composeArray($glue, $array = [], $prepend = '', $append = '')
 	{
-		$string_array = [];
+		$composed_array = [];
 		foreach ($array as $key => $val)
-			$string_array[] = $prepend . $key . $glue . (string) $val . $append;
-		return $string_array;
+			$composed_array[] = $prepend . $key . $glue . (string) $val . $append;
+		return $composed_array;
 	}
 
 }

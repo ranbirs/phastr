@@ -8,9 +8,9 @@ class Conf extends Util {
 
 	public function k($const, $context = 'config', $base = app__)
 	{
-		if (is_null($constant = $this->getConst($const .= '__', $context, $base))) {
+		if (is_null($constant = $this->constant($const .= '__', $context, $base))) {
 			$this->loader()->resolveInclude($context, 'conf', false, app__);//
-			$constant = $this->getConst($const, $context, $base);
+			$constant = $this->constant($const, $context, $base);
 		}
 		return $constant;
 	}
@@ -21,7 +21,7 @@ class Conf extends Util {
 		return parse_ini_file($path, $sections);
 	}
 
-	public function getConst($const, $context, $base)
+	protected function constant($const, $context, $base)
 	{
 		return constant($base . '\\confs\\' . $context . '\\' . $const);
 	}
