@@ -61,11 +61,11 @@ class Route {
 		}
 		unset($arg);
 		$path['path'] = $path['route'];
-		if (current($path['label']) == self::autoload__) {
-			array_shift($path['path']);
-		}
-		if (end($path['label']) == self::action__) {
+		if ($path['label'][2] == self::action__) {
 			array_pop($path['path']);
+		}
+		if ($path['label'][0] == self::autoload__) {
+			array_shift($path['path']);
 		}
 		$path['path'] = implode('/', $path['path']);
 		$path['route'] = $this->util()->helper()->path($path['route'], 'route');

@@ -28,18 +28,13 @@ abstract class Controller {
 		if (!$render) {
 			$this->route()->error(404);
 		}
-		if ($this->request()->resolve($params)) {
-			$this->view()->layout(['request', $this->request()->layout]);
-		}
-		$this->render($page, $action, $params);
+		$this->render(($this->request()->resolve($params)) ? ['request', $this->request()->layout] : null);
 	}
 
-	public function render()
+	public function render($layout = null)
 	{
-		if (($this->view()->page = $this->view()->page()) !== false) {
-			$this->view()->layout();
-		}
-		$this->route()->error(404);
+		$this->view()->page = $this->view()->page();
+		$this->view()->layout($layout);
 	}
 
 }
