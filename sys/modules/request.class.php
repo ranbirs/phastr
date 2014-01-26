@@ -54,8 +54,9 @@ class Request extends Module {
 				if (substr($label, 0, $length) !== $subj . $separator) {
 					continue;
 				}
-				if (substr($key = substr($label, $length), 0, 1) !== $separator)
+				if (substr($key = substr($label, $length), 0, 1) !== $separator) {
 					$fields[$key] = $request[$label];
+				}
 			}
 			return $fields;
 		}
@@ -68,8 +69,9 @@ class Request extends Module {
 		if (!isset($GLOBALS[$global])) {
 			return false;
 		}
-		if (!is_null($key) && !is_null($value))
+		if (!is_null($key) && !is_null($value)) {
 			$GLOBALS[$global][$key] = $value;
+		}
 		return (!is_null($key)) ? ((isset($GLOBALS[$global][$key])) ? $GLOBALS[$global][$key] : false) : $GLOBALS[$global];
 	}
 

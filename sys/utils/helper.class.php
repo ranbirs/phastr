@@ -39,9 +39,9 @@ class Helper extends Util {
 
 	public function path($path = null, $type = 'label')
 	{
-		if (is_array($path))
+		if (is_array($path)) {
 			$path = implode('/', $path);
-
+		}
 		switch ($type) {
 			case 'label':
 				$path = str_replace(['--', '-'], ['__', '_'], $path);

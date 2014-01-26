@@ -2,8 +2,6 @@
 
 namespace sys;
 
-use sys\modules\Request;
-
 abstract class Controller {
 
 	use \sys\traits\Route;
@@ -18,17 +16,10 @@ abstract class Controller {
 
 	}
 
-	public function dispatch($default, $page, $action, $params = [])
+	public function dispatch($dispatch, $page, $action, $params = [])
 	{
-		$dispatch = [
-			$default,
-			$default . '_' . $action,
-			$page . '_' . $default,
-			$page . '_' . $action
-		];
 		$render = false;
-
-		foreach ($dispatch as $method) {
+		foreach ((array) $dispatch as $method) {
 			if (method_exists($this, $method)) {
 				$this->{$method}($page, $action, $params);
 				$render = true;

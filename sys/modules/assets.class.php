@@ -26,9 +26,11 @@ class Assets extends Module {
 					return $this->optimize($type, $this->assets[$type]);
 				}
 				$assets = ['remote' => [], 'file' => [], 'inline' => []];
-				foreach ($this->assets[$type] as $context => $asset)
-					foreach ($asset as $param)
+				foreach ($this->assets[$type] as $context => $asset) {
+					foreach ($asset as $param) {
 						$assets[$context][] = $param['asset'];
+					}
+				}
 				return implode(eol__, array_merge($assets['remote'], $assets['file'], $assets['inline']));
 			default:
 				return (isset($this->assets[$type])) ?
@@ -44,8 +46,9 @@ class Assets extends Module {
 			$context = current($type);
 			$type = key($type);
 		}
-		if (filter_var($subj, FILTER_VALIDATE_URL))
+		if (filter_var($subj, FILTER_VALIDATE_URL)) {
 			$context = 'remote';
+		}
 		$asset = $this->util()->html()->asset($type, $context, trim($subj), $params, $append);
 
 		switch ($type) {
@@ -88,12 +91,14 @@ class Assets extends Module {
 					}
 					break;
 				case 'inline':
-					foreach ($asset as $param)
+					foreach ($asset as $param) {
 						$inline_assets[] = $param['asset'];
+					}
 					break;
 				case 'remote':
-					foreach ($asset as $param)
+					foreach ($asset as $param) {
 						$remote_assets[] = $param['asset'];
+					}
 					break;
 			}
 		}
@@ -104,13 +109,15 @@ class Assets extends Module {
 			$dir = $root_path . $write_path;
 			$file = $dir . '/' . $file_name;
 
-			if (!is_dir($dir))
+			if (!is_dir($dir)) {
 				mkdir($dir);
+			}
 			if (is_writable($dir)) {
 				if (!file_exists($file)) {
 					$content = [];
-					foreach ($file_assets['value'] as $file_path)
+					foreach ($file_assets['value'] as $file_path) {
 						$content[] = file_get_contents($root_path . $file_path);
+					}
 					file_put_contents($file, implode(eol__, $content));
 				}
 				$file_assets = [$this->util()->html()->asset($type, 'file', $write_path . '/'. $file_name, null, null)];

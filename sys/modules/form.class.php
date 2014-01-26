@@ -37,17 +37,19 @@ abstract class Form extends Module {
 		$this->request()->layout = $layout;
 		$method = $this->method;
 
-		foreach ($this->sanitized as $id => $filter)
+		foreach ($this->sanitized as $id => $filter) {
 			$this->request()->{$method}($id, $this->validation->sanitize($this->request()->{$method}($id), $filter));
-		foreach ($this->validated as $id => $validation)
+		}
+		foreach ($this->validated as $id => $validation) {
 			$this->validation->resolve($id, $validation, $this->request()->{$method}($id));
-
+		}
 		$this->submit = $this->request()->fields($this->form_id, $this->method);
 		$validate = $this->validate($this->submit, $this->import);
 
 		if (array_key_exists(Validation::error__, $result = $this->validation->getResult())) {
-			if (!isset($this->error))
+			if (!isset($this->error)) {
 				$this->error();
+			}
 			$this->error['validation'] = $result;//
 			return $this->error;
 		}
@@ -56,9 +58,9 @@ abstract class Form extends Module {
 		}
 		$this->submit($this->submit, $this->import);
 
-		if ((isset($this->expire)) ? $this->expire : $this->expire())
+		if ((isset($this->expire)) ? $this->expire : $this->expire()) {
 			$this->session()->drop($this->form_id, 'token');
-
+		}
 		return (isset($this->success)) ? $this->success : $this->success();
 	}
 
@@ -82,9 +84,9 @@ abstract class Form extends Module {
 
 	protected function close()
 	{
-		if (!$this->session()->get($this->form_id, 'token'))
+		if (!$this->session()->get($this->form_id, 'token')) {
 			$this->session()->set([$this->form_id => 'token'], $this->util()->hash()->rand());
-
+		}
 		$header_id = $this->session()->token();
 		$session_key = $this->session()->key();
 
@@ -157,15 +159,19 @@ abstract class Form extends Module {
 			$control = key($control);
 		}
 		if (is_null($type)) {
-			if ($control == 'input')
+			if ($control == 'input') {
 				$type = 'text';
-			if ($control == 'button')
+			}
+			if ($control == 'button') {
 				$type = 'button';
+			}
 		}
-		if (!is_array($params))
+		if (!is_array($params)) {
 			$params = ['value' => $params];
-		if (!isset($params['value']))
+		}
+		if (!isset($params['value'])) {
 			$params['value'] = ($params !== array_values($params)) ? '' : $params;
+		}
 		$params['attr'] = (isset($params['attr'])) ? (array) $params['attr'] : [];
 
 		$params['label'] = $label;
@@ -184,41 +190,47 @@ abstract class Form extends Module {
 		$group = null;
 
 		$field['attr']['id'] = $id;
-		if (!is_null($type))
+		if (!is_null($type)) {
 			$field['attr']['type'] = $type;
-		if (isset($field['attr']['class']))
+		}
+		if (isset($field['attr']['class'])) {
 			$field['attr']['class'] = (array) $field['attr']['class'];
-
+		}
 		if ($control != 'button') {
 			$field['attr']['name'] = (!is_array($field['value'])) ? $id : $id . '[]';
 			$field['attr']['class'][] = 'form-control';
-			if (!isset($field['sanitize']))
+			if (!isset($field['sanitize'])) {
 				$field['sanitize'] = ['strip' => FILTER_FLAG_ENCODE_LOW];
+			}
 		}
-		if (isset($field['sanitize']))
+		if (isset($field['sanitize'])) {
 			$this->sanitized[$id] = $field['sanitize'];
-
+		}
 		if (isset($field['validate'])) {
 			$this->validated[$id] = $field['validate'];
-			foreach ($field['validate'] as $rule => $params)
-				if (is_array($params) && array_intersect([Validation::error__, Validation::success__], array_keys($params)))
+			foreach ($field['validate'] as $rule => $params) {
+				if (is_array($params) && array_intersect([Validation::error__, Validation::success__], array_keys($params))) {
 					$field['verbose'] = true;
+				}
+			}
 		}
-		if (is_array($field['value']))
+		if (is_array($field['value'])) {
 			$this->_parseArrayField($id, $control, $field['value'], $field);
-
+		}
 		switch ($control) {
 			case 'input':
-				if ($type == 'hidden')
+				if ($type == 'hidden') {
 					$group = $type;
+				}
 				(!is_array($field['control'])) ?
 					$field['attr']['value'] = $field['value'] :
 					$group = $id;
 				break;
 			case 'select':
 				$options = [];
-				foreach ($field['control'] as $option)
+				foreach ($field['control'] as $option) {
 					$options[] = $option['control'];
+				}
 				$build = eol__ . implode(eol__, $options) . eol__ . '</' . $control . '>';
 				break;
 			case 'button':
@@ -252,9 +264,7 @@ abstract class Form extends Module {
 		$values = [];
 
 		foreach ($fields as $index => &$field) {
-
 			$field = (array) $field;
-
 			if (!isset($field['value'])) {
 				if (array_values($field) !== $field) {
 					$field['value'] = key($field);
@@ -267,8 +277,9 @@ abstract class Form extends Module {
 			}
 			$values[] = $field['value'];
 
-			if (!isset($field['label']))
+			if (!isset($field['label'])) {
 				$field['label'] = '';
+			}
 
 			$field['attr'] = (isset($field['attr'])) ? (array) $field['attr'] : [];
 			$field['attr']['value'] = $field['value'];

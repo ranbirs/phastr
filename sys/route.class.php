@@ -31,23 +31,23 @@ class Route {
 
 	private function _parsePath($path = [])
 	{
-		$path = ['request' => $path, 'path' => $path, 'route' => $path];
+		$path = ['request' => $path, 'route' => $path];
 
 		if (empty($path['request'])) {
-			$path['path'] = [self::homepage__];
 			$path['route'] = [self::autoload__, self::homepage__, self::action__];
 		}
 		$controllers = $this->util()->helper()->splitString(',', self::controllers__);
 		$controllers[] = self::autoload__;
 
-		if (!in_array($this->util()->helper()->path($path['route'][0]), $controllers))
+		if (!in_array($this->util()->helper()->path($path['route'][0]), $controllers)) {
 			array_unshift($path['route'], self::autoload__);
-
-		if (!isset($path['route'][1]))
+		}
+		if (!isset($path['route'][1])) {
 			$path['route'][1] = self::page__;
-		if (!isset($path['route'][2]))
+		}
+		if (!isset($path['route'][2])) {
 			$path['route'][2] = self::action__;
-
+		}
 		$path['params'] = current(array_slice($path['route'], 3));
 		$path['route'] = array_slice($path['route'], 0, 3);
 
@@ -60,11 +60,34 @@ class Route {
 			}
 		}
 		unset($arg);
+		$path['path'] = $path['route'];
+		if (current($path['label']) == self::autoload__) {
+			array_shift($path['path']);
+		}
+		if (end($path['label']) == self::action__) {
+			array_pop($path['path']);
+		}
 		$path['path'] = implode('/', $path['path']);
 		$path['route'] = $this->util()->helper()->path($path['route'], 'route');
 		$path['params'] = $this->util()->helper()->splitString('/', $path['params']);
 
 		return $path;
+	}
+
+	public function dispatch($dispatch = [])
+	{
+		if (self::method__) {
+			$page[] = self::method__;
+			$action[] = self::method__;
+		}
+		$page[] = $this->path['label'][1];
+		$action[] = $this->path['label'][2];
+		foreach ($page as $page_label) {
+			foreach ($action as $action_label) {
+				$dispatch[] = $page_label . '_' . $action_label;
+			}
+		}
+		return $dispatch;
 	}
 
 	public function path($request = false)

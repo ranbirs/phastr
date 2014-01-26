@@ -52,10 +52,7 @@ class Database extends PDO {
 			unset($values[0]);
 		}
 		foreach ($values as $key => $val) {
-
-			$val = (array) $val;
-
-			switch (count($val)) {
+			switch (count($val = (array) $val)) {
 				case 2:
 					$this->sth->bindValue($key, $val[0], $val[1]);
 					break;
@@ -74,8 +71,9 @@ class Database extends PDO {
 		$cols = implode(', ', $cols);
 		$this->sth = $this->prepare("SELECT $cols FROM $table $clause");
 
-		foreach ($params as $key => $val)
+		foreach ($params as $key => $val) {
 			$this->sth->bindValue($key, $val);
+		}
 		$this->sth->execute();
 		if ($this->sth->rowCount()) {
 			return $this->sth->fetchAll($fetch);
@@ -89,8 +87,9 @@ class Database extends PDO {
 		$values = implode(', ', $values);
 		$this->sth = $this->prepare("UPDATE $table SET $values $clause");
 
-		foreach ($params as $key => $val)
+		foreach ($params as $key => $val) {
 			$this->sth->bindValue($key, $val);
+		}
 		return $this->sth->execute();
 	}
 
@@ -100,8 +99,9 @@ class Database extends PDO {
 		$values = implode(', ', array_values($values));
 		$this->sth = $this->prepare("INSERT INTO $table ($cols) VALUES ($values)");
 
-		foreach ($params as $key => $val)
+		foreach ($params as $key => $val) {
 			$this->sth->bindValue($key, $val);
+		}
 		$this->sth->execute();
 		return $this->lastInsertId();
 	}

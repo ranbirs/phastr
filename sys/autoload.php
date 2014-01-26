@@ -20,8 +20,9 @@ function autoload($class) {
 		case sys__:
 			$path = implode('/', explode('\\', $class));
 			$file = $path . '.class.php';
-			if (stream_resolve_include_path($file) === false)
+			if (stream_resolve_include_path($file) === false) {
 				$file = $path . '.' . $subj . '.php';
+			}
 			require_once $file;
 			break;
 	}

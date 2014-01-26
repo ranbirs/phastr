@@ -31,8 +31,9 @@ class Html extends Util {
 				}
 				break;
 			case 'style':
-				if (!empty($params))
+				if (!empty($params)) {
 					$params = $this->attr($params);
+				}
 				switch ($context) {
 					case null:
 					case 'file':

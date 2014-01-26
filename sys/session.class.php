@@ -17,8 +17,9 @@ class Session {
 	{
 		session_start();
 		$this->session_id = session_id();
-		if (!isset($_SESSION[$this->session_id]))
+		if (!isset($_SESSION[$this->session_id])) {
 			$this->generate();
+		}
 		$this->register();
 	}
 

@@ -15,8 +15,9 @@ class Hash extends Util {
 
 	public function gen($data = '', $algo = self::algo__, $key = self::key__)
 	{
-		if (empty($data))
+		if (empty($data)) {
 			$data = uniqid($this->salt(), true);
+		}
 		return ($key) ? hash_hmac($algo, $data, $key) : hash($algo, $data);
 	}
 	
@@ -41,8 +42,9 @@ class Hash extends Util {
 	{
 		$length = (int) $length;
 		$hash = hash($algo, $this->salt());
-		if ($length > 0)
+		if ($length > 0) {
 			$hash = ($length > strlen($hash)) ? str_pad($hash, $length, $hash) : substr($hash, 0, $length);
+		}
 		return $hash;
 	}
 

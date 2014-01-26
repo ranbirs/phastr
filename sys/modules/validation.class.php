@@ -42,8 +42,9 @@ class Validation extends Module {
 					continue;
 				}
 			}
-			if ($valid === self::error__)
+			if ($valid === self::error__) {
 				$this->setStatus($id, '', $valid);
+			}
 		}
 	}
 
@@ -64,8 +65,9 @@ class Validation extends Module {
 			case 'match':
 				return (!is_null($param) && strcmp($value, $param) == 0);
 			case 'required':
-				if (is_array($value))
+				if (is_array($value)) {
 					$value = implode($value);
+				}
 				return (strlen($value) > 0);
 			case 'maxlength':
 				$param = (int) $param;
