@@ -34,8 +34,8 @@ class Load {
 
 	public function module($path, $base = app__)
 	{
-		$ext = ($base == app__) ? 'module.php' : 'class.php';
-		return $this->util()->loader()->resolveInclude($path, 'module', true, $this->instance(), $base, $ext);
+		$ext = [app__ => 'module.php', sys__ => 'class.php'];
+		return $this->util()->loader()->resolveInclude($path, 'module', true, $this->instance(), $base, $ext[$base]);
 	}
 
 	public function controller($path)

@@ -65,8 +65,7 @@ class View {
 
 	private function _resolveFile($path, $type = 'page')
 	{
-		if (is_array($path))
-			$path = implode('/', $path);
+		$path = implode('/', (array) $path);
 		return $this->util()->loader()->resolveFile('views/' . $type . 's/' . $path);
 	}
 

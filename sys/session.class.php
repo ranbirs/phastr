@@ -17,10 +17,9 @@ class Session {
 	{
 		session_start();
 		$this->session_id = session_id();
-
 		if (!isset($_SESSION[$this->session_id]))
-			$this->gen();
-		$this->reg();
+			$this->generate();
+		$this->register();
 	}
 
 	public function destroy()
@@ -35,24 +34,23 @@ class Session {
 		$this->start();
 	}
 
-	protected function gen()
+	public function id()
 	{
-		$this->set('_id', $this->util()->hash()->gen());
+		return $this->session_id;
+	}
+
+	protected function generate()
+	{
 		$this->set('_token', $this->util()->hash()->rand());
 		$this->set('_key', $this->keygen());
 		$this->set(['_timestamp' => 0], microtime(true));
 		$this->set(['_client' => 'lang'], \app\confs\config\lang__);
 	}
 	
-	protected function reg()
+	protected function register()
 	{
 		$this->set(['_timestamp' => 1], microtime(true));
 		$this->set(['_client' => 'agent'], (isset($_SERVER['HTTP_USER_AGENT'])) ? $_SERVER['HTTP_USER_AGENT'] : null);
-	}
-
-	public function id()
-	{
-		return $this->get('_id');
 	}
 
 	public function token()
@@ -67,8 +65,8 @@ class Session {
 
 	public function keygen($hash = null)
 	{
-		$key = $this->util()->hash()->gen($this->session_id . $this->id() . $this->token(), 'sha1');
-		return (!is_null($hash)) ? ($hash === $key) : $key;
+		$key = $this->util()->hash()->gen($this->session_id . $this->token(), 'sha1');
+		return (is_null($hash)) ? $key : ($hash === $key);
 	}
 
 	public function timestamp($key = 0)
@@ -79,11 +77,6 @@ class Session {
 	public function client($key = 'agent')
 	{
 		return $this->get('_client', $key);
-	}
-
-	public function user($key = 'token')
-	{
-		return $this->get('_user', $key);
 	}
 
 	public function get($subj, $key = null)

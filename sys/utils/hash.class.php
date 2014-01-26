@@ -11,8 +11,7 @@ class Hash extends Util {
 	const cipher__ = \app\confs\hash\cipher__;
 	const cost__ = \app\confs\hash\cost__;
 	const salt__ = \app\confs\hash\salt__;
-
-	public $range;
+	const range__ = \app\confs\hash\range__;
 
 	public function gen($data = '', $algo = self::algo__, $key = self::key__)
 	{
@@ -40,32 +39,21 @@ class Hash extends Util {
 
 	public function rand($length = 0, $algo = 'sha1')
 	{
-		$hash = hash($algo, $this->salt());
 		$length = (int) $length;
+		$hash = hash($algo, $this->salt());
 		if ($length > 0)
 			$hash = ($length > strlen($hash)) ? str_pad($hash, $length, $hash) : substr($hash, 0, $length);
 		return $hash;
 	}
 
-	public function salt($length = 16, $range = null)
+	public function salt($length = 16, $range = self::range__)
 	{
-		if (empty($range)) {
-			if (!isset($this->range))
-				$this->range = array_merge(range('a', 'z'), range('A', 'Z'), range(0, 9));
-			$range = $this->range;
-		}
-		else {
-			$range = (is_array($range)) ? array_values($range) : explode($range);
-		}
-		$range_length = count($range) - 1;
 		$length = (int) $length;
-		$salt = [];
-
-		for ($c = 0; $c < $length; $c++) {
-			$rand = mt_rand(0, $range_length);
-			$salt[] = $range[$rand];
-		}
-		return implode($salt);
+		$index_range = strlen($range) - 1;
+		$salt = '';
+		for ($c = 0; $c < $length; $c++)
+			$salt .= $range[mt_rand(0, $index_range)];
+		return $salt;
 	}
 
 }
