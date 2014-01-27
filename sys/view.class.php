@@ -48,6 +48,7 @@ class View {
 	{
 		$file = $this->_resolveFile(($path) ? $path : \app\confs\config\layout__, 'layout');
 		$this->_includeFile($file, true);
+
 		exit;
 	}
 

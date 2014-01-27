@@ -24,22 +24,13 @@ class Route {
 	{
 		$name = self::name__;
 		$path = (isset($_GET[$name])) ? $this->util()->helper()->splitString('/', $_GET[$name], 4) : [];
-		unset($_GET[$name]);
-
-		$this->path = $this->_parsePath($path);
-	}
-
-	private function _parsePath($path = [])
-	{
 		$path = ['request' => $path, 'route' => $path];
+		unset($_GET[$name]);
 
 		if (empty($path['request'])) {
 			$path['route'] = [self::autoload__, self::homepage__, self::action__];
 		}
-		$controllers = $this->util()->helper()->splitString(',', self::controllers__);
-		$controllers[] = self::autoload__;
-
-		if (!in_array($this->util()->helper()->path($path['route'][0]), $controllers)) {
+		if (!in_array($path['route'][0], $this->util()->helper()->splitString(',', self::controllers__))) {
 			array_unshift($path['route'], self::autoload__);
 		}
 		if (!isset($path['route'][1])) {
@@ -61,33 +52,17 @@ class Route {
 		}
 		unset($arg);
 		$path['path'] = $path['route'];
-		if ($path['label'][2] == self::action__) {
+		if ($path['route'][2] == self::action__) {
 			array_pop($path['path']);
 		}
-		if ($path['label'][0] == self::autoload__) {
+		if ($path['route'][0] == self::autoload__) {
 			array_shift($path['path']);
 		}
 		$path['path'] = implode('/', $path['path']);
 		$path['route'] = $this->util()->helper()->path($path['route'], 'route');
 		$path['params'] = $this->util()->helper()->splitString('/', $path['params']);
 
-		return $path;
-	}
-
-	public function dispatch($dispatch = [])
-	{
-		if (self::method__) {
-			$page[] = self::method__;
-			$action[] = self::method__;
-		}
-		$page[] = $this->path['label'][1];
-		$action[] = $this->path['label'][2];
-		foreach ($page as $page_label) {
-			foreach ($action as $action_label) {
-				$dispatch[] = $page_label . '_' . $action_label;
-			}
-		}
-		return $dispatch;
+		$this->path = $path;
 	}
 
 	public function path($request = false)
@@ -98,6 +73,13 @@ class Route {
 	public function route($label = false)
 	{
 		return (!$label) ? $this->path['route'] : $this->path['label'];
+	}
+
+	public function params($index = null)
+	{
+		return (is_numeric($index)) ?
+			((isset($this->path['params'][$index])) ? $this->path['params'][$index] : null) :
+			((is_null($index)) ? $this->path['params'] : false);
 	}
 
 	public function controller()
@@ -115,11 +97,20 @@ class Route {
 		return $this->path['label'][2];
 	}
 
-	public function params($index = null)
+	public function method($methods = [])
 	{
-		return (is_numeric($index)) ?
-			((isset($this->path['params'][$index])) ? $this->path['params'][$index] : null) :
-			((is_null($index)) ? $this->path['params'] : false);
+		if (self::method__) {
+			$page[] = self::method__;
+			$action[] = self::method__;
+		}
+		$page[] = $this->path['label'][1];
+		$action[] = $this->path['label'][2];
+		foreach ($page as $page_label) {
+			foreach ($action as $action_label) {
+				$methods[] = $page_label . '_' . $action_label;
+			}
+		}
+		return $methods;
 	}
 
 	public function error($code = 404, $msg = '')
@@ -129,6 +120,7 @@ class Route {
 			trigger_error(($msg) ? $msg : print_r(debug_backtrace(), true));
 		}
 		require app__ . '/views/layouts/error/' . $code . '.php';
+
 		exit;
 	}
 

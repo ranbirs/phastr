@@ -16,10 +16,10 @@ abstract class Controller {
 
 	}
 
-	public function dispatch($dispatch, $page, $action, $params = [])
+	public function dispatch($methods, $page, $action, $params = [])
 	{
 		$render = false;
-		foreach ((array) $dispatch as $method) {
+		foreach ((array) $methods as $method) {
 			if (method_exists($this, $method)) {
 				$this->{$method}($page, $action, $params);
 				$render = true;

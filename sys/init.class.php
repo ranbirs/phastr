@@ -16,7 +16,7 @@ class Init {
 		self::$view = new \sys\View;
 
 		self::$load->controller(self::$route->controller())
-			->dispatch(self::$route->dispatch(), self::$route->page(), self::$route->action(), self::$route->params());
+			->dispatch(self::$route->method(), self::$route->page(), self::$route->action(), self::$route->params());
 	}
 
 	public static function util()
