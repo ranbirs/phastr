@@ -24,7 +24,7 @@ class Assets extends Module
 				if (\app\confs\Config::optimize__) {
 					return $this->optimize($type, $this->assets[$type]);
 				}
-				$assets = ['remote' => [],'file' => [],'inline' => []];
+				$assets = ['remote' => [], 'file' => [], 'inline' => []];
 				foreach ($this->assets[$type] as $context => $asset) {
 					foreach ($asset as $param) {
 						$assets[$context][] = $param['asset'];
@@ -57,7 +57,7 @@ class Assets extends Module
 						$context = 'file';
 					case 'file':
 					case 'remote':
-						return $this->assets[$type][$context][$key] = ['value' => $subj,'asset' => $asset,
+						return $this->assets[$type][$context][$key] = ['value' => $subj, 'asset' => $asset, 
 							'iteration' => $append];
 					case 'inline':
 						return $this->assets[$type][$context][$key] = ['asset' => $asset];
@@ -73,7 +73,7 @@ class Assets extends Module
 		$file_assets = [];
 		$inline_assets = [];
 		$remote_assets = [];
-		$ext = ['script' => self::script__,'style' => self::style__];
+		$ext = ['script' => self::script__, 'style' => self::style__];
 		
 		foreach ($assets as $context => $asset) {
 			switch ($context) {

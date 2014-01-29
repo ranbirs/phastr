@@ -44,13 +44,13 @@ class Helper extends Util
 		}
 		switch ($type) {
 			case 'label':
-				$path = str_replace(['--','-'], ['__','_'], $path);
+				$path = str_replace(['--', '-'], ['__', '_'], $path);
 				break;
 			case 'path':
-				$path = str_replace(['__','/','_'], ['--','--','-'], $path);
+				$path = str_replace(['__', '/', '_'], ['--', '--', '-'], $path);
 				break;
 			case 'tree':
-				$path = str_replace(['__','--','-'], ['/','/','_'], $path);
+				$path = str_replace(['__', '--', '-'], ['/', '/', '_'], $path);
 				break;
 			case 'route':
 				$path = (\sys\Route::rewrite__) ? '/' . $this->path($path, 'base') : '/' . $this->path('', 'base') . '?' .

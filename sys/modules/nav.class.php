@@ -31,7 +31,7 @@ abstract class Nav extends Module
 		$this->build['title'] = $title;
 		$this->build['attr'] = $this->util()->helper()->attr($attr);
 		
-		$nav = ['build' => $this->build,'items' => $this->items];
+		$nav = ['build' => $this->build, 'items' => $this->items];
 		return $this->view()->template('nav', $template, $nav);
 	}
 
@@ -48,12 +48,12 @@ abstract class Nav extends Module
 					$this->items[$index]['item'][] = $val;
 					continue;
 				}
-				$this->items[] = ['label' => $label,'path' => $path,'item' => $params];
+				$this->items[] = ['label' => $label, 'path' => $path, 'item' => $params];
 				break;
 			}
 		}
 		else {
-			$this->items[] = ['label' => $label,'path' => $path,'item' => $params];
+			$this->items[] = ['label' => $label, 'path' => $path, 'item' => $params];
 		}
 	}
 

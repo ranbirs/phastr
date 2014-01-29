@@ -22,7 +22,7 @@ class Validation extends Module
 
 	public function setStatus($subj, $msg = null, $status = self::error__)
 	{
-		$this->result[$status][] = [$subj,$msg];
+		$this->result[$status][] = [$subj, $msg];
 	}
 
 	public function resolve($id, $validation, $value = null)

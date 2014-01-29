@@ -13,7 +13,7 @@ class Load
 
 	public function module($path, $base = app__)
 	{
-		$ext = [app__ => 'php',sys__ => 'class.php'];
+		$ext = [app__ => 'php', sys__ => 'class.php'];
 		return $this->util()->loader()->resolveInclude($path, 'module', true, $this->instance(), $base, $ext[$base]);
 	}
 

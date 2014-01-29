@@ -77,11 +77,11 @@ abstract class Form extends Module
 		
 		$attr['id'] = $this->form_id;
 		$attr['method'] = $method;
-		$attr['action'] = $this->util()->helper()->path(['form',$this->form_id], Request::param__) . '/'; //
+		$attr['action'] = $this->util()->helper()->path(['form', $this->form_id], Request::param__) . '/'; //
 		$this->build['title'] = $title;
 		$this->build['attr'] = $attr;
 		
-		$form = ['build' => $this->build,'fields' => $this->fields,'action' => $this->action,
+		$form = ['build' => $this->build, 'fields' => $this->fields, 'action' => $this->action, 
 			'hidden' => $this->hidden];
 		return $this->view()->template('form', $template, $form);
 	}
@@ -95,13 +95,13 @@ abstract class Form extends Module
 		$session_key = $this->session()->key();
 		
 		$this->field(['input' => 'hidden'], '_header_id_' . $session_key, null, 
-			$params = ['value' => $header_id,'validate' => ['header' => [$session_key => $header_id]]]);
+			$params = ['value' => $header_id, 'validate' => ['header' => [$session_key => $header_id]]]);
 		$this->field(['input' => 'hidden'], '_form_id_' . $session_key, null, 
-			$params = ['value' => $this->form_id,
+			$params = ['value' => $this->form_id, 
 				'validate' => [$this->method => [
 					$this->form_id . '__form_id_' . $session_key => $this->form_id]]]);
 		$this->field(['input' => 'hidden'], '_form_token_' . $session_key, null, 
-			$params = ['value' => $this->session()->get($this->form_id, 'token'),
+			$params = ['value' => $this->session()->get($this->form_id, 'token'), 
 				'validate' => ['token' => $this->form_id]]);
 	}
 
@@ -126,17 +126,17 @@ abstract class Form extends Module
 
 	protected function error($msg = '', $callback = '')
 	{
-		return $this->error = ['result' => false,'callback' => $callback,'message' => $msg];
+		return $this->error = ['result' => false, 'callback' => $callback, 'message' => $msg];
 	}
 
 	protected function fail($msg = '', $callback = '')
 	{
-		return $this->fail = ['result' => false,'callback' => $callback,'message' => $msg];
+		return $this->fail = ['result' => false, 'callback' => $callback, 'message' => $msg];
 	}
 
 	protected function success($msg = '', $callback = '')
 	{
-		return $this->success = ['result' => true,'callback' => $callback,'message' => $msg];
+		return $this->success = ['result' => true, 'callback' => $callback, 'message' => $msg];
 	}
 
 	protected function expire($expire = true)
@@ -202,7 +202,7 @@ abstract class Form extends Module
 		if (isset($field['validate'])) {
 			$this->validated[$id] = $field['validate'];
 			foreach ($field['validate'] as $rule => $params) {
-				if (is_array($params) && array_intersect([Validation::error__,Validation::success__], 
+				if (is_array($params) && array_intersect([Validation::error__, Validation::success__], 
 					array_keys($params))) {
 					$field['verbose'] = true;
 				}

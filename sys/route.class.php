@@ -22,10 +22,10 @@ class Route
 	{
 		$name = self::name__;
 		$path = (isset($_GET[$name])) ? $this->util()->helper()->splitString('/', $_GET[$name], 4) : [];
-		$path = ['request' => $path,'route' => $path];
+		$path = ['request' => $path, 'route' => $path];
 		
 		if (empty($path['request'])) {
-			$path['route'] = [self::autoload__,self::homepage__,self::action__];
+			$path['route'] = [self::autoload__, self::homepage__, self::action__];
 		}
 		if (! in_array($path['route'][0], $this->util()->helper()->splitString(',', self::controllers__))) {
 			array_unshift($path['route'], self::autoload__);
