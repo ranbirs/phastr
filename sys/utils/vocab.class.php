@@ -4,20 +4,17 @@ namespace sys\utils;
 
 use sys\Util;
 
-class Vocab extends Util {
+class Vocab extends Util
+{
 
-	public function t($const, $context, $lang = \app\confs\config\lang__)
+	public function t($const, $context, $lang = \app\confs\Config::lang__)
 	{
-		if (is_null($constant = $this->constant($const, $context))) {
-			$this->loader()->resolveInclude(($lang) ? $lang . '/' . $context : $context, 'vocab', false);//
-			$constant = $this->constant($const, $context);
-		}
-		return $constant;
+		return $this->constant($const, ($lang) ? $lang . '\\' . $context : $context);
 	}
 
 	protected function constant($const, $context)
 	{
-		return constant('\\app\\vocabs\\' . $context . '\\' . $const);
+		return constant('\\app\\vocabs\\' . $context . '::' . $const);
 	}
 
 }

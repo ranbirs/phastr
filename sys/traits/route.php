@@ -2,7 +2,8 @@
 
 namespace sys\traits;
 
-trait Route {
+trait Route
+{
 
 	public function route()
 	{

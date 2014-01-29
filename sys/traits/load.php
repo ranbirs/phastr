@@ -2,7 +2,8 @@
 
 namespace sys\traits;
 
-trait Load {
+trait Load
+{
 
 	public function load()
 	{

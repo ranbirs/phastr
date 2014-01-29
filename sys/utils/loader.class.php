@@ -4,8 +4,9 @@ namespace sys\utils;
 
 use sys\Util;
 
-class Loader extends Util {
-	
+class Loader extends Util
+{
+
 	public function includeFile($path, $ext = 'php')
 	{
 		require_once $this->helper()->path($path) . '.' . $ext;
@@ -20,20 +21,20 @@ class Loader extends Util {
 
 	public function resolveInclude($path, $type, $new = true, $instance = null, $base = app__, $ext = 'php')
 	{
-		$this->includeFile($base . '/' . $type . 's/'. $path, $ext);
+		$this->includeFile($base . '/' . $type . 's/' . $path, $ext);
 		return ($new) ? $this->resolveInstance($path, $type, $instance, $base) : true;
 	}
 
 	public function resolveInstance($path, $type, $instance = null, $base = app__)
 	{
 		$path = $this->helper()->path($type . 's/' . $path);
-		$class = $this->helper()->pathClass('\\'. $base . '\\' . $path);
-
+		$class = $this->helper()->pathClass('\\' . $base . '\\' . $path);
+		
 		if (is_object($instance)) {
 			$prop = $this->helper()->pathName($path);
-			return $instance->$prop = new $class;
+			return $instance->$prop = new $class();
 		}
-		return new $class;
+		return new $class();
 	}
 
 }

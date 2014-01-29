@@ -4,23 +4,21 @@ namespace sys\modules;
 
 use sys\Module;
 
-class Request extends Module {
-
+class Request extends Module
+{
 	use \sys\traits\Instance;
-
-	const method__ = \app\confs\request\method__;
-	const layout__ = \app\confs\request\layout__;
-
+	const method__ = \app\confs\Request::method__;
+	const layout__ = \app\confs\Request::layout__;
 	const param__ = 'ajax';
 
 	public $method = self::method__;
+
 	public $layout = self::layout__;
 
 	function __construct()
 	{
-		$this->view()->assets()->set(['script' => 'inline'],
-			'$.ajaxSetup({headers: {\'' . $this->session()->key() . '\': \'' . $this->session()->token() . '\'}});'
-		);
+		$this->view()->assets()->set(['script' => 'inline'], 
+			'$.ajaxSetup({headers: {\'' . $this->session()->key() . '\': \'' . $this->session()->token() . '\'}});');
 	}
 
 	public function header($key)
@@ -66,18 +64,18 @@ class Request extends Module {
 	public function globals($global = 'post', $key = null, $value = null)
 	{
 		$global = '_' . strtoupper($global);
-		if (!isset($GLOBALS[$global])) {
+		if (! isset($GLOBALS[$global])) {
 			return false;
 		}
-		if (!is_null($key) && !is_null($value)) {
+		if (! is_null($key) && ! is_null($value)) {
 			$GLOBALS[$global][$key] = $value;
 		}
-		return (!is_null($key)) ? ((isset($GLOBALS[$global][$key])) ? $GLOBALS[$global][$key] : false) : $GLOBALS[$global];
+		return (! is_null($key)) ? ((isset($GLOBALS[$global][$key])) ? $GLOBALS[$global][$key] : false) : $GLOBALS[$global];
 	}
 
 	public function resolve($params = [])
 	{
-		if (!isset($params[2]) || $params[0] !== self::param__) {
+		if (! isset($params[2]) || $params[0] !== self::param__) {
 			return false;
 		}
 		if ($this->header($this->session()->key()) !== $this->session()->token()) {

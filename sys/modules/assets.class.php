@@ -4,8 +4,8 @@ namespace sys\modules;
 
 use sys\Module;
 
-class Assets extends Module {
-
+class Assets extends Module
+{
 	const script__ = 'js';
 	const style__ = 'css';
 	const hash__ = 'md5';
@@ -14,7 +14,6 @@ class Assets extends Module {
 
 	function __construct()
 	{
-
 	}
 
 	public function get($type = 'script')
@@ -22,10 +21,10 @@ class Assets extends Module {
 		switch ($type) {
 			case 'script':
 			case 'style':
-				if (\app\confs\config\optimize__) {
+				if (\app\confs\Config::optimize__) {
 					return $this->optimize($type, $this->assets[$type]);
 				}
-				$assets = ['remote' => [], 'file' => [], 'inline' => []];
+				$assets = ['remote' => [],'file' => [],'inline' => []];
 				foreach ($this->assets[$type] as $context => $asset) {
 					foreach ($asset as $param) {
 						$assets[$context][] = $param['asset'];
@@ -33,13 +32,11 @@ class Assets extends Module {
 				}
 				return implode(eol__, array_merge($assets['remote'], $assets['file'], $assets['inline']));
 			default:
-				return (isset($this->assets[$type])) ?
-					implode(eol__, array_values($this->assets[$type])) :
-					null;
+				return (isset($this->assets[$type])) ? implode(eol__, array_values($this->assets[$type])) : null;
 		}
 	}
 
-	public function set($type = ['script' => 'file'], $subj = null, $params = null, $append = \app\confs\config\iteration__)
+	public function set($type = ['script' => 'file'], $subj = null, $params = null, $append = \app\confs\Config::iteration__)
 	{
 		$context = null;
 		if (is_array($type)) {
@@ -50,7 +47,7 @@ class Assets extends Module {
 			$context = 'remote';
 		}
 		$asset = $this->util()->html()->asset($type, $context, trim($subj), $params, $append);
-
+		
 		switch ($type) {
 			case 'script':
 			case 'style':
@@ -60,11 +57,8 @@ class Assets extends Module {
 						$context = 'file';
 					case 'file':
 					case 'remote':
-						return $this->assets[$type][$context][$key] = [
-							'value' => $subj,
-							'asset' => $asset,
-							'iteration' => $append
-						];
+						return $this->assets[$type][$context][$key] = ['value' => $subj,'asset' => $asset,
+							'iteration' => $append];
 					case 'inline':
 						return $this->assets[$type][$context][$key] = ['asset' => $asset];
 				}
@@ -79,8 +73,8 @@ class Assets extends Module {
 		$file_assets = [];
 		$inline_assets = [];
 		$remote_assets = [];
-		$ext = ['script' => self::script__, 'style' => self::style__];
-
+		$ext = ['script' => self::script__,'style' => self::style__];
+		
 		foreach ($assets as $context => $asset) {
 			switch ($context) {
 				case 'file':
@@ -104,23 +98,24 @@ class Assets extends Module {
 		}
 		if (isset($file_assets['value'])) {
 			$root_path = $this->util()->helper()->path('', 'root') . '/' . $this->util()->helper()->path('', 'base');
-			$write_path = \app\confs\config\assets__ . '/' . $type;
+			$write_path = \app\confs\Config::assets__ . '/' . $type;
 			$file_name = hash(self::hash__, implode($file_assets['checksum'])) . '.' . $ext[$type];
 			$dir = $root_path . $write_path;
 			$file = $dir . '/' . $file_name;
-
-			if (!is_dir($dir)) {
+			
+			if (! is_dir($dir)) {
 				mkdir($dir);
 			}
 			if (is_writable($dir)) {
-				if (!file_exists($file)) {
+				if (! file_exists($file)) {
 					$content = [];
 					foreach ($file_assets['value'] as $file_path) {
 						$content[] = file_get_contents($root_path . $file_path);
 					}
 					file_put_contents($file, implode(eol__, $content));
 				}
-				$file_assets = [$this->util()->html()->asset($type, 'file', $write_path . '/'. $file_name, null, null)];
+				$file_assets = [
+					$this->util()->html()->asset($type, 'file', $write_path . '/' . $file_name, null, null)];
 			}
 			else {
 				$file_assets = $file_assets['asset'];

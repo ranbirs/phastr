@@ -4,8 +4,8 @@ namespace sys\utils;
 
 use sys\Util;
 
-class Helper extends Util {
-
+class Helper extends Util
+{
 	use \sys\traits\Route;
 
 	public function instanceClassName($instance)
@@ -44,29 +44,27 @@ class Helper extends Util {
 		}
 		switch ($type) {
 			case 'label':
-				$path = str_replace(['--', '-'], ['__', '_'], $path);
+				$path = str_replace(['--','-'], ['__','_'], $path);
 				break;
 			case 'path':
-				$path = str_replace(['__', '/', '_'], ['--', '--', '-'], $path);
+				$path = str_replace(['__','/','_'], ['--','--','-'], $path);
 				break;
 			case 'tree':
-				$path = str_replace(['__', '--', '-'], ['/', '/', '_'], $path);
+				$path = str_replace(['__','--','-'], ['/','/','_'], $path);
 				break;
 			case 'route':
-				$path = (\sys\Route::rewrite__) ?
-					'/' . $this->path($path, 'base') :
-					'/' . $this->path('', 'base') . '?' . \sys\Route::name__ . '=' . $path;
+				$path = (\sys\Route::rewrite__) ? '/' . $this->path($path, 'base') : '/' . $this->path('', 'base') . '?' .
+					 \sys\Route::name__ . '=' . $path;
 				break;
 			case 'ajax':
 				$path = $this->route()->route() . '/' . \sys\modules\Request::param__ . '/' . $path;
 				break;
 			case 'page':
-				$path = $this->route()->controller() . '/' . $this->path(($path) ? $path : $this->route()->page(), 'tree');
+				$path = $this->route()->controller() . '/' . $this->path(($path) ? $path : $this->route()->page(), 
+					'tree');
 				break;
 			case 'base':
-				$path = ($base = \sys\Route::base__) ?
-					(($path) ? $base . '/' . $path : $base) :
-					(($path) ? $path : '');
+				$path = ($base = \sys\Route::base__) ? (($path) ? $base . '/' . $path : $base) : (($path) ? $path : '');
 				break;
 			case 'root':
 				$path = ($path) ? $_SERVER['DOCUMENT_ROOT'] . '/' . $path : $_SERVER['DOCUMENT_ROOT'];
@@ -80,11 +78,9 @@ class Helper extends Util {
 	public function args($params = null, $delimiter = ':')
 	{
 		$args = [];
-		$params = (array) $params;
-
-		foreach ($params as $param) {
+		foreach ((array) $params as $param) {
 			$param = array_map('trim', explode($delimiter, $param, 2));
-			if (!strlen($param[0])) {
+			if (! strlen($param[0])) {
 				continue;
 			}
 			$args[$param[0]] = (isset($param[1])) ? $param[1] : null;
@@ -96,7 +92,7 @@ class Helper extends Util {
 	{
 		$attrs = [];
 		foreach ($attr as $key => $val) {
-			$val = (!is_array($val)) ? $val : implode($glue, $val);
+			$val = (! is_array($val)) ? $val : implode($glue, $val);
 			if (is_int($key)) {
 				$attrs[$val] = $val;
 				continue;
@@ -108,9 +104,9 @@ class Helper extends Util {
 
 	public function splitString($delimiter, $string = '', $limit = null)
 	{
-		$limit = (int) $limit;
-		$array = (!$limit) ? explode($delimiter, $string) : explode($delimiter, $string, $limit);
-		$trim = function ($arg) use ($delimiter) {
+		$array = (! ($limit = (int) $limit)) ? explode($delimiter, $string) : explode($delimiter, $string, $limit);
+		$trim = function ($arg) use($delimiter)
+		{
 			return trim($arg, $delimiter . ' ');
 		};
 		return array_values(array_filter(array_map($trim, $array), 'strlen'));
@@ -119,9 +115,24 @@ class Helper extends Util {
 	public function composeArray($glue, $array = [], $prepend = '', $append = '')
 	{
 		$composed_array = [];
-		foreach ($array as $key => $val)
+		foreach ($array as $key => $val) {
 			$composed_array[] = $prepend . $key . $glue . (string) $val . $append;
+		}
 		return $composed_array;
+	}
+
+	public function isIndexArray($array = [])
+	{
+		return ($array === array_values($array));
+	}
+
+	public function shiftArrayIndex($array = [], $shift = 1)
+	{
+		if (($shift = (int) $shift) < 1) {
+			return false;
+		}
+		$array = array_merge(array_fill(0, $shift, ''), array_values($array));
+		return array_slice($array, $shift, null, true);
 	}
 
 }

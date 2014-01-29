@@ -2,7 +2,8 @@
 
 namespace sys\traits;
 
-trait Session {
+trait Session
+{
 
 	public function session()
 	{

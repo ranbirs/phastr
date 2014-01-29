@@ -4,8 +4,8 @@ namespace sys\modules;
 
 use sys\Module;
 
-class Validation extends Module {
-
+class Validation extends Module
+{
 	const error__ = 'error';
 	const success__ = 'success';
 
@@ -13,29 +13,26 @@ class Validation extends Module {
 
 	function __construct()
 	{
-
 	}
 
 	public function getResult($status = null)
 	{
-		return (!is_null($status)) ?
-			((isset($this->result[$status])) ? $this->result[$status] : null) :
-			$this->result;
+		return (! is_null($status)) ? ((isset($this->result[$status])) ? $this->result[$status] : null) : $this->result;
 	}
 
 	public function setStatus($subj, $msg = null, $status = self::error__)
 	{
-		$this->result[$status][] = [$subj, $msg];
+		$this->result[$status][] = [$subj,$msg];
 	}
 
 	public function resolve($id, $validation, $value = null)
 	{
 		foreach ($validation as $key => $args) {
-
-			$rule = (!is_int($key)) ? $key : $args;
+			
+			$rule = (! is_int($key)) ? $key : $args;
 			$param = (isset($args['value'])) ? $args['value'] : $args;
 			$valid = ($this->validate($value, $rule, $param)) ? self::success__ : self::error__;
-
+			
 			if (is_array($args)) {
 				if (array_key_exists($valid, $args)) {
 					$this->setStatus($id, $args[$valid], $valid);
@@ -50,20 +47,20 @@ class Validation extends Module {
 
 	public function validate($value = null, $rule = null, $param = null)
 	{
-		switch($rule) {
+		switch ($rule) {
 			case 'header':
 			case 'server':
 			case 'post':
 			case 'get':
-				if (!is_array($param)) {
+				if (! is_array($param)) {
 					return false;
 				}
 				$request = $this->request()->{$rule}(key($param));
-				return (!is_null($value) && $value === $request && $request === current($param));
+				return (! is_null($value) && $value === $request && $request === current($param));
 			case 'token':
-				return (!is_null($param) && $value === $this->session()->get($param, 'token'));
+				return (! is_null($param) && $value === $this->session()->get($param, 'token'));
 			case 'match':
-				return (!is_null($param) && strcmp($value, $param) == 0);
+				return (! is_null($param) && strcmp($value, $param) == 0);
 			case 'required':
 				if (is_array($value)) {
 					$value = implode($value);
@@ -71,7 +68,7 @@ class Validation extends Module {
 				return (strlen($value) > 0);
 			case 'maxlength':
 				$param = (int) $param;
-				if (!is_array($value)) {
+				if (! is_array($value)) {
 					return (strlen($value) < $param);
 				}
 				foreach ($value as $val) {
@@ -82,7 +79,7 @@ class Validation extends Module {
 				return true;
 			case 'minlength':
 				$param = (int) $param;
-				if (!is_array($value)) {
+				if (! is_array($value)) {
 					return (strlen($value) > $param);
 				}
 				foreach ($value as $val) {
@@ -147,15 +144,17 @@ class Validation extends Module {
 			default:
 				return false;
 		}
-		$filter = function ($value) use ($rule, $param) {
+		$filter = function ($value) use($rule, $param)
+		{
 			$value = trim($value);
-			if (!is_null($param)) {
+			if (! is_null($param)) {
 				return filter_var($value, $rule, $param);
 			}
 			return filter_var($value, $rule);
 		};
-		$sanitize = function ($value) use ($filter) {
-			if (!is_array($value)) {
+		$sanitize = function ($value) use($filter)
+		{
+			if (! is_array($value)) {
 				return $value = $filter($value);
 			}
 			foreach ($value as &$val) {

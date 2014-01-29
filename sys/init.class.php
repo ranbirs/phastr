@@ -2,21 +2,22 @@
 
 namespace sys;
 
-class Init {
+class Init
+{
 
-	private static $util, $route, $session, $view, $load, $request;
+	private static $util, $route, $session, $load, $view, $request;
 
 	function __construct()
 	{
-		self::$util = new \sys\Util;
-		self::$route = new \sys\Route;
-
-		self::$session = new \sys\Session;
-		self::$load = new \sys\Load;
-		self::$view = new \sys\View;
-
-		self::$load->controller(self::$route->controller())
-			->dispatch(self::$route->method(), self::$route->page(), self::$route->action(), self::$route->params());
+		self::$util = new \sys\Util();
+		self::$route = new \sys\Route();
+		
+		self::$session = new \sys\Session();
+		self::$load = new \sys\Load();
+		self::$view = new \sys\View();
+		
+		self::$load->controller(self::$route->controller())->dispatch(self::$route->method(), self::$route->page(), 
+			self::$route->action(), self::$route->params());
 	}
 
 	public static function util()
@@ -46,7 +47,7 @@ class Init {
 
 	public static function request()
 	{
-		return (isset(self::$request)) ? self::$request : self::$request = new \sys\modules\Request;
+		return (isset(self::$request)) ? self::$request : self::$request = new \sys\modules\Request();
 	}
 
 }

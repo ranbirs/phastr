@@ -4,15 +4,12 @@ namespace sys\utils;
 
 use sys\Util;
 
-class Conf extends Util {
+class Conf extends Util
+{
 
 	public function k($const, $context = 'config', $base = app__)
 	{
-		if (is_null($constant = $this->constant($const .= '__', $context, $base))) {
-			$this->loader()->resolveInclude($context, 'conf', false, app__);//
-			$constant = $this->constant($const, $context, $base);
-		}
-		return $constant;
+		return $this->constant($const .= '__', $context, $base);
 	}
 
 	public function ini($path, $sections = true)
@@ -23,7 +20,7 @@ class Conf extends Util {
 
 	protected function constant($const, $context, $base)
 	{
-		return constant($base . '\\confs\\' . $context . '\\' . $const);
+		return constant($base . '\\confs\\' . $context . '::' . $const);
 	}
 
 }

@@ -2,7 +2,8 @@
 
 namespace sys\traits;
 
-trait View {
+trait View
+{
 
 	public function view()
 	{

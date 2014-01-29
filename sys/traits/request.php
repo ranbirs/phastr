@@ -2,7 +2,8 @@
 
 namespace sys\traits;
 
-trait Request {
+trait Request
+{
 
 	public function request()
 	{

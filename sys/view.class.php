@@ -4,8 +4,8 @@ namespace sys;
 
 use sys\modules\Assets;
 
-class View {
-
+class View
+{
 	use \sys\traits\Util;
 
 	public $request, $response, $error, $type, $page, $body, $title, $callback;
@@ -14,12 +14,11 @@ class View {
 
 	function __construct()
 	{
-
 	}
 
 	public function assets()
 	{
-		return (isset($this->_assets)) ? $this->_assets : $this->_assets = new \sys\modules\Assets;
+		return (isset($this->_assets)) ? $this->_assets : $this->_assets = new \sys\modules\Assets();
 	}
 
 	public function block($path)
@@ -46,16 +45,16 @@ class View {
 
 	public function layout($path = null)
 	{
-		$file = $this->_resolveFile(($path) ? $path : \app\confs\config\layout__, 'layout');
+		$file = $this->_resolveFile(($path) ? $path : \app\confs\Config::layout__, 'layout');
 		$this->_includeFile($file, true);
-
-		exit;
+		
+		exit();
 	}
 
 	private function _render($path, $type = 'page')
 	{
 		$file = $this->_resolveFile($path, $type);
-		if (!$file) {
+		if (! $file) {
 			return false;
 		}
 		ob_start();
@@ -71,7 +70,7 @@ class View {
 
 	private function _includeFile($file, $require = false)
 	{
-		if (!$require) {
+		if (! $require) {
 			include $file;
 		}
 		else {

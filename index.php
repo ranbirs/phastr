@@ -1,6 +1,6 @@
 <?php
 
-//define('dir__', DIRECTORY_SEPARATOR);
+// define('dir__', DIRECTORY_SEPARATOR);
 define('eol__', PHP_EOL);
 
 define('sys__', 'sys');

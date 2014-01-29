@@ -4,14 +4,14 @@ namespace sys\utils;
 
 use sys\Util;
 
-class Hash extends Util {
-
-	const algo__ = \app\confs\hash\algo__;
-	const key__ = \app\confs\hash\key__;
-	const cipher__ = \app\confs\hash\cipher__;
-	const cost__ = \app\confs\hash\cost__;
-	const salt__ = \app\confs\hash\salt__;
-	const range__ = \app\confs\hash\range__;
+class Hash extends Util
+{
+	const algo__ = \app\confs\Hash::algo__;
+	const key__ = \app\confs\Hash::key__;
+	const cipher__ = \app\confs\Hash::cipher__;
+	const cost__ = \app\confs\Hash::cost__;
+	const salt__ = \app\confs\Hash::salt__;
+	const range__ = \app\confs\Hash::range__;
 
 	public function gen($data = '', $algo = self::algo__, $key = self::key__)
 	{
@@ -20,12 +20,12 @@ class Hash extends Util {
 		}
 		return ($key) ? hash_hmac($algo, $data, $key) : hash($algo, $data);
 	}
-	
+
 	public function cipher($data = '')
 	{
 		return crypt($data, self::cipher__ . self::cost__ . '$' . $this->salt(self::salt__));
 	}
-	
+
 	public function resolve($hash, $data = '', $algo = self::algo__, $key = self::key__)
 	{
 		if ($algo) {
@@ -53,7 +53,7 @@ class Hash extends Util {
 		$length = (int) $length;
 		$index_range = strlen($range) - 1;
 		$salt = '';
-		for ($c = 0; $c < $length; $c++)
+		for ($c = 0; $c < $length; $c ++)
 			$salt .= $range[mt_rand(0, $index_range)];
 		return $salt;
 	}

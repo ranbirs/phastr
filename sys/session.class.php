@@ -2,8 +2,8 @@
 
 namespace sys;
 
-class Session {
-
+class Session
+{
 	use \sys\traits\Util;
 
 	protected $session_id;
@@ -17,7 +17,7 @@ class Session {
 	{
 		session_start();
 		$this->session_id = session_id();
-		if (!isset($_SESSION[$this->session_id])) {
+		if (! isset($_SESSION[$this->session_id])) {
 			$this->generate();
 		}
 		$this->register();
@@ -45,13 +45,14 @@ class Session {
 		$this->set('_token', $this->util()->hash()->rand());
 		$this->set('_key', $this->keygen());
 		$this->set(['_timestamp' => 0], microtime(true));
-		$this->set(['_client' => 'lang'], \app\confs\config\lang__);
+		$this->set(['_client' => 'lang'], \app\confs\Config::lang__);
 	}
-	
+
 	protected function register()
 	{
 		$this->set(['_timestamp' => 1], microtime(true));
-		$this->set(['_client' => 'agent'], (isset($_SERVER['HTTP_USER_AGENT'])) ? $_SERVER['HTTP_USER_AGENT'] : null);
+		$this->set(['_client' => 'agent'], 
+			(isset($_SERVER['HTTP_USER_AGENT'])) ? $_SERVER['HTTP_USER_AGENT'] : null);
 	}
 
 	public function token()
@@ -82,9 +83,8 @@ class Session {
 
 	public function get($subj, $key = null)
 	{
-		return (!is_null($key)) ?
-			((isset($_SESSION[$this->session_id][$subj][$key])) ? $_SESSION[$this->session_id][$subj][$key] : null) :
-			((isset($_SESSION[$this->session_id][$subj])) ? $_SESSION[$this->session_id][$subj] : null);
+		return (! is_null($key)) ? ((isset($_SESSION[$this->session_id][$subj][$key])) ? $_SESSION[$this->session_id][$subj][$key] : null) : ((isset(
+			$_SESSION[$this->session_id][$subj])) ? $_SESSION[$this->session_id][$subj] : null);
 	}
 
 	public function set($subj, $value = null)
@@ -94,15 +94,13 @@ class Session {
 			$key = current($subj);
 			$subj = key($subj);
 		}
-		return (!is_null($key)) ?
-			$_SESSION[$this->session_id][$subj][$key] = $value :
-			$_SESSION[$this->session_id][$subj] = $value;
+		return (! is_null($key)) ? $_SESSION[$this->session_id][$subj][$key] = $value : $_SESSION[$this->session_id][$subj] = $value;
 	}
 
 	public function drop($subj, $key = null)
 	{
 		if ($this->get($subj, $key)) {
-			if (!is_null($key)) {
+			if (! is_null($key)) {
 				unset($_SESSION[$this->session_id][$subj][$key]);
 			}
 			else {

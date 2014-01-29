@@ -2,7 +2,8 @@
 
 namespace sys\traits;
 
-trait Util {
+trait Util
+{
 
 	public function util()
 	{

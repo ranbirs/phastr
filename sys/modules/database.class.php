@@ -5,15 +5,14 @@ namespace sys\modules;
 use PDO;
 use PDOException;
 
-class Database extends PDO {
-
+class Database extends PDO
+{
 	use \sys\traits\Util;
-
-	const type__ = \app\confs\database\type__;
-	const host__ = \app\confs\database\host__;
-	const name__ = \app\confs\database\name__;
-	const user__ = \app\confs\database\user__;
-	const pass__ = \app\confs\database\pass__;
+	const type__ = \app\confs\Database::type__;
+	const host__ = \app\confs\Database::host__;
+	const name__ = \app\confs\Database::name__;
+	const user__ = \app\confs\Database::user__;
+	const pass__ = \app\confs\Database::pass__;
 
 	protected $dsn, $sth, $client;
 
@@ -24,7 +23,7 @@ class Database extends PDO {
 		}
 		catch (PDOException $e) {
 			throw $e;
-			exit;
+			exit();
 		}
 	}
 
@@ -46,10 +45,9 @@ class Database extends PDO {
 	public function query($statement, $values = [])
 	{
 		$this->sth = $this->prepare($statement);
-
-		if ($values === array_values($values)) {
-			array_unshift($values, '');
-			unset($values[0]);
+		
+		if ($this->util()->helper()->isIndexArray($values)) {
+			$values = $this->util()->helper()->shiftArrayIndex($values, 1);
 		}
 		foreach ($values as $key => $val) {
 			switch (count($val = (array) $val)) {
@@ -70,7 +68,7 @@ class Database extends PDO {
 	{
 		$cols = implode(', ', $cols);
 		$this->sth = $this->prepare("SELECT $cols FROM $table $clause");
-
+		
 		foreach ($params as $key => $val) {
 			$this->sth->bindValue($key, $val);
 		}
@@ -86,7 +84,7 @@ class Database extends PDO {
 		$values = $this->util()->helper()->composeArray(' = ', $values);
 		$values = implode(', ', $values);
 		$this->sth = $this->prepare("UPDATE $table SET $values $clause");
-
+		
 		foreach ($params as $key => $val) {
 			$this->sth->bindValue($key, $val);
 		}
@@ -98,7 +96,7 @@ class Database extends PDO {
 		$cols = implode(', ', array_keys($values));
 		$values = implode(', ', array_values($values));
 		$this->sth = $this->prepare("INSERT INTO $table ($cols) VALUES ($values)");
-
+		
 		foreach ($params as $key => $val) {
 			$this->sth->bindValue($key, $val);
 		}

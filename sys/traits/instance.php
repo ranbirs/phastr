@@ -2,7 +2,8 @@
 
 namespace sys\traits;
 
-trait Instance {
+trait Instance
+{
 
 	private $_instance;
 
