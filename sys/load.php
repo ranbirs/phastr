@@ -4,6 +4,7 @@ namespace sys;
 
 class Load
 {
+	
 	use \sys\traits\Util;
 	use \sys\traits\Instance;
 
@@ -11,44 +12,34 @@ class Load
 	{
 	}
 
+	public function controller($path)
+	{
+		return $this->util()->loader()->instanciate($path, 'controller');
+	}
+
 	public function module($path, $base = app__)
 	{
-		return $this->util()->loader()->resolveInclude($path, 'module', true, $this->instance(), $base);
+		return $this->util()->loader()->instanciate($path, 'module', $this->instance(), $base);
 	}
 
 	public function model($path)
 	{
-		return $this->util()->loader()->resolveInclude($path, 'model', true, $this->instance());
+		return $this->util()->loader()->instanciate($path, 'model', $this->instance());
 	}
 
 	public function form($path)
 	{
-		return $this->util()->loader()->resolveInclude($path, 'form', true, $this->instance());
+		return $this->util()->loader()->instanciate($path, 'form', $this->instance());
 	}
 
 	public function nav($path)
 	{
-		return $this->util()->loader()->resolveInclude($path, 'nav', true, $this->instance());
+		return $this->util()->loader()->instanciate($path, 'nav', $this->instance());
 	}
 
 	public function service($path, $data = null)
 	{
-		return $this->util()->loader()->resolveInclude($path, 'service', true, $this->instance());
-	}
-
-	public function controller($path)
-	{
-		return $this->util()->loader()->resolveInclude($path, 'controller', true, false);
-	}
-
-	public function conf($path, $base = app__)
-	{
-		return $this->util()->loader()->resolveInclude($path, 'conf', false, false);
-	}
-
-	public function vocab($path, $lang = '')
-	{
-		return $this->util()->loader()->resolveInclude(($lang) ? $lang . '/' . $path : $path, 'vocab', false, false);
+		return $this->util()->loader()->instanciate($path, 'service', $this->instance());
 	}
 
 }

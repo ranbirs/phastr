@@ -1,6 +1,6 @@
 <?php
 
-namespace sys;
+namespace sys\modules;
 
 class Session
 {
@@ -10,12 +10,14 @@ class Session
 
 	function __construct()
 	{
+		if (session_status() !== PHP_SESSION_ACTIVE) {
+			session_start();
+		}
 		$this->start();
 	}
 
 	public function start()
 	{
-		session_start();
 		$this->session_id = session_id();
 		if (! isset($_SESSION[$this->session_id])) {
 			$this->generate();

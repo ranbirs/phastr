@@ -6,8 +6,11 @@ use sys\Module;
 
 class Assets extends Module
 {
+
 	const script__ = 'js';
+
 	const style__ = 'css';
+
 	const hash__ = 'md5';
 
 	protected $assets = [];

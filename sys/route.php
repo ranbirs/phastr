@@ -4,37 +4,31 @@ namespace sys;
 
 class Route
 {
+	
 	use \sys\traits\Util;
-	const rewrite__ = \app\confs\Route::rewrite__;
-	const name__ = \app\confs\Route::name__;
-	const base__ = \app\confs\Route::base__;
-	const controllers__ = \app\confs\Route::controllers__;
-	const autoload__ = \app\confs\Route::autoload__;
-	const homepage__ = \app\confs\Route::homepage__;
-	const page__ = \app\confs\Route::page__;
-	const action__ = \app\confs\Route::action__;
-	const method__ = \app\confs\Route::method__;
+
 	const length__ = 128;
 
 	protected $path;
 
 	function __construct()
 	{
-		$name = self::name__;
+		$name = \app\confs\Route::name__;
 		$path = (isset($_GET[$name])) ? $this->util()->helper()->splitString('/', $_GET[$name], 4) : [];
 		$path = ['request' => $path, 'route' => $path];
 		
 		if (empty($path['request'])) {
-			$path['route'] = [self::autoload__, self::homepage__, self::action__];
+			$path['route'] = [\app\confs\Route::autoload__, \app\confs\Route::homepage__, 
+				\app\confs\Route::action__];
 		}
-		if (! in_array($path['route'][0], $this->util()->helper()->splitString(',', self::controllers__))) {
-			array_unshift($path['route'], self::autoload__);
+		if (! in_array($path['route'][0], $this->util()->helper()->splitString(',', \app\confs\Route::controllers__))) {
+			array_unshift($path['route'], \app\confs\Route::autoload__);
 		}
 		if (! isset($path['route'][1])) {
-			$path['route'][1] = self::page__;
+			$path['route'][1] = \app\confs\Route::page__;
 		}
 		if (! isset($path['route'][2])) {
-			$path['route'][2] = self::action__;
+			$path['route'][2] = \app\confs\Route::action__;
 		}
 		$path['params'] = current(array_slice($path['route'], 3));
 		$path['route'] = array_slice($path['route'], 0, 3);
@@ -43,16 +37,16 @@ class Route
 			if ((strlen($arg) > self::length__) || preg_match('/[^a-z0-9-]/', $arg = strtolower($arg))) {
 				return $this->error(404);
 			}
-			if (($path['label'][$index] = $this->util()->helper()->path($arg)) == self::method__) {
+			if (($path['label'][$index] = $this->util()->helper()->path($arg)) == \app\confs\Route::method__) {
 				return $this->error(404);
 			}
 		}
 		unset($arg);
 		$path['path'] = $path['route'];
-		if ($path['route'][2] == self::action__) {
+		if ($path['route'][2] == \app\confs\Route::action__) {
 			array_pop($path['path']);
 		}
-		if ($path['route'][0] == self::autoload__) {
+		if ($path['route'][0] == \app\confs\Route::autoload__) {
 			array_shift($path['path']);
 		}
 		$path['path'] = implode('/', $path['path']);
@@ -95,9 +89,9 @@ class Route
 
 	public function method($methods = [])
 	{
-		if (self::method__) {
-			$page[] = self::method__;
-			$action[] = self::method__;
+		if (\app\confs\Route::method__) {
+			$page[] = \app\confs\Route::method__;
+			$action[] = \app\confs\Route::method__;
 		}
 		$page[] = $this->path['label'][1];
 		$action[] = $this->path['label'][2];

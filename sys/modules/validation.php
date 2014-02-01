@@ -6,13 +6,17 @@ use sys\Module;
 
 class Validation extends Module
 {
+
 	const error__ = 'error';
+
 	const success__ = 'success';
 
 	protected $result = [];
 
 	function __construct()
 	{
+		$this->load()->module('session', sys__);
+		$this->load()->module('request', sys__);
 	}
 
 	public function getResult($status = null)
@@ -55,10 +59,10 @@ class Validation extends Module
 				if (! is_array($param)) {
 					return false;
 				}
-				$request = $this->request()->{$rule}(key($param));
+				$request = $this->request->{$rule}(key($param));
 				return (! is_null($value) && $value === $request && $request === current($param));
 			case 'token':
-				return (! is_null($param) && $value === $this->session()->get($param, 'token'));
+				return (! is_null($param) && $value === $this->session->get($param, 'token'));
 			case 'match':
 				return (! is_null($param) && strcmp($value, $param) == 0);
 			case 'required':

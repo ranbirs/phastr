@@ -6,14 +6,8 @@ use sys\Util;
 
 class Hash extends Util
 {
-	const algo__ = \app\confs\Hash::algo__;
-	const key__ = \app\confs\Hash::key__;
-	const cipher__ = \app\confs\Hash::cipher__;
-	const cost__ = \app\confs\Hash::cost__;
-	const salt__ = \app\confs\Hash::salt__;
-	const range__ = \app\confs\Hash::range__;
 
-	public function gen($data = '', $algo = self::algo__, $key = self::key__)
+	public function gen($data = '', $algo = \app\confs\Hash::algo__, $key = \app\confs\Hash::key__)
 	{
 		if (empty($data)) {
 			$data = uniqid($this->salt(), true);
@@ -23,16 +17,18 @@ class Hash extends Util
 
 	public function cipher($data = '')
 	{
-		return crypt($data, self::cipher__ . self::cost__ . '$' . $this->salt(self::salt__));
+		return crypt($data, 
+			\app\confs\Hash::cipher__ . \app\confs\Hash::cost__ . '$' . $this->salt(\app\confs\Hash::salt__));
 	}
 
-	public function resolve($hash, $data = '', $algo = self::algo__, $key = self::key__)
+	public function resolve($hash, $data = '', $algo = \app\confs\Hash::algo__, $key = \app\confs\Hash::key__)
 	{
 		if ($algo) {
 			$subj = $this->gen($data, $algo, $key);
 		}
 		else {
-			$salt = substr($hash, 0, strlen(self::cipher__ . self::cost__) + 1 + self::salt__);
+			$salt = substr($hash, 0, 
+				strlen(\app\confs\Hash::cipher__ . \app\confs\Hash::cost__) + 1 + \app\confs\Hash::salt__);
 			$subj = crypt($data, $salt);
 		}
 		return ($hash === $subj);
@@ -48,7 +44,7 @@ class Hash extends Util
 		return $hash;
 	}
 
-	public function salt($length = 16, $range = self::range__)
+	public function salt($length = 16, $range = \app\confs\Hash::range__)
 	{
 		$length = (int) $length;
 		$index_range = strlen($range) - 1;

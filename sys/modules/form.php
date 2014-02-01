@@ -19,6 +19,7 @@ abstract class Form extends Module
 
 	function __construct()
 	{
+		$this->load()->module('session', sys__);
 	}
 
 	abstract protected function build();
@@ -35,25 +36,26 @@ abstract class Form extends Module
 
 	public function resolve($layout = 'json')
 	{
+		$this->load()->module('request', sys__);
 		$this->load()->module('validation', sys__);
 		
-		$this->request()->layout = $layout;
+		$this->request->layout = $layout;
 		$method = $this->method;
 		
 		foreach ($this->sanitized as $id => $filter) {
-			$this->request()->{$method}($id, $this->validation->sanitize($this->request()->{$method}($id), $filter));
+			$this->request->{$method}($id, $this->validation->sanitize($this->request->{$method}($id), $filter));
 		}
 		foreach ($this->validated as $id => $validation) {
-			$this->validation->resolve($id, $validation, $this->request()->{$method}($id));
+			$this->validation->resolve($id, $validation, $this->request->{$method}($id));
 		}
-		$this->submit = $this->request()->fields($this->form_id, $this->method);
+		$this->submit = $this->request->fields($this->form_id, $this->method);
 		$validate = $this->validate($this->submit, $this->import);
 		
 		if (array_key_exists(Validation::error__, $result = $this->validation->getResult())) {
 			if (! isset($this->error)) {
 				$this->error();
 			}
-			$this->error['validation'] = $result; //
+			$this->error['validation'] = $result;
 			return $this->error;
 		}
 		if (! $validate) {
@@ -62,7 +64,7 @@ abstract class Form extends Module
 		$this->submit($this->submit, $this->import);
 		
 		if ((isset($this->expire)) ? $this->expire : $this->expire()) {
-			$this->session()->drop($this->form_id, 'token');
+			$this->session->drop($this->form_id, 'token');
 		}
 		return (isset($this->success)) ? $this->success : $this->success();
 	}
@@ -77,7 +79,7 @@ abstract class Form extends Module
 		
 		$attr['id'] = $this->form_id;
 		$attr['method'] = $method;
-		$attr['action'] = $this->util()->helper()->path(['form', $this->form_id], Request::param__) . '/'; //
+		$attr['action'] = $this->util()->helper()->path(['form', $this->form_id], Request::param__) . '/';
 		$this->build['title'] = $title;
 		$this->build['attr'] = $attr;
 		
@@ -88,11 +90,11 @@ abstract class Form extends Module
 
 	protected function close()
 	{
-		if (! $this->session()->get($this->form_id, 'token')) {
-			$this->session()->set([$this->form_id => 'token'], $this->util()->hash()->rand());
+		if (! $this->session->get($this->form_id, 'token')) {
+			$this->session->set([$this->form_id => 'token'], $this->util()->hash()->rand());
 		}
-		$header_id = $this->session()->token();
-		$session_key = $this->session()->key();
+		$header_id = $this->session->token();
+		$session_key = $this->session->key();
 		
 		$this->field(['input' => 'hidden'], '_header_id_' . $session_key, null, 
 			$params = ['value' => $header_id, 'validate' => ['header' => [$session_key => $header_id]]]);
@@ -101,7 +103,7 @@ abstract class Form extends Module
 				'validate' => [$this->method => [
 					$this->form_id . '__form_id_' . $session_key => $this->form_id]]]);
 		$this->field(['input' => 'hidden'], '_form_token_' . $session_key, null, 
-			$params = ['value' => $this->session()->get($this->form_id, 'token'), 
+			$params = ['value' => $this->session->get($this->form_id, 'token'), 
 				'validate' => ['token' => $this->form_id]]);
 	}
 

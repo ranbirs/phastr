@@ -53,8 +53,8 @@ class Helper extends Util
 				$path = str_replace(['__', '--', '-'], ['/', '/', '_'], $path);
 				break;
 			case 'route':
-				$path = (\sys\Route::rewrite__) ? '/' . $this->path($path, 'base') : '/' . $this->path('', 'base') . '?' .
-					 \sys\Route::name__ . '=' . $path;
+				$path = (\app\confs\Route::rewrite__) ? '/' . $this->path($path, 'base') : '/' . $this->path('', 'base') .
+					 '?' . \app\confs\Route::name__ . '=' . $path;
 				break;
 			case 'ajax':
 				$path = $this->route()->route() . '/' . \sys\modules\Request::param__ . '/' . $path;
@@ -64,7 +64,7 @@ class Helper extends Util
 					'tree');
 				break;
 			case 'base':
-				$path = ($base = \sys\Route::base__) ? (($path) ? $base . '/' . $path : $base) : (($path) ? $path : '');
+				$path = ($base = \app\confs\Route::base__) ? (($path) ? $base . '/' . $path : $base) : (($path) ? $path : '');
 				break;
 			case 'root':
 				$path = ($path) ? $_SERVER['DOCUMENT_ROOT'] . '/' . $path : $_SERVER['DOCUMENT_ROOT'];

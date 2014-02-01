@@ -7,18 +7,15 @@ use sys\Module;
 class Request extends Module
 {
 	use \sys\traits\Instance;
-	const method__ = \app\confs\Request::method__;
-	const layout__ = \app\confs\Request::layout__;
+
 	const param__ = 'ajax';
 
-	public $method = self::method__;
+	public $method = \app\confs\Request::method__;
 
-	public $layout = self::layout__;
+	public $layout = \app\confs\Request::layout__;
 
 	function __construct()
 	{
-		$this->view()->assets()->set(['script' => 'inline'], 
-			'$.ajaxSetup({headers: {\'' . $this->session()->key() . '\': \'' . $this->session()->token() . '\'}});');
 	}
 
 	public function header($key)
@@ -71,35 +68,6 @@ class Request extends Module
 			$GLOBALS[$global][$key] = $value;
 		}
 		return (! is_null($key)) ? ((isset($GLOBALS[$global][$key])) ? $GLOBALS[$global][$key] : false) : $GLOBALS[$global];
-	}
-
-	public function resolve($params = [])
-	{
-		if (! isset($params[2]) || $params[0] !== self::param__) {
-			return false;
-		}
-		if ($this->header($this->session()->key()) !== $this->session()->token()) {
-			return false;
-		}
-		$subj = $params[2];
-		switch ($context = $params[1]) {
-			case 'request':
-				$this->view()->request = $this->globals($this->method);
-				$this->view()->response = $this->view()->request($subj);
-				if ($this->view()->response !== false) {
-					return true;
-				}
-				return false;
-			case 'form':
-				if ($this->instance()->$subj instanceof \sys\modules\Form) {
-					$this->view()->request = $this->globals($this->instance()->$subj->method());
-					$this->view()->response = $this->instance()->$subj->resolve('json');
-					return true;
-				}
-				return false;
-			default:
-				return false;
-		}
 	}
 
 }

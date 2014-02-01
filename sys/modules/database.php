@@ -8,28 +8,18 @@ use PDOException;
 class Database extends PDO
 {
 	use \sys\traits\Util;
-	const type__ = \app\confs\Database::type__;
-	const host__ = \app\confs\Database::host__;
-	const name__ = \app\confs\Database::name__;
-	const user__ = \app\confs\Database::user__;
-	const pass__ = \app\confs\Database::pass__;
 
-	protected $dsn, $sth, $client;
+	protected $sth, $client;
 
 	function __construct($dsn, $user, $pass)
 	{
 		try {
-			parent::__construct($this->dsn = $dsn, $user, $pass);
+			parent::__construct($dsn, $user, $pass);
 		}
 		catch (PDOException $e) {
 			throw $e;
 			exit();
 		}
-	}
-
-	public function dsn()
-	{
-		return $this->dsn;
 	}
 
 	public function sth()

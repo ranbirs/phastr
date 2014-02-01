@@ -6,6 +6,7 @@ use sys\modules\Assets;
 
 class View
 {
+	
 	use \sys\traits\Util;
 
 	public $request, $response, $error, $type, $page, $body, $title, $callback;

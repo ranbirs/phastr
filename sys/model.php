@@ -6,12 +6,11 @@ use sys\modules\Database;
 
 abstract class Model
 {
+	
 	use \sys\traits\Route;
-	use \sys\traits\Util;
 	use \sys\traits\Load;
 	use \sys\traits\View;
-	use \sys\traits\Session;
-	use \sys\traits\Request;
+	use \sys\traits\Util;
 
 	private $_database;
 
@@ -19,10 +18,15 @@ abstract class Model
 	{
 	}
 
-	public function database($type = Database::type__, $host = Database::host__, $name = Database::name__, $user = Database::user__, $pass = Database::pass__)
+	private function dsn($type = \app\confs\Database::type__, $host = \app\confs\Database::host__, $name = \app\confs\Database::name__)
+	{
+		return $type . ':host=' . $host . ';dbname=' . $name;
+	}
+
+	public function database($dsn = null, $user = \app\confs\Database::user__, $pass = \app\confs\Database::pass__)
 	{
 		return (isset($this->_database)) ? $this->_database : $this->_database = new Database(
-			$type . ':host=' . $host . ';dbname=' . $name, $user, $pass);
+			($dsn) ? $dsn : $this->dsn(), $user, $pass);
 	}
 
 }

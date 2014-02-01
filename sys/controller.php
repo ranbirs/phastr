@@ -4,12 +4,11 @@ namespace sys;
 
 abstract class Controller
 {
+	
 	use \sys\traits\Route;
-	use \sys\traits\Session;
 	use \sys\traits\Load;
 	use \sys\traits\View;
 	use \sys\traits\Util;
-	use \sys\traits\Request;
 
 	function __construct()
 	{
@@ -27,13 +26,12 @@ abstract class Controller
 		if (! $render) {
 			$this->route()->error(404);
 		}
-		$this->render(($this->request()->resolve($params)) ? 'request/' . $this->request()->layout : null);
+		$this->render();
 	}
 
 	public function render()
 	{
-		$this->view()->page = $this->view()->page();
-		$this->view()->layout(func_get_arg(0));
+		$this->view()->layout();
 	}
 
 }
