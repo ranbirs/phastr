@@ -47,6 +47,7 @@ class Init
 
 	public static function request()
 	{
+		/* modules to load() */
 		return (isset(self::$request)) ? self::$request : self::$request = new \sys\modules\Request();
 	}
 

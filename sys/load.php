@@ -13,8 +13,7 @@ class Load
 
 	public function module($path, $base = app__)
 	{
-		$ext = [app__ => 'php', sys__ => 'class.php'];
-		return $this->util()->loader()->resolveInclude($path, 'module', true, $this->instance(), $base, $ext[$base]);
+		return $this->util()->loader()->resolveInclude($path, 'module', true, $this->instance(), $base);
 	}
 
 	public function model($path)
@@ -44,12 +43,12 @@ class Load
 
 	public function conf($path, $base = app__)
 	{
-		return $this->util()->loader()->resolveInclude($path, 'conf', false, $base);
+		return $this->util()->loader()->resolveInclude($path, 'conf', false, false);
 	}
 
 	public function vocab($path, $lang = '')
 	{
-		return $this->util()->loader()->resolveInclude(($lang) ? $lang . '/' . $path : $path, 'vocab', false);
+		return $this->util()->loader()->resolveInclude(($lang) ? $lang . '/' . $path : $path, 'vocab', false, false);
 	}
 
 }

@@ -1,5 +1,6 @@
 <?php
-require sys__ . '/autoload.php';
+
+spl_autoload_register();
 
 require app__ . '/confs/config.php';
 require app__ . '/confs/route.php';
