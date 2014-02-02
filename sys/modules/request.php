@@ -2,11 +2,8 @@
 
 namespace sys\modules;
 
-use sys\Module;
-
-class Request extends Module
+class Request extends \sys\Module
 {
-	use \sys\traits\Instance;
 
 	const param__ = 'ajax';
 

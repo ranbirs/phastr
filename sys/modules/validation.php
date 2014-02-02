@@ -2,9 +2,7 @@
 
 namespace sys\modules;
 
-use sys\Module;
-
-class Validation extends Module
+class Validation extends \sys\Module
 {
 
 	const error__ = 'error';

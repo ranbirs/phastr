@@ -2,9 +2,7 @@
 
 namespace sys\utils;
 
-use sys\Util;
-
-class Helper extends Util
+class Helper extends \sys\Util
 {
 	use \sys\traits\Route;
 

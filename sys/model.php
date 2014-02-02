@@ -2,14 +2,12 @@
 
 namespace sys;
 
-use sys\modules\Database;
-
 abstract class Model
 {
 	
 	use \sys\traits\Route;
-	use \sys\traits\Load;
 	use \sys\traits\View;
+	use \sys\traits\Load;
 	use \sys\traits\Util;
 
 	private $_database;
@@ -25,7 +23,7 @@ abstract class Model
 
 	public function database($dsn = null, $user = \app\confs\Database::user__, $pass = \app\confs\Database::pass__)
 	{
-		return (isset($this->_database)) ? $this->_database : $this->_database = new Database(
+		return (isset($this->_database)) ? $this->_database : $this->_database = new \sys\modules\Database(
 			($dsn) ? $dsn : $this->dsn(), $user, $pass);
 	}
 

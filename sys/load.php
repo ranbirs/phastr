@@ -6,40 +6,50 @@ class Load
 {
 	
 	use \sys\traits\Util;
-	use \sys\traits\Instance;
 
-	function __construct()
+	private $_instance;
+
+	function __construct($instance)
 	{
+		$this->_instance = $instance;
 	}
 
-	public function controller($path)
+	private function _instance($path, $type, $base = app__, $prop = true)
 	{
-		return $this->util()->loader()->instanciate($path, 'controller');
-	}
-
-	public function module($path, $base = app__)
-	{
-		return $this->util()->loader()->instanciate($path, 'module', $this->instance(), $base);
+		$path = $this->util()->helper()->path($type . 's/' . $path);
+		$name = $this->util()->helper()->pathName($path);
+		$class = $this->util()->helper()->pathClass('\\' . $base . '\\' . $path);
+		return ($prop) ? $this->_instance->$name = new $class() : new $class();
 	}
 
 	public function model($path)
 	{
-		return $this->util()->loader()->instanciate($path, 'model', $this->instance());
+		return $this->_instance($path, 'model');
+	}
+
+	public function module($path, $base = app__)
+	{
+		return $this->_instance($path, 'module', $base);
 	}
 
 	public function form($path)
 	{
-		return $this->util()->loader()->instanciate($path, 'form', $this->instance());
+		return $this->_instance($path, 'form');
 	}
 
 	public function nav($path)
 	{
-		return $this->util()->loader()->instanciate($path, 'nav', $this->instance());
+		return $this->_instance($path, 'nav');
 	}
 
 	public function service($path, $data = null)
 	{
-		return $this->util()->loader()->instanciate($path, 'service', $this->instance());
+		return $this->_instance($path, 'service');
+	}
+
+	public function init($path)
+	{
+		return $this->_instance($path, 'controller', app__, false);
 	}
 
 }

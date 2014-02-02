@@ -2,9 +2,7 @@
 
 namespace sys\utils;
 
-use sys\Util;
-
-class Vocab extends Util
+class Vocab extends \sys\Util
 {
 
 	public function t($const, $context, $lang = \app\confs\Config::lang__)

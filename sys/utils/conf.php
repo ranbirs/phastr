@@ -2,9 +2,7 @@
 
 namespace sys\utils;
 
-use sys\Util;
-
-class Conf extends Util
+class Conf extends \sys\Util
 {
 
 	public function k($const, $context = 'config', $base = app__)

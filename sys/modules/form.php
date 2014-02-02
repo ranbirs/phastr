@@ -2,11 +2,10 @@
 
 namespace sys\modules;
 
-use sys\Module;
 use sys\modules\Request;
 use sys\modules\Validation;
 
-abstract class Form extends Module
+abstract class Form extends \sys\Module
 {
 
 	protected $form_id, $method, $import, $submit;
@@ -91,18 +90,19 @@ abstract class Form extends Module
 	protected function close()
 	{
 		if (! $this->session->get($this->form_id, 'token')) {
-			$this->session->set([$this->form_id => 'token'], $this->util()->hash()->rand());
+			$this->session->set([$this->form_id => 'token'], $this->util()->hash()->rand('sha256'));
 		}
-		$header_id = $this->session->token();
+		$session_token = $this->session->token();
 		$session_key = $this->session->key();
 		
-		$this->field(['input' => 'hidden'], '_header_id_' . $session_key, null, 
-			$params = ['value' => $header_id, 'validate' => ['header' => [$session_key => $header_id]]]);
-		$this->field(['input' => 'hidden'], '_form_id_' . $session_key, null, 
+		$this->field(['input' => 'hidden'], '_header_id_' . $session_token, null, 
+			$params = ['value' => $session_key, 'validate' => [
+				'header' => [$session_token => $session_key]]]);
+		$this->field(['input' => 'hidden'], '_form_id_' . $session_token, null, 
 			$params = ['value' => $this->form_id, 
 				'validate' => [$this->method => [
-					$this->form_id . '__form_id_' . $session_key => $this->form_id]]]);
-		$this->field(['input' => 'hidden'], '_form_token_' . $session_key, null, 
+					$this->form_id . '__form_id_' . $session_token => $this->form_id]]]);
+		$this->field(['input' => 'hidden'], '_form_token_' . $session_token, null, 
 			$params = ['value' => $this->session->get($this->form_id, 'token'), 
 				'validate' => ['token' => $this->form_id]]);
 	}

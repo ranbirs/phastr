@@ -10,14 +10,14 @@ class Session
 
 	function __construct()
 	{
-		if (session_status() !== PHP_SESSION_ACTIVE) {
-			session_start();
-		}
 		$this->start();
 	}
 
 	public function start()
 	{
+		if (session_status() !== PHP_SESSION_ACTIVE) {
+			session_start();
+		}
 		$this->session_id = session_id();
 		if (! isset($_SESSION[$this->session_id])) {
 			$this->generate();
@@ -37,24 +37,24 @@ class Session
 		$this->start();
 	}
 
-	public function id()
+	public function generate()
 	{
-		return $this->session_id;
-	}
-
-	protected function generate()
-	{
-		$this->set('_token', $this->util()->hash()->rand());
+		$this->set('_token', $this->util()->hash()->rand('md5'));
 		$this->set('_key', $this->keygen());
 		$this->set(['_timestamp' => 0], microtime(true));
 		$this->set(['_client' => 'lang'], \app\confs\Config::lang__);
 	}
 
-	protected function register()
+	public function register()
 	{
 		$this->set(['_timestamp' => 1], microtime(true));
 		$this->set(['_client' => 'agent'], 
 			(isset($_SERVER['HTTP_USER_AGENT'])) ? $_SERVER['HTTP_USER_AGENT'] : null);
+	}
+
+	public function id()
+	{
+		return $this->session_id;
 	}
 
 	public function token()
@@ -69,7 +69,7 @@ class Session
 
 	public function keygen($hash = null)
 	{
-		$key = $this->util()->hash()->gen($this->session_id . $this->token(), 'sha1');
+		$key = $this->util()->hash()->gen($this->session_id . $this->token(), 'sha256');
 		return (is_null($hash)) ? $key : ($hash === $key);
 	}
 

@@ -2,9 +2,7 @@
 
 namespace sys\utils;
 
-use sys\Util;
-
-class Hash extends Util
+class Hash extends \sys\Util
 {
 
 	public function gen($data = '', $algo = \app\confs\Hash::algo__, $key = \app\confs\Hash::key__)
@@ -34,7 +32,7 @@ class Hash extends Util
 		return ($hash === $subj);
 	}
 
-	public function rand($length = 0, $algo = 'sha1')
+	public function rand($algo = 'md5', $length = 0)
 	{
 		$length = (int) $length;
 		$hash = hash($algo, $this->salt());

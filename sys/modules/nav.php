@@ -2,9 +2,7 @@
 
 namespace sys\modules;
 
-use sys\Module;
-
-abstract class Nav extends Module
+abstract class Nav extends \sys\Module
 {
 
 	protected $nav_id;

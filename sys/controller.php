@@ -6,8 +6,8 @@ abstract class Controller
 {
 	
 	use \sys\traits\Route;
-	use \sys\traits\Load;
 	use \sys\traits\View;
+	use \sys\traits\Load;
 	use \sys\traits\Util;
 
 	function __construct()

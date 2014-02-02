@@ -2,9 +2,7 @@
 
 namespace sys;
 
-use sys\Model;
-
-abstract class Service extends Model
+abstract class Service extends \sys\Model
 {
 
 	function __construct()

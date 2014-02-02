@@ -2,10 +2,10 @@
 
 namespace sys\modules;
 
-use sys\Module;
-
-class Assets extends Module
+class Assets
 {
+	
+	use \sys\traits\Util;
 
 	const script__ = 'js';
 
@@ -24,7 +24,7 @@ class Assets extends Module
 		switch ($type) {
 			case 'script':
 			case 'style':
-				if (\app\confs\Config::optimize__) {
+				if (\app\confs\Config::assets__) {
 					return $this->optimize($type, $this->assets[$type]);
 				}
 				$assets = ['remote' => [], 'file' => [], 'inline' => []];
