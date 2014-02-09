@@ -96,12 +96,12 @@ abstract class Form extends \sys\Module
 		$session_key = $this->session->key();
 		
 		$this->field(['input' => 'hidden'], '_header_id_' . $session_token, null, 
-			$params = ['value' => $session_key, 'validate' => [
-				'header' => [$session_token => $session_key]]]);
+			$params = ['value' => $session_key, 'validate' => ['header' => [
+				$session_token => $session_key]]]);
 		$this->field(['input' => 'hidden'], '_form_id_' . $session_token, null, 
 			$params = ['value' => $this->form_id, 
-				'validate' => [$this->method => [
-					$this->form_id . '__form_id_' . $session_token => $this->form_id]]]);
+				'validate' => [
+					$this->method => [$this->form_id . '__form_id_' . $session_token => $this->form_id]]]);
 		$this->field(['input' => 'hidden'], '_form_token_' . $session_token, null, 
 			$params = ['value' => $this->session->get($this->form_id, 'token'), 
 				'validate' => ['token' => $this->form_id]]);
@@ -206,7 +206,7 @@ abstract class Form extends \sys\Module
 			foreach ($field['validate'] as $rule => $params) {
 				if (is_array($params) && array_intersect([Validation::error__, Validation::success__], 
 					array_keys($params))) {
-					$field['verbose'] = true;
+					$field['feedback'] = true;
 				}
 			}
 		}

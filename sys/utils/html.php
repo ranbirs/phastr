@@ -11,45 +11,42 @@ class Html extends \sys\Util
 		return (! empty($attr)) ? ' ' . implode(' ', $this->helper()->composeArray('="', $attr, '', '"')) : '';
 	}
 
-	public function asset($type = 'script', $context = null, $subj = null, $params = null, $append = null)
+	public function asset($type = 'script', $context = 'file', $subj = null, $params = null, $append = null)
 	{
 		switch ($type) {
 			case 'script':
 				switch ($context) {
-					case null:
 					case 'file':
 						$subj = '/' . $this->helper()->path($subj, 'base');
-					case 'remote':
-						$asset = '<script src="' . ((! is_null($append)) ? $subj . '?' . $append : $subj) . '"></script>';
+					case 'external':
+						$params['src'] = (! is_null($append)) ? $subj . '?' . $append : $subj;
+						$asset = '<script' . $this->attr($params) . '></script>';
 						break 2;
 					case 'inline':
-						$asset = '<script>' . $subj . '</script>';
+						$asset = '<script' . $this->attr($params) . '>' . trim($subj) . '</script>';
 						break 2;
 					default:
 						return false;
 				}
 				break;
 			case 'style':
-				if (! empty($params)) {
-					$params = $this->attr($params);
-				}
 				switch ($context) {
-					case null:
 					case 'file':
 						$subj = '/' . $this->helper()->path($subj, 'base');
-					case 'remote':
-						$asset = '<link href="' . ((! is_null($append)) ? $subj . '?' . $append : $subj) .
-							 '" rel="stylesheet"' . $params . '>';
+					case 'external':
+						$params['href'] = (! is_null($append)) ? $subj . '?' . $append : $subj;
+						$params['rel'] = 'stylesheet';
+						$asset = '<link' . $this->attr($params) . '>';
 						break 2;
 					case 'inline':
-						$asset = '<style>' . $subj . '</style>';
+						$asset = '<style' . $this->attr($params) . '>' . trim($subj) . '</style>';
 						break 2;
 					default:
 						return false;
 				}
 				break;
 			case 'meta':
-				$asset = '<meta name="' . $subj . '" content="' . $params . '">';
+				$asset = '<meta' . $this->attr((array) $subj) . '>';
 				break;
 			default:
 				return false;

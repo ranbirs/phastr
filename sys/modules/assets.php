@@ -19,21 +19,25 @@ class Assets
 	{
 	}
 
-	public function get($type = 'script')
+	public function get($type = 'script', $context = null)
 	{
 		switch ($type) {
 			case 'script':
 			case 'style':
-				if (\app\confs\Config::assets__) {
-					return $this->optimize($type, $this->assets[$type]);
-				}
-				$assets = ['remote' => [], 'file' => [], 'inline' => []];
-				foreach ($this->assets[$type] as $context => $asset) {
+				$assets = ['external' => [], 'file' => [], 'inline' => []];
+				foreach ($this->assets[$type] as $_context => $asset) {
+					if ($_context == 'file' && \app\confs\Config::assets__) {
+						$assets['file'][] = $this->optimizeFiles($type, $asset);
+						continue;
+					}
 					foreach ($asset as $param) {
-						$assets[$context][] = $param['asset'];
+						$assets[$_context][] = $param['asset'];
 					}
 				}
-				return implode(eol__, array_merge($assets['remote'], $assets['file'], $assets['inline']));
+				if (is_null($context)) {
+					return implode(eol__, array_merge($assets['external'], $assets['file'], $assets['inline']));
+				}
+				return (isset($assets[$context])) ? implode(eol__, $assets[$context]) : false;
 			default:
 				return (isset($this->assets[$type])) ? implode(eol__, array_values($this->assets[$type])) : null;
 		}
@@ -41,25 +45,20 @@ class Assets
 
 	public function set($type = ['script' => 'file'], $subj = null, $params = null, $append = \app\confs\Config::iteration__)
 	{
-		$context = null;
+		$context = 'file';
 		if (is_array($type)) {
 			$context = current($type);
 			$type = key($type);
 		}
-		if (filter_var($subj, FILTER_VALIDATE_URL)) {
-			$context = 'remote';
-		}
-		$asset = $this->util()->html()->asset($type, $context, trim($subj), $params, $append);
+		$asset = $this->util()->html()->asset($type, $context, $subj, $params, $append);
 		
 		switch ($type) {
 			case 'script':
 			case 'style':
 				$key = hash(self::hash__, $subj);
 				switch ($context) {
-					case null:
-						$context = 'file';
 					case 'file':
-					case 'remote':
+					case 'external':
 						return $this->assets[$type][$context][$key] = ['value' => $subj, 'asset' => $asset, 
 							'iteration' => $append];
 					case 'inline':
@@ -71,60 +70,32 @@ class Assets
 		}
 	}
 
-	protected function optimize($type, $assets = [])
+	protected function optimizeFiles($type, $files = [])
 	{
-		$file_assets = [];
-		$inline_assets = [];
-		$remote_assets = [];
-		$ext = ['script' => self::script__, 'style' => self::style__];
-		
-		foreach ($assets as $context => $asset) {
-			switch ($context) {
-				case 'file':
-					foreach ($asset as $param) {
-						$file_assets['value'][] = $param['value'];
-						$file_assets['asset'][] = $param['asset'];
-						$file_assets['checksum'][] = $param['value'] . $ext[$type] . $param['iteration'];
-					}
-					break;
-				case 'inline':
-					foreach ($asset as $param) {
-						$inline_assets[] = $param['asset'];
-					}
-					break;
-				case 'remote':
-					foreach ($asset as $param) {
-						$remote_assets[] = $param['asset'];
-					}
-					break;
-			}
+		$assets = [];
+		foreach ($files as $file) {
+			$assets['value'][] = $file['value'];
+			$assets['asset'][] = $file['asset'];
+			$assets['checksum'][] = $type . $file['value'] . $file['iteration'];
 		}
-		if (isset($file_assets['value'])) {
-			$root_path = $this->util()->helper()->path('', 'root') . '/' . $this->util()->helper()->path('', 'base');
-			$write_path = \app\confs\Config::assets__ . '/' . $type;
-			$file_name = hash(self::hash__, implode($file_assets['checksum'])) . '.' . $ext[$type];
-			$dir = $root_path . $write_path;
-			$file = $dir . '/' . $file_name;
-			
+		$root_path = $this->util()->helper()->path('', 'root') . '/' . $this->util()->helper()->path('', 'base');
+		$assets_path = \app\confs\Config::assets__ . '/' . $type;
+		$file_name = hash(self::hash__, implode($assets['checksum'])) . '.' . constant('self::' . $type . '__');
+		$dir = $root_path . $assets_path;
+		
+		if (! file_exists($file = $dir . '/' . $file_name)) {
 			if (! is_dir($dir)) {
 				mkdir($dir);
 			}
 			if (is_writable($dir)) {
-				if (! file_exists($file)) {
-					$content = [];
-					foreach ($file_assets['value'] as $file_path) {
-						$content[] = file_get_contents($root_path . $file_path);
-					}
-					file_put_contents($file, implode(eol__, $content));
+				$content = [];
+				foreach ($assets['value'] as $file_path) {
+					$content[] = file_get_contents($root_path . $file_path);
 				}
-				$file_assets = [
-					$this->util()->html()->asset($type, 'file', $write_path . '/' . $file_name, null, null)];
-			}
-			else {
-				$file_assets = $file_assets['asset'];
+				file_put_contents($file, implode(eol__, $content));
 			}
 		}
-		return implode(eol__, array_merge($remote_assets, $file_assets, $inline_assets));
+		return $this->util()->html()->asset($type, 'file', $assets_path . '/' . $file_name, null, null);
 	}
 
 }

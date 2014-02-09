@@ -34,8 +34,7 @@ class View
 
 	public function template($type, $path, $data = null)
 	{
-		$this->$type = $data;
-		return $this->_render($type . '/' . $path, 'template');
+		return $this->_render($type . '/' . $path, 'template', [$type => $data]);
 	}
 
 	public function page($path = null)
@@ -47,19 +46,19 @@ class View
 	public function layout($path = null)
 	{
 		$file = $this->_resolveFile(($path) ? $path : \app\confs\Config::layout__, 'layout');
-		$this->_includeFile($file, true);
+		$this->_includeFile($file);
 		
 		exit();
 	}
 
-	private function _render($path, $type = 'page')
+	private function _render($path, $type = 'page', $data = null)
 	{
 		$file = $this->_resolveFile($path, $type);
 		if (! $file) {
 			return false;
 		}
 		ob_start();
-		$this->_includeFile($file);
+		$this->_includeFile($file, $data);
 		return ob_get_clean();
 	}
 
@@ -69,14 +68,12 @@ class View
 		return $this->util()->loader()->resolveFile('views/' . $type . 's/' . $path);
 	}
 
-	private function _includeFile($file, $require = false)
+	private function _includeFile($file, $data = null)
 	{
-		if (! $require) {
-			include $file;
+		if (! is_null($data)) {
+			extract($data);
 		}
-		else {
-			require $file;
-		}
+		include $file;
 	}
 
 }
