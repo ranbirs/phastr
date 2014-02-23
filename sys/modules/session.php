@@ -57,7 +57,6 @@ class Session
 		$this->set(['_timestamp' => 1], microtime(true));
 		$this->set(['_client' => 'agent'], 
 			(isset($_SERVER['HTTP_USER_AGENT'])) ? $_SERVER['HTTP_USER_AGENT'] : null);
-		// session_write_close();
 	}
 
 	public function id()
