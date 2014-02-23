@@ -81,9 +81,10 @@ class Assets
 			$assets['asset'][] = $file['asset'];
 			$assets['checksum'][] = $type . $file['value'] . $file['iteration'];
 		}
+		$ext = constant('self::' . $type . '__');
 		$root_path = $this->path()->root() . '/' . $this->path()->base();
-		$assets_path = ConfigConf::assets__ . '/' . $type;
-		$file_name = hash(self::hash__, implode($assets['checksum'])) . '.' . constant('self::' . $type . '__');
+		$assets_path = ConfigConf::assets__ . '/' . $ext;
+		$file_name = hash(self::hash__, implode($assets['checksum'])) . '.' . $ext;
 		$dir = $root_path . $assets_path;
 		
 		if (!file_exists($file = $dir . '/' . $file_name)) {
