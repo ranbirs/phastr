@@ -95,5 +95,11 @@ class Database extends PDO
 		$this->sth->execute();
 		return $this->lastInsertId();
 	}
+	
+	function __destruct()
+	{
+		$this->sth = null;
+		$this->client = null;
+	}
 
 }

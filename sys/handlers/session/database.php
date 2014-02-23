@@ -17,12 +17,14 @@ class Database implements SessionHandlerInterface
 	const data__ = 'data';
 
 	const time__ = 'time';
+	
+	const token__ = 'token';
 
 	function __construct()
 	{
 	}
 
-	public function open($savePath, $sessionName)
+	public function open($save_path, $name)
 	{
 		return true;
 	}
@@ -32,40 +34,32 @@ class Database implements SessionHandlerInterface
 		return true;
 	}
 
-	public function read($id)
+	public function read($session_id)
 	{
-		$read = $this->database()->select('session', ['data'], 'WHERE sid = :sid', [':sid' => $id]);
+		$read = $this->database()->select('session', ['data'], 'WHERE sid = :sid', [':sid' => $session_id]);
 		if ($read) {
 			return base64_decode($read[0]->data);
 		}
 		return false;
 	}
 
-	public function write($id, $data)
+	public function write($session_id, $session_data)
 	{
-		$bind = [':sid' => $id, ':data' => base64_encode($data), ':time' => time()];
-		$read = $this->database()->select('session', ['sid'], 'WHERE sid = :sid', [':sid' => $id]);
-		
-		if ($read) {
-			$write = $this->database()->query('UPDATE session SET data = :data, time = :time WHERE sid = :sid', $bind);
-		}
-		else {
-			$write = $this->database()->query('INSERT INTO session (sid, data, time) VALUES (:sid, :data, :time)', 
-				$bind);
-		}
+		$query = 'INSERT INTO session (sid, data, time) VALUES (:sid, :data, :time) ' .
+			'ON DUPLICATE KEY UPDATE data = VALUES(data), time = VALUES(time)';
+		$write = $this->database()->query($query, [':sid' => $session_id, ':data' => base64_encode($session_data), ':time' => time()]);
 		return (bool) $write->rowCount();
 	}
 
-	public function destroy($id)
+	public function destroy($session_id)
 	{
-		$destroy = $this->database()->query('DELETE FROM session WHERE sid = :sid LIMIT 1', [':sid' => $id]);
+		$destroy = $this->database()->query('DELETE FROM session WHERE sid = :sid LIMIT 1', [':sid' => $session_id]);
 		return (bool) $destroy->rowCount();
 	}
 
-	public function gc($maxLifeTime)
+	public function gc($maxlifetime)
 	{
-		$destroy = $this->database()->query('DELETE FROM session WHERE time < :time', 
-			[':time' => (time() - $maxLifeTime)]);
+		$destroy = $this->database()->query('DELETE FROM session WHERE time < :time', [':time' => (time() - $maxlifetime)]);
 		return true;
 	}
 
