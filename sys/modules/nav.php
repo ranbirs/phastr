@@ -4,6 +4,8 @@ namespace sys\modules;
 
 abstract class Nav extends \sys\Module
 {
+	
+	use \sys\traits\util\Helper;
 
 	protected $nav_id;
 
@@ -20,14 +22,14 @@ abstract class Nav extends \sys\Module
 		return $this->nav_id;
 	}
 
-	public function html($import = null, $title = null, $attr = [], $template = 'bootstrap')
+	public function render($import = null, $title = null, $attr = [], $template = 'bootstrap')
 	{
-		$this->nav_id = strtolower($this->util()->helper()->instanceClassName($this));
+		$this->nav_id = strtolower($this->helper()->className($this));
 		$this->build($import);
 		
 		$attr['id'] = $this->nav_id;
 		$this->build['title'] = $title;
-		$this->build['attr'] = $this->util()->helper()->attr($attr);
+		$this->build['attr'] = $this->helper()->attr($attr);
 		
 		$nav = ['build' => $this->build, 'items' => $this->items];
 		return $this->view()->template('nav', $template, $nav);
@@ -38,7 +40,7 @@ abstract class Nav extends \sys\Module
 		$count = count($this->items);
 		$index = ($count > 0) ? $count + 1 : 0;
 		
-		if (! empty($params)) {
+		if (!empty($params)) {
 			foreach ($params as $key => $val) {
 				if (is_int($key)) {
 					$this->items[$index]['label'] = $label;

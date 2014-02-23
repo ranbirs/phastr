@@ -19,7 +19,7 @@ class Validation extends \sys\Module
 
 	public function getResult($status = null)
 	{
-		return (! is_null($status)) ? ((isset($this->result[$status])) ? $this->result[$status] : null) : $this->result;
+		return (!is_null($status)) ? ((isset($this->result[$status])) ? $this->result[$status] : null) : $this->result;
 	}
 
 	public function setStatus($subj, $msg = null, $status = self::error__)
@@ -31,7 +31,7 @@ class Validation extends \sys\Module
 	{
 		foreach ($validation as $key => $args) {
 			
-			$rule = (! is_int($key)) ? $key : $args;
+			$rule = (!is_int($key)) ? $key : $args;
 			$param = (isset($args['value'])) ? $args['value'] : $args;
 			$valid = ($this->validate($value, $rule, $param)) ? self::success__ : self::error__;
 			
@@ -54,15 +54,15 @@ class Validation extends \sys\Module
 			case 'server':
 			case 'post':
 			case 'get':
-				if (! is_array($param)) {
+				if (!is_array($param)) {
 					return false;
 				}
 				$request = $this->request->{$rule}(key($param));
-				return (! is_null($value) && $value === $request && $request === current($param));
+				return (!is_null($value) && $value === $request && $request === current($param));
 			case 'token':
-				return (! is_null($param) && $value === $this->session->get($param, 'token'));
+				return (!is_null($param) && $value === $this->session->get($param, 'token'));
 			case 'match':
-				return (! is_null($param) && strcmp($value, $param) == 0);
+				return (!is_null($param) && strcmp($value, $param) == 0);
 			case 'required':
 				if (is_array($value)) {
 					$value = implode($value);
@@ -70,7 +70,7 @@ class Validation extends \sys\Module
 				return (strlen($value) > 0);
 			case 'maxlength':
 				$param = (int) $param;
-				if (! is_array($value)) {
+				if (!is_array($value)) {
 					return (strlen($value) < $param);
 				}
 				foreach ($value as $val) {
@@ -81,7 +81,7 @@ class Validation extends \sys\Module
 				return true;
 			case 'minlength':
 				$param = (int) $param;
-				if (! is_array($value)) {
+				if (!is_array($value)) {
 					return (strlen($value) > $param);
 				}
 				foreach ($value as $val) {
@@ -149,14 +149,14 @@ class Validation extends \sys\Module
 		$filter = function ($value) use($rule, $param)
 		{
 			$value = trim($value);
-			if (! is_null($param)) {
+			if (!is_null($param)) {
 				return filter_var($value, $rule, $param);
 			}
 			return filter_var($value, $rule);
 		};
 		$sanitize = function ($value) use($filter)
 		{
-			if (! is_array($value)) {
+			if (!is_array($value)) {
 				return $value = $filter($value);
 			}
 			foreach ($value as &$val) {

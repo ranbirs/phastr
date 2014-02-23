@@ -8,7 +8,6 @@ abstract class Controller
 	use \sys\traits\Route;
 	use \sys\traits\View;
 	use \sys\traits\Load;
-	use \sys\traits\Util;
 
 	function __construct()
 	{
@@ -23,7 +22,7 @@ abstract class Controller
 				$render = true;
 			}
 		}
-		if (! $render) {
+		if (!$render) {
 			$this->route()->error(404);
 		}
 		$this->render();

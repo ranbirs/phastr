@@ -2,14 +2,16 @@
 
 namespace sys\modules;
 
+use app\confs\Request as RequestConf;
+
 class Request extends \sys\Module
 {
 
 	const param__ = 'ajax';
 
-	public $method = \app\confs\Request::method__;
+	public $method = RequestConf::method__;
 
-	public $layout = \app\confs\Request::layout__;
+	public $layout = RequestConf::layout__;
 
 	function __construct()
 	{
@@ -58,13 +60,13 @@ class Request extends \sys\Module
 	public function globals($global = 'post', $key = null, $value = null)
 	{
 		$global = '_' . strtoupper($global);
-		if (! isset($GLOBALS[$global])) {
+		if (!isset($GLOBALS[$global])) {
 			return false;
 		}
-		if (! is_null($key) && ! is_null($value)) {
+		if (!is_null($key) && !is_null($value)) {
 			$GLOBALS[$global][$key] = $value;
 		}
-		return (! is_null($key)) ? ((isset($GLOBALS[$global][$key])) ? $GLOBALS[$global][$key] : false) : $GLOBALS[$global];
+		return (!is_null($key)) ? ((isset($GLOBALS[$global][$key])) ? $GLOBALS[$global][$key] : false) : $GLOBALS[$global];
 	}
 
 }

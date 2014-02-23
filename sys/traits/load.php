@@ -7,7 +7,7 @@ trait Load
 
 	private $_load;
 
-	public function load()
+	protected function load()
 	{
 		return (isset($this->_load)) ? $this->_load : new \sys\Load($this);
 	}

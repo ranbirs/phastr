@@ -2,20 +2,17 @@
 
 namespace sys;
 
-use sys\modules\Assets;
+use app\confs\Config as ConfigConf;
 
 class View
 {
 	
-	use \sys\traits\Util;
+	use \sys\traits\util\Path;
+	use \sys\traits\util\Html;
 
 	public $request, $response, $error, $type, $page, $body, $title, $callback;
 
 	private $_assets;
-
-	function __construct()
-	{
-	}
 
 	public function assets()
 	{
@@ -24,53 +21,55 @@ class View
 
 	public function block($path)
 	{
-		return $this->_render($path, 'block');
+		return $this->render($this->filePath($path, 'block'));
 	}
 
 	public function request($path)
 	{
-		return $this->_render($path, 'request');
+		return $this->render($this->filePath($path, 'request'));
 	}
 
 	public function template($type, $path, $data = null)
 	{
-		return $this->_render($type . '/' . $path, 'template', [$type => $data]);
+		return $this->render($this->filePath($type . '/' . $path, 'template'), [$type => $data]);
 	}
 
 	public function page($path = null)
 	{
-		$path = $this->util()->helper()->path($path, 'page');
-		return $this->_render($path, 'page');
+		if (($file = $this->resolveFile($this->path()->page($path), 'page')) !== false) {
+			return $this->render($file);
+		}
+		return false;
 	}
 
 	public function layout($path = null)
 	{
-		$file = $this->_resolveFile(($path) ? $path : \app\confs\Config::layout__, 'layout');
-		$this->_includeFile($file);
+		$file = $this->filePath(($path) ? $path : ConfigConf::layout__, 'layout');
+		$this->includeFile($file);
 		
 		exit();
 	}
 
-	private function _render($path, $type = 'page', $data = null)
+	protected function render($file, $data = null)
 	{
-		$file = $this->_resolveFile($path, $type);
-		if (! $file) {
-			return false;
-		}
 		ob_start();
-		$this->_includeFile($file, $data);
+		$this->includeFile($file, $data);
 		return ob_get_clean();
 	}
 
-	private function _resolveFile($path, $type = 'page')
+	protected function filePath($path, $type)
 	{
-		$path = implode('/', (array) $path);
-		return $this->util()->loader()->resolveFile('views/' . $type . 's/' . $path);
+		return $this->path()->file('views/' . $type . 's/' . $path);
 	}
 
-	private function _includeFile($file, $data = null)
+	protected function resolveFile($path, $type = 'page')
 	{
-		if (! is_null($data)) {
+		return $this->path()->resolve($this->filePath($path, $type));
+	}
+
+	protected function includeFile($file, $data = null)
+	{
+		if (!is_null($data)) {
 			extract($data);
 		}
 		include $file;

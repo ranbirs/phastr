@@ -2,10 +2,16 @@
 
 namespace sys;
 
+use app\confs\Route as RouteConf;
+use app\confs\Config as ConfigConf;
+
 class Route
 {
 	
-	use \sys\traits\Util;
+	use \sys\traits\util\Helper;
+	use \sys\traits\util\Path {
+		path as pathUtil;
+	}
 
 	const length__ = 128;
 
@@ -13,22 +19,21 @@ class Route
 
 	function __construct()
 	{
-		$name = \app\confs\Route::name__;
-		$path = (isset($_GET[$name])) ? $this->util()->helper()->splitString('/', $_GET[$name], 4) : [];
+		$name = RouteConf::name__;
+		$path = (isset($_GET[$name])) ? $this->helper()->splitString('/', $_GET[$name], 4) : [];
 		$path = ['request' => $path, 'route' => $path];
 		
 		if (empty($path['request'])) {
-			$path['route'] = [\app\confs\Route::autoload__, \app\confs\Route::homepage__, 
-				\app\confs\Route::action__];
+			$path['route'] = [RouteConf::autoload__, RouteConf::homepage__, RouteConf::action__];
 		}
-		if (! in_array($path['route'][0], $this->util()->helper()->splitString(',', \app\confs\Route::controllers__))) {
-			array_unshift($path['route'], \app\confs\Route::autoload__);
+		if (!in_array($path['route'][0], $this->helper()->splitString(',', RouteConf::controllers__))) {
+			array_unshift($path['route'], RouteConf::autoload__);
 		}
-		if (! isset($path['route'][1])) {
-			$path['route'][1] = \app\confs\Route::page__;
+		if (!isset($path['route'][1])) {
+			$path['route'][1] = RouteConf::page__;
 		}
-		if (! isset($path['route'][2])) {
-			$path['route'][2] = \app\confs\Route::action__;
+		if (!isset($path['route'][2])) {
+			$path['route'][2] = RouteConf::action__;
 		}
 		$path['params'] = current(array_slice($path['route'], 3));
 		$path['route'] = array_slice($path['route'], 0, 3);
@@ -37,33 +42,28 @@ class Route
 			if ((strlen($arg) > self::length__) || preg_match('/[^a-z0-9-]/', $arg = strtolower($arg))) {
 				return $this->error(404);
 			}
-			if (($path['label'][$index] = $this->util()->helper()->path($arg)) == \app\confs\Route::method__) {
+			if (($path['label'][$index] = $this->helper()->path($arg)) == RouteConf::method__) {
 				return $this->error(404);
 			}
 		}
 		unset($arg);
 		$path['path'] = $path['route'];
-		if ($path['route'][2] == \app\confs\Route::action__) {
+		if ($path['route'][2] == RouteConf::action__) {
 			array_pop($path['path']);
 		}
-		if ($path['route'][0] == \app\confs\Route::autoload__) {
+		if ($path['route'][0] == RouteConf::autoload__) {
 			array_shift($path['path']);
 		}
 		$path['path'] = implode('/', $path['path']);
-		$path['route'] = $this->util()->helper()->path($path['route'], 'route');
-		$path['params'] = $this->util()->helper()->splitString('/', $path['params']);
+		$path['route'] = $this->pathUtil()->uri(implode('/', $path['route']));
+		$path['params'] = $this->helper()->splitString('/', $path['params']);
 		
 		$this->path = $path;
 	}
 
-	public function path($request = false)
+	public function path($key = 'path')
 	{
-		return (! $request) ? $this->path['path'] : $this->path['request'];
-	}
-
-	public function route($label = false)
-	{
-		return (! $label) ? $this->path['route'] : $this->path['label'];
+		return (isset($this->path[$key])) ? $this->path[$key] : false;
 	}
 
 	public function params($index = null)
@@ -89,12 +89,13 @@ class Route
 
 	public function method($methods = [])
 	{
-		if (\app\confs\Route::method__) {
-			$page[] = \app\confs\Route::method__;
-			$action[] = \app\confs\Route::method__;
+		if (RouteConf::method__) {
+			$page[] = RouteConf::method__;
+			$action[] = RouteConf::method__;
 		}
 		$page[] = $this->path['label'][1];
 		$action[] = $this->path['label'][2];
+		
 		foreach ($page as $page_label) {
 			foreach ($action as $action_label) {
 				$methods[] = $page_label . '_' . $action_label;
@@ -106,7 +107,7 @@ class Route
 	public function error($code = 404, $msg = '')
 	{
 		http_response_code($code = (int) $code);
-		if (\app\confs\Config::errors__) {
+		if (ConfigConf::errors__) {
 			trigger_error(($msg) ? $msg : print_r(debug_backtrace(), true));
 		}
 		require app__ . '/views/layouts/error/' . $code . '.php';

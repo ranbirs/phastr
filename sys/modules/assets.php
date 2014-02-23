@@ -2,10 +2,13 @@
 
 namespace sys\modules;
 
+use app\confs\Config as ConfigConf;
+
 class Assets
 {
 	
-	use \sys\traits\Util;
+	use \sys\traits\util\Path;
+	use \sys\traits\util\Html;
 
 	const script__ = 'js';
 
@@ -26,7 +29,7 @@ class Assets
 			case 'style':
 				$assets = ['external' => [], 'file' => [], 'inline' => []];
 				foreach ($this->assets[$type] as $_context => $asset) {
-					if ($_context == 'file' && \app\confs\Config::assets__) {
+					if ($_context == 'file' && ConfigConf::assets__) {
 						$assets['file'][] = $this->optimizeFiles($type, $asset);
 						continue;
 					}
@@ -43,14 +46,14 @@ class Assets
 		}
 	}
 
-	public function set($type = ['script' => 'file'], $subj = null, $params = null, $append = \app\confs\Config::iteration__)
+	public function set($type = ['script' => 'file'], $subj = null, $params = null, $append = ConfigConf::iteration__)
 	{
 		$context = 'file';
 		if (is_array($type)) {
 			$context = current($type);
 			$type = key($type);
 		}
-		$asset = $this->util()->html()->asset($type, $context, $subj, $params, $append);
+		$asset = $this->html()->asset($type, $context, $subj, $params, $append);
 		
 		switch ($type) {
 			case 'script':
@@ -78,13 +81,13 @@ class Assets
 			$assets['asset'][] = $file['asset'];
 			$assets['checksum'][] = $type . $file['value'] . $file['iteration'];
 		}
-		$root_path = $this->util()->helper()->path('', 'root') . '/' . $this->util()->helper()->path('', 'base');
-		$assets_path = \app\confs\Config::assets__ . '/' . $type;
+		$root_path = $this->path()->root() . '/' . $this->path()->base();
+		$assets_path = ConfigConf::assets__ . '/' . $type;
 		$file_name = hash(self::hash__, implode($assets['checksum'])) . '.' . constant('self::' . $type . '__');
 		$dir = $root_path . $assets_path;
 		
-		if (! file_exists($file = $dir . '/' . $file_name)) {
-			if (! is_dir($dir)) {
+		if (!file_exists($file = $dir . '/' . $file_name)) {
+			if (!is_dir($dir)) {
 				mkdir($dir);
 			}
 			if (is_writable($dir)) {
@@ -95,7 +98,7 @@ class Assets
 				file_put_contents($file, implode(eol__, $content));
 			}
 		}
-		return $this->util()->html()->asset($type, 'file', $assets_path . '/' . $file_name, null, null);
+		return $this->html()->asset($type, 'file', $assets_path . '/' . $file_name, null, null);
 	}
 
 }

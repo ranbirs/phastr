@@ -5,7 +5,7 @@ namespace sys\traits;
 trait View
 {
 
-	public function view()
+	protected function view()
 	{
 		return \sys\Init::view();
 	}

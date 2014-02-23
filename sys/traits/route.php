@@ -5,7 +5,7 @@ namespace sys\traits;
 trait Route
 {
 
-	public function route()
+	protected function route()
 	{
 		return \sys\Init::route();
 	}

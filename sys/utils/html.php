@@ -2,13 +2,16 @@
 
 namespace sys\utils;
 
-class Html extends \sys\Util
+class Html
 {
+	
+	use \sys\traits\util\Helper;
+	use \sys\traits\util\Path;
 
 	public function attr($attr = [])
 	{
 		$attr = $this->helper()->attr($attr);
-		return (! empty($attr)) ? ' ' . implode(' ', $this->helper()->composeArray('="', $attr, '', '"')) : '';
+		return (!empty($attr)) ? ' ' . implode(' ', $this->helper()->composeArray('="', $attr, '', '"')) : '';
 	}
 
 	public function asset($type = 'script', $context = 'file', $subj = null, $params = null, $append = null)
@@ -17,9 +20,9 @@ class Html extends \sys\Util
 			case 'script':
 				switch ($context) {
 					case 'file':
-						$subj = '/' . $this->helper()->path($subj, 'base');
+						$subj = '/' . $this->path()->base($subj);
 					case 'external':
-						$params['src'] = (! is_null($append)) ? $subj . '?' . $append : $subj;
+						$params['src'] = (!is_null($append)) ? $subj . '?' . $append : $subj;
 						$asset = '<script' . $this->attr($params) . '></script>';
 						break 2;
 					case 'inline':
@@ -32,9 +35,9 @@ class Html extends \sys\Util
 			case 'style':
 				switch ($context) {
 					case 'file':
-						$subj = '/' . $this->helper()->path($subj, 'base');
+						$subj = '/' . $this->path()->base($subj);
 					case 'external':
-						$params['href'] = (! is_null($append)) ? $subj . '?' . $append : $subj;
+						$params['href'] = (!is_null($append)) ? $subj . '?' . $append : $subj;
 						$params['rel'] = 'stylesheet';
 						$asset = '<link' . $this->attr($params) . '>';
 						break 2;

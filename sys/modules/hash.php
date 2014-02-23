@@ -1,11 +1,13 @@
 <?php
 
-namespace sys\utils;
+namespace sys\modules;
 
-class Hash extends \sys\Util
+use app\confs\Hash as HashConf;
+
+class Hash
 {
 
-	public function gen($data = '', $algo = \app\confs\Hash::algo__, $key = \app\confs\Hash::key__)
+	public function gen($data = '', $algo = HashConf::algo__, $key = HashConf::key__)
 	{
 		if (empty($data)) {
 			$data = uniqid($this->salt(), true);
@@ -15,18 +17,16 @@ class Hash extends \sys\Util
 
 	public function cipher($data = '')
 	{
-		return crypt($data, 
-			\app\confs\Hash::cipher__ . \app\confs\Hash::cost__ . '$' . $this->salt(\app\confs\Hash::salt__));
+		return crypt($data, HashConf::cipher__ . HashConf::cost__ . '$' . $this->salt(HashConf::salt__));
 	}
 
-	public function resolve($hash, $data = '', $algo = \app\confs\Hash::algo__, $key = \app\confs\Hash::key__)
+	public function resolve($hash, $data = '', $algo = HashConf::algo__, $key = HashConf::key__)
 	{
 		if ($algo) {
 			$subj = $this->gen($data, $algo, $key);
 		}
 		else {
-			$salt = substr($hash, 0, 
-				strlen(\app\confs\Hash::cipher__ . \app\confs\Hash::cost__) + 1 + \app\confs\Hash::salt__);
+			$salt = substr($hash, 0, strlen(HashConf::cipher__ . HashConf::cost__) + 1 + HashConf::salt__);
 			$subj = crypt($data, $salt);
 		}
 		return ($hash === $subj);
@@ -42,12 +42,12 @@ class Hash extends \sys\Util
 		return $hash;
 	}
 
-	public function salt($length = 16, $range = \app\confs\Hash::range__)
+	public function salt($length = 16, $range = HashConf::range__)
 	{
 		$length = (int) $length;
 		$index_range = strlen($range) - 1;
 		$salt = '';
-		for ($c = 0; $c < $length; $c ++)
+		for ($c = 0; $c < $length; $c++)
 			$salt .= $range[mt_rand(0, $index_range)];
 		return $salt;
 	}

@@ -1,8 +1,8 @@
 <?php
 
-namespace sys\utils;
+namespace sys\modules;
 
-class Conf extends \sys\Util
+class Conf
 {
 
 	public function k($const, $context = 'config', $base = app__)

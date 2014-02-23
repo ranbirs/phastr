@@ -1,11 +1,13 @@
 <?php
 
-namespace sys\utils;
+namespace sys\modules;
 
-class Vocab extends \sys\Util
+use app\confs\Config as ConfigConf;
+
+class Vocab
 {
 
-	public function t($const, $context, $lang = \app\confs\Config::lang__)
+	public function t($const, $context, $lang = ConfigConf::lang__)
 	{
 		return $this->constant($const, ($lang) ? $lang . '\\' . $context : $context);
 	}

@@ -2,11 +2,15 @@
 
 namespace sys\modules;
 
-use sys\modules\Request;
 use sys\modules\Validation;
 
 abstract class Form extends \sys\Module
 {
+	
+	use \sys\traits\module\Hash;
+	use \sys\traits\util\Helper;
+	use \sys\traits\util\Path;
+	use \sys\traits\util\Html;
 
 	protected $form_id, $method, $import, $submit;
 
@@ -51,13 +55,13 @@ abstract class Form extends \sys\Module
 		$validate = $this->validate($this->submit, $this->import);
 		
 		if (array_key_exists(Validation::error__, $result = $this->validation->getResult())) {
-			if (! isset($this->error)) {
+			if (!isset($this->error)) {
 				$this->error();
 			}
 			$this->error['validation'] = $result;
 			return $this->error;
 		}
-		if (! $validate) {
+		if (!$validate) {
 			return (isset($this->fail)) ? $this->fail : $this->fail();
 		}
 		$this->submit($this->submit, $this->import);
@@ -68,9 +72,9 @@ abstract class Form extends \sys\Module
 		return (isset($this->success)) ? $this->success : $this->success();
 	}
 
-	public function html($import = null, $title = null, $attr = [], $method = 'post', $template = 'bootstrap')
+	public function render($import = null, $title = null, $attr = [], $method = 'post', $template = 'bootstrap')
 	{
-		$this->form_id = strtolower($this->util()->helper()->instanceClassName($this));
+		$this->form_id = strtolower($this->helper()->className($this));
 		$this->import = $import;
 		$this->method = $method;
 		$this->build($import);
@@ -78,7 +82,7 @@ abstract class Form extends \sys\Module
 		
 		$attr['id'] = $this->form_id;
 		$attr['method'] = $method;
-		$attr['action'] = $this->util()->helper()->path(['form', $this->form_id], Request::param__) . '/';
+		$attr['action'] = $this->path()->request('form/' . $this->form_id);
 		$this->build['title'] = $title;
 		$this->build['attr'] = $attr;
 		
@@ -89,19 +93,19 @@ abstract class Form extends \sys\Module
 
 	protected function close()
 	{
-		if (! $this->session->get($this->form_id, 'token')) {
-			$this->session->set([$this->form_id => 'token'], $this->util()->hash()->rand('sha256'));
+		if (!$this->session->get($this->form_id, 'token')) {
+			$this->session->set([$this->form_id => 'token'], $this->hash()->rand('sha256'));
 		}
 		$session_token = $this->session->token();
 		$session_key = $this->session->key();
 		
 		$this->field(['input' => 'hidden'], '_header_id_' . $session_token, null, 
-			$params = ['value' => $session_key, 'validate' => ['header' => [
-				$session_token => $session_key]]]);
+			$params = ['value' => $session_key, 'validate' => [
+				'header' => [$session_token => $session_key]]]);
 		$this->field(['input' => 'hidden'], '_form_id_' . $session_token, null, 
 			$params = ['value' => $this->form_id, 
-				'validate' => [
-					$this->method => [$this->form_id . '__form_id_' . $session_token => $this->form_id]]]);
+				'validate' => [$this->method => [
+					$this->form_id . '__form_id_' . $session_token => $this->form_id]]]);
 		$this->field(['input' => 'hidden'], '_form_token_' . $session_token, null, 
 			$params = ['value' => $this->session->get($this->form_id, 'token'), 
 				'validate' => ['token' => $this->form_id]]);
@@ -161,10 +165,10 @@ abstract class Form extends \sys\Module
 				$type = 'button';
 			}
 		}
-		if (! is_array($params)) {
+		if (!is_array($params)) {
 			$params = ['value' => $params];
 		}
-		if (! isset($params['value'])) {
+		if (!isset($params['value'])) {
 			$params['value'] = ($params !== array_values($params)) ? '' : $params;
 		}
 		$params['attr'] = (isset($params['attr'])) ? (array) $params['attr'] : [];
@@ -185,16 +189,16 @@ abstract class Form extends \sys\Module
 		$group = null;
 		
 		$field['attr']['id'] = $id;
-		if (! is_null($type)) {
+		if (!is_null($type)) {
 			$field['attr']['type'] = $type;
 		}
 		if (isset($field['attr']['class'])) {
 			$field['attr']['class'] = (array) $field['attr']['class'];
 		}
 		if ($control != 'button') {
-			$field['attr']['name'] = (! is_array($field['value'])) ? $id : $id . '[]';
+			$field['attr']['name'] = (!is_array($field['value'])) ? $id : $id . '[]';
 			$field['attr']['class'][] = 'form-control';
-			if (! isset($field['sanitize'])) {
+			if (!isset($field['sanitize'])) {
 				$field['sanitize'] = ['strip' => FILTER_FLAG_ENCODE_LOW];
 			}
 		}
@@ -218,7 +222,7 @@ abstract class Form extends \sys\Module
 				if ($type == 'hidden') {
 					$group = $type;
 				}
-				(! is_array($field['control'])) ? $field['attr']['value'] = $field['value'] : $group = $id;
+				(!is_array($field['control'])) ? $field['attr']['value'] = $field['value'] : $group = $id;
 				break;
 			case 'select':
 				$options = [];
@@ -236,7 +240,7 @@ abstract class Form extends \sys\Module
 				$build = '</' . $control . '>';
 				break;
 		}
-		$build = '<' . $control . $this->util()->html()->attr($field['attr']) . '>' . $build;
+		$build = '<' . $control . $this->html()->attr($field['attr']) . '>' . $build;
 		
 		switch ($group) {
 			case 'hidden':
@@ -259,7 +263,7 @@ abstract class Form extends \sys\Module
 		
 		foreach ($fields as $index => &$field) {
 			$field = (array) $field;
-			if (! isset($field['value'])) {
+			if (!isset($field['value'])) {
 				if (array_values($field) !== $field) {
 					$field['value'] = key($field);
 					$field['label'] = current($field);
@@ -271,7 +275,7 @@ abstract class Form extends \sys\Module
 			}
 			$values[] = $field['value'];
 			
-			if (! isset($field['label'])) {
+			if (!isset($field['label'])) {
 				$field['label'] = '';
 			}
 			
@@ -290,10 +294,10 @@ abstract class Form extends \sys\Module
 				default:
 					$field['attr']['id'] = $id . '-' . $index;
 					$field['attr']['name'] = $id . '[]';
-					$field['attr'] = $this->util()->helper()->attr(array_merge($parent['attr'], $field['attr']));
+					$field['attr'] = $this->helper()->attr(array_merge($parent['attr'], $field['attr']));
 					$field['active'] = (isset($field['attr']['checked'])) ? true : false;
 			}
-			$build = '<' . $field['control'] . $this->util()->html()->attr($field['attr']) . '>' . $build;
+			$build = '<' . $field['control'] . $this->html()->attr($field['attr']) . '>' . $build;
 			$field['control'] = $build;
 		}
 		unset($field);

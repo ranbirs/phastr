@@ -7,7 +7,7 @@ use PDOException;
 
 class Database extends PDO
 {
-	use \sys\traits\Util;
+	use \sys\traits\util\Helper;
 
 	protected $sth, $client;
 
@@ -36,8 +36,9 @@ class Database extends PDO
 	{
 		$this->sth = $this->prepare($statement);
 		
-		if ($this->util()->helper()->isIndexArray($values)) {
-			$values = $this->util()->helper()->shiftArrayIndex($values, 1);
+		if ($values === array_values($values)) {
+			array_unshift($values, null);
+			unset($values[0]);
 		}
 		foreach ($values as $key => $val) {
 			switch (count($val = (array) $val)) {
@@ -51,7 +52,8 @@ class Database extends PDO
 					return false;
 			}
 		}
-		return $this->sth->execute();
+		$this->sth->execute();
+		return $this->sth;
 	}
 
 	public function select($table, $cols = [], $clause = '', $params = [], $fetch = PDO::FETCH_OBJ)
@@ -71,7 +73,7 @@ class Database extends PDO
 
 	public function update($table, $values = [], $clause = '', $params = [])
 	{
-		$values = $this->util()->helper()->composeArray(' = ', $values);
+		$values = $this->helper()->composeArray(' = ', $values);
 		$values = implode(', ', $values);
 		$this->sth = $this->prepare("UPDATE $table SET $values $clause");
 		
