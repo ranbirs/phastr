@@ -12,11 +12,11 @@ class View
 
 	public $request, $response, $error, $type, $page, $body, $title, $callback;
 
-	private $_assets;
+	private $_assets_module;
 
 	public function assets()
 	{
-		return (isset($this->_assets)) ? $this->_assets : $this->_assets = new \sys\modules\Assets();
+		return (isset($this->_assets_module)) ? $this->_assets_module : $this->_assets_module = new \sys\modules\Assets();
 	}
 
 	public function block($path)

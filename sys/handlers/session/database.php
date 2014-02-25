@@ -17,7 +17,7 @@ class Database implements SessionHandlerInterface
 	const data__ = 'data';
 
 	const time__ = 'time';
-	
+
 	const token__ = 'token';
 
 	function __construct()
@@ -46,8 +46,9 @@ class Database implements SessionHandlerInterface
 	public function write($session_id, $session_data)
 	{
 		$query = 'INSERT INTO session (sid, data, time) VALUES (:sid, :data, :time) ' .
-			'ON DUPLICATE KEY UPDATE data = VALUES(data), time = VALUES(time)';
-		$write = $this->database()->query($query, [':sid' => $session_id, ':data' => base64_encode($session_data), ':time' => time()]);
+			 'ON DUPLICATE KEY UPDATE data = VALUES(data), time = VALUES(time)';
+		$write = $this->database()->query($query, 
+			[':sid' => $session_id, ':data' => base64_encode($session_data), ':time' => time()]);
 		return (bool) $write->rowCount();
 	}
 
@@ -59,7 +60,8 @@ class Database implements SessionHandlerInterface
 
 	public function gc($maxlifetime)
 	{
-		$destroy = $this->database()->query('DELETE FROM session WHERE time < :time', [':time' => (time() - $maxlifetime)]);
+		$destroy = $this->database()->query('DELETE FROM session WHERE time < :time', 
+			[':time' => (time() - $maxlifetime)]);
 		return true;
 	}
 

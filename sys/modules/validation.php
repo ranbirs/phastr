@@ -13,8 +13,8 @@ class Validation extends \sys\Module
 
 	function __construct()
 	{
-		$this->load()->module('session', sys__);
-		$this->load()->module('request', sys__);
+		$this->load()->module('session');
+		$this->load()->module('request');
 	}
 
 	public function getResult($status = null)

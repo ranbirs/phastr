@@ -7,45 +7,40 @@ class Load
 
 	private $_instance;
 
-	function __construct($_instance)
+	function __construct($instance)
 	{
-		$this->_instance = $_instance;
+		$this->_instance = $instance;
 	}
 
-	private function _instance($path, $base = app__, $name = null)
+	protected function composite($instance, $path, $base = app__)
 	{
 		$class = '\\' . $base . '\\' . implode('\\', explode('/', $path));
-		return ($name) ? $this->_instance->$name = new $class() : new $class();
+		return $instance->{basename($path)} = new $class();
+	}
+
+	public function module($path, $base = sys__)
+	{
+		return $this->composite($this->_instance, 'modules/' . $path, $base);
 	}
 
 	public function model($path)
 	{
-		return $this->_instance('models/' . $path, app__, basename($path));
-	}
-
-	public function module($path, $base = app__)
-	{
-		return $this->_instance('modules/' . $path, $base, basename($path));
+		return $this->composite($this->_instance, 'models/' . $path);
 	}
 
 	public function form($path)
 	{
-		return $this->_instance('forms/' . $path, app__, basename($path));
+		return $this->composite($this->_instance, 'forms/' . $path);
 	}
 
 	public function nav($path)
 	{
-		return $this->_instance('navs/' . $path, app__, basename($path));
+		return $this->composite($this->_instance, 'navs/' . $path);
 	}
 
-	public function service($path, $data = null)
+	public function service($path)
 	{
-		return $this->_instance('services/' . $path, app__, basename($path));
-	}
-
-	public function init($path)
-	{
-		return $this->_instance('controllers/' . $path, app__);
+		return $this->composite($this->_instance, 'services/' . $path);
 	}
 
 }

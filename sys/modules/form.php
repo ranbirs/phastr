@@ -22,7 +22,7 @@ abstract class Form extends \sys\Module
 
 	function __construct()
 	{
-		$this->load()->module('session', sys__);
+		$this->load()->module('session');
 	}
 
 	abstract protected function build();
@@ -39,8 +39,8 @@ abstract class Form extends \sys\Module
 
 	public function resolve($layout = 'json')
 	{
-		$this->load()->module('request', sys__);
-		$this->load()->module('validation', sys__);
+		$this->load()->module('request');
+		$this->load()->module('validation');
 		
 		$this->request->layout = $layout;
 		$method = $this->method;

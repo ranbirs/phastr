@@ -87,7 +87,7 @@ class Route
 		return $this->path['label'][2];
 	}
 
-	public function method($methods = [])
+	public function methods($methods = [])
 	{
 		if (RouteConf::method__) {
 			$page[] = RouteConf::method__;

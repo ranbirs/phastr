@@ -4,8 +4,6 @@ namespace sys;
 
 class Init
 {
-	
-	use \sys\traits\Load;
 
 	private static $route, $view;
 
@@ -14,8 +12,9 @@ class Init
 		self::$route = new \sys\Route();
 		self::$view = new \sys\View();
 		
-		$this->load()->init(self::$route->controller())->dispatch(self::$route->method(), self::$route->page(), 
-			self::$route->action(), self::$route->params());
+		$controller = '\\' . app__ . '\\controllers\\' . self::$route->controller();
+		(new $controller())->dispatch(self::$route->methods(), self::$route->page(), self::$route->action(), 
+			self::$route->params());
 	}
 
 	public static function route()
