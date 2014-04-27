@@ -20,8 +20,6 @@ class Database extends PDO
 		}
 		catch (PDOException $e) {
 			throw $e;
-			
-			exit();
 		}
 	}
 
@@ -39,21 +37,12 @@ class Database extends PDO
 	{
 		$this->sth = $this->prepare($statement);
 		
-		if ($values === array_values($values)) {
+		if (!empty($values) && $values === array_values($values)) {
 			array_unshift($values, null);
 			unset($values[0]);
 		}
 		foreach ($values as $key => $val) {
-			switch (count($val = (array) $val)) {
-				case 2:
-					$this->sth->bindValue($key, $val[0], $val[1]);
-					break;
-				case 1:
-					$this->sth->bindValue($key, $val[0]);
-					break;
-				default:
-					return false;
-			}
+			call_user_func_array(array($this->sth, 'bindValue'), (array) $val);
 		}
 		$this->sth->execute();
 		return $this->sth;

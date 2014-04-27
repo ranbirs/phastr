@@ -21,7 +21,7 @@ class Database extends \sys\components\Database
 		}
 		$this->sth->execute();
 		if ($this->sth->rowCount()) {
-			if ($fetch_mode) {
+			if (!is_null($fetch_mode)) {
 				$this->sth->setFetchMode($fetch_mode);
 			}
 			return $this->sth->fetchAll();

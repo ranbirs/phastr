@@ -28,7 +28,7 @@ class Path
 
 	public function base($path = '')
 	{
-		return ($base = RouteConf::base__) ? (($path) ? $base . '/' . $path : $base) : (($path) ? $path : '');
+		return ($base = $this->route()->path('base')) ? (($path) ? $base . '/' . $path : $base) : (($path) ? $path : '');
 	}
 
 	public function page($path = '')
@@ -39,13 +39,12 @@ class Path
 
 	public function uri($path = '')
 	{
-		return (RouteConf::rewrite__) ? '/' . $this->base($path) : '/' . $this->base() . '?' . RouteConf::name__ . '=' .
-			 $path;
+		return (RouteConf::rewrite__) ? '/' . $this->route()->path('base') . '/' . $path : '/' . $this->route()->path('script') . '/' . $path;
 	}
 
 	public function request($path = '')
 	{
-		return $this->route()->path('route') . '/' . \sys\modules\Request::param__ . '/' . $path;
+		return $this->uri($this->route()->path('route') . '/' . \sys\modules\Request::param__ . '/' . $path);
 	}
 
 	public function trail($path = '')
