@@ -2,7 +2,7 @@
 
 namespace sys\modules;
 
-use app\confs\Config as ConfigConf;
+use app\confs\Config as __Config;
 
 class Assets
 {
@@ -29,7 +29,7 @@ class Assets
 			case 'style':
 				$assets = ['external' => [], 'file' => [], 'inline' => []];
 				foreach ($this->assets[$type] as $_context => $asset) {
-					if ($_context == 'file' && ConfigConf::assets__) {
+					if ($_context == 'file' && __Config::assets__) {
 						$assets['file'][] = $this->optimizeFiles($type, $asset);
 						continue;
 					}
@@ -46,7 +46,7 @@ class Assets
 		}
 	}
 
-	public function set($type = ['script' => 'file'], $subj = null, $params = null, $append = ConfigConf::iteration__)
+	public function set($type = ['script' => 'file'], $subj = null, $params = null, $append = __Config::iteration__)
 	{
 		$context = 'file';
 		if (is_array($type)) {
@@ -83,7 +83,7 @@ class Assets
 		}
 		$ext = constant('self::' . $type . '__');
 		$root_path = $this->path()->root() . '/' . $this->path()->base();
-		$assets_path = ConfigConf::assets__ . '/' . $ext;
+		$assets_path = __Config::assets__ . '/' . $ext;
 		$file_name = hash(self::hash__, implode($assets['checksum'])) . '.' . $ext;
 		$dir = $root_path . $assets_path;
 		

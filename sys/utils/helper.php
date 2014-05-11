@@ -11,6 +11,11 @@ class Helper
 		return end($class);
 	}
 
+	public function classFullName($name, $namespace, $context = app__)
+	{
+		return '\\' . $context . '\\' . $namespace . '\\' . $name;
+	}
+
 	public function path($path = null, $type = 'label')
 	{
 		$path = implode('/', (array) $path);
@@ -58,23 +63,19 @@ class Helper
 		return $attrs;
 	}
 
-	public function splitString($delimiter, $string = '', $limit = null)
+	public function splitString($delimiter, $subj = '', $limit = null)
 	{
-		$array = (!($limit = (int) $limit)) ? explode($delimiter, $string) : explode($delimiter, $string, $limit);
-		$trim = function ($arg) use($delimiter)
-		{
-			return trim($arg, $delimiter . ' ');
-		};
-		return array_values(array_filter(array_map($trim, $array), 'strlen'));
+		$split = (!($limit = (int) $limit)) ? explode($delimiter, $subj) : explode($delimiter, $subj, $limit);
+		return array_values(array_filter(array_map('trim', $split), 'strlen'));
 	}
 
 	public function composeArray($glue, $array = [], $prepend = '', $append = '')
 	{
-		$composed_array = [];
+		$composed = [];
 		foreach ($array as $key => $val) {
-			$composed_array[] = $prepend . $key . $glue . (string) $val . $append;
+			$composed[] = $prepend . $key . $glue . (string) $val . $append;
 		}
-		return $composed_array;
+		return $composed;
 	}
 
 }

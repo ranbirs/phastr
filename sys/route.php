@@ -2,16 +2,13 @@
 
 namespace sys;
 
-use app\confs\Route as RouteConf;
-use app\confs\Config as ConfigConf;
+use app\confs\Route as __Route;
+use app\confs\Config as __Config;
 
 class Route
 {
 	
 	use \sys\traits\util\Helper;
-	use \sys\traits\util\Path {
-		path as pathUtil;
-	}
 
 	const length__ = 128;
 
@@ -19,39 +16,48 @@ class Route
 
 	function __construct()
 	{
-		$path['script'] = $this->helper()->splitString('/', $_SERVER['SCRIPT_NAME']);
-		$path['request'] = $this->helper()->splitString('/', $_SERVER['REQUEST_URI']);
-		$path['route'] = array_values(array_diff_assoc($path['request'], $path['script']));
-		$path['base'] = trim(pathinfo($_SERVER['SCRIPT_NAME'], PATHINFO_DIRNAME), '/');
-		$path['script'] = implode($path['script']);
-
-		if (!isset($path['route'][0])) {
-			$path['route'][0] = RouteConf::controller__;
+		$path = parse_url($_SERVER['REQUEST_URI']);
+		
+		$path['path'] = $this->helper()->splitString('/', $path['path']);
+		$path['file'] = $this->helper()->splitString('/', $_SERVER['SCRIPT_NAME']);
+		$path['path'] = array_values(array_diff_assoc($path['path'], $path['file']));
+		$path['uri'] = (!empty($path['path'])) ? implode('/', $path['path']) : '/';
+		$path['base'] = implode('/', array_slice($path['file'], 0, -1));
+		$path['file'] = implode('/', $path['file']);
+		
+		if (!isset($path['path'][0])) {
+			$path['path'][0] = __Route::controller__;
 		}
-		elseif (!in_array($path['route'][0], $this->helper()->splitString(',', RouteConf::scope__))) {
+		elseif (!in_array($path['path'][0], $this->helper()->splitString(',', __Route::scope__))) {
 			return $this->error(404);
 		}
-		if (!isset($path['route'][1])) {
-			$path['route'][1] = RouteConf::page__;
+		if (!isset($path['path'][1])) {
+			$path['path'][1] = __Route::page__;
 		}
-		if (!isset($path['route'][2])) {
-			$path['route'][2] = RouteConf::action__;
+		if (!isset($path['path'][2])) {
+			$path['path'][2] = __Route::action__;
 		}
-		$path['params'] = (isset($path['route'][3])) ? array_splice($path['route'], 3) : [];
-
+		$path['params'] = (isset($path['path'][3])) ? array_slice($path['path'], 3) : [];
+		$path['route'] = array_slice($path['path'], 0, 3);
+		
 		foreach ($path['route'] as $index => &$arg) {
 			if ((strlen($arg) > self::length__) || preg_match('/[^a-z0-9-]/', $arg = strtolower($arg))) {
 				return $this->error(404);
 			}
-			if (($path['label'][$index] = $this->helper()->path($arg)) == RouteConf::method__) {
+			if (($path['label'][$index] = $this->helper()->path($arg)) == __Route::method__) {
 				return $this->error(404);
 			}
 		}
 		unset($arg);
-		$path['path'] = implode('/', $path['route']);
 		$path['route'] = implode('/', $path['route']);
+		$path['path'] = implode('/', $path['path']);
 		
 		$this->path = $path;
+	}
+
+	public function uri()
+	{
+		return $this->path['uri'];
 	}
 
 	public function path($key = 'path')
@@ -65,9 +71,10 @@ class Route
 			$index)) ? $this->path['params'] : false);
 	}
 
-	public function controller()
+	public function controller($class = false)
 	{
-		return $this->path['label'][0];
+		return (!$class) ? $this->path['label'][0] : $this->helper()->classFullName($this->path['label'][0], 
+			'controllers');
 	}
 
 	public function page()
@@ -75,26 +82,25 @@ class Route
 		return $this->path['label'][1];
 	}
 
-	public function action()
+	public function action($method = false)
 	{
-		return $this->path['label'][2];
-	}
-
-	public function methods($methods = [])
-	{
-		if (RouteConf::method__) {
-			$page[] = RouteConf::method__;
-			$action[] = RouteConf::method__;
+		if (!$method) {
+			return $this->path['label'][2];
+		}
+		if (($method = __Route::method__)) {
+			$page[] = $method;
+			$action[] = $method;
 		}
 		$page[] = $this->path['label'][1];
 		$action[] = $this->path['label'][2];
 		
+		$method = array();
 		foreach ($page as $page_label) {
 			foreach ($action as $action_label) {
-				$methods[] = $page_label . '_' . $action_label;
+				$method[] = $page_label . '_' . $action_label;
 			}
 		}
-		return $methods;
+		return $method;
 	}
 
 	public function error($code = 404, $msg = '')
@@ -107,7 +113,7 @@ class Route
 		
 		exit();
 	}
-	
+
 	public function status($code = 200, $headers = [])
 	{
 		return ($code) ? http_response_code($code) : http_response_code();

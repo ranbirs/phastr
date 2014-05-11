@@ -2,7 +2,7 @@
 
 namespace sys\modules;
 
-use app\confs\Config as ConfigConf;
+use app\confs\Config as __Config;
 
 class Session extends \sys\components\Session
 {
@@ -19,7 +19,7 @@ class Session extends \sys\components\Session
 		$this->set('_token', $this->hash()->rand('md5'));
 		$this->set('_key', $this->keygen());
 		$this->set(['_timestamp' => 0], microtime(true));
-		$this->set(['_client' => 'lang'], ConfigConf::lang__);
+		$this->set(['_client' => 'lang'], __Config::lang__);
 	}
 
 	public function register()

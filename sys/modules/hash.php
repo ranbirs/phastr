@@ -2,12 +2,12 @@
 
 namespace sys\modules;
 
-use app\confs\Hash as HashConf;
+use app\confs\Hash as __Hash;
 
 class Hash
 {
 
-	public function gen($data = '', $algo = HashConf::algo__, $key = HashConf::key__)
+	public function gen($data = '', $algo = __Hash::algo__, $key = __Hash::key__)
 	{
 		if (empty($data)) {
 			$data = uniqid($this->salt(), true);
@@ -17,16 +17,16 @@ class Hash
 
 	public function cipher($data = '')
 	{
-		return crypt($data, HashConf::cipher__ . HashConf::cost__ . '$' . $this->salt(HashConf::salt__));
+		return crypt($data, __Hash::cipher__ . __Hash::cost__ . '$' . $this->salt(__Hash::salt__));
 	}
 
-	public function resolve($hash, $data = '', $algo = HashConf::algo__, $key = HashConf::key__)
+	public function resolve($hash, $data = '', $algo = __Hash::algo__, $key = __Hash::key__)
 	{
 		if ($algo) {
 			$subj = $this->gen($data, $algo, $key);
 		}
 		else {
-			$salt = substr($hash, 0, strlen(HashConf::cipher__ . HashConf::cost__) + 1 + HashConf::salt__);
+			$salt = substr($hash, 0, strlen(__Hash::cipher__ . __Hash::cost__) + 1 + __Hash::salt__);
 			$subj = crypt($data, $salt);
 		}
 		return ($hash === $subj);
@@ -42,7 +42,7 @@ class Hash
 		return $hash;
 	}
 
-	public function salt($length = 16, $range = HashConf::range__)
+	public function salt($length = 16, $range = __Hash::range__)
 	{
 		$length = (int) $length;
 		$index_range = strlen($range) - 1;

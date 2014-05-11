@@ -4,27 +4,15 @@ namespace sys\handlers;
 
 class Error
 {
-	
+
 	public function exception($exception)
 	{
-		return $this->output($exception->getTrace());
+		print $exception->getTraceAsString();
 	}
-	
+
 	public function error()
 	{
-		return $this->output(debug_backtrace());
+		debug_print_backtrace();
 	}
-	
-	public function shutdown()
-	{
-		return $this->output(error_get_last());
-	}
-	
-	protected function output($msg = null)
-	{
-		print '<pre>' . print_r($msg, true) . '</pre>';
 
-		//exit();
-	}
-	
 }

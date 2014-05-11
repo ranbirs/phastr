@@ -1,6 +1,6 @@
 <?php
+error_reporting(E_ALL);
 
-// define('dir__', DIRECTORY_SEPARATOR);
 define('eol__', PHP_EOL);
 
 define('sys__', 'sys');

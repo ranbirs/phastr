@@ -2,16 +2,16 @@
 
 namespace sys\modules;
 
-use app\confs\Request as RequestConf;
+use app\confs\Request as __Request;
 
 class Request extends \sys\Module
 {
 
 	const param__ = 'ajax';
 
-	public $method = RequestConf::method__;
+	public $method = __Request::method__;
 
-	public $layout = RequestConf::layout__;
+	public $layout = __Request::layout__;
 
 	function __construct()
 	{

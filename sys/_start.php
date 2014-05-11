@@ -1,13 +1,10 @@
 <?php
 spl_autoload_register();
 
-/*
-//register_shutdown_function();
-set_exception_handler();
-error_reporting(E_ALL);
-*/
+$error_handler = new \sys\handlers\Error();
 
-//set_error_handler([(new \sys\handlers\Error()), 'error']);
+set_error_handler([$error_handler, 'error']);
+set_exception_handler([$error_handler, 'exception']);
 
 require app__ . '/confs/config.php';
 require app__ . '/confs/route.php';
@@ -15,6 +12,6 @@ require app__ . '/confs/route.php';
 require sys__ . '/route.php';
 require sys__ . '/init.php';
 
-new \sys\Init();
+new \sys\Init(new \sys\Route(), new \sys\View());
 
 exit();

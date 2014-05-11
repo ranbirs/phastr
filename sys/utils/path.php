@@ -2,7 +2,7 @@
 
 namespace sys\utils;
 
-use app\confs\Route as RouteConf;
+use app\confs\Route as __Route;
 
 class Path
 {
@@ -39,7 +39,10 @@ class Path
 
 	public function uri($path = '')
 	{
-		return (RouteConf::rewrite__) ? '/' . $this->route()->path('base') . '/' . $path : '/' . $this->route()->path('script') . '/' . $path;
+		$path = ($path && $path != '/') ? '/' . $path : '';
+		$base = (__Route::rewrite__) ? (($base = $this->route()->path('base')) ? '/' . $base : '') : '/' .
+			 $this->route()->path('file');
+		return $base . $path;
 	}
 
 	public function request($path = '')
@@ -49,7 +52,7 @@ class Path
 
 	public function trail($path = '')
 	{
-		return ($path) ? $path . RouteConf::trail__ : '';
+		return ($path) ? $path . __Route::trail__ : '';
 	}
 
 }

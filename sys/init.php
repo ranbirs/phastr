@@ -7,14 +7,14 @@ class Init
 
 	private static $route, $view;
 
-	function __construct()
+	function __construct($route, $view)
 	{
-		self::$route = new \sys\Route();
-		self::$view = new \sys\View();
+		self::$route = $route;
+		self::$view = $view;
 		
-		$controller = '\\' . app__ . '\\controllers\\' . self::$route->controller();
-		(new $controller())->dispatch(self::$route->methods(), self::$route->page(), self::$route->action(), 
-			self::$route->params());
+		$controller = $route->controller(true);
+		
+		(new $controller())->dispatch($route);
 	}
 
 	public static function route()

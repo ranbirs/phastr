@@ -13,8 +13,12 @@ abstract class Controller
 	{
 	}
 
-	public function dispatch($methods, $page, $action, $params = [])
+	public function dispatch($route)
 	{
+		$page = $route->page();
+		$action = $route->action();
+		$params = $route->params();
+		$methods = $route->action(true);
 		$render = false;
 		foreach ((array) $methods as $method) {
 			if (method_exists($this, $method)) {
@@ -23,7 +27,7 @@ abstract class Controller
 			}
 		}
 		if (!$render) {
-			$this->route()->error(404);
+			$route->error(404);
 		}
 		$this->render();
 	}
