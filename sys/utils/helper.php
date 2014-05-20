@@ -11,9 +11,9 @@ class Helper
 		return end($class);
 	}
 
-	public function classFullName($name, $namespace, $context = app__)
+	public function classFullName($name, $context, $base = app__)
 	{
-		return '\\' . $context . '\\' . $namespace . '\\' . $name;
+		return '\\' . $base . '\\' . $context . '\\' . $name;
 	}
 
 	public function path($path = null, $type = 'label')

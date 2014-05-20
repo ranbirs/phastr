@@ -2,7 +2,8 @@
 
 namespace sys\modules;
 
-use app\confs\Config as __Config;
+use app\confs\Config as __config;
+use app\confs\Database as __database;
 
 class Session extends \sys\components\Session
 {
@@ -11,7 +12,7 @@ class Session extends \sys\components\Session
 
 	function __construct()
 	{
-		$this->start((\app\confs\Database::session__) ? new \sys\handlers\session\Database() : null);
+		$this->start((__database::session__) ? new \sys\handlers\session\Database() : null);
 	}
 
 	public function generate()

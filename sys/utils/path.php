@@ -40,7 +40,7 @@ class Path
 	public function uri($path = '')
 	{
 		$path = ($path && $path != '/') ? '/' . $path : '';
-		$base = (__Route::rewrite__) ? (($base = $this->route()->path('base')) ? '/' . $base : '') : '/' .
+		$base = (__route::rewrite__) ? (($base = $this->route()->path('base')) ? '/' . $base : '') : '/' .
 			 $this->route()->path('file');
 		return $base . $path;
 	}
@@ -52,7 +52,7 @@ class Path
 
 	public function trail($path = '')
 	{
-		return ($path) ? $path . __Route::trail__ : '';
+		return ($path) ? $path . __route::trail__ : '';
 	}
 
 }

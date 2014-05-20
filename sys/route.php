@@ -2,8 +2,8 @@
 
 namespace sys;
 
-use app\confs\Route as __Route;
-use app\confs\Config as __Config;
+use app\confs\Route as __route;
+use app\confs\Config as __config;
 
 class Route
 {
@@ -26,16 +26,16 @@ class Route
 		$path['file'] = implode('/', $path['file']);
 		
 		if (!isset($path['path'][0])) {
-			$path['path'][0] = __Route::controller__;
+			$path['path'][0] = __route::controller__;
 		}
-		elseif (!in_array($path['path'][0], $this->helper()->splitString(',', __Route::scope__))) {
+		elseif (!in_array($path['path'][0], $this->helper()->splitString(',', __route::scope__))) {
 			return $this->error(404);
 		}
 		if (!isset($path['path'][1])) {
-			$path['path'][1] = __Route::page__;
+			$path['path'][1] = __route::page__;
 		}
 		if (!isset($path['path'][2])) {
-			$path['path'][2] = __Route::action__;
+			$path['path'][2] = __route::action__;
 		}
 		$path['params'] = (isset($path['path'][3])) ? array_slice($path['path'], 3) : [];
 		$path['route'] = array_slice($path['path'], 0, 3);
@@ -44,7 +44,7 @@ class Route
 			if ((strlen($arg) > self::length__) || preg_match('/[^a-z0-9-]/', $arg = strtolower($arg))) {
 				return $this->error(404);
 			}
-			if (($path['label'][$index] = $this->helper()->path($arg)) == __Route::method__) {
+			if (($path['label'][$index] = $this->helper()->path($arg)) == __route::method__) {
 				return $this->error(404);
 			}
 		}
@@ -87,7 +87,7 @@ class Route
 		if (!$method) {
 			return $this->path['label'][2];
 		}
-		if (($method = __Route::method__)) {
+		if (($method = __route::method__)) {
 			$page[] = $method;
 			$action[] = $method;
 		}
@@ -114,7 +114,7 @@ class Route
 		exit();
 	}
 
-	public function status($code = 200, $headers = [])
+	public function status($code = 200)
 	{
 		return ($code) ? http_response_code($code) : http_response_code();
 	}

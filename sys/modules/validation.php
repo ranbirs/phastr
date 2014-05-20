@@ -146,25 +146,22 @@ class Validation extends \sys\Module
 			default:
 				return false;
 		}
-		$filter = function ($value) use($rule, $param)
-		{
-			$value = trim($value);
-			if (!is_null($param)) {
-				return filter_var($value, $rule, $param);
-			}
-			return filter_var($value, $rule);
-		};
-		$sanitize = function ($value) use($filter)
-		{
-			if (!is_array($value)) {
-				return $value = $filter($value);
-			}
-			foreach ($value as &$val) {
-				$val = $filter($val);
-			}
-			return $value;
-		};
-		return $sanitize($value);
+		if (!is_array($value)) {
+			return $value = $this->filter($value, $rule, $param);
+		}
+		foreach ($value as &$val) {
+			$val = $this->filter($val, $rule, $param);
+		}
+		return $value;
+	}
+	
+	public function filter($value = null, $rule = null, $param = null)
+	{
+		$value = trim($value);
+		if (!is_null($param)) {
+			return filter_var($value, $rule, $param);
+		}
+		return filter_var($value, $rule);
 	}
 
 }

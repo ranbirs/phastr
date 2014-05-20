@@ -2,12 +2,12 @@
 
 namespace sys\modules;
 
-use app\confs\Config as __Config;
+use app\confs\Config as __config;
 
 class Vocab
 {
 
-	public function t($const, $context, $lang = __Config::lang__)
+	public function t($const, $context, $lang = __config::lang__)
 	{
 		return $this->constant($const, ($lang) ? $lang . '\\' . $context : $context);
 	}

@@ -3,7 +3,6 @@
 namespace sys\handlers\session;
 
 use SessionHandlerInterface;
-use app\confs\Database as DatabaseConf;
 
 class Database implements SessionHandlerInterface
 {

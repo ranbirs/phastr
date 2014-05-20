@@ -2,7 +2,7 @@
 
 namespace sys;
 
-use app\confs\Config as __Config;
+use app\confs\Config as __config;
 
 class View
 {
@@ -44,7 +44,7 @@ class View
 
 	public function layout($path = null)
 	{
-		$file = $this->filePath(($path) ? $path : __Config::layout__, 'layout');
+		$file = $this->filePath(($path) ? $path : __config::layout__, 'layout');
 		$this->includeFile($file);
 		
 		exit();

@@ -18,9 +18,9 @@ abstract class Controller
 		$page = $route->page();
 		$action = $route->action();
 		$params = $route->params();
-		$methods = $route->action(true);
+
 		$render = false;
-		foreach ((array) $methods as $method) {
+		foreach ($route->action(true) as $method) {
 			if (method_exists($this, $method)) {
 				$this->{$method}($page, $action, $params);
 				$render = true;
