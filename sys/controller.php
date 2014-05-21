@@ -9,16 +9,12 @@ abstract class Controller
 	use \sys\traits\View;
 	use \sys\traits\Load;
 
-	function __construct()
-	{
-	}
-
-	public function dispatch($route)
+	public function init($route)
 	{
 		$page = $route->page();
 		$action = $route->action();
 		$params = $route->params();
-
+		
 		$render = false;
 		foreach ($route->action(true) as $method) {
 			if (method_exists($this, $method)) {
@@ -26,10 +22,10 @@ abstract class Controller
 				$render = true;
 			}
 		}
-		if (!$render) {
-			$route->error(404);
+		if ($render) {
+			$this->render();
 		}
-		$this->render();
+		$route->error(404);
 	}
 
 	public function render()

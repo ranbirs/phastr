@@ -48,9 +48,4 @@ class Database extends PDO
 		return $this->sth;
 	}
 
-	function __destruct()
-	{
-		$this->sth = null;
-	}
-
 }

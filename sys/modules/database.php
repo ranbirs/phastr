@@ -2,13 +2,21 @@
 
 namespace sys\modules;
 
+use app\confs\Database as __database;
+
 class Database extends \sys\components\Database
 {
-	use \sys\traits\util\Helper;
+	
+	use \sys\traits\Load;
 
-	function __construct($dsn, $username, $password, $driver_options = [])
+	function __construct($dsn = null, $username = __database::user__, $password = __database::pass__, $driver_options = [])
 	{
-		parent::__construct($dsn, $username, $password, $driver_options);
+		parent::__construct((is_null($dsn)) ? $this->dsn() : $dsn, $username, $password, $driver_options);
+	}
+
+	protected function dsn($driver = __database::type__, $host = __database::host__, $name = __database::name__)
+	{
+		return $driver . ':host=' . $host . ';dbname=' . $name;
 	}
 
 	public function select($table, $cols = [], $clause = '', $params = [], $fetch_mode = null)
@@ -31,7 +39,7 @@ class Database extends \sys\components\Database
 
 	public function update($table, $values = [], $clause = '', $params = [])
 	{
-		$values = $this->helper()->composeArray(' = ', $values);
+		$values = $this->load()->util('helper')->composeArray(' = ', $values);
 		$values = implode(', ', $values);
 		$this->sth = $this->prepare("UPDATE $table SET $values $clause");
 		

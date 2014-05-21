@@ -8,7 +8,7 @@ class Path
 {
 	
 	use \sys\traits\Route;
-	use \sys\traits\util\Helper;
+	use \sys\traits\Load;
 
 	public function resolve($file)
 	{
@@ -18,7 +18,7 @@ class Path
 
 	public function file($path, $base = app__, $ext = 'php')
 	{
-		return $this->helper()->path($base . '/' . $path) . '.' . $ext;
+		return $this->load()->util('helper')->path($base . '/' . $path) . '.' . $ext;
 	}
 
 	public function root($path = '')
@@ -34,7 +34,7 @@ class Path
 	public function page($path = '')
 	{
 		return $this->route()->controller() . '/' .
-			 $this->helper()->path(($path) ? $path : $this->route()->page(), 'tree');
+			 $this->load()->util('helper')->path(($path) ? $path : $this->route()->page());
 	}
 
 	public function uri($path = '')

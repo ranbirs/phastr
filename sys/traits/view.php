@@ -5,11 +5,11 @@ namespace sys\traits;
 trait View
 {
 
-	private $_init_view;
+	private $_view_trait;
 
 	protected function view()
 	{
-		return (isset($this->_init_view)) ? $this->_init_view : $this->_init_view = \sys\Init::view();
+		return (isset($this->_view_trait)) ? $this->_view_trait : $this->_view_trait = \sys\Init::view();
 	}
 
 }

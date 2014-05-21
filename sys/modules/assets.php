@@ -7,8 +7,7 @@ use app\confs\Config as __config;
 class Assets
 {
 	
-	use \sys\traits\util\Path;
-	use \sys\traits\util\Html;
+	use \sys\traits\Load;
 
 	const script__ = 'js';
 
@@ -17,10 +16,6 @@ class Assets
 	const hash__ = 'md5';
 
 	protected $assets = [];
-
-	function __construct()
-	{
-	}
 
 	public function get($type = 'script', $context = null)
 	{
@@ -53,7 +48,7 @@ class Assets
 			$context = current($type);
 			$type = key($type);
 		}
-		$asset = $this->html()->asset($type, $context, $subj, $params, $append);
+		$asset = $this->load()->util('html')->asset($type, $context, $subj, $params, $append);
 		
 		switch ($type) {
 			case 'script':
@@ -75,6 +70,8 @@ class Assets
 
 	protected function optimizeFiles($type, $files = [])
 	{
+		$this->load()->util('path');
+		
 		$assets = [];
 		foreach ($files as $file) {
 			$assets['value'][] = $file['value'];
@@ -82,7 +79,7 @@ class Assets
 			$assets['checksum'][] = $type . $file['value'] . $file['iteration'];
 		}
 		$ext = constant('self::' . $type . '__');
-		$root_path = $this->path()->root() . '/' . $this->path()->base();
+		$root_path = $this->path->root() . '/' . $this->path->base();
 		$assets_path = __config::assets__ . '/' . $ext;
 		$file_name = hash(self::hash__, implode($assets['checksum'])) . '.' . $ext;
 		$dir = $root_path . $assets_path;
@@ -99,7 +96,7 @@ class Assets
 				file_put_contents($file, implode(eol__, $content));
 			}
 		}
-		return $this->html()->asset($type, 'file', $assets_path . '/' . $file_name, null, null);
+		return $this->load()->util('html')->asset($type, 'file', $assets_path . '/' . $file_name, null, null);
 	}
 
 }

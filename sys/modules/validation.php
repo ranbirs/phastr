@@ -2,20 +2,16 @@
 
 namespace sys\modules;
 
-class Validation extends \sys\Module
+class Validation
 {
+	
+	use \sys\traits\Load;
 
 	const error__ = 'error';
 
 	const success__ = 'success';
 
 	protected $result = [];
-
-	function __construct()
-	{
-		$this->load()->module('session');
-		$this->load()->module('request');
-	}
 
 	public function getResult($status = null)
 	{
@@ -57,10 +53,10 @@ class Validation extends \sys\Module
 				if (!is_array($param)) {
 					return false;
 				}
-				$request = $this->request->{$rule}(key($param));
+				$request = $this->load()->module('request')->{$rule}(key($param));
 				return (!is_null($value) && $value === $request && $request === current($param));
 			case 'token':
-				return (!is_null($param) && $value === $this->session->get($param, 'token'));
+				return (!is_null($param) && $value === $this->load()->module('session')->get($param, 'token'));
 			case 'match':
 				return (!is_null($param) && strcmp($value, $param) == 0);
 			case 'required':
@@ -154,7 +150,7 @@ class Validation extends \sys\Module
 		}
 		return $value;
 	}
-	
+
 	public function filter($value = null, $rule = null, $param = null)
 	{
 		$value = trim($value);

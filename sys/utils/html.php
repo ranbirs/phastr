@@ -5,13 +5,13 @@ namespace sys\utils;
 class Html
 {
 	
-	use \sys\traits\util\Helper;
-	use \sys\traits\util\Path;
+	use \sys\traits\Load;
 
 	public function attr($attr = [])
 	{
-		$attr = $this->helper()->attr($attr);
-		return (!empty($attr)) ? ' ' . implode(' ', $this->helper()->composeArray('="', $attr, '', '"')) : '';
+		$this->load()->util('helper');
+		$attr = $this->helper->attr($attr);
+		return (!empty($attr)) ? ' ' . implode(' ', $this->helper->composeArray('="', $attr, '', '"')) : '';
 	}
 
 	public function asset($type = 'script', $context = 'file', $subj = null, $params = null, $append = null)
@@ -20,7 +20,7 @@ class Html
 			case 'script':
 				switch ($context) {
 					case 'file':
-						$subj = '/' . $this->path()->base($subj);
+						$subj = '/' . $this->load()->util('path')->base($subj);
 					case 'external':
 						$params['src'] = (!is_null($append)) ? $subj . '?' . $append : $subj;
 						$asset = '<script' . $this->attr($params) . '></script>';
@@ -35,7 +35,7 @@ class Html
 			case 'style':
 				switch ($context) {
 					case 'file':
-						$subj = '/' . $this->path()->base($subj);
+						$subj = '/' . $this->load()->util('path')->base($subj);
 					case 'external':
 						$params['href'] = (!is_null($append)) ? $subj . '?' . $append : $subj;
 						$params['rel'] = 'stylesheet';

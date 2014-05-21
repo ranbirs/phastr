@@ -12,6 +12,6 @@ require app__ . '/confs/route.php';
 require sys__ . '/route.php';
 require sys__ . '/init.php';
 
-new \sys\Init(new \sys\Route(), new \sys\View());
+$init = new \sys\Init(new \sys\Route(), new \sys\View());
 
 exit();

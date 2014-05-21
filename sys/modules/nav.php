@@ -2,18 +2,15 @@
 
 namespace sys\modules;
 
-abstract class Nav extends \sys\Module
+abstract class Nav
 {
 	
-	use \sys\traits\util\Helper;
+	use \sys\traits\Load;
+	use \sys\traits\View;
 
 	protected $nav_id;
 
 	protected $build = [], $items = [];
-
-	function __construct()
-	{
-	}
 
 	abstract protected function build();
 
@@ -24,12 +21,14 @@ abstract class Nav extends \sys\Module
 
 	public function render($import = null, $title = null, $attr = [], $template = 'bootstrap')
 	{
-		$this->nav_id = strtolower($this->helper()->className($this));
+		$this->load()->util('helper');
+		
+		$this->nav_id = strtolower($this->helper->className($this));
 		$this->build($import);
 		
 		$attr['id'] = $this->nav_id;
 		$this->build['title'] = $title;
-		$this->build['attr'] = $this->helper()->attr($attr);
+		$this->build['attr'] = $this->helper->attr($attr);
 		
 		$nav = ['build' => $this->build, 'items' => $this->items];
 		return $this->view()->template('nav', $template, $nav);

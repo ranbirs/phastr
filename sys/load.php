@@ -12,35 +12,44 @@ class Load
 		$this->_instance = $instance;
 	}
 
-	protected function composite($instance, $path, $base = app__)
+	protected function getInstance($path, $base = app__, $prop = true)
 	{
-		$class = '\\' . $base . '\\' . implode('\\', explode('/', $path));
-		return $instance->{basename($path)} = new $class();
+		if (!isset($this->_instance->{$name = basename($path)}) || !$prop) {
+			$class = '\\' . $base . '\\' . implode('\\', explode('/', $path));
+			$instance = new $class();
+			return (!$prop) ? $instance : $this->_instance->{$name} = $instance;
+		}
+		return $this->_instance->{$name};
 	}
 
-	public function module($path, $base = sys__)
+	public function util($path, $prop = true)
 	{
-		return $this->composite($this->_instance, 'modules/' . $path, $base);
+		return $this->getInstance('utils/' . $path, sys__, $prop);
 	}
 
-	public function model($path)
+	public function module($path, $base = sys__, $prop = true)
 	{
-		return $this->composite($this->_instance, 'models/' . $path);
+		return $this->getInstance('modules/' . $path, $base, $prop);
 	}
 
-	public function form($path)
+	public function model($path, $prop = true)
 	{
-		return $this->composite($this->_instance, 'forms/' . $path);
+		return $this->getInstance('models/' . $path, app__, $prop);
 	}
 
-	public function nav($path)
+	public function form($path, $prop = true)
 	{
-		return $this->composite($this->_instance, 'navs/' . $path);
+		return $this->getInstance('forms/' . $path, app__, $prop);
 	}
 
-	public function service($path)
+	public function nav($path, $prop = true)
 	{
-		return $this->composite($this->_instance, 'services/' . $path);
+		return $this->getInstance('navs/' . $path, app__, $prop);
+	}
+
+	public function service($path, $prop = true)
+	{
+		return $this->getInstance('services/' . $path, app__, $prop);
 	}
 
 }

@@ -14,7 +14,7 @@ class Init
 		
 		$controller = $route->controller(true);
 		
-		(new $controller())->dispatch($route);
+		return (new $controller())->init($route);
 	}
 
 	public static function route()

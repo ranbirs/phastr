@@ -4,7 +4,7 @@ namespace sys\modules;
 
 use app\confs\Request as __request;
 
-class Request extends \sys\Module
+class Request
 {
 
 	const param__ = 'ajax';
@@ -12,10 +12,6 @@ class Request extends \sys\Module
 	public $method = __request::method__;
 
 	public $layout = __request::layout__;
-
-	function __construct()
-	{
-	}
 
 	public function header($key = null)
 	{
@@ -26,7 +22,7 @@ class Request extends \sys\Module
 	{
 		return (!is_null($key)) ? ((isset($_SERVER[$key])) ? $_SERVER[$key] : false) : $_SERVER;
 	}
-	
+
 	public function post($key = null, $value = null)
 	{
 		if (!is_null($key) && !is_null($value)) {
@@ -62,7 +58,5 @@ class Request extends \sys\Module
 		}
 		return $this->{$method}($subj . $separator . $key);
 	}
-	
-
 
 }

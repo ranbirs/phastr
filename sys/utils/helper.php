@@ -22,13 +22,10 @@ class Helper
 		
 		switch ($type) {
 			case 'label':
-				$path = str_replace(['--', '-'], ['__', '_'], $path);
+				$path = str_replace('-', '_', $path);
 				break;
 			case 'path':
-				$path = str_replace(['__', '/', '_'], ['--', '--', '-'], $path);
-				break;
-			case 'tree':
-				$path = str_replace(['__', '--', '-'], ['/', '/', '_'], $path);
+				$path = str_replace('_', '-', $path);
 				break;
 			default:
 				return false;

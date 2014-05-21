@@ -7,16 +7,15 @@ use app\confs\Config as __config;
 class View
 {
 	
-	use \sys\traits\util\Path;
-	use \sys\traits\util\Html;
+	use \sys\traits\Load;
 
 	public $request, $response, $error, $type, $page, $body, $title, $callback;
 
-	private $_assets_module;
-
-	public function assets()
+	function __construct()
 	{
-		return (isset($this->_assets_module)) ? $this->_assets_module : $this->_assets_module = new \sys\modules\Assets();
+		$this->load()->module('assets');
+		$this->load()->util('path');
+		$this->load()->util('html');
 	}
 
 	public function block($path)
@@ -36,7 +35,7 @@ class View
 
 	public function page($path = null)
 	{
-		if (($file = $this->resolveFile($this->path()->page($path), 'page')) !== false) {
+		if (($file = $this->resolveFile($this->path->page($path), 'page')) !== false) {
 			return $this->render($file);
 		}
 		return false;
@@ -59,12 +58,12 @@ class View
 
 	protected function filePath($path, $type)
 	{
-		return $this->path()->file('views/' . $type . 's/' . $path);
+		return $this->path->file('views/' . $type . 's/' . $path);
 	}
 
 	protected function resolveFile($path, $type = 'page')
 	{
-		return $this->path()->resolve($this->filePath($path, $type));
+		return $this->path->resolve($this->filePath($path, $type));
 	}
 
 	protected function includeFile($file, $data = null)

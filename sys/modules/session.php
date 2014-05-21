@@ -8,16 +8,17 @@ use app\confs\Database as __database;
 class Session extends \sys\components\Session
 {
 	
-	use \sys\traits\module\Hash;
+	use \sys\traits\Load;
 
 	function __construct()
 	{
+		$this->load()->module('hash');
 		$this->start((__database::session__) ? new \sys\handlers\session\Database() : null);
 	}
 
 	public function generate()
 	{
-		$this->set('_token', $this->hash()->rand('md5'));
+		$this->set('_token', $this->hash->rand('md5'));
 		$this->set('_key', $this->keygen());
 		$this->set(['_timestamp' => 0], microtime(true));
 		$this->set(['_client' => 'lang'], __Config::lang__);
@@ -42,7 +43,7 @@ class Session extends \sys\components\Session
 
 	public function keygen($hash = null)
 	{
-		$key = $this->hash()->gen($this->session_id . $this->token(), 'sha256');
+		$key = $this->hash->gen($this->session_id . $this->token(), 'sha256');
 		return (is_null($hash)) ? $key : ($hash === $key);
 	}
 

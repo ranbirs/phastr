@@ -5,11 +5,11 @@ namespace sys\traits;
 trait Load
 {
 
-	private $_sys_load;
+	private $_load_trait;
 
 	protected function load()
 	{
-		return (isset($this->_sys_load)) ? $this->_sys_load : $this->_sys_load = new \sys\Load($this);
+		return (isset($this->_load_trait)) ? $this->_load_trait : $this->_load_trait = new \sys\Load($this);
 	}
 
 }

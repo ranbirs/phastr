@@ -4,13 +4,10 @@ namespace sys\modules;
 
 use sys\modules\Validation;
 
-abstract class Form extends \sys\Module
+abstract class Form
 {
-	
-	use \sys\traits\module\Hash;
-	use \sys\traits\util\Helper;
-	use \sys\traits\util\Path;
-	use \sys\traits\util\Html;
+	use \sys\traits\Load;
+	use \sys\traits\View;
 
 	protected $form_id, $method, $import, $submit;
 
@@ -23,6 +20,10 @@ abstract class Form extends \sys\Module
 	function __construct()
 	{
 		$this->load()->module('session');
+		$this->load()->module('hash');
+		$this->load()->util('helper');
+		$this->load()->util('path');
+		$this->load()->util('html');
 	}
 
 	abstract protected function build();
@@ -74,7 +75,7 @@ abstract class Form extends \sys\Module
 
 	public function render($import = null, $title = null, $attr = [], $method = 'post', $template = 'bootstrap')
 	{
-		$this->form_id = strtolower($this->helper()->className($this));
+		$this->form_id = strtolower($this->helper->className($this));
 		$this->import = $import;
 		$this->method = $method;
 		$this->build($import);
@@ -82,7 +83,7 @@ abstract class Form extends \sys\Module
 		
 		$attr['id'] = $this->form_id;
 		$attr['method'] = $method;
-		$attr['action'] = $this->path()->request('form/' . $this->form_id);
+		$attr['action'] = $this->path->request('form/' . $this->form_id);
 		$this->build['title'] = $title;
 		$this->build['attr'] = $attr;
 		
@@ -94,7 +95,7 @@ abstract class Form extends \sys\Module
 	protected function close()
 	{
 		if (!$this->session->get($this->form_id, 'token')) {
-			$this->session->set([$this->form_id => 'token'], $this->hash()->rand('sha256'));
+			$this->session->set([$this->form_id => 'token'], $this->hash->rand('sha256'));
 		}
 		$session_token = $this->session->token();
 		$session_key = $this->session->key();
@@ -240,7 +241,7 @@ abstract class Form extends \sys\Module
 				$build = '</' . $control . '>';
 				break;
 		}
-		$build = '<' . $control . $this->html()->attr($field['attr']) . '>' . $build;
+		$build = '<' . $control . $this->html->attr($field['attr']) . '>' . $build;
 		
 		switch ($group) {
 			case 'hidden':
@@ -294,10 +295,10 @@ abstract class Form extends \sys\Module
 				default:
 					$field['attr']['id'] = $id . '-' . $index;
 					$field['attr']['name'] = $id . '[]';
-					$field['attr'] = $this->helper()->attr(array_merge($parent['attr'], $field['attr']));
+					$field['attr'] = $this->helper->attr(array_merge($parent['attr'], $field['attr']));
 					$field['active'] = (isset($field['attr']['checked'])) ? true : false;
 			}
-			$build = '<' . $field['control'] . $this->html()->attr($field['attr']) . '>' . $build;
+			$build = '<' . $field['control'] . $this->html->attr($field['attr']) . '>' . $build;
 			$field['control'] = $build;
 		}
 		unset($field);
