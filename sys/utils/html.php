@@ -5,7 +5,7 @@ namespace sys\utils;
 class Html
 {
 	
-	use \sys\traits\Load;
+	use \sys\Loader;
 
 	public function attr($attr = [])
 	{

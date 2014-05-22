@@ -7,7 +7,7 @@ use SessionHandlerInterface;
 class Database implements SessionHandlerInterface
 {
 	
-	use \sys\traits\Load;
+	use \sys\Loader;
 
 	const table__ = 'session';
 

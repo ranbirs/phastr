@@ -7,7 +7,7 @@ use app\confs\Database as __database;
 class Database extends \sys\components\Database
 {
 	
-	use \sys\traits\Load;
+	use \sys\Loader;
 
 	function __construct($dsn = null, $username = __database::user__, $password = __database::pass__, $driver_options = [])
 	{

@@ -7,71 +7,52 @@ use app\confs\Config as __config;
 class View
 {
 	
-	use \sys\traits\Load;
-
-	public $request, $response, $error, $type, $page, $body, $title, $callback;
+	use \sys\Loader;
 
 	function __construct()
 	{
-		$this->load()->module('assets');
 		$this->load()->util('path');
-		$this->load()->util('html');
-	}
-
-	public function block($path)
-	{
-		return $this->render($this->filePath($path, 'block'));
-	}
-
-	public function request($path)
-	{
-		return $this->render($this->filePath($path, 'request'));
-	}
-
-	public function template($type, $path, $data = null)
-	{
-		return $this->render($this->filePath($type . '/' . $path, 'template'), [$type => $data]);
 	}
 
 	public function page($path = null)
 	{
-		if (($file = $this->resolveFile($this->path->page($path), 'page')) !== false) {
-			return $this->render($file);
-		}
-		return false;
+		return $this->render('views/pages/' . $this->path->page($path));
 	}
 
-	public function layout($path = null)
+	public function block($path)
 	{
-		$file = $this->filePath(($path) ? $path : __config::layout__, 'layout');
-		$this->includeFile($file);
+		return $this->render('views/blocks/' . $path);
+	}
+
+	public function request($path)
+	{
+		return $this->render('views/requests/' . $path);
+	}
+
+	public function template($type, $path, $data = null)
+	{
+		return $this->render('views/templates/' . $type . '/' . $path, [$type => $data]);
+	}
+
+	public function layout($path = __config::layout__)
+	{
+		include $this->path->file('views/layouts/' . $path);
 		
 		exit();
 	}
 
-	protected function render($file, $data = null)
+	protected function render($path, $data = null)
 	{
+		$file = $this->path->file($path);
+		
 		ob_start();
-		$this->includeFile($file, $data);
-		return ob_get_clean();
-	}
-
-	protected function filePath($path, $type)
-	{
-		return $this->path->file('views/' . $type . 's/' . $path);
-	}
-
-	protected function resolveFile($path, $type = 'page')
-	{
-		return $this->path->resolve($this->filePath($path, $type));
-	}
-
-	protected function includeFile($file, $data = null)
-	{
+		
 		if (!is_null($data)) {
 			extract($data);
 		}
 		include $file;
+		
+		return ob_get_clean();
 	}
 
 }

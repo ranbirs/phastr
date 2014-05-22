@@ -5,8 +5,7 @@ namespace sys\modules;
 abstract class Nav
 {
 	
-	use \sys\traits\Load;
-	use \sys\traits\View;
+	use \sys\Loader;
 
 	protected $nav_id;
 
@@ -21,6 +20,7 @@ abstract class Nav
 
 	public function render($import = null, $title = null, $attr = [], $template = 'bootstrap')
 	{
+		$this->load()->init('view');
 		$this->load()->util('helper');
 		
 		$this->nav_id = strtolower($this->helper->className($this));
@@ -31,7 +31,7 @@ abstract class Nav
 		$this->build['attr'] = $this->helper->attr($attr);
 		
 		$nav = ['build' => $this->build, 'items' => $this->items];
-		return $this->view()->template('nav', $template, $nav);
+		return $this->view->template('nav', $template, $nav);
 	}
 
 	protected function item($label = null, $path = null, $params = [])

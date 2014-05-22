@@ -7,7 +7,7 @@ use app\confs\Config as __config;
 class Assets
 {
 	
-	use \sys\traits\Load;
+	use \sys\Loader;
 
 	const script__ = 'js';
 

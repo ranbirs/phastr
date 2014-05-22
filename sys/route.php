@@ -8,7 +8,7 @@ use app\confs\Config as __config;
 class Route
 {
 	
-	use \sys\traits\Load;
+	use \sys\Loader;
 
 	const length__ = 128;
 
@@ -84,9 +84,9 @@ class Route
 		return $this->path['label'][1];
 	}
 
-	public function action($methods = false, $glue = '__')
+	public function action($method = false, $glue = '__')
 	{
-		if (!$methods) {
+		if (!$method) {
 			return $this->path['label'][2];
 		}
 		if (($default = __route::method__)) {

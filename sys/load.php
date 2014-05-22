@@ -22,6 +22,15 @@ class Load
 		return $this->_instance->{$name};
 	}
 
+	public function init($subj, $prop = true)
+	{
+		if (!isset($this->_instance->{$subj}) || !$prop) {
+			$instance = call_user_func('\\' . sys__ . '\\Init::' . $subj);
+			return (!$prop) ? $instance : $this->_instance->{$subj} = $instance;
+		}
+		return $this->_instance->{$subj};
+	}
+
 	public function util($path, $prop = true)
 	{
 		return $this->getInstance('utils/' . $path, sys__, $prop);

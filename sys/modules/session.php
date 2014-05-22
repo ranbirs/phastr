@@ -8,7 +8,7 @@ use app\confs\Database as __database;
 class Session extends \sys\components\Session
 {
 	
-	use \sys\traits\Load;
+	use \sys\Loader;
 
 	function __construct()
 	{

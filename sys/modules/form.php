@@ -6,8 +6,7 @@ use sys\modules\Validation;
 
 abstract class Form
 {
-	use \sys\traits\Load;
-	use \sys\traits\View;
+	use \sys\Loader;
 
 	protected $form_id, $method, $import, $submit;
 
@@ -15,10 +14,11 @@ abstract class Form
 
 	protected $validated = [], $sanitized = [];
 
-	protected $expire, $success, $fail, $error;
+	protected $status, $expire, $message, $callback;
 
 	function __construct()
 	{
+		$this->load()->init('view');
 		$this->load()->module('session');
 		$this->load()->module('hash');
 		$this->load()->util('helper');
@@ -26,7 +26,9 @@ abstract class Form
 		$this->load()->util('html');
 	}
 
-	abstract protected function build();
+	abstract public function build();
+
+	abstract public function submit();
 
 	public function id()
 	{
@@ -44,33 +46,34 @@ abstract class Form
 		$this->load()->module('validation');
 		
 		$this->request->layout = $layout;
-		$method = $this->method;
 		
 		foreach ($this->sanitized as $id => $filter) {
-			$this->request->{$method}($id, $this->validation->sanitize($this->request->{$method}($id), $filter));
+			$this->request->{$this->method}($id, 
+				$this->validation->sanitize($this->request->{$this->method}($id), $filter));
 		}
 		foreach ($this->validated as $id => $validation) {
-			$this->validation->resolve($id, $validation, $this->request->{$method}($id));
+			$this->validation->resolve($id, $validation, $this->request->{$this->method}($id));
 		}
 		$this->submit = $this->request->fields($this->form_id, $this->method);
-		$validate = $this->validate($this->submit, $this->import);
 		
-		if (array_key_exists(Validation::error__, $result = $this->validation->getResult())) {
-			if (!isset($this->error)) {
-				$this->error();
-			}
-			$this->error['validation'] = $result;
-			return $this->error;
+		if (!$this->status()) {
+			return $this->status;
 		}
-		if (!$validate) {
-			return (isset($this->fail)) ? $this->fail : $this->fail();
+		$this->validate($this->submit, $this->status);
+		
+		if (!$this->status()) {
+			return $this->status;
 		}
-		$this->submit($this->submit, $this->import);
+		$this->submit($this->submit, $this->status);
 		
 		if ((isset($this->expire)) ? $this->expire : $this->expire()) {
 			$this->session->drop($this->form_id, 'token');
 		}
-		return (isset($this->success)) ? $this->success : $this->success();
+		if ($this->status()) {
+			return $this->status;
+		}
+		
+		return false;
 	}
 
 	public function render($import = null, $title = null, $attr = [], $method = 'post', $template = 'bootstrap')
@@ -89,10 +92,10 @@ abstract class Form
 		
 		$form = ['build' => $this->build, 'fields' => $this->fields, 'action' => $this->action, 
 			'hidden' => $this->hidden];
-		return $this->view()->template('form', $template, $form);
+		return $this->view->template('form', $template, $form);
 	}
 
-	protected function close()
+	public function close()
 	{
 		if (!$this->session->get($this->form_id, 'token')) {
 			$this->session->set([$this->form_id => 'token'], $this->hash->rand('sha256'));
@@ -112,41 +115,44 @@ abstract class Form
 				'validate' => ['token' => $this->form_id]]);
 	}
 
-	protected function getValidation($id = null)
+	public function status()
 	{
-		return $this->validation->getResult();
+		$this->status['status'] = (array_key_exists(Validation::error__, 
+			$this->status['validation'] = $this->validation->getResult())) ? 0 : 1;
+		$this->status['message'] = (isset($this->message[$this->status['status']])) ? $this->message[$this->status['status']] : '';
+		$this->status['callback'] = (string) $this->callback;
+		
+		return $this->status['status'];
 	}
 
-	public function setValidation($id, $msg = null, $status = Validation::error__)
-	{
-		return $this->validation->setStatus($this->form_id . '_' . $id, $msg, $status);
-	}
-
-	protected function validate($submit = null, $import = null)
+	public function validate($submit = null, $status = null)
 	{
 		return true;
 	}
 
-	protected function submit($submit = null, $import = null)
+	public function getValidation()
 	{
+		return $this->validation->getResult();
 	}
 
-	protected function error($msg = '', $callback = '')
+	public function setValidation($id, $message = null, $status = false)
 	{
-		return $this->error = ['result' => false, 'callback' => $callback, 'message' => $msg];
+		$status = (!$status) ? Validation::error__ : Validation::success__;
+		return $this->validation->setStatus($this->form_id . '_' . $id, $message, $status);
 	}
 
-	protected function fail($msg = '', $callback = '')
+	public function message($message, $status = true)
 	{
-		return $this->fail = ['result' => false, 'callback' => $callback, 'message' => $msg];
+		$status = (int) $status;
+		return $this->message[$status] = $message;
 	}
 
-	protected function success($msg = '', $callback = '')
+	public function callback($callback = '')
 	{
-		return $this->success = ['result' => true, 'callback' => $callback, 'message' => $msg];
+		return $this->callback = $callback;
 	}
 
-	protected function expire($expire = true)
+	public function expire($expire = true)
 	{
 		return $this->expire = (bool) $expire;
 	}

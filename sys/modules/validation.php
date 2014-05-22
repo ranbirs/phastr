@@ -5,7 +5,7 @@ namespace sys\modules;
 class Validation
 {
 	
-	use \sys\traits\Load;
+	use \sys\Loader;
 
 	const error__ = 'error';
 
@@ -18,88 +18,90 @@ class Validation
 		return (!is_null($status)) ? ((isset($this->result[$status])) ? $this->result[$status] : null) : $this->result;
 	}
 
-	public function setStatus($subj, $msg = null, $status = self::error__)
+	public function setStatus($id, $msg = null, $status = self::error__)
 	{
-		$this->result[$status][] = [$subj, $msg];
+		$this->result[$status][] = ['id' => $id, 'message' => $msg];
 	}
 
 	public function resolve($id, $validation, $value = null)
 	{
-		foreach ($validation as $key => $args) {
+		foreach ($validation as $rule => $args) {
 			
-			$rule = (!is_int($key)) ? $key : $args;
-			$param = (isset($args['value'])) ? $args['value'] : $args;
-			$valid = ($this->validate($value, $rule, $param)) ? self::success__ : self::error__;
+			$rule = (!is_int($rule)) ? $rule : $args;
+			$params = (isset($args['value'])) ? $args['value'] : $args;
+			$status = ($this->validate($value, $rule, $params)) ? self::success__ : self::error__;
 			
 			if (is_array($args)) {
-				if (array_key_exists($valid, $args)) {
-					$this->setStatus($id, $args[$valid], $valid);
+				if (array_key_exists($status, $args)) {
+					$this->setStatus($id, $args[$status], $status);
 					continue;
 				}
 			}
-			if ($valid === self::error__) {
-				$this->setStatus($id, '', $valid);
+			if ($status === self::error__) {
+				$this->setStatus($id, '', $status);
 			}
 		}
 	}
 
-	public function validate($value = null, $rule = null, $param = null)
+	public function validate($value = null, $rule = null, $params = null)
 	{
 		switch ($rule) {
 			case 'header':
 			case 'server':
 			case 'post':
 			case 'get':
-				if (!is_array($param)) {
+				if (!is_array($params)) {
 					return false;
 				}
-				$request = $this->load()->module('request')->{$rule}(key($param));
-				return (!is_null($value) && $value === $request && $request === current($param));
+				$request = $this->load()->module('request')->{$rule}(key($params));
+				return (!is_null($value) && $value === $request && $request === current($params));
 			case 'token':
-				return (!is_null($param) && $value === $this->load()->module('session')->get($param, 'token'));
-			case 'match':
-				return (!is_null($param) && strcmp($value, $param) == 0);
-			case 'required':
+				return (!is_null($params) && $value === $this->load()->module('session')->get($params, 'token'));
+			case 'compare':
+				return (!is_null($params) && strcmp($value, $params) == 0);
+			case 'require':
 				if (is_array($value)) {
 					$value = implode($value);
 				}
 				return (strlen($value) > 0);
 			case 'maxlength':
-				$param = (int) $param;
+				$params = (int) $params;
 				if (!is_array($value)) {
-					return (strlen($value) < $param);
+					return (strlen($value) < $params);
 				}
 				foreach ($value as $val) {
-					if (strlen($val) > $param) {
+					if (strlen($val) > $params) {
 						return false;
 					}
 				}
 				return true;
 			case 'minlength':
-				$param = (int) $param;
+				$params = (int) $params;
 				if (!is_array($value)) {
-					return (strlen($value) > $param);
+					return (strlen($value) > $params);
 				}
 				foreach ($value as $val) {
-					if (strlen($val) < $param) {
+					if (strlen($val) < $params) {
 						return false;
 					}
 				}
 				return true;
-			case 'alpha':
-				return ctype_alpha($value);
-			case 'alnum':
-				return ctype_alnum($value);
+			case 'email':
+				return (filter_var($value, FILTER_VALIDATE_EMAIL) !== false);
+			case 'url':
+				return (filter_var($value, FILTER_VALIDATE_URL) !== false);
+			case 'ip':
+				return (filter_var($value, FILTER_VALIDATE_IP, $params) !== false);
+			case 'regexp':
+				return (filter_var($value, FILTER_VALIDATE_REGEXP, ['options' => [$rule => $params]]) !== false);
 			case 'int':
 				return (filter_var($value, FILTER_VALIDATE_INT, ['options' => $params]) !== false);
 			case 'float':
 				return (filter_var($value, FILTER_VALIDATE_FLOAT) !== false);
-			case 'email':
-				return (filter_var($value, FILTER_VALIDATE_EMAIL) !== false);
-			case 'ip':
-				return (filter_var($value, FILTER_VALIDATE_IP, $param) !== false);
-			case 'regexp':
-				return (filter_var($value, FILTER_VALIDATE_REGEXP, ['options' => [$rule => $param]]) !== false);
+			case 'alpha':
+				return ctype_alpha($value);
+			case 'alnum':
+				return ctype_alnum($value);
 			case null:
 				return true;
 			default:
@@ -107,10 +109,10 @@ class Validation
 		}
 	}
 
-	public function sanitize($value = null, $rule = null, $param = null)
+	public function sanitize($value = null, $rule = null, $params = null)
 	{
 		if (is_array($rule)) {
-			$param = current($rule);
+			$params = current($rule);
 			$rule = key($rule);
 		}
 		switch ($rule) {
@@ -143,19 +145,19 @@ class Validation
 				return false;
 		}
 		if (!is_array($value)) {
-			return $value = $this->filter($value, $rule, $param);
+			return $value = $this->filter($value, $rule, $params);
 		}
 		foreach ($value as &$val) {
-			$val = $this->filter($val, $rule, $param);
+			$val = $this->filter($val, $rule, $params);
 		}
 		return $value;
 	}
 
-	public function filter($value = null, $rule = null, $param = null)
+	public function filter($value = null, $rule = null, $params = null)
 	{
 		$value = trim($value);
-		if (!is_null($param)) {
-			return filter_var($value, $rule, $param);
+		if (!is_null($params)) {
+			return filter_var($value, $rule, $params);
 		}
 		return filter_var($value, $rule);
 	}

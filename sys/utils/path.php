@@ -2,18 +2,16 @@
 
 namespace sys\utils;
 
-use app\confs\Route as __Route;
+use app\confs\Route as __route;
 
 class Path
 {
 	
-	use \sys\traits\Route;
-	use \sys\traits\Load;
+	use \sys\Loader;
 
 	public function resolve($file)
 	{
-		$file = stream_resolve_include_path($file);
-		return ($file !== false) ? $file : false;
+		return (($file = stream_resolve_include_path($file)) !== false) ? $file : false;
 	}
 
 	public function file($path, $base = app__, $ext = 'php')
@@ -28,26 +26,27 @@ class Path
 
 	public function base($path = '')
 	{
-		return ($base = $this->route()->path('base')) ? (($path) ? $base . '/' . $path : $base) : (($path) ? $path : '');
+		return ($base = $this->load()->init('route')->path('base')) ? (($path) ? $base . '/' . $path : $base) : (($path) ? $path : '');
 	}
 
 	public function page($path = '')
 	{
-		return $this->route()->controller() . '/' .
-			 $this->load()->util('helper')->path(($path) ? $path : $this->route()->page());
+		return $this->load()->init('route')->controller() . '/' .
+			 $this->load()->util('helper')->path(($path) ? $path : $this->load()->init('route')->page());
 	}
 
 	public function uri($path = '')
 	{
 		$path = ($path && $path != '/') ? '/' . $path : '';
-		$base = (__route::rewrite__) ? (($base = $this->route()->path('base')) ? '/' . $base : '') : '/' .
-			 $this->route()->path('file');
+		$base = (__route::rewrite__) ? (($base = $this->load()->init('route')->path('base')) ? '/' . $base : '') : '/' .
+			 $this->load()->init('route')->path('file');
 		return $base . $path;
 	}
 
 	public function request($path = '')
 	{
-		return $this->uri($this->route()->path('route') . '/' . \sys\modules\Request::param__ . '/' . $path);
+		return $this->uri(
+			$this->load()->init('route')->path('route') . '/' . \sys\modules\Request::param__ . '/' . $path);
 	}
 
 	public function trail($path = '')

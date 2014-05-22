@@ -13,8 +13,14 @@ class Init
 		self::$view = $view;
 		
 		$controller = $route->controller(true);
+		$controller = new $controller();
 		
-		return (new $controller())->init($route);
+		if (!$controller->init($route)) {
+			$route->error(404);
+		}
+		$controller->render();
+		
+		exit();
 	}
 
 	public static function route()

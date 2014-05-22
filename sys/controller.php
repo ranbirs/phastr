@@ -5,9 +5,13 @@ namespace sys;
 abstract class Controller
 {
 	
-	use \sys\traits\Route;
-	use \sys\traits\View;
-	use \sys\traits\Load;
+	use \sys\Loader;
+
+	function __construct()
+	{
+		$this->load()->init('route');
+		$this->load()->init('view');
+	}
 
 	public function init($route)
 	{
@@ -16,21 +20,18 @@ abstract class Controller
 		$params = $route->params();
 		
 		$render = false;
-		foreach ($route->action(true) as $method) {
+		foreach ((array) $route->action(true) as $method) {
 			if (method_exists($this, $method)) {
 				$this->{$method}($page, $action, $params);
 				$render = true;
 			}
 		}
-		if ($render) {
-			$this->render();
-		}
-		$route->error(404);
+		return $render;
 	}
 
 	public function render()
 	{
-		$this->view()->layout();
+		$this->view->layout();
 	}
 
 }
