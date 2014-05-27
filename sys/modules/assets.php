@@ -6,8 +6,6 @@ use app\confs\Config as __config;
 
 class Assets
 {
-	
-	use \sys\Loader;
 
 	const script__ = 'js';
 
@@ -17,71 +15,61 @@ class Assets
 
 	protected $assets = [];
 
-	public function get($type = 'script', $context = null)
+	public function script($subj = '', $type = 'file', $attr = null, $iteration = __config::iteration__)
 	{
-		switch ($type) {
+		$key = hash(self::hash__, 'script' . $type . $iteration . $subj);
+		$asset = \sys\utils\html\script($subj, $type, $attr, $iteration);
+		return $this->assets['script'][$type][$key] = ['value' => $subj, 'asset' => $asset, 'iteration' => $iteration];
+	}
+	
+	public function style($subj = '', $type = 'file', $attr = null, $iteration = __config::iteration__)
+	{
+		$key = hash(self::hash__, 'style' . $type . $iteration . $subj);
+		$asset = \sys\utils\html\style($subj, $type, $attr, $iteration);
+		return $this->assets['style'][$type][$key] = ['value' => $subj, 'asset' => $asset, 'iteration' => $iteration];
+	}
+	
+	public function meta($attr = null)
+	{
+		return $this->assets['meta'][] = \sys\utils\html\meta($attr);
+	}
+	
+	public function set($type, $asset = null)
+	{
+		return $this->assets[$type][] = $asset;
+	}
+	
+	public function get($subj = 'script', $type = null)
+	{
+		switch ($subj) {
 			case 'script':
 			case 'style':
-				$assets = ['external' => [], 'file' => [], 'inline' => []];
-				foreach ($this->assets[$type] as $_context => $asset) {
-					if ($_context == 'file' && __config::assets__) {
-						$assets['file'][] = $this->optimizeFiles($type, $asset);
-						continue;
+				$assets['external'] = [];
+				$assets['file'] = [];
+				$assets['inline'] = [];
+				foreach ($this->assets[$subj] as $_type => $_assets) {
+					if (__config::assets__ && $_type == 'file') {
+						$_assets = [['asset' => $this->optimize($subj, $_assets)]];
 					}
-					foreach ($asset as $param) {
-						$assets[$_context][] = $param['asset'];
+					foreach ($_assets as $asset) {
+						$assets[$_type][] = $asset['asset'];
 					}
 				}
-				if (is_null($context)) {
-					return implode(eol__, array_merge($assets['external'], $assets['file'], $assets['inline']));
-				}
-				return (isset($assets[$context])) ? implode(eol__, $assets[$context]) : false;
+				return ($type) ? ((isset($assets[$type])) ? implode(eol__, $assets[$type]) : false) : implode(eol__, call_user_func_array('array_merge', $assets));
+			case 'meta':
+				return (isset($this->assets[$subj])) ? implode(eol__, array_values($this->assets[$subj])) : false;
 			default:
-				return (isset($this->assets[$type])) ? implode(eol__, array_values($this->assets[$type])) : null;
+				return (isset($this->assets[$subj])) ? $this->assets[$subj] : false;
 		}
 	}
 
-	public function set($type = ['script' => 'file'], $subj = null, $params = null, $append = __config::iteration__)
+	protected function optimize($type, $assets = [])
 	{
-		$context = 'file';
-		if (is_array($type)) {
-			$context = current($type);
-			$type = key($type);
-		}
-		$asset = $this->load()->util('html')->asset($type, $context, $subj, $params, $append);
-		
-		switch ($type) {
-			case 'script':
-			case 'style':
-				$key = hash(self::hash__, $subj);
-				switch ($context) {
-					case 'file':
-					case 'external':
-						return $this->assets[$type][$context][$key] = ['value' => $subj, 'asset' => $asset, 
-							'iteration' => $append];
-					case 'inline':
-						return $this->assets[$type][$context][$key] = ['asset' => $asset];
-				}
-				break;
-			default:
-				return $this->assets[$type][] = $asset;
-		}
-	}
-
-	protected function optimizeFiles($type, $files = [])
-	{
-		$this->load()->util('path');
-		
-		$assets = [];
-		foreach ($files as $file) {
-			$assets['value'][] = $file['value'];
-			$assets['asset'][] = $file['asset'];
-			$assets['checksum'][] = $type . $file['value'] . $file['iteration'];
-		}
 		$ext = constant('self::' . $type . '__');
-		$root_path = $this->path->root() . '/' . $this->path->base();
+		$root_path = \sys\utils\path\root() . '/' . \sys\utils\path\base();
 		$assets_path = __config::assets__ . '/' . $ext;
-		$file_name = hash(self::hash__, implode($assets['checksum'])) . '.' . $ext;
+		$file_name = hash(self::hash__, implode(array_keys($assets))) . '.' . $ext;
+		$file_path = $assets_path . '/' . $file_name;
 		$dir = $root_path . $assets_path;
 		
 		if (!file_exists($file = $dir . '/' . $file_name)) {
@@ -90,13 +78,13 @@ class Assets
 			}
 			if (is_writable($dir)) {
 				$content = [];
-				foreach ($assets['value'] as $file_path) {
-					$content[] = file_get_contents($root_path . $file_path);
+				foreach ($assets as $asset) {
+					$content[] = file_get_contents($root_path . $asset['value']);
 				}
 				file_put_contents($file, implode(eol__, $content));
 			}
 		}
-		return $this->load()->util('html')->asset($type, 'file', $assets_path . '/' . $file_name, null, null);
+		return call_user_func_array('\\sys\\utils\\html\\' . $type, [$file_path, 'file']);
 	}
 
 }

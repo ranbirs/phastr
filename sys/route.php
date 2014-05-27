@@ -7,30 +7,24 @@ use app\confs\Config as __config;
 
 class Route
 {
-	
-	use \sys\Loader;
 
 	const length__ = 128;
 
 	protected $path;
 
 	function __construct()
-	{
-		$this->load()->util('helper');
-		
+	{	
 		$path = parse_url($_SERVER['REQUEST_URI']);
 		
-		$path['path'] = $this->helper->splitString('/', $path['path']);
-		$path['file'] = $this->helper->splitString('/', $_SERVER['SCRIPT_NAME']);
-		$path['path'] = array_values(array_diff_assoc($path['path'], $path['file']));
+		$path['file'] = $_SERVER['SCRIPT_NAME'];
+		$path['base'] = (($path['base'] = dirname($path['file'])) == '/') ? '/' : $path['base'] . '/';
+		$path['path'] = \sys\utils\helper\filter_split('/', substr($path['path'], strlen($path['file'])));
 		$path['uri'] = (!empty($path['path'])) ? implode('/', $path['path']) : '/';
-		$path['base'] = implode('/', array_slice($path['file'], 0, -1));
-		$path['file'] = implode('/', $path['file']);
 		
 		if (!isset($path['path'][0])) {
 			$path['path'][0] = __route::controller__;
 		}
-		elseif (!in_array($path['path'][0], $this->helper->splitString(',', __route::scope__))) {
+		elseif (!in_array($path['path'][0], \sys\utils\helper\filter_split(',', __route::scope__))) {
 			return $this->error(404);
 		}
 		if (!isset($path['path'][1])) {
@@ -46,11 +40,10 @@ class Route
 			if ((strlen($arg) > self::length__) || preg_match('/[^a-z0-9-]/', $arg = strtolower($arg))) {
 				return $this->error(404);
 			}
-			if (($path['label'][$index] = $this->helper->path($arg)) == __route::method__) {
-				return $this->error(404);
-			}
+			$path['label'][$index] = \sys\utils\path\label($arg);
 		}
 		unset($arg);
+		
 		$path['route'] = implode('/', $path['route']);
 		$path['path'] = implode('/', $path['path']);
 		
@@ -64,19 +57,17 @@ class Route
 
 	public function path($key = 'path')
 	{
-		return (isset($this->path[$key])) ? $this->path[$key] : false;
+		return ($key && isset($this->path[$key])) ? $this->path[$key] : ((!$key) ? $this->path : false);
 	}
 
 	public function params($index = null)
 	{
-		return (is_numeric($index)) ? ((isset($this->path['params'][$index])) ? $this->path['params'][$index] : null) : ((is_null(
-			$index)) ? $this->path['params'] : false);
+		return (is_null($index)) ? $this->path['params'] : ((isset($this->path['params'][$index])) ? $this->path['params'][$index] : false);
 	}
 
 	public function controller($class = false)
 	{
-		return (!$class) ? $this->path['label'][0] : $this->helper->classFullName($this->path['label'][0], 
-			'controllers');
+		return (!$class) ? $this->path['label'][0] : '\\' . app__ . '\\controllers\\' . $this->path['label'][0];
 	}
 
 	public function page()
@@ -84,31 +75,15 @@ class Route
 		return $this->path['label'][1];
 	}
 
-	public function action($method = false, $glue = '__')
+	public function action($method = false, $glue = __route::glue__)
 	{
-		if (!$method) {
-			return $this->path['label'][2];
-		}
-		if (($default = __route::method__)) {
-			$page[] = $default;
-			$action[] = $default;
-		}
-		$page[] = $this->path['label'][1];
-		$action[] = $this->path['label'][2];
-		
-		$methods = array();
-		foreach ($page as $page_label) {
-			foreach ($action as $action_label) {
-				$methods[] = $page_label . $glue . $action_label;
-			}
-		}
-		return $methods;
+		return (!$method) ? $this->path['label'][2] : $this->path['label'][1] . $glue . $this->path['label'][2];
 	}
 
-	public function error($code = 404, $msg = '')
+	public function error($code = 404, $message = '')
 	{
-		if ($msg) {
-			trigger_error($msg);
+		if ($message) {
+			trigger_error($message);
 		}
 		$this->status($code);
 		require app__ . '/views/layouts/error/' . $code . '.php';

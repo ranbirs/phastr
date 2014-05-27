@@ -15,31 +15,36 @@ class Validation
 
 	public function getResult($status = null)
 	{
-		return (!is_null($status)) ? ((isset($this->result[$status])) ? $this->result[$status] : null) : $this->result;
+		return (is_null($status)) ? $this->result : ((isset($this->result[$status])) ? $this->result[$status] : false);
 	}
 
-	public function setStatus($id, $msg = null, $status = self::error__)
+	public function getStatus($id, $status = self::error__)
 	{
-		$this->result[$status][] = ['id' => $id, 'message' => $msg];
+		return (isset($this->result[$status][$id])) ? $this->result[$status][$id] : false;
 	}
 
-	public function resolve($id, $validation, $value = null)
+	public function setStatus($id, $status = self::error__, $message = '')
 	{
-		foreach ($validation as $rule => $args) {
-			
-			$rule = (!is_int($rule)) ? $rule : $args;
-			$params = (isset($args['value'])) ? $args['value'] : $args;
-			$status = ($this->validate($value, $rule, $params)) ? self::success__ : self::error__;
-			
-			if (is_array($args)) {
-				if (array_key_exists($status, $args)) {
-					$this->setStatus($id, $args[$status], $status);
-					continue;
-				}
-			}
-			if ($status === self::error__) {
-				$this->setStatus($id, '', $status);
-			}
+		$this->result[$status][$id] = ['id' => $id, 'status' => $status, 'message' => $message];
+	}
+
+	public function resolve($id, $value = null, $rule = null, $message = null)
+	{
+		$params = null;
+		if (is_array($rule)) {
+			$params = current($rule);
+			$rule = key($rule);
+		}
+		$status = ($this->validate($value, $rule, $params)) ? self::success__ : self::error__;
+
+		if (!is_array($message)) {
+			$message = [self::error__ => $message];
+		}
+		if (array_key_exists($status, $message)) {
+			$this->setStatus($id, $status, $message[$status]);
+		}
+		elseif ($status === self::error__) {
+			$this->setStatus($id, $status);
 		}
 	}
 
@@ -78,7 +83,7 @@ class Validation
 			case 'minlength':
 				$params = (int) $params;
 				if (!is_array($value)) {
-					return (strlen($value) > $params);
+					return (strlen($value) >= $params);
 				}
 				foreach ($value as $val) {
 					if (strlen($val) < $params) {
@@ -111,10 +116,6 @@ class Validation
 
 	public function sanitize($value = null, $rule = null, $params = null)
 	{
-		if (is_array($rule)) {
-			$params = current($rule);
-			$rule = key($rule);
-		}
 		switch ($rule) {
 			case 'int':
 				$rule = FILTER_SANITIZE_NUMBER_INT;

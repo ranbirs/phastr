@@ -1,60 +1,41 @@
 <?php
 
-namespace sys\utils;
+namespace sys\utils\html;
 
-class Html
-{
-	
-	use \sys\Loader;
+function attr($attr = []) {
+	$attr = \sys\utils\helper\attr($attr);
+	return (!empty($attr)) ? ' ' . implode(' ', \sys\utils\helper\iterate_join('="', $attr, '', '"')) : '';
+}
 
-	public function attr($attr = [])
-	{
-		$this->load()->util('helper');
-		$attr = $this->helper->attr($attr);
-		return (!empty($attr)) ? ' ' . implode(' ', $this->helper->composeArray('="', $attr, '', '"')) : '';
+function script($subj = '', $context = 'file', $attr = null, $iteration = null) {
+	switch ($context) {
+		case 'file':
+			$subj = \sys\utils\path\base($subj);
+		case 'external':
+			$attr['src'] = ($iteration) ? $subj . '?' . $iteration : $subj;
+			return '<script' . \sys\utils\html\attr($attr) . '></script>';
+		case 'inline':
+			return '<script' . \sys\utils\html\attr($attr) . '>' . trim($subj) . '</script>';
+		default:
+			return false;
 	}
+}
 
-	public function asset($type = 'script', $context = 'file', $subj = null, $params = null, $append = null)
-	{
-		switch ($type) {
-			case 'script':
-				switch ($context) {
-					case 'file':
-						$subj = '/' . $this->load()->util('path')->base($subj);
-					case 'external':
-						$params['src'] = (!is_null($append)) ? $subj . '?' . $append : $subj;
-						$asset = '<script' . $this->attr($params) . '></script>';
-						break 2;
-					case 'inline':
-						$asset = '<script' . $this->attr($params) . '>' . trim($subj) . '</script>';
-						break 2;
-					default:
-						return false;
-				}
-				break;
-			case 'style':
-				switch ($context) {
-					case 'file':
-						$subj = '/' . $this->load()->util('path')->base($subj);
-					case 'external':
-						$params['href'] = (!is_null($append)) ? $subj . '?' . $append : $subj;
-						$params['rel'] = 'stylesheet';
-						$asset = '<link' . $this->attr($params) . '>';
-						break 2;
-					case 'inline':
-						$asset = '<style' . $this->attr($params) . '>' . trim($subj) . '</style>';
-						break 2;
-					default:
-						return false;
-				}
-				break;
-			case 'meta':
-				$asset = '<meta' . $this->attr((array) $subj) . '>';
-				break;
-			default:
-				return false;
-		}
-		return $asset;
+function style($subj = '', $context = 'file', $attr = null, $iteration = null) {
+	switch ($context) {
+		case 'file':
+			$subj = \sys\utils\path\base($subj);
+		case 'external':
+			$attr['rel'] = 'stylesheet';
+			$attr['href'] = ($iteration) ? $subj . '?' . $iteration : $subj;
+			return '<link' . \sys\utils\html\attr($attr) . '>';
+		case 'inline':
+			return '<style' . \sys\utils\html\attr($attr) . '>' . trim($subj) . '</style>';
+		default:
+			return false;
 	}
+}
 
+function meta($attr = []) {
+	return '<meta' . \sys\utils\html\attr($attr) . '>';
 }

@@ -21,14 +21,13 @@ class Session extends \sys\components\Session
 		$this->set('_token', $this->hash->rand('md5'));
 		$this->set('_key', $this->keygen());
 		$this->set(['_timestamp' => 0], microtime(true));
-		$this->set(['_client' => 'lang'], __Config::lang__);
+		$this->set(['_client' => 'lang'], __config::lang__);
 	}
 
 	public function register()
 	{
 		$this->set(['_timestamp' => 1], microtime(true));
-		$this->set(['_client' => 'agent'], 
-			(isset($_SERVER['HTTP_USER_AGENT'])) ? $_SERVER['HTTP_USER_AGENT'] : null);
+		$this->set(['_client' => 'agent'], (isset($_SERVER['HTTP_USER_AGENT'])) ? $_SERVER['HTTP_USER_AGENT'] : null);
 	}
 
 	public function token()
@@ -44,7 +43,7 @@ class Session extends \sys\components\Session
 	public function keygen($hash = null)
 	{
 		$key = $this->hash->gen($this->session_id . $this->token(), 'sha256');
-		return (is_null($hash)) ? $key : ($hash === $key);
+		return (!$hash) ? $key : ($hash === $key);
 	}
 
 	public function timestamp($key = 0)

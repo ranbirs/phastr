@@ -33,18 +33,15 @@ class Database extends PDO
 		return $this->client = $this;
 	}
 
-	public function query($statement, $values = [])
+	public function query($statement, $values = null)
 	{
 		$this->sth = $this->prepare($statement);
-		
-		if (!empty($values) && $values === array_values($values)) {
-			array_unshift($values, null);
-			unset($values[0]);
-		}
+
 		foreach ($values as $key => $val) {
-			call_user_func_array(array($this->sth, 'bindValue'), (array) $val);
+			call_user_func_array(array($this->sth, 'bindValue'), ((array) (is_int($key)) ? $key + 1 : $key) + ((array) $val));
 		}
 		$this->sth->execute();
+		
 		return $this->sth;
 	}
 

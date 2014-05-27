@@ -72,7 +72,7 @@ class Service
 		if (!isset($this->info)) {
 			return false;
 		}
-		return (!is_null($key)) ? ((isset($this->info[$key])) ? $this->info[$key] : false) : $this->info;
+		return ($key) ? ((isset($this->info[$key])) ? $this->info[$key] : false) : $this->info;
 	}
 
 	public function header($key = null)
@@ -81,15 +81,14 @@ class Service
 			return false;
 		}
 		if (!is_array($this->header)) {
-			$this->load()->util('helper');
-			$this->header = $this->helper->args($this->helper->splitString(eol__, $this->header));
+			$this->header = \sys\utils\helper\args(\sys\utils\helper\filter_split(eol__, $this->header));
 		}
-		return (!is_null($key)) ? ((isset($this->header[$key])) ? $this->header[$key] : false) : $this->header;
+		return ($key) ? ((isset($this->header[$key])) ? $this->header[$key] : false) : $this->header;
 	}
 
 	public function setHeader($headers = [])
 	{
-		$headers = $this->load()->util('helper')->composeArray(': ', $headers);
+		$headers = \sys\utils\helper\iterate_join(': ', $headers);
 		$this->headers = array_merge((array) $this->headers, $headers);
 		
 		curl_setopt($this->handle, CURLOPT_HTTPHEADER, $this->headers);

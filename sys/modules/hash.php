@@ -10,7 +10,7 @@ class Hash
 	public function gen($data = '', $algo = __hash::algo__, $key = __hash::key__)
 	{
 		if (empty($data)) {
-			$data = uniqid($this->salt(), true);
+			$data = uniqid($this->salt(16), true);
 		}
 		return ($key) ? hash_hmac($algo, $data, $key) : hash($algo, $data);
 	}
@@ -36,19 +36,23 @@ class Hash
 	{
 		$length = (int) $length;
 		$hash = hash($algo, $this->salt());
+
 		if ($length > 0) {
 			$hash = ($length > strlen($hash)) ? str_pad($hash, $length, $hash) : substr($hash, 0, $length);
 		}
 		return $hash;
 	}
 
-	public function salt($length = 16, $range = __hash::range__)
+	public function salt($length = 16, $chars = __hash::chars__)
 	{
 		$length = (int) $length;
-		$index_range = strlen($range) - 1;
+		$limit = strlen($chars) - 1;
 		$salt = '';
-		for ($c = 0; $c < $length; $c++)
-			$salt .= $range[mt_rand(0, $index_range)];
+
+		for ($i = 0; $i < $length; $i++) {
+			$rand = mt_rand(0, $limit);
+			$salt .= $chars[$rand];
+		}
 		return $salt;
 	}
 

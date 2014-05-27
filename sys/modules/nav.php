@@ -9,29 +9,33 @@ abstract class Nav
 
 	protected $nav_id;
 
-	protected $build = [], $items = [];
+	protected $nav = [], $items = [];
 
-	abstract protected function build();
+	abstract protected function items();
 
-	public function id()
+	public function nav_id()
 	{
 		return $this->nav_id;
 	}
 
-	public function render($import = null, $title = null, $attr = [], $template = 'bootstrap')
+	public function get($params = null, $attr = [])
 	{
-		$this->load()->init('view');
-		$this->load()->util('helper');
+		$this->nav_id = strtolower(\sys\utils\helper\class_name($this));
 		
-		$this->nav_id = strtolower($this->helper->className($this));
-		$this->build($import);
+		$this->items();
 		
 		$attr['id'] = $this->nav_id;
-		$this->build['title'] = $title;
-		$this->build['attr'] = $this->helper->attr($attr);
 		
-		$nav = ['build' => $this->build, 'items' => $this->items];
-		return $this->view->template('nav', $template, $nav);
+		$this->nav['attr'] = \sys\utils\helper\attr($attr);
+		$this->nav['params'] = $params;
+		$this->nav['items'] = $this->items;
+		
+		return $this->nav;
+	}
+	
+	public function render($template = 'bootstrap')
+	{
+		return $this->load()->init('view')->template('nav', $template, $this->nav);
 	}
 
 	protected function item($label = null, $path = null, $params = [])

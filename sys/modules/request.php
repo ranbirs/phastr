@@ -15,48 +15,46 @@ class Request
 
 	public function header($key = null)
 	{
-		return $this->server((!is_null($key)) ? 'HTTP_' . strtoupper($key) : null);
+		return $this->server(($key) ? 'HTTP_' . strtoupper($key) : null);
 	}
 
 	public function server($key = null)
 	{
-		return (!is_null($key)) ? ((isset($_SERVER[$key])) ? $_SERVER[$key] : false) : $_SERVER;
+		return ($key) ? ((isset($_SERVER[$key])) ? $_SERVER[$key] : false) : $_SERVER;
 	}
 
 	public function post($key = null, $value = null)
 	{
-		if (!is_null($key) && !is_null($value)) {
+		if ($key && !is_null($value)) {
 			return $_POST[$key] = $value;
 		}
-		return (!is_null($key)) ? ((isset($_POST[$key])) ? $_POST[$key] : false) : $_POST;
+		return ($key) ? ((isset($_POST[$key])) ? $_POST[$key] : false) : $_POST;
 	}
 
 	public function get($key = null, $value = null)
 	{
-		if (!is_null($key) && !is_null($value)) {
+		if ($key && !is_null($value)) {
 			return $_GET[$key] = $value;
 		}
-		return (!is_null($key)) ? ((isset($_GET[$key])) ? $_GET[$key] : false) : $_GET;
+		return ($key) ? ((isset($_GET[$key])) ? $_GET[$key] : false) : $_GET;
 	}
 
-	public function fields($subj, $method = 'post', $key = null, $separator = '_')
+	public function fields($subj, $method = 'post', $key = null, $delimiter = '_')
 	{
-		if (is_null($key)) {
-			$request = $this->{$method}();
-			$labels = array_keys($request);
-			$length = strlen($subj . $separator);
-			$fields = [];
-			foreach ($labels as $label) {
-				if (substr($label, 0, $length) !== $subj . $separator) {
-					continue;
-				}
-				if (substr($key = substr($label, $length), 0, 1) !== $separator) {
-					$fields[$key] = $request[$label];
-				}
-			}
-			return $fields;
+		if ($key) {
+			return $this->{$method}($subj . $delimiter . $key);
 		}
-		return $this->{$method}($subj . $separator . $key);
+		$request = $this->{$method}();
+		$labels = array_keys($request);
+		$length = strlen($subj . $delimiter);
+		$fields = [];
+
+		foreach ($labels as $label) {
+			if (substr($label, 0, $length) == $subj . $delimiter && substr($key = substr($label, $length), 0, 1) != $delimiter) {
+				$fields[$key] = $request[$label];
+			}
+		}
+		return $fields;	
 	}
 
 }

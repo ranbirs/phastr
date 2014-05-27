@@ -11,7 +11,7 @@ class Database extends \sys\components\Database
 
 	function __construct($dsn = null, $username = __database::user__, $password = __database::pass__, $driver_options = [])
 	{
-		parent::__construct((is_null($dsn)) ? $this->dsn() : $dsn, $username, $password, $driver_options);
+		parent::__construct((!$dsn) ? $this->dsn() : $dsn, $username, $password, $driver_options);
 	}
 
 	protected function dsn($driver = __database::type__, $host = __database::host__, $name = __database::name__)
@@ -19,9 +19,9 @@ class Database extends \sys\components\Database
 		return $driver . ':host=' . $host . ';dbname=' . $name;
 	}
 
-	public function select($table, $cols = [], $clause = '', $params = [], $fetch_mode = null)
+	public function select($table, $cols, $clause = '', $params = [], $fetch_mode = null)
 	{
-		$cols = implode(', ', $cols);
+		$cols = implode(', ', (array) $cols);
 		$this->sth = $this->prepare("SELECT $cols FROM $table $clause");
 		
 		foreach ($params as $key => $val) {
@@ -39,7 +39,7 @@ class Database extends \sys\components\Database
 
 	public function update($table, $values = [], $clause = '', $params = [])
 	{
-		$values = $this->load()->util('helper')->composeArray(' = ', $values);
+		$values = \sys\utils\helper\iterate_join(' = ', $values);
 		$values = implode(', ', $values);
 		$this->sth = $this->prepare("UPDATE $table SET $values $clause");
 		

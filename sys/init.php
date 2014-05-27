@@ -15,7 +15,7 @@ class Init
 		$controller = $route->controller(true);
 		$controller = new $controller();
 		
-		if (!$controller->init($route)) {
+		if (!$controller->init($route->action(true), $route->params())) {
 			$route->error(404);
 		}
 		$controller->render();

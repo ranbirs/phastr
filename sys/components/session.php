@@ -11,7 +11,7 @@ abstract class Session
 
 	abstract public function register();
 
-	public function id()
+	public function session_id()
 	{
 		return $this->session_id;
 	}

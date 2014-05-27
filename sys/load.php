@@ -31,11 +31,6 @@ class Load
 		return $this->_instance->{$subj};
 	}
 
-	public function util($path, $prop = true)
-	{
-		return $this->getInstance('utils/' . $path, sys__, $prop);
-	}
-
 	public function module($path, $base = sys__, $prop = true)
 	{
 		return $this->getInstance('modules/' . $path, $base, $prop);

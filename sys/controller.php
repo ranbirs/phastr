@@ -13,20 +13,14 @@ abstract class Controller
 		$this->load()->init('view');
 	}
 
-	public function init($route)
+	public function init($method, $params = [])
 	{
-		$page = $route->page();
-		$action = $route->action();
-		$params = $route->params();
-		
-		$render = false;
-		foreach ((array) $route->action(true) as $method) {
-			if (method_exists($this, $method)) {
-				$this->{$method}($page, $action, $params);
-				$render = true;
-			}
+		if (method_exists($this, $method)) {
+			$this->{$method}($params);
+			
+			return true;
 		}
-		return $render;
+		return false;
 	}
 
 	public function render()

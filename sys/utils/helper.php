@@ -1,78 +1,47 @@
 <?php
 
-namespace sys\utils;
+namespace sys\utils\helper;
 
-class Helper
-{
+function class_name($instance) {
+	$class = explode('\\', get_class($instance));
+	return end($class);
+}
 
-	public function className($instance)
-	{
-		$class = explode('\\', get_class($instance));
-		return end($class);
-	}
-
-	public function classFullName($name, $context, $base = app__)
-	{
-		return '\\' . $base . '\\' . $context . '\\' . $name;
-	}
-
-	public function path($path = null, $type = 'label')
-	{
-		$path = implode('/', (array) $path);
-		
-		switch ($type) {
-			case 'label':
-				$path = str_replace('-', '_', $path);
-				break;
-			case 'path':
-				$path = str_replace('_', '-', $path);
-				break;
-			default:
-				return false;
+function args($params = null, $delimiter = ':') {
+	$args = [];
+	foreach ((array) $params as $param) {
+		$param = array_map('trim', explode($delimiter, $param, 2));
+		if (!strlen($param[0])) {
+			continue;
 		}
-		return $path;
+		$args[$param[0]] = (isset($param[1])) ? $param[1] : null;
 	}
+	return $args;
+}
 
-	public function args($params = null, $delimiter = ':')
-	{
-		$args = [];
-		foreach ((array) $params as $param) {
-			$param = array_map('trim', explode($delimiter, $param, 2));
-			if (!strlen($param[0])) {
-				continue;
-			}
-			$args[$param[0]] = (isset($param[1])) ? $param[1] : null;
+function attr($attr = [], $glue = ' ') {
+	$attrs = [];
+	foreach ((array) $attr as $key => $val) {
+		if (is_array($val)) {
+			$val = implode($glue, $val);
 		}
-		return $args;
-	}
-
-	public function attr($attr = [], $glue = ' ')
-	{
-		$attrs = [];
-		foreach ((array) $attr as $key => $val) {
-			$val = (!is_array($val)) ? $val : implode($glue, $val);
-			if (is_int($key)) {
-				$attrs[$val] = $val;
-				continue;
-			}
-			$attrs[$key] = $val;
+		if (is_int($key)) {
+			$key = $val;
 		}
-		return $attrs;
+		$attrs[$key] = $val;
 	}
+	return $attrs;
+}
 
-	public function splitString($delimiter, $subj = '', $limit = null)
-	{
-		$split = (!($limit = (int) $limit)) ? explode($delimiter, $subj) : explode($delimiter, $subj, $limit);
-		return array_values(array_filter(array_map('trim', $split), 'strlen'));
+function filter_split($delimiter, $subj = '') {
+	return array_values(array_filter(array_map('trim', explode($delimiter, $subj)), 'strlen'));
+	// return preg_split('/' . preg_quote($delimiter, '/') . '/', $subj, -1, PREG_SPLIT_NO_EMPTY);
+}
+
+function iterate_join($glue = '', $subj = [], $prepend = '', $append = '') {
+	$join = [];
+	foreach ($subj as $key => $val) {
+		$join[] = $prepend . $key . $glue . $val . $append;
 	}
-
-	public function composeArray($glue, $array = [], $prepend = '', $append = '')
-	{
-		$composed = [];
-		foreach ($array as $key => $val) {
-			$composed[] = $prepend . $key . $glue . (string) $val . $append;
-		}
-		return $composed;
-	}
-
+	return $join;
 }

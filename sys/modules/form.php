@@ -6,31 +6,28 @@ use sys\modules\Validation;
 
 abstract class Form
 {
+	
 	use \sys\Loader;
 
-	protected $form_id, $method, $import, $submit;
+	protected $form_id, $method, $action, $submit;
 
-	protected $build = [], $fields = [], $hidden = [], $action = [];
+	protected $form = [], $fields = [], $hidden = [], $button = [], $weight = [];
 
-	protected $validated = [], $sanitized = [];
+	protected $validate = [], $sanitize = [];
 
-	protected $status, $expire, $message, $callback;
+	protected $status, $result, $message, $callback, $expire;
 
 	function __construct()
 	{
-		$this->load()->init('view');
 		$this->load()->module('session');
 		$this->load()->module('hash');
-		$this->load()->util('helper');
-		$this->load()->util('path');
-		$this->load()->util('html');
 	}
 
-	abstract public function build();
+	abstract public function fields();
 
 	abstract public function submit();
 
-	public function id()
+	public function form_id()
 	{
 		return $this->form_id;
 	}
@@ -40,6 +37,11 @@ abstract class Form
 		return $this->method;
 	}
 
+	public function action()
+	{
+		return $this->action;
+	}
+
 	public function resolve($layout = 'json')
 	{
 		$this->load()->module('request');
@@ -47,54 +49,57 @@ abstract class Form
 		
 		$this->request->layout = $layout;
 		
-		foreach ($this->sanitized as $id => $filter) {
-			$this->request->{$this->method}($id, 
-				$this->validation->sanitize($this->request->{$this->method}($id), $filter));
+		foreach ($this->sanitize as $id => $filters) {
+			foreach ($filters as $filter) {
+				$this->request->{$this->method}($id, $this->validation->sanitize($this->request->{$this->method}($id), $filter));
+			}
 		}
-		foreach ($this->validated as $id => $validation) {
-			$this->validation->resolve($id, $validation, $this->request->{$this->method}($id));
+		foreach ($this->validate as $id => $rules) {
+			foreach ($rules as $rule) {
+				$this->validation->resolve($id, $this->request->{$this->method}($id), $rule['rule'], $rule['message']);
+			}
 		}
-		$this->submit = $this->request->fields($this->form_id, $this->method);
-		
-		if (!$this->status()) {
+		if (!$this->result()) {
 			return $this->status;
 		}
-		$this->validate($this->submit, $this->status);
-		
-		if (!$this->status()) {
+		$this->submit($this->submit = $this->request->fields($this->form_id, $this->method), $this->status);
+
+		if (!$this->result()) {
 			return $this->status;
 		}
-		$this->submit($this->submit, $this->status);
-		
 		if ((isset($this->expire)) ? $this->expire : $this->expire()) {
 			$this->session->drop($this->form_id, 'token');
 		}
-		if ($this->status()) {
-			return $this->status;
-		}
-		
-		return false;
+		return $this->result(false);
 	}
 
-	public function render($import = null, $title = null, $attr = [], $method = 'post', $template = 'bootstrap')
+	public function get($params = null, $attr = [])
 	{
-		$this->form_id = strtolower($this->helper->className($this));
-		$this->import = $import;
-		$this->method = $method;
-		$this->build($import);
+		$this->form_id = strtolower(\sys\utils\helper\class_name($this));
+		$this->method = (!isset($attr['method'])) ? 'post' : $attr['method'];
+		$this->action = (!isset($attr['action'])) ? \sys\utils\path\request('form/' . $this->form_id) : $attr['action'];
+		
+		$this->fields();
 		$this->close();
 		
 		$attr['id'] = $this->form_id;
-		$attr['method'] = $method;
-		$attr['action'] = $this->path->request('form/' . $this->form_id);
-		$this->build['title'] = $title;
-		$this->build['attr'] = $attr;
+		$attr['method'] = $this->method;
+		$attr['action'] = $this->action;
 		
-		$form = ['build' => $this->build, 'fields' => $this->fields, 'action' => $this->action, 
-			'hidden' => $this->hidden];
-		return $this->view->template('form', $template, $form);
+		$this->form['params'] = $params;
+		$this->form['attr'] = $attr;
+		$this->form['fields'] = $this->fields;
+		$this->form['hidden'] = $this->hidden;
+		$this->form['button'] = $this->button;
+		
+		return $this->form;
 	}
 
+	public function render($template = 'bootstrap/form')
+	{
+		return $this->load()->init('view')->template('form', $template, $this->form);
+	}
+	
 	public function close()
 	{
 		if (!$this->session->get($this->form_id, 'token')) {
@@ -103,212 +108,249 @@ abstract class Form
 		$session_token = $this->session->token();
 		$session_key = $this->session->key();
 		
-		$this->field(['input' => 'hidden'], '_header_id_' . $session_token, null, 
-			$params = ['value' => $session_key, 'validate' => [
-				'header' => [$session_token => $session_key]]]);
-		$this->field(['input' => 'hidden'], '_form_id_' . $session_token, null, 
-			$params = ['value' => $this->form_id, 
-				'validate' => [$this->method => [
-					$this->form_id . '__form_id_' . $session_token => $this->form_id]]]);
-		$this->field(['input' => 'hidden'], '_form_token_' . $session_token, null, 
-			$params = ['value' => $this->session->get($this->form_id, 'token'), 
-				'validate' => ['token' => $this->form_id]]);
+		$this->hidden('_header_id_' . $session_token, $session_key);
+		$this->hidden('_form_id_' . $session_token, $this->form_id);
+		$this->hidden('_form_token_' . $session_token, $this->session->get($this->form_id, 'token'));
+
+		$this->validate('_header_id_' . $session_token, ['header' => [$session_token => $session_key]]);
+		$this->validate('_form_id_' . $session_token, [$this->method => [$this->form_id . '__form_id_' . $session_token => $this->form_id]]);
+		$this->validate('_form_token_' . $session_token, ['token' => $this->form_id]);
 	}
 
-	public function status()
+	public function result($key = 'status')
 	{
-		$this->status['status'] = (array_key_exists(Validation::error__, 
-			$this->status['validation'] = $this->validation->getResult())) ? 0 : 1;
+		$this->status['status'] = $this->validation->getResult(Validation::error__) ? Validation::error__ : Validation::success__;
 		$this->status['message'] = (isset($this->message[$this->status['status']])) ? $this->message[$this->status['status']] : '';
-		$this->status['callback'] = (string) $this->callback;
-		
-		return $this->status['status'];
+		$this->status['validation'] = $this->validation->getResult();
+		$this->status['callback'] = $this->callback;
+		$this->status['expire'] = $this->expire;
+		$this->status['status'] = ($this->status['status'] == Validation::error__) ? false : true;
+
+		return ($key) ? ((isset($this->status[$key])) ? $this->status[$key] : false) : $this->status;
 	}
 
-	public function validate($submit = null, $status = null)
+	public function validate($id, $rule, $message = null)
 	{
-		return true;
+		$id = $this->field_id($id);
+		return $this->validate[$id][] = ['rule' => $rule, 'message' => $message];
 	}
 
-	public function getValidation()
+	public function sanitize($id, $filter = 'strip')
 	{
-		return $this->validation->getResult();
+		$id = $this->field_id($id);
+		return $this->sanitize[$id][] = $filter;
+	}
+	
+	public function status($id = null, $status = Validation::error__)
+	{
+		return ($id) ? $this->validation->getStatus($this->field_id($id), $status) : $this->validation->getResult($status); 
+	}
+	
+	public function error($id = null, $message = '')
+	{
+		return $this->validation->setStatus(($id) ? $this->field_id($id) : Validation::error__, Validation::error__, $message);
+	}
+	
+	public function success($id = null, $message = '')
+	{
+		return $this->validation->setStatus(($id) ? $this->field_id($id) : Validation::success__, Validation::success__, $message);
 	}
 
-	public function setValidation($id, $message = null, $status = false)
+	public function message($params = [])
 	{
-		$status = (!$status) ? Validation::error__ : Validation::success__;
-		return $this->validation->setStatus($this->form_id . '_' . $id, $message, $status);
+		foreach ($params as $status => $message) {
+			$this->message[$status] = $message;
+		}
 	}
 
-	public function message($message, $status = true)
+	public function callback($name, $args = null)
 	{
-		$status = (int) $status;
-		return $this->message[$status] = $message;
-	}
-
-	public function callback($callback = '')
-	{
-		return $this->callback = $callback;
+		return $this->callback = ['name' => $name, 'args' => (array) $args];
 	}
 
 	public function expire($expire = true)
 	{
 		return $this->expire = (bool) $expire;
 	}
-
-	protected function field($control, $id, $label = null, $params = null)
+	
+	public function field_id($id)
 	{
-		$type = null;
-		if (is_array($control)) {
-			$type = current($control);
-			$control = key($control);
-		}
-		if (is_null($type)) {
-			if ($control == 'input') {
-				$type = 'text';
-			}
-			if ($control == 'button') {
-				$type = 'button';
-			}
-		}
-		if (!is_array($params)) {
-			$params = ['value' => $params];
-		}
-		if (!isset($params['value'])) {
-			$params['value'] = ($params !== array_values($params)) ? '' : $params;
-		}
-		$params['attr'] = (isset($params['attr'])) ? (array) $params['attr'] : [];
-		
-		$params['label'] = $label;
-		$params['control'] = '';
-		
-		return $this->_parseField($this->form_id . '_' . $id, $control, $type, $params);
+		return $this->form_id . '_' . $id;
 	}
-
-	private function _parseField($id, $control, $type = null, $field = [])
+	
+	public function label($label = null)
 	{
-		if ($control == 'markup') {
-			$field['control'] = $field['value'];
-			return $this->fields[$id] = $field;
+		if (!is_array($label)) {
+			$label = ['value' => $label];
 		}
-		$build = '';
-		$group = null;
-		
-		$field['attr']['id'] = $id;
-		if (!is_null($type)) {
-			$field['attr']['type'] = $type;
-		}
-		if (isset($field['attr']['class'])) {
-			$field['attr']['class'] = (array) $field['attr']['class'];
-		}
-		if ($control != 'button') {
-			$field['attr']['name'] = (!is_array($field['value'])) ? $id : $id . '[]';
-			$field['attr']['class'][] = 'form-control';
-			if (!isset($field['sanitize'])) {
-				$field['sanitize'] = ['strip' => FILTER_FLAG_ENCODE_LOW];
-			}
-		}
-		if (isset($field['sanitize'])) {
-			$this->sanitized[$id] = $field['sanitize'];
-		}
-		if (isset($field['validate'])) {
-			$this->validated[$id] = $field['validate'];
-			foreach ($field['validate'] as $rule => $params) {
-				if (is_array($params) && array_intersect([Validation::error__, Validation::success__], 
-					array_keys($params))) {
-					$field['feedback'] = true;
-				}
-			}
-		}
-		if (is_array($field['value'])) {
-			$this->_parseArrayField($id, $control, $field['value'], $field);
-		}
-		switch ($control) {
-			case 'input':
-				if ($type == 'hidden') {
-					$group = $type;
-				}
-				(!is_array($field['control'])) ? $field['attr']['value'] = $field['value'] : $group = $id;
-				break;
-			case 'select':
-				$options = [];
-				foreach ($field['control'] as $option) {
-					$options[] = $option['control'];
-				}
-				$build = eol__ . implode(eol__, $options) . eol__ . '</' . $control . '>';
-				break;
-			case 'button':
-				$build = $field['label'] . '</' . $control . '>';
-				$field['label'] = '';
-				$group = 'action';
-				break;
-			case 'textarea':
-				$build = '</' . $control . '>';
-				break;
-		}
-		$build = '<' . $control . $this->html->attr($field['attr']) . '>' . $build;
-		
-		switch ($group) {
-			case 'hidden':
-			case 'action':
-				$field['control'] = $build;
-				$this->{$group}[] = $field;
-				break;
-			case null:
-				$field['control'] = $build;
-			default:
-				$this->fields[$id] = $field;
-		}
-		// return $this->fields[$id];
+		$label['attr'] = (isset($label['attr'])) ? (array) $label['attr'] : [];
+
+		return $label;
 	}
-
-	private function _parseArrayField($id, $control, &$values, &$parent)
+	
+	public function input($id, $label = null, $input = null)
 	{
-		$fields = $values;
-		$values = [];
-		
-		foreach ($fields as $index => &$field) {
-			$field = (array) $field;
-			if (!isset($field['value'])) {
-				if (array_values($field) !== $field) {
-					$field['value'] = key($field);
-					$field['label'] = current($field);
-				}
-				else {
-					$field['value'] = current($field);
-					$field['label'] = '';
-				}
-			}
-			$values[] = $field['value'];
-			
-			if (!isset($field['label'])) {
-				$field['label'] = '';
-			}
-			
-			$field['attr'] = (isset($field['attr'])) ? (array) $field['attr'] : [];
-			$field['attr']['value'] = $field['value'];
-			$field['control'] = $control;
-			
-			$build = '';
-			
-			switch ($control) {
-				case 'select':
-					$field['control'] = 'option';
-					$field['active'] = (isset($field['attr']['selected'])) ? true : false;
-					$build = $field['label'] . '</' . $field['control'] . '>';
-					break;
-				default:
-					$field['attr']['id'] = $id . '-' . $index;
-					$field['attr']['name'] = $id . '[]';
-					$field['attr'] = $this->helper->attr(array_merge($parent['attr'], $field['attr']));
-					$field['active'] = (isset($field['attr']['checked'])) ? true : false;
-			}
-			$build = '<' . $field['control'] . $this->html->attr($field['attr']) . '>' . $build;
-			$field['control'] = $build;
+		$this->sanitize($id, 'strip');
+
+		$id = $this->field_id($id);
+
+		if (!is_array($input)) {
+			$input = ['value' => $input]; 
 		}
-		unset($field);
-		$parent['control'] = $fields;
+		if (!isset($input['label'])) {
+			$input['label'] = '';
+		}
+		if (!isset($input['value'])) {
+			$input['value'] = '';
+		}
+		if (!isset($input['type'])) {
+			$input['type'] = 'text';
+		}
+		$input['control'] = 'input';
+		$input['id'] = $id;
+		$input['label'] = $this->label($input['label']);
+
+		$input['attr'] = (isset($input['attr'])) ? (array) $input['attr'] : [];
+		$input['attr']['value'] = $input['value'];
+		$input['attr']['type'] = $input['type'];
+		$input['attr']['name'] = $id;
+		$input['attr']['id'] = $id;
+	
+		if (isset($input['group'])) {
+			$id = $this->field_id($input['group']);
+		}
+		$weight = (isset($this->weight['field'][$input['id']])) ? count($this->weight['field'][$input['id']]) : 0;
+	
+		if ($weight > 0) {
+			if ($weight < 2) {
+				$occur = array_search($input['id'], $this->weight['group'][$id]);
+				$this->fields[$id]['field'][$occur]['attr']['name'] .= '[]';
+			}
+			$input['attr']['name'] .= '[]';
+			$input['attr']['id'] .= '-' . $weight;
+		}
+		$this->weight['field'][$input['id']][] = $id;
+		$this->weight['group'][$id][] = $input['id'];
+	
+		if ($label) {
+			$this->fields[$id]['label'] = $this->label($label);
+		}
+		$this->fields[$id]['field'][] = $input;
+	
+		return $this->fields[$id];
+	}
+	
+	public function select($id, $label = null, $select = [])
+	{
+		$this->sanitize($id, 'strip');
+
+		$id = $this->field_id($id);
+
+		if (!isset($select['options'])) {
+			$select['options'] = $select;
+		}
+		if (!isset($select['label'])) {
+			$select['label'] = '';
+		}
+		$select['control'] = 'select';
+		$select['id'] = $id;
+		$select['label'] = $this->label($select['label']);
+
+		$select['attr'] = (isset($select['attr'])) ? (array) $select['attr'] : [];
+		$select['attr']['name'] = $id;
+		$select['attr']['id'] = $id;
+
+		if (isset($select['multiple'])) {
+			$select['attr']['name'] .= '[]';
+			$select['attr']['multiple'] = 'multiple';
+		}
+		foreach ($select['options'] as &$option) {
+			$option['control'] = 'option';
+			$option['attr'] = (isset($option['attr'])) ? (array) $option['attr'] : [];
+			if (!isset($option['label'])) {
+				$option['label'] = '';
+			}
+			if (!isset($option['value'])) {
+				$option['value'] = '';
+			}
+			$option['attr']['value'] = $option['value'];
+		}
+		unset($option);
+
+		if (isset($select['group'])) {
+			$id = $this->field_id($select['group']);
+		}
+		$this->weight['field'][$select['id']][] = $id;
+		$this->weight['group'][$id][] = $select['id'];
+
+		if ($label) {
+			$this->fields[$id]['label'] = $this->label($label);
+		}
+		$this->fields[$id]['field'][] = $select;
+		
+		return $this->fields[$id];
+	}
+	
+	public function markup($id, $label = null, $markup = null)
+	{
+		$id = $this->field_id($id);
+
+		if (!is_array($markup)) {
+			$markup = ['value' => $markup];
+		}
+		if (!isset($input['value'])) {
+			$input['value'] = '';
+		}
+		$markup['control'] = 'markup';
+		$markup['id'] = $id;
+		
+		if ($label) {
+			$this->fields[$id]['label'] = $this->label($label);
+		}
+		$this->fields[$id]['field'][] = $markup;
+		
+		return $this->fields[$id];
+	}
+	
+	public function hidden($id, $hidden = null)
+	{
+		$this->sanitize($id, 'strip');
+
+		$id = $this->field_id($id);
+		
+		if (!is_array($hidden)) {
+			$hidden = ['value' => $hidden];
+		}
+		if (!isset($hidden['value'])) {
+			$hidden['value'] = '';
+		}
+		$hidden['control'] = 'hidden';
+		$hidden['id'] = $id;
+
+		$hidden['attr'] = (isset($hidden['attr'])) ? (array) $hidden['attr'] : [];
+		$hidden['attr']['value'] = $hidden['value'];
+		$hidden['attr']['type'] = 'hidden';
+		$hidden['attr']['name'] = $id;
+		$hidden['attr']['id'] = $id;
+	
+		return $this->hidden[$id] = $hidden;
+	}
+	
+	public function button($id, $label = '', $button = [])
+	{
+		$id = $this->field_id($id);
+		$button['control'] = 'button';
+		$button['id'] = $id;
+		$button['label'] = $label;
+	
+		if (!isset($button['type'])) {
+			$button['type'] = 'submit';
+		}
+		$button['attr'] = (isset($button['attr'])) ? (array) $button['attr'] : [];
+		$button['attr']['type'] = $button['type'];
+		$button['attr']['id'] = $id;
+	
+		return $this->button[$id] = $button;
 	}
 
 }

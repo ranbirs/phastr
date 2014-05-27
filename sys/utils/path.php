@@ -1,57 +1,45 @@
 <?php
 
-namespace sys\utils;
-
-use app\confs\Route as __route;
-
-class Path
-{
+namespace sys\utils\path;
 	
-	use \sys\Loader;
+function route($key = null) {
+	return \sys\Init::route()->path($key);
+}
 
-	public function resolve($file)
-	{
-		return (($file = stream_resolve_include_path($file)) !== false) ? $file : false;
-	}
+function resolve($file) {
+	return (($file = stream_resolve_include_path($file)) !== false) ? $file : false;
+}
 
-	public function file($path, $base = app__, $ext = 'php')
-	{
-		return $this->load()->util('helper')->path($base . '/' . $path) . '.' . $ext;
-	}
+function label($path = '') {
+	return str_replace('-', '_', $path);
+	// return str_replace('-', '_', preg_replace('/[^a-z0-9]/', '', $path));
+}
 
-	public function root($path = '')
-	{
-		return ($path) ? $_SERVER['DOCUMENT_ROOT'] . '/' . $path : $_SERVER['DOCUMENT_ROOT'];
-	}
+function file($path, $base = app__, $ext = 'php') {
+	return \sys\utils\path\label($base . '/' . $path) . '.' . $ext;
+}
 
-	public function base($path = '')
-	{
-		return ($base = $this->load()->init('route')->path('base')) ? (($path) ? $base . '/' . $path : $base) : (($path) ? $path : '');
-	}
+function root($path = '') {
+	return ($path) ? $_SERVER['DOCUMENT_ROOT'] . '/' . $path : $_SERVER['DOCUMENT_ROOT'];
+}
 
-	public function page($path = '')
-	{
-		return $this->load()->init('route')->controller() . '/' .
-			 $this->load()->util('helper')->path(($path) ? $path : $this->load()->init('route')->page());
-	}
+function base($path = '') {
+	return \sys\utils\path\route('base') . $path;
+}
 
-	public function uri($path = '')
-	{
-		$path = ($path && $path != '/') ? '/' . $path : '';
-		$base = (__route::rewrite__) ? (($base = $this->load()->init('route')->path('base')) ? '/' . $base : '') : '/' .
-			 $this->load()->init('route')->path('file');
-		return $base . $path;
-	}
+function page($path = '') {
+	return \sys\utils\path\route('label')[0] . '/' . \sys\utils\path\label(($path) ? $path : \sys\utils\path\route('label')[1]);
+}
 
-	public function request($path = '')
-	{
-		return $this->uri(
-			$this->load()->init('route')->path('route') . '/' . \sys\modules\Request::param__ . '/' . $path);
-	}
+function uri($path = '') {
+	$uri = (\app\confs\Route::rewrite__) ? \sys\utils\path\route('base') : \sys\utils\path\route('file');
+	return $uri .= ($path && $path != '/') ? '/' . $path : '';
+}
 
-	public function trail($path = '')
-	{
-		return ($path) ? $path . __route::trail__ : '';
-	}
+function request($path = '') {
+	return \sys\utils\path\uri(\sys\utils\path\route('route') . '/' . \sys\modules\Request::param__ . '/' . $path);
+}
 
+function trail($path = '') {
+	return ($path) ? $path . \app\confs\Route::trail__ : '';
 }

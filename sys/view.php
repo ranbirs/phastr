@@ -6,48 +6,36 @@ use app\confs\Config as __config;
 
 class View
 {
-	
-	use \sys\Loader;
-
-	function __construct()
-	{
-		$this->load()->util('path');
-	}
 
 	public function page($path = null)
 	{
-		return $this->render('views/pages/' . $this->path->page($path));
-	}
-
-	public function block($path)
-	{
-		return $this->render('views/blocks/' . $path);
+		return $this->render('pages/' . \sys\utils\path\page($path));
 	}
 
 	public function request($path)
 	{
-		return $this->render('views/requests/' . $path);
+		return $this->render('requests/' . $path);
 	}
 
 	public function template($type, $path, $data = null)
 	{
-		return $this->render('views/templates/' . $type . '/' . $path, [$type => $data]);
+		return $this->render('templates/' . $type . '/' . $path, [$type => $data]);
 	}
 
 	public function layout($path = __config::layout__)
 	{
-		include $this->path->file('views/layouts/' . $path);
+		include \sys\utils\path\file('views/layouts/' . $path);
 		
 		exit();
 	}
 
-	protected function render($path, $data = null)
+	public function render($path, $data = null)
 	{
-		$file = $this->path->file($path);
+		$file = \sys\utils\path\file('views/' . $path);
 		
 		ob_start();
 		
-		if (!is_null($data)) {
+		if (!empty($data)) {
 			extract($data);
 		}
 		include $file;
