@@ -11,10 +11,9 @@ function args($params = null, $delimiter = ':') {
 	$args = [];
 	foreach ((array) $params as $param) {
 		$param = array_map('trim', explode($delimiter, $param, 2));
-		if (!strlen($param[0])) {
-			continue;
+		if (strlen($param[0])) {
+			$args[$param[0]] = (isset($param[1])) ? $param[1] : null;
 		}
-		$args[$param[0]] = (isset($param[1])) ? $param[1] : null;
 	}
 	return $args;
 }

@@ -60,8 +60,8 @@ class Validation
 				}
 				$request = $this->load()->module('request')->{$rule}(key($params));
 				return (!is_null($value) && $value === $request && $request === current($params));
-			case 'token':
-				return (!is_null($params) && $value === $this->load()->module('session')->get($params, 'token'));
+			case 'session':
+				return (!is_null($params) && $value === $this->load()->module('session')->get($params));
 			case 'compare':
 				return (!is_null($params) && strcmp($value, $params) == 0);
 			case 'require':

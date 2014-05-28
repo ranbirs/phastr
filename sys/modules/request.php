@@ -7,11 +7,7 @@ use app\confs\Request as __request;
 class Request
 {
 
-	const param__ = 'ajax';
-
 	public $method = __request::method__;
-
-	public $layout = __request::layout__;
 
 	public function header($key = null)
 	{

@@ -28,7 +28,7 @@ function base($path = '') {
 }
 
 function page($path = '') {
-	return \sys\utils\path\route('label')[0] . '/' . \sys\utils\path\label(($path) ? $path : \sys\utils\path\route('label')[1]);
+	return \sys\utils\path\route('label')[0] . '/' . (($path) ? \sys\utils\path\label($path) : \sys\utils\path\route('label')[1]);
 }
 
 function uri($path = '') {
@@ -37,7 +37,7 @@ function uri($path = '') {
 }
 
 function request($path = '') {
-	return \sys\utils\path\uri(\sys\utils\path\route('route') . '/' . \sys\modules\Request::param__ . '/' . $path);
+	return \sys\utils\path\uri(\sys\utils\path\route('route') . '/' . \app\confs\Request::resolver__ . '/' . $path);
 }
 
 function trail($path = '') {

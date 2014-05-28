@@ -24,7 +24,7 @@ class Route
 		if (!isset($path['path'][0])) {
 			$path['path'][0] = __route::controller__;
 		}
-		elseif (!in_array($path['path'][0], \sys\utils\helper\filter_split(',', __route::scope__))) {
+		elseif (!in_array($path['path'][0], \sys\utils\helper\filter_split(',', __route::controllers__))) {
 			return $this->error(404);
 		}
 		if (!isset($path['path'][1])) {
@@ -35,7 +35,7 @@ class Route
 		}
 		$path['params'] = (isset($path['path'][3])) ? array_slice($path['path'], 3) : [];
 		$path['route'] = array_slice($path['path'], 0, 3);
-		
+
 		foreach ($path['route'] as $index => &$arg) {
 			if ((strlen($arg) > self::length__) || preg_match('/[^a-z0-9-]/', $arg = strtolower($arg))) {
 				return $this->error(404);

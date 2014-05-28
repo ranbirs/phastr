@@ -9,8 +9,8 @@ trait Loader
 
 	protected function load($instance = null)
 	{
-		if ($instance && is_object($instance)) {
-			return $this->_export = new \sys\Load($instance);
+		if ($instance) {
+			return $this->_export = (is_object($instance)) ? new \sys\Load($instance) : false;
 		}
 		return (isset($this->_loader)) ? $this->_loader : $this->_loader = new \sys\Load($this);
 	}

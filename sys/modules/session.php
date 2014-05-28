@@ -48,12 +48,12 @@ class Session extends \sys\components\Session
 
 	public function timestamp($key = 0)
 	{
-		return $this->get('_timestamp', $key);
+		return $this->get(['_timestamp' => $key]);
 	}
 
 	public function client($key = 'agent')
 	{
-		return $this->get('_client', $key);
+		return $this->get(['_client' => $key]);
 	}
 
 }

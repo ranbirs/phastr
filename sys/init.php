@@ -7,16 +7,16 @@ class Init
 
 	private static $route, $view;
 
-	function __construct($route, $view)
+	function __construct()
 	{
-		self::$route = $route;
-		self::$view = $view;
+		self::$route = new \sys\Route();
+		self::$view = new \sys\View();
 		
-		$controller = $route->controller(true);
+		$controller = self::$route->controller(true);
 		$controller = new $controller();
 		
-		if (!$controller->init($route->action(true), $route->params())) {
-			$route->error(404);
+		if (!$controller->init(self::$route->action(true), self::$route->params())) {
+			self::$route->error(404);
 		}
 		$controller->render();
 		

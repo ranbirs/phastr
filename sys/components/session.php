@@ -45,8 +45,13 @@ abstract class Session
 		$this->start();
 	}
 
-	public function get($subj, $key = null)
+	public function get($subj)
 	{
+		$key = null;
+		if (is_array($subj)) {
+			$key = current($subj);
+			$subj = key($subj);
+		}
 		if (!is_null($key)) {
 			return (isset($_SESSION[$this->session_id][$subj][$key])) ? $_SESSION[$this->session_id][$subj][$key] : false;
 		}
@@ -63,8 +68,13 @@ abstract class Session
 		return (!is_null($key)) ? $_SESSION[$this->session_id][$subj][$key] = $value : $_SESSION[$this->session_id][$subj] = $value;
 	}
 
-	public function drop($subj, $key = null)
+	public function drop($subj)
 	{
+		$key = null;
+		if (is_array($subj)) {
+			$key = current($subj);
+			$subj = key($subj);
+		}
 		if (!is_null($key)) {
 			unset($_SESSION[$this->session_id][$subj][$key]);
 		}

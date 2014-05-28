@@ -7,6 +7,8 @@ use app\confs\Config as __config;
 class View
 {
 
+	public $layout = __config::layout__;
+
 	public function page($path = null)
 	{
 		return $this->render('pages/' . \sys\utils\path\page($path));
@@ -22,9 +24,9 @@ class View
 		return $this->render('templates/' . $type . '/' . $path, [$type => $data]);
 	}
 
-	public function layout($path = __config::layout__)
+	public function layout($path = null)
 	{
-		include \sys\utils\path\file('views/layouts/' . $path);
+		include \sys\utils\path\file('views/layouts/' . ((!$path) ? $this->layout : $path));
 		
 		exit();
 	}

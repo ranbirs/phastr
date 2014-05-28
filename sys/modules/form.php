@@ -2,16 +2,24 @@
 
 namespace sys\modules;
 
-use sys\modules\Validation;
+use sys\modules\Validation as __validation;
 
 abstract class Form
 {
 	
 	use \sys\Loader;
+	
+	const method__ = 'post';
+	
+	const format__ = 'json';
+	
+	protected $method = self::method__;
+	
+	protected $format = self::format__;
 
-	protected $form_id, $method, $action, $submit;
+	protected $form_id, $action;
 
-	protected $form = [], $fields = [], $hidden = [], $button = [], $weight = [];
+	protected $form = [], $fields = [], $hidden = [], $button = [], $weight = [], $values = [];
 
 	protected $validate = [], $sanitize = [];
 
@@ -32,22 +40,25 @@ abstract class Form
 		return $this->form_id;
 	}
 
-	public function method()
-	{
-		return $this->method;
-	}
-
 	public function action()
 	{
 		return $this->action;
 	}
+	
+	public function method()
+	{
+		return $this->method;
+	}
+	
+	public function format($format = null)
+	{
+		return $this->format = (!$format) ? $this->format : $layout;
+	}
 
-	public function resolve($layout = 'json')
+	public function resolve()
 	{
 		$this->load()->module('request');
 		$this->load()->module('validation');
-		
-		$this->request->layout = $layout;
 		
 		foreach ($this->sanitize as $id => $filters) {
 			foreach ($filters as $filter) {
@@ -62,37 +73,43 @@ abstract class Form
 		if (!$this->result()) {
 			return $this->status;
 		}
-		$this->submit($this->submit = $this->request->fields($this->form_id, $this->method), $this->status);
+		$this->submit($this->values = $this->request->fields($this->form_id, $this->method), $this->status);
 
 		if (!$this->result()) {
 			return $this->status;
 		}
 		if ((isset($this->expire)) ? $this->expire : $this->expire()) {
-			$this->session->drop($this->form_id, 'token');
+			$this->session->drop([$this->form_id => 'token']);
 		}
 		return $this->result(false);
 	}
 
-	public function get($params = null, $attr = [])
+	public function get($form = null)
 	{
 		$this->form_id = strtolower(\sys\utils\helper\class_name($this));
-		$this->method = (!isset($attr['method'])) ? 'post' : $attr['method'];
-		$this->action = (!isset($attr['action'])) ? \sys\utils\path\request('form/' . $this->form_id) : $attr['action'];
+
+		if (!is_array($form)) {
+			$form = ['title' => $form];
+		}
+		$form['id'] = $this->form_id;
+
+		$form['attr'] = (isset($form['attr'])) ? (array) $form['attr'] : [];
+
+		$this->action = (!isset($form['attr']['action'])) ? \sys\utils\path\request('form/' . $this->form_id) : $form['attr']['action'];
+		$this->method = (!isset($form['attr']['method'])) ? $this->method : $form['attr']['method'];
 		
 		$this->fields();
-		$this->close();
+		$this->secure();
 		
-		$attr['id'] = $this->form_id;
-		$attr['method'] = $this->method;
-		$attr['action'] = $this->action;
+		$form['attr']['id'] = $this->form_id;
+		$form['attr']['action'] = $this->action;
+		$form['attr']['method'] = $this->method;
 		
-		$this->form['params'] = $params;
-		$this->form['attr'] = $attr;
-		$this->form['fields'] = $this->fields;
-		$this->form['hidden'] = $this->hidden;
-		$this->form['button'] = $this->button;
+		$form['fields'] = $this->fields;
+		$form['hidden'] = $this->hidden;
+		$form['button'] = $this->button;
 		
-		return $this->form;
+		return $this->form = $form;
 	}
 
 	public function render($template = 'bootstrap/form')
@@ -100,67 +117,63 @@ abstract class Form
 		return $this->load()->init('view')->template('form', $template, $this->form);
 	}
 	
-	public function close()
+	protected function secure()
 	{
-		if (!$this->session->get($this->form_id, 'token')) {
+		if (!$this->session->get([$this->form_id => 'token'])) {
 			$this->session->set([$this->form_id => 'token'], $this->hash->rand('sha256'));
 		}
 		$session_token = $this->session->token();
 		$session_key = $this->session->key();
-		
-		$this->hidden('_header_id_' . $session_token, $session_key);
-		$this->hidden('_form_id_' . $session_token, $this->form_id);
-		$this->hidden('_form_token_' . $session_token, $this->session->get($this->form_id, 'token'));
-
-		$this->validate('_header_id_' . $session_token, ['header' => [$session_token => $session_key]]);
-		$this->validate('_form_id_' . $session_token, [$this->method => [$this->form_id . '__form_id_' . $session_token => $this->form_id]]);
-		$this->validate('_form_token_' . $session_token, ['token' => $this->form_id]);
+	
+		$this->hidden('_header_' . $session_token, $session_key);
+		$this->hidden('_token_' . $session_token, $this->session->get([$this->form_id => 'token']));
+	
+		$this->validate('_header_' . $session_token, ['header' => [$session_token => $session_key]]);
+		$this->validate('_token_' . $session_token, ['session' => [$this->form_id => 'token']]);
 	}
 
 	public function result($key = 'status')
 	{
-		$this->status['status'] = $this->validation->getResult(Validation::error__) ? Validation::error__ : Validation::success__;
+		$this->status['status'] = $this->validation->getResult(__validation::error__) ? __validation::error__ : __validation::success__;
 		$this->status['message'] = (isset($this->message[$this->status['status']])) ? $this->message[$this->status['status']] : '';
 		$this->status['validation'] = $this->validation->getResult();
 		$this->status['callback'] = $this->callback;
 		$this->status['expire'] = $this->expire;
-		$this->status['status'] = ($this->status['status'] == Validation::error__) ? false : true;
+		$this->status['status'] = ($this->status['status'] == __validation::error__) ? false : true;
 
 		return ($key) ? ((isset($this->status[$key])) ? $this->status[$key] : false) : $this->status;
 	}
 
-	public function validate($id, $rule, $message = null)
+	public function validate($id, $rule = null, $message = null)
 	{
 		$id = $this->field_id($id);
 		return $this->validate[$id][] = ['rule' => $rule, 'message' => $message];
 	}
 
-	public function sanitize($id, $filter = 'strip')
+	public function sanitize($id, $filter = null)
 	{
 		$id = $this->field_id($id);
 		return $this->sanitize[$id][] = $filter;
 	}
 	
-	public function status($id = null, $status = Validation::error__)
+	public function status($id = null, $status = __validation::error__)
 	{
 		return ($id) ? $this->validation->getStatus($this->field_id($id), $status) : $this->validation->getResult($status); 
 	}
 	
 	public function error($id = null, $message = '')
 	{
-		return $this->validation->setStatus(($id) ? $this->field_id($id) : Validation::error__, Validation::error__, $message);
+		return $this->validation->setStatus(($id) ? $this->field_id($id) : __validation::error__, __validation::error__, $message);
 	}
 	
 	public function success($id = null, $message = '')
 	{
-		return $this->validation->setStatus(($id) ? $this->field_id($id) : Validation::success__, Validation::success__, $message);
+		return $this->validation->setStatus(($id) ? $this->field_id($id) : __validation::success__, __validation::success__, $message);
 	}
 
-	public function message($params = [])
+	public function message($message = '', $status = __validation::success__)
 	{
-		foreach ($params as $status => $message) {
-			$this->message[$status] = $message;
-		}
+		return $this->message[$status] = $message;
 	}
 
 	public function callback($name, $args = null)
@@ -197,17 +210,17 @@ abstract class Form
 		if (!is_array($input)) {
 			$input = ['value' => $input]; 
 		}
-		if (!isset($input['label'])) {
-			$input['label'] = '';
-		}
 		if (!isset($input['value'])) {
 			$input['value'] = '';
 		}
 		if (!isset($input['type'])) {
 			$input['type'] = 'text';
 		}
-		$input['control'] = 'input';
+		if (!isset($input['label'])) {
+			$input['label'] = '';
+		}
 		$input['id'] = $id;
+		$input['control'] = 'input';
 		$input['label'] = $this->label($input['label']);
 
 		$input['attr'] = (isset($input['attr'])) ? (array) $input['attr'] : [];
@@ -252,8 +265,8 @@ abstract class Form
 		if (!isset($select['label'])) {
 			$select['label'] = '';
 		}
-		$select['control'] = 'select';
 		$select['id'] = $id;
+		$select['control'] = 'select';
 		$select['label'] = $this->label($select['label']);
 
 		$select['attr'] = (isset($select['attr'])) ? (array) $select['attr'] : [];
@@ -294,15 +307,15 @@ abstract class Form
 	public function markup($id, $label = null, $markup = null)
 	{
 		$id = $this->field_id($id);
-
+		
 		if (!is_array($markup)) {
 			$markup = ['value' => $markup];
 		}
 		if (!isset($input['value'])) {
 			$input['value'] = '';
 		}
-		$markup['control'] = 'markup';
 		$markup['id'] = $id;
+		$markup['control'] = 'markup';
 		
 		if ($label) {
 			$this->fields[$id]['label'] = $this->label($label);
@@ -324,8 +337,8 @@ abstract class Form
 		if (!isset($hidden['value'])) {
 			$hidden['value'] = '';
 		}
-		$hidden['control'] = 'hidden';
 		$hidden['id'] = $id;
+		$hidden['control'] = 'hidden';
 
 		$hidden['attr'] = (isset($hidden['attr'])) ? (array) $hidden['attr'] : [];
 		$hidden['attr']['value'] = $hidden['value'];
@@ -339,13 +352,14 @@ abstract class Form
 	public function button($id, $label = '', $button = [])
 	{
 		$id = $this->field_id($id);
-		$button['control'] = 'button';
-		$button['id'] = $id;
-		$button['label'] = $label;
 	
 		if (!isset($button['type'])) {
 			$button['type'] = 'submit';
 		}
+		$button['id'] = $id;
+		$button['control'] = 'button';
+		$button['label'] = $label;
+
 		$button['attr'] = (isset($button['attr'])) ? (array) $button['attr'] : [];
 		$button['attr']['type'] = $button['type'];
 		$button['attr']['id'] = $id;
