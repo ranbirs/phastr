@@ -31,7 +31,7 @@ class Session extends \sys\components\Session
 	
 	public function render()
 	{
-		$this->session->set('_request', $this->session->hash($this->session->timestamp()[1]));
+		$this->set('_request', $this->hash($this->timestamp()[1]));
 	}
 
 	public function timestamp($gen = false)
