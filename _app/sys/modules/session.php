@@ -28,6 +28,11 @@ class Session extends \sys\components\Session
 		$this->set(['_timestamp' => 1], $this->timestamp(true));
 		$this->set(['_client' => 'agent'], (isset($_SERVER['HTTP_USER_AGENT'])) ? $_SERVER['HTTP_USER_AGENT'] : null);
 	}
+	
+	public function render()
+	{
+		$this->session->set('_request', $this->session->hash($this->session->timestamp()[1]));
+	}
 
 	public function timestamp($gen = false)
 	{

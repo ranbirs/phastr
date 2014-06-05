@@ -25,6 +25,7 @@ abstract class Controller
 
 	public function render()
 	{
+		$this->load()->module('session')->render();
 		$this->view->layout();
 	}
 
