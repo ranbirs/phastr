@@ -132,12 +132,12 @@ abstract class Form
 			$this->session->set([$this->form_id => 'token'], $this->session->hash($this->form_id, 'sha256'));
 		}
 		$session_token = $this->session->token();
-		$session_key = $this->session->key();
+		$request_token = $this->session->get('_request');
 	
-		$this->hidden('_header_' . $session_token, $session_key);
+		$this->hidden('_request_' . $session_token, $request_token);
 		$this->hidden('_token_' . $session_token, $this->session->get([$this->form_id => 'token']));
 	
-		$this->validate('_header_' . $session_token, ['header' => [$session_token => $session_key]]);
+		$this->validate('_request_' . $session_token, ['header' => [$session_token => $request_token]]);
 		$this->validate('_token_' . $session_token, ['session' => [$this->form_id => 'token']]);
 	}
 
