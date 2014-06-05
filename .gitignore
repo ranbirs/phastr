@@ -1,4 +1,4 @@
-app/*
+_app/app/*
 .*
 !.gitignore
 !.htaccess

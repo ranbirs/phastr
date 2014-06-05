@@ -9,17 +9,17 @@ class Request
 
 	public $method = __request::method__;
 
-	public function header($key = null)
+	public function header($key = '')
 	{
 		return $this->server(($key) ? 'HTTP_' . strtoupper($key) : null);
 	}
 
-	public function server($key = null)
+	public function server($key = '')
 	{
 		return ($key) ? ((isset($_SERVER[$key])) ? $_SERVER[$key] : false) : $_SERVER;
 	}
 
-	public function post($key = null, $value = null)
+	public function post($key = '', $value = null)
 	{
 		if ($key && !is_null($value)) {
 			return $_POST[$key] = $value;
@@ -27,7 +27,7 @@ class Request
 		return ($key) ? ((isset($_POST[$key])) ? $_POST[$key] : false) : $_POST;
 	}
 
-	public function get($key = null, $value = null)
+	public function get($key = '', $value = null)
 	{
 		if ($key && !is_null($value)) {
 			return $_GET[$key] = $value;
@@ -35,7 +35,7 @@ class Request
 		return ($key) ? ((isset($_GET[$key])) ? $_GET[$key] : false) : $_GET;
 	}
 
-	public function fields($subj, $method = 'post', $key = null, $delimiter = '_')
+	public function fields($subj, $method = 'post', $key = '', $delimiter = '_')
 	{
 		if ($key) {
 			return $this->{$method}($subj . $delimiter . $key);

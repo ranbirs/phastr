@@ -4,7 +4,7 @@ namespace sys\utils\html;
 
 function attr($attr = []) {
 	$attr = \sys\utils\helper\attr($attr);
-	return (!empty($attr)) ? ' ' . implode(' ', \sys\utils\helper\iterate_join('="', $attr, '', '"')) : '';
+	return ($attr) ? ' ' . implode(' ', \sys\utils\helper\iterate_join('="', $attr, '', '"')) : '';
 }
 
 function script($subj = '', $context = 'file', $attr = null, $iteration = null) {

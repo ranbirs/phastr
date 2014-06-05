@@ -3,12 +3,11 @@
 namespace sys;
 
 use app\confs\Route as __route;
-use app\confs\Config as __config;
 
 class Route
 {
 
-	const length__ = 128;
+	const maxlength__ = 128;
 
 	protected $path;
 
@@ -19,7 +18,7 @@ class Route
 		$path['file'] = $_SERVER['SCRIPT_NAME'];
 		$path['base'] = (($path['base'] = dirname($path['file'])) == '/') ? '/' : $path['base'] . '/';
 		$path['path'] = \sys\utils\helper\filter_split('/', substr($path['path'], strlen($path['file'])));
-		$path['uri'] = (!empty($path['path'])) ? implode('/', $path['path']) : '/';
+		$path['uri'] = ($path['path']) ? implode('/', $path['path']) : '/';
 		
 		if (!isset($path['path'][0])) {
 			$path['path'][0] = __route::controller__;
@@ -35,12 +34,12 @@ class Route
 		}
 		$path['params'] = (isset($path['path'][3])) ? array_slice($path['path'], 3) : [];
 		$path['route'] = array_slice($path['path'], 0, 3);
-
-		foreach ($path['route'] as $index => &$arg) {
-			if ((strlen($arg) > self::length__) || preg_match('/[^a-z0-9-]/', $arg = strtolower($arg))) {
+		
+		foreach ($path['route'] as &$arg) {
+			if ((strlen($arg) > self::maxlength__) || preg_match('/[^a-z0-9-]/', $arg = strtolower($arg))) {
 				return $this->error(404);
 			}
-			$path['label'][$index] = \sys\utils\path\label($arg);
+			$path['label'][] = \sys\utils\path\label($arg);
 		}
 		unset($arg);
 		

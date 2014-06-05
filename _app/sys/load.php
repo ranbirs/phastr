@@ -17,7 +17,7 @@ class Load
 		if (!isset($this->_instance->{$name = basename($path)}) || !$prop) {
 			$class = '\\' . $base . '\\' . implode('\\', explode('/', $path));
 			$instance = new $class();
-			return (!$prop) ? $instance : $this->_instance->{$name} = $instance;
+			return ($prop) ? $this->_instance->{$name} = $instance : $instance;
 		}
 		return $this->_instance->{$name};
 	}
@@ -26,7 +26,7 @@ class Load
 	{
 		if (!isset($this->_instance->{$subj}) || !$prop) {
 			$instance = call_user_func('\\' . sys__ . '\\Init::' . $subj);
-			return (!$prop) ? $instance : $this->_instance->{$subj} = $instance;
+			return ($prop) ? $this->_instance->{$subj} = $instance : $instance;
 		}
 		return $this->_instance->{$subj};
 	}

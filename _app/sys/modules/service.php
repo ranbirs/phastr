@@ -67,7 +67,7 @@ class Service
 		return $this->result;
 	}
 
-	public function info($key = null)
+	public function info($key = '')
 	{
 		if (!isset($this->info)) {
 			return false;
@@ -75,7 +75,7 @@ class Service
 		return ($key) ? ((isset($this->info[$key])) ? $this->info[$key] : false) : $this->info;
 	}
 
-	public function header($key = null)
+	public function header($key = '')
 	{
 		if (!isset($this->header)) {
 			return false;

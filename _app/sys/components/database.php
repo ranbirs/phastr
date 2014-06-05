@@ -37,8 +37,8 @@ class Database extends PDO
 	{
 		$this->sth = $this->prepare($statement);
 
-		foreach ($values as $key => $val) {
-			call_user_func_array(array($this->sth, 'bindValue'), ((array) (is_int($key)) ? $key + 1 : $key) + ((array) $val));
+		foreach ((array) $values as $key => $val) {
+			call_user_func_array(array($this->sth, 'bindValue'), (array) ((is_int($key)) ? $key + 1 : $key) + (array) $val);
 		}
 		$this->sth->execute();
 		

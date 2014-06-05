@@ -13,9 +13,9 @@ class Validation
 
 	protected $result = [];
 
-	public function getResult($status = null)
+	public function getResult($status = '')
 	{
-		return (is_null($status)) ? $this->result : ((isset($this->result[$status])) ? $this->result[$status] : false);
+		return (!$status) ? $this->result : ((isset($this->result[$status])) ? $this->result[$status] : false);
 	}
 
 	public function getStatus($id, $status = self::error__)
@@ -30,12 +30,11 @@ class Validation
 
 	public function resolve($id, $value = null, $rule = null, $message = null)
 	{
-		$params = null;
 		if (is_array($rule)) {
 			$params = current($rule);
 			$rule = key($rule);
 		}
-		$status = ($this->validate($value, $rule, $params)) ? self::success__ : self::error__;
+		$status = ($this->validate($value, $rule, ((isset($params)) ? $params : null))) ? self::success__ : self::error__;
 
 		if (!is_array($message)) {
 			$message = [self::error__ => $message];
@@ -70,23 +69,21 @@ class Validation
 				}
 				return (strlen($value) > 0);
 			case 'maxlength':
-				$params = (int) $params;
 				if (!is_array($value)) {
-					return (strlen($value) < $params);
+					return (strlen($value) < (int) $params);
 				}
 				foreach ($value as $val) {
-					if (strlen($val) > $params) {
+					if (strlen($val) > (int) $params) {
 						return false;
 					}
 				}
 				return true;
 			case 'minlength':
-				$params = (int) $params;
 				if (!is_array($value)) {
-					return (strlen($value) >= $params);
+					return (strlen($value) >= (int) $params);
 				}
 				foreach ($value as $val) {
-					if (strlen($val) < $params) {
+					if (strlen($val) < (int) $params) {
 						return false;
 					}
 				}
@@ -154,7 +151,7 @@ class Validation
 		return $value;
 	}
 
-	public function filter($value = null, $rule = null, $params = null)
+	public function filter($value = '', $rule = null, $params = null)
 	{
 		$value = trim($value);
 		if (!is_null($params)) {

@@ -2,6 +2,7 @@
 
 namespace sys\modules;
 
+use app\confs\Config as __config;
 use sys\modules\Validation as __validation;
 
 abstract class Form
@@ -13,13 +14,11 @@ abstract class Form
 	
 	const format__ = 'json';
 	
-	protected $method = self::method__;
-	
-	protected $format = self::format__;
+	const fieldset__ = 'default';
 
-	protected $form_id, $action;
+	protected $form_id, $action, $method, $format, $title;
 
-	protected $form = [], $fields = [], $hidden = [], $button = [], $weight = [], $values = [];
+	protected $form = [], $fields = [], $hidden = [], $button = [], $weight = [], $values = [], $fieldset = [];
 
 	protected $validate = [], $sanitize = [];
 
@@ -28,7 +27,6 @@ abstract class Form
 	function __construct()
 	{
 		$this->load()->module('session');
-		$this->load()->module('hash');
 	}
 
 	abstract public function fields();
@@ -50,9 +48,9 @@ abstract class Form
 		return $this->method;
 	}
 	
-	public function format($format = null)
+	public function format()
 	{
-		return $this->format = (!$format) ? $this->format : $layout;
+		return $this->format;
 	}
 
 	public function resolve()
@@ -91,36 +89,47 @@ abstract class Form
 		if (!is_array($form)) {
 			$form = ['title' => $form];
 		}
-		$form['id'] = $this->form_id;
+		if (!isset($form['action'])) {
+			$form['action'] = \sys\utils\path\request('form/' . $this->form_id);
+		}
+		if (!isset($form['method'])) {
+			$form['method'] = self::method__;
+		}
+		if (!isset($form['format'])) {
+			$form['format'] = self::format__;
+		}
 
-		$form['attr'] = (isset($form['attr'])) ? (array) $form['attr'] : [];
-
-		$this->action = (!isset($form['attr']['action'])) ? \sys\utils\path\request('form/' . $this->form_id) : $form['attr']['action'];
-		$this->method = (!isset($form['attr']['method'])) ? $this->method : $form['attr']['method'];
+		$this->title = $form['title'];
+		$this->action = $form['action'];
+		$this->method = $form['method'];
+		$this->format = $form['format'];
 		
-		$this->fields();
+		$this->fields($form);
 		$this->secure();
 		
-		$form['attr']['id'] = $this->form_id;
-		$form['attr']['action'] = $this->action;
-		$form['attr']['method'] = $this->method;
-		
+		$form['id'] = $this->form_id;
 		$form['fields'] = $this->fields;
 		$form['hidden'] = $this->hidden;
 		$form['button'] = $this->button;
+		$form['fieldset'] = $this->fieldset;
+		
+		$form['attr'] = (isset($form['attr'])) ? (array) $form['attr'] : [];
+		$form['attr']['id'] = $form['id'];
+		$form['attr']['action'] = $form['action'];
+		$form['attr']['method'] = $form['method'];
 		
 		return $this->form = $form;
 	}
 
-	public function render($template = 'bootstrap/form')
+	public function render($template = __config::form__)
 	{
-		return $this->load()->init('view')->template('form', $template, $this->form);
+		return $this->load()->init('view')->template('form', $template . '/form', $this->form);
 	}
 	
 	protected function secure()
 	{
 		if (!$this->session->get([$this->form_id => 'token'])) {
-			$this->session->set([$this->form_id => 'token'], $this->hash->rand('sha256'));
+			$this->session->set([$this->form_id => 'token'], $this->session->hash($this->form_id, 'sha256'));
 		}
 		$session_token = $this->session->token();
 		$session_key = $this->session->key();
@@ -134,7 +143,7 @@ abstract class Form
 
 	public function result($key = 'status')
 	{
-		$this->status['status'] = $this->validation->getResult(__validation::error__) ? __validation::error__ : __validation::success__;
+		$this->status['status'] = ($this->validation->getResult(__validation::error__)) ? __validation::error__ : __validation::success__;
 		$this->status['message'] = (isset($this->message[$this->status['status']])) ? $this->message[$this->status['status']] : '';
 		$this->status['validation'] = $this->validation->getResult();
 		$this->status['callback'] = $this->callback;
@@ -156,17 +165,17 @@ abstract class Form
 		return $this->sanitize[$id][] = $filter;
 	}
 	
-	public function status($id = null, $status = __validation::error__)
+	public function status($id = '', $status = __validation::error__)
 	{
 		return ($id) ? $this->validation->getStatus($this->field_id($id), $status) : $this->validation->getResult($status); 
 	}
 	
-	public function error($id = null, $message = '')
+	public function error($id = '', $message = '')
 	{
 		return $this->validation->setStatus(($id) ? $this->field_id($id) : __validation::error__, __validation::error__, $message);
 	}
 	
-	public function success($id = null, $message = '')
+	public function success($id = '', $message = '')
 	{
 		return $this->validation->setStatus(($id) ? $this->field_id($id) : __validation::success__, __validation::success__, $message);
 	}
@@ -199,6 +208,40 @@ abstract class Form
 		$label['attr'] = (isset($label['attr'])) ? (array) $label['attr'] : [];
 
 		return $label;
+	}
+	
+	protected function field($id, $field, $label = null)
+	{
+		if (!isset($field['fieldset'])) {
+			$field['fieldset'] = self::fieldset__;
+		}
+		if (!isset($this->weight['group'][$id])) {
+			$this->fieldset($field['fieldset'], $this->title, $id);
+		}
+		$this->weight['field'][$field['id']][] = $id;
+		$this->weight['group'][$id][] = $field['id'];
+	
+		if ($label) {
+			$this->fields[$id]['label'] = $this->label($label);
+		}
+		$this->fields[$id]['field'][] = $field;
+	
+		return $this->fields[$id];
+	}
+	
+	public function fieldset($id, $title = '', $field_id = '')
+	{
+		$id = $this->field_id($id);
+
+		if (!isset($this->fieldset[$id])) {
+			$this->fieldset[$id] = ['title' => $title, 'fields' => []];
+		}
+		if ($field_id) {
+			if (array_search($field_id, $this->fieldset[$id]['fields']) === false) {
+				$this->fieldset[$id]['fields'][] = $field_id;
+			}
+		}
+		return $this->fieldset[$id];
 	}
 	
 	public function input($id, $label = null, $input = null)
@@ -242,15 +285,7 @@ abstract class Form
 			$input['attr']['name'] .= '[]';
 			$input['attr']['id'] .= '-' . $weight;
 		}
-		$this->weight['field'][$input['id']][] = $id;
-		$this->weight['group'][$id][] = $input['id'];
-	
-		if ($label) {
-			$this->fields[$id]['label'] = $this->label($label);
-		}
-		$this->fields[$id]['field'][] = $input;
-	
-		return $this->fields[$id];
+		return $this->field($id, $input, $label);
 	}
 	
 	public function select($id, $label = null, $select = [])
@@ -293,15 +328,7 @@ abstract class Form
 		if (isset($select['group'])) {
 			$id = $this->field_id($select['group']);
 		}
-		$this->weight['field'][$select['id']][] = $id;
-		$this->weight['group'][$id][] = $select['id'];
-
-		if ($label) {
-			$this->fields[$id]['label'] = $this->label($label);
-		}
-		$this->fields[$id]['field'][] = $select;
-		
-		return $this->fields[$id];
+		return $this->field($id, $select, $label);
 	}
 	
 	public function markup($id, $label = null, $markup = null)
@@ -317,12 +344,7 @@ abstract class Form
 		$markup['id'] = $id;
 		$markup['control'] = 'markup';
 		
-		if ($label) {
-			$this->fields[$id]['label'] = $this->label($label);
-		}
-		$this->fields[$id]['field'][] = $markup;
-		
-		return $this->fields[$id];
+		return $this->field($id, $markup, $label);
 	}
 	
 	public function hidden($id, $hidden = null)

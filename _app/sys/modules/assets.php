@@ -39,7 +39,7 @@ class Assets
 		return $this->assets[$type][] = $asset;
 	}
 	
-	public function get($subj = 'script', $type = null)
+	public function get($subj = 'script', $type = '')
 	{
 		switch ($subj) {
 			case 'script':

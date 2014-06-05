@@ -9,7 +9,7 @@ class View
 
 	public $layout = __config::layout__;
 
-	public function page($path = null)
+	public function page($path = '')
 	{
 		return $this->render('pages/' . \sys\utils\path\page($path));
 	}
@@ -24,7 +24,7 @@ class View
 		return $this->render('templates/' . $type . '/' . $path, [$type => $data]);
 	}
 
-	public function layout($path = null)
+	public function layout($path = '')
 	{
 		include \sys\utils\path\file('views/layouts/' . ((!$path) ? $this->layout : $path));
 		
@@ -37,7 +37,7 @@ class View
 		
 		ob_start();
 		
-		if (!empty($data)) {
+		if ($data) {
 			extract($data);
 		}
 		include $file;

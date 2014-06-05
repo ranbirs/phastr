@@ -9,7 +9,7 @@ class Database extends \sys\components\Database
 	
 	use \sys\Loader;
 
-	function __construct($dsn = null, $username = __database::user__, $password = __database::pass__, $driver_options = [])
+	function __construct($dsn = '', $username = __database::user__, $password = __database::pass__, $driver_options = [])
 	{
 		parent::__construct((!$dsn) ? $this->dsn() : $dsn, $username, $password, $driver_options);
 	}

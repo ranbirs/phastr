@@ -26,6 +26,7 @@ abstract class Session
 			session_start();
 		}
 		$this->session_id = session_id();
+
 		if (!isset($_SESSION[$this->session_id])) {
 			$_SESSION = [$this->session_id => []];
 			$this->generate();
@@ -47,12 +48,11 @@ abstract class Session
 
 	public function get($subj)
 	{
-		$key = null;
 		if (is_array($subj)) {
 			$key = current($subj);
 			$subj = key($subj);
 		}
-		if (!is_null($key)) {
+		if (isset($key)) {
 			return (isset($_SESSION[$this->session_id][$subj][$key])) ? $_SESSION[$this->session_id][$subj][$key] : false;
 		}
 		return (isset($_SESSION[$this->session_id][$subj])) ? $_SESSION[$this->session_id][$subj] : false;
@@ -60,22 +60,20 @@ abstract class Session
 
 	public function set($subj, $value = null)
 	{
-		$key = null;
 		if (is_array($subj)) {
 			$key = current($subj);
 			$subj = key($subj);
 		}
-		return (!is_null($key)) ? $_SESSION[$this->session_id][$subj][$key] = $value : $_SESSION[$this->session_id][$subj] = $value;
+		return (isset($key)) ? $_SESSION[$this->session_id][$subj][$key] = $value : $_SESSION[$this->session_id][$subj] = $value;
 	}
 
 	public function drop($subj)
 	{
-		$key = null;
 		if (is_array($subj)) {
 			$key = current($subj);
 			$subj = key($subj);
 		}
-		if (!is_null($key)) {
+		if (isset($key)) {
 			unset($_SESSION[$this->session_id][$subj][$key]);
 		}
 		else {

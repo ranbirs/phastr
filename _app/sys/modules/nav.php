@@ -38,12 +38,12 @@ abstract class Nav
 		return $this->load()->init('view')->template('nav', $template, $this->nav);
 	}
 
-	protected function item($label = null, $path = null, $params = [])
+	protected function item($label = '', $path = '', $params = [])
 	{
 		$count = count($this->items);
 		$index = ($count > 0) ? $count + 1 : 0;
 		
-		if (!empty($params)) {
+		if ($params) {
 			foreach ($params as $key => $val) {
 				if (is_int($key)) {
 					$this->items[$index]['label'] = $label;

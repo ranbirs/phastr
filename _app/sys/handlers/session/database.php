@@ -38,7 +38,7 @@ class Database implements SessionHandlerInterface
 	{
 		$read = $this->database->select('session', ['data'], 'WHERE sid = :sid', [':sid' => $session_id]);
 		if ($read) {
-			return json_decode(base64_decode($read[0]->data));
+			return json_decode(base64_decode(current($read)->data));
 		}
 		return false;
 	}

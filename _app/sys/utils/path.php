@@ -2,7 +2,7 @@
 
 namespace sys\utils\path;
 	
-function route($key = null) {
+function route($key = '') {
 	return \sys\Init::route()->path($key);
 }
 
@@ -33,7 +33,7 @@ function page($path = '') {
 
 function uri($path = '') {
 	$uri = (\app\confs\Route::rewrite__) ? \sys\utils\path\route('base') : \sys\utils\path\route('file');
-	return $uri .= ($path && $path != '/') ? '/' . $path : '';
+	return $uri .= ($path && $path != '/') ? '/' . $path : ''; // \sys\utils\path\route('uri');
 }
 
 function request($path = '') {

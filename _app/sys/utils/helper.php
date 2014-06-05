@@ -7,12 +7,12 @@ function class_name($instance) {
 	return end($class);
 }
 
-function args($params = null, $delimiter = ':') {
+function args($arg = null, $delimiter = ':') {
 	$args = [];
-	foreach ((array) $params as $param) {
-		$param = array_map('trim', explode($delimiter, $param, 2));
-		if (strlen($param[0])) {
-			$args[$param[0]] = (isset($param[1])) ? $param[1] : null;
+	foreach ((array) $arg as $params) {
+		$params = array_map('trim', explode($delimiter, $params, 2));
+		if (isset($params[0]) && strlen($params[0])) {
+			$args[$params[0]] = (isset($params[1])) ? $params[1] : null;
 		}
 	}
 	return $args;

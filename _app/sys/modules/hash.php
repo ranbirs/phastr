@@ -9,15 +9,12 @@ class Hash
 
 	public function gen($data = '', $algo = __hash::algo__, $key = __hash::key__)
 	{
-		if (empty($data)) {
-			$data = uniqid($this->salt(16), true);
-		}
 		return ($key) ? hash_hmac($algo, $data, $key) : hash($algo, $data);
 	}
 
 	public function cipher($data = '')
 	{
-		return crypt($data, __hash::cipher__ . __hash::cost__ . '$' . $this->salt(__hash::salt__));
+		return crypt($data, __hash::cipher__ . __hash::cost__ . '$' . $this->rand(__hash::salt__));
 	}
 
 	public function resolve($hash, $data = '', $algo = __hash::algo__, $key = __hash::key__)
@@ -32,28 +29,16 @@ class Hash
 		return ($hash === $subj);
 	}
 
-	public function rand($algo = 'md5', $length = 0)
+	public function rand($length = 16, $algo = null, $chars = __hash::chars__)
 	{
-		$length = (int) $length;
-		$hash = hash($algo, $this->salt());
-
-		if ($length > 0) {
-			$hash = ($length > strlen($hash)) ? str_pad($hash, $length, $hash) : substr($hash, 0, $length);
-		}
-		return $hash;
-	}
-
-	public function salt($length = 16, $chars = __hash::chars__)
-	{
-		$length = (int) $length;
 		$limit = strlen($chars) - 1;
-		$salt = '';
+		$rand = '';
 
-		for ($i = 0; $i < $length; $i++) {
-			$rand = mt_rand(0, $limit);
-			$salt .= $chars[$rand];
+		for ($i = 0; $i < (int) $length; $i++) {
+			$index = mt_rand(0, $limit);
+			$rand .= $chars[$index];
 		}
-		return $salt;
+		return (!$algo) ? $rand : hash($algo, uniqid($rand, true));
 	}
 
 }
