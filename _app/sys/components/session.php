@@ -10,8 +10,6 @@ abstract class Session
 	abstract public function generate();
 
 	abstract public function register();
-	
-	abstract public function render();
 
 	public function session_id()
 	{
