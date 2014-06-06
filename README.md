@@ -16,6 +16,6 @@ Phastr does not try to reinvent the wheel and force you to relearn yet another l
 
 If you're feeling creative you should be free to go ahead and use conventions and architectural patterns how you feel most appropriate. Phastr won't get in your way. Phastr tries to synthesize programming to its purest state by wrapping its core in an intuitive hybrid MVC engine ready for running secure JavaScript applications.
 
-Phastr is more than a framework, it's in fact a modular library with everything you would expect. It's built for passionate productive programmers that still want to be creative. It's for real programmers or anyone who wants to learn real programming without pain; but it is certainly not pink. Well, unless you're happy with coding spaghetti. If you like the aroma of static declarations and similar shortcut brogramming methodologies then Phastr is not for you.
+Phastr is more than a framework, it's in fact a modular library with everything you would expect. It's built for passionate programmers that want to be productive but still have time to be creative. It's for real programmers or anyone who wants to learn real programming without pain; but it is certainly not pink. Well, unless you're happy with coding spaghetti. If you like the aroma of static declarations and similar shortcut brogramming methodologies then Phastr is not for you.
 
 Phastr uses the high-level [un]gracefulness of the language itself the most extensive and efficiently possible. This helps keeping resources to an absolute minimum. The result is; well, what you see, graceful.
