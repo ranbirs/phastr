@@ -78,6 +78,14 @@ class Route
 	{
 		return (!$method) ? $this->path['label'][2] : $this->path['label'][1] . $glue . $this->path['label'][2];
 	}
+	
+	public function request()
+	{
+		if ($this->params(0) == __route::request__) {
+			return $this->params(1);
+		}
+		return false;
+	}
 
 	public function error($code = 404, $message = '')
 	{

@@ -17,15 +17,12 @@ abstract class Controller
 	{
 		if (method_exists($this, $method)) {
 			$this->{$method}($params);
-			
-			return true;
 		}
-		return false;
+		$this->render();
 	}
-
+	
 	public function render()
 	{
-		$this->load()->module('session')->render();
 		$this->view->layout();
 	}
 

@@ -17,12 +17,11 @@ class Error
 	
 	public function output($handler, $code = null, $message = null, $file = null, $line = null)
 	{
-		print '<pre style="white-space: pre-line;">';
-		print '<strong>' . $handler . '</strong> ';
-		print '<code>[' . $code . ']</code> ';
-		print '<em>' . $message . '</em> ';
-		print '<strong>' . $file . ':' . $line . '</strong>';
-		print '</pre>';	
+		return "<pre style=\"white-space: pre-line;\">
+			<strong>{$handler}</strong>
+			<em>{$message}</em>
+			<strong>{$file}:{$line}</strong>
+		<pre>";
 	}
 
 }

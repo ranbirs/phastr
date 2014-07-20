@@ -23,8 +23,7 @@ class Hash
 			$subj = $this->gen($data, $algo, $key);
 		}
 		else {
-			$salt = substr($hash, 0, strlen(__hash::cipher__ . __hash::cost__) + 1 + __hash::salt__);
-			$subj = crypt($data, $salt);
+			$subj = crypt($data, substr($hash, 0, strlen(__hash::cipher__ . __hash::cost__) + 1 + __hash::salt__));
 		}
 		return ($hash === $subj);
 	}

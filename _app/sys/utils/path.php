@@ -37,7 +37,7 @@ function uri($path = '') {
 }
 
 function request($path = '') {
-	return \sys\utils\path\uri(\sys\utils\path\route('route') . '/' . \app\confs\Request::resolver__ . '/' . $path);
+	return \sys\utils\path\uri(\sys\utils\path\route('route') . '/' . \app\confs\Route::request__ . '/' . $path);
 }
 
 function trail($path = '') {

@@ -18,8 +18,9 @@ class Database extends PDO
 			}
 			parent::__construct($dsn, $username, $password, $driver_options);
 		}
-		catch (PDOException $e) {
-			throw $e;
+		catch (PDOException $ex) {
+			print $ex->getMessage();
+			exit();
 		}
 	}
 

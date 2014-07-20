@@ -15,11 +15,10 @@ class Init
 		$controller = self::$route->controller(true);
 		$controller = new $controller();
 		
-		if (!$controller->init(self::$route->action(true), self::$route->params())) {
-			self::$route->error(404);
-		}
-		$controller->render();
-		
+		$controller->init(self::$route->action(true), self::$route->params());
+
+		self::$route->error(404);
+
 		exit();
 	}
 

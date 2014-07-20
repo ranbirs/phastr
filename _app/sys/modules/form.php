@@ -53,7 +53,7 @@ abstract class Form
 		return $this->format;
 	}
 
-	public function resolve()
+	public function request()
 	{
 		$this->load()->module('request');
 		$this->load()->module('validation');
@@ -90,7 +90,7 @@ abstract class Form
 			$form = ['title' => $form];
 		}
 		if (!isset($form['action'])) {
-			$form['action'] = \sys\utils\path\request('form/' . $this->form_id);
+			$form['action'] = \sys\utils\path\request($this->form_id);
 		}
 		if (!isset($form['method'])) {
 			$form['method'] = self::method__;

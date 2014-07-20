@@ -4,24 +4,13 @@ namespace sys\modules;
 
 class Service
 {
-	
-	use \sys\Loader;
 
-	protected $handle, $headers, $response, $info, $header, $result;
-
-	public function init($url)
-	{
-		if ($this->load()->module('validation')->validate($url, 'url')) {
-			return $this->handle = curl_init($url);
-		}
-		return false;
-	}
+	public $handle, $headers, $response, $info, $header, $result;
 
 	public function request($url, $data = null, $method = 'post')
 	{
-		if (!$this->init($url)) {
-			return false;
-		}
+		$this->handle = curl_init($url);
+
 		curl_setopt($this->handle, CURLOPT_HEADER, true);
 		curl_setopt($this->handle, CURLOPT_RETURNTRANSFER, true);
 		
@@ -52,6 +41,7 @@ class Service
 		$this->response = curl_exec($this->handle);
 		$this->info = curl_getinfo($this->handle);
 		$this->header = trim(substr($this->response, 0, $header_size = (int) $this->info['header_size']));
+		$this->header = \sys\utils\helper\args(\sys\utils\helper\filter_split(eol__, $this->header));
 		$this->result = trim(substr($this->response, $header_size));
 		
 		curl_close($this->handle);
@@ -65,25 +55,6 @@ class Service
 			return $this->execute();
 		}
 		return $this->result;
-	}
-
-	public function info($key = '')
-	{
-		if (!isset($this->info)) {
-			return false;
-		}
-		return ($key) ? ((isset($this->info[$key])) ? $this->info[$key] : false) : $this->info;
-	}
-
-	public function header($key = '')
-	{
-		if (!isset($this->header)) {
-			return false;
-		}
-		if (!is_array($this->header)) {
-			$this->header = \sys\utils\helper\args(\sys\utils\helper\filter_split(eol__, $this->header));
-		}
-		return ($key) ? ((isset($this->header[$key])) ? $this->header[$key] : false) : $this->header;
 	}
 
 	public function setHeader($headers = [])

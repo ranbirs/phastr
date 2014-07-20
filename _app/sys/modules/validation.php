@@ -46,7 +46,8 @@ class Validation
 			$this->setStatus($id, $status);
 		}
 	}
-
+	
+	// @todo contextual param (explicit request, etc)
 	public function validate($value = null, $rule = null, $params = null)
 	{
 		switch ($rule) {
@@ -59,6 +60,8 @@ class Validation
 				}
 				$request = $this->load()->module('request')->{$rule}(key($params));
 				return (!is_null($value) && $value === $request && $request === current($params));
+			case 'request':
+				return ($this->load()->module('request')->header($this->load()->module('session')->token()) === $this->load()->module('session')->get('_request'));
 			case 'session':
 				return (!is_null($params) && $value === $this->load()->module('session')->get($params));
 			case 'compare':
