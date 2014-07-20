@@ -32,8 +32,8 @@ class Route
 		if (!isset($path['path'][2])) {
 			$path['path'][2] = __route::action__;
 		}
-		$path['params'] = array_slice($path['path'], 3);
 		$path['route'] = array_slice($path['path'], 0, 3);
+		$path['params'] = array_slice($path['path'], 3);
 		
 		foreach ($path['route'] as &$arg) {
 			if ((strlen($arg) > self::maxlength__) || preg_match('/[^a-z0-9-]/', $arg = strtolower($arg))) {
@@ -43,8 +43,8 @@ class Route
 		}
 		unset($arg);
 		
-		$path['route'] = implode('/', $path['route']);
 		$path['path'] = implode('/', $path['path']);
+		$path['route'] = implode('/', $path['route']);
 
 		$this->path = $path;
 	}
@@ -90,6 +90,7 @@ class Route
 			trigger_error($message);
 		}
 		$this->status($code);
+
 		require app__ . '/views/layouts/error/' . $code . '.php';
 		
 		exit();
