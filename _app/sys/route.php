@@ -32,7 +32,7 @@ class Route
 		if (!isset($path['path'][2])) {
 			$path['path'][2] = __route::action__;
 		}
-		$path['params'] = (isset($path['path'][3])) ? array_slice($path['path'], 3) : [];
+		$path['params'] = array_slice($path['path'], 3);
 		$path['route'] = array_slice($path['path'], 0, 3);
 		
 		foreach ($path['route'] as &$arg) {
@@ -45,7 +45,7 @@ class Route
 		
 		$path['route'] = implode('/', $path['route']);
 		$path['path'] = implode('/', $path['path']);
-		
+
 		$this->path = $path;
 	}
 
@@ -79,12 +79,9 @@ class Route
 		return (!$method) ? $this->path['label'][2] : $this->path['label'][1] . $glue . $this->path['label'][2];
 	}
 	
-	public function request()
+	public function request($param = __route::request__)
 	{
-		if ($this->params(0) == __route::request__) {
-			return $this->params(1);
-		}
-		return false;
+		return (isset($this->path['params'][1]) && $this->path['params'][0] == $param) ? $this->path['params'][1] : false;
 	}
 
 	public function error($code = 404, $message = '')
@@ -98,7 +95,7 @@ class Route
 		exit();
 	}
 
-	public function status($code = 200)
+	public function status($code = null)
 	{
 		return ($code) ? http_response_code($code) : http_response_code();
 	}
