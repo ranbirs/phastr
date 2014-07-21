@@ -35,9 +35,6 @@ class Service
 
 	public function execute()
 	{
-		if (!isset($this->handle)) {
-			return false;
-		}
 		$this->response = curl_exec($this->handle);
 		$this->info = curl_getinfo($this->handle);
 		$this->header = trim(substr($this->response, 0, $header_size = (int) $this->info['header_size']));

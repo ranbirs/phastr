@@ -7,16 +7,11 @@ abstract class Nav
 	
 	use \sys\Loader;
 
-	protected $nav_id;
+	public $nav_id;
 
-	protected $nav = [], $items = [];
+	public $nav = [], $items = [];
 
 	abstract protected function items();
-
-	public function nav_id()
-	{
-		return $this->nav_id;
-	}
 
 	public function get($params = null, $attr = [])
 	{

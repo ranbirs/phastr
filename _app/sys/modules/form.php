@@ -16,9 +16,9 @@ abstract class Form
 	
 	const fieldset__ = 'default';
 
-	protected $form_id, $action, $method, $format, $title;
+	public $form_id, $action, $method, $format, $title;
 
-	protected $form = [], $fields = [], $hidden = [], $button = [], $weight = [], $values = [], $fieldset = [];
+	public $form = [], $fields = [], $hidden = [], $button = [], $weight = [], $values = [], $fieldset = [];
 
 	protected $validate = [], $sanitize = [];
 
@@ -32,26 +32,6 @@ abstract class Form
 	abstract public function fields();
 
 	abstract public function submit();
-
-	public function form_id()
-	{
-		return $this->form_id;
-	}
-
-	public function action()
-	{
-		return $this->action;
-	}
-	
-	public function method()
-	{
-		return $this->method;
-	}
-	
-	public function format()
-	{
-		return $this->format;
-	}
 
 	public function request()
 	{
@@ -98,7 +78,6 @@ abstract class Form
 		if (!isset($form['format'])) {
 			$form['format'] = self::format__;
 		}
-
 		$this->title = $form['title'];
 		$this->action = $form['action'];
 		$this->method = $form['method'];
@@ -155,29 +134,29 @@ abstract class Form
 
 	public function validate($id, $rule = null, $message = null)
 	{
-		$id = $this->field_id($id);
+		$id = $this->fieldId($id);
 		return $this->validate[$id][] = ['rule' => $rule, 'message' => $message];
 	}
 
 	public function sanitize($id, $filter = null)
 	{
-		$id = $this->field_id($id);
+		$id = $this->fieldId($id);
 		return $this->sanitize[$id][] = $filter;
 	}
 	
 	public function status($id = '', $status = __validation::error__)
 	{
-		return ($id) ? $this->validation->getStatus($this->field_id($id), $status) : $this->validation->getResult($status); 
+		return ($id) ? $this->validation->getStatus($this->fieldId($id), $status) : $this->validation->getResult($status); 
 	}
 	
 	public function error($id = '', $message = '')
 	{
-		return $this->validation->setStatus(($id) ? $this->field_id($id) : __validation::error__, __validation::error__, $message);
+		return $this->validation->setStatus(($id) ? $this->fieldId($id) : __validation::error__, __validation::error__, $message);
 	}
 	
 	public function success($id = '', $message = '')
 	{
-		return $this->validation->setStatus(($id) ? $this->field_id($id) : __validation::success__, __validation::success__, $message);
+		return $this->validation->setStatus(($id) ? $this->fieldId($id) : __validation::success__, __validation::success__, $message);
 	}
 
 	public function message($message = '', $status = __validation::success__)
@@ -195,7 +174,7 @@ abstract class Form
 		return $this->expire = (bool) $expire;
 	}
 	
-	public function field_id($id)
+	public function fieldId($id)
 	{
 		return $this->form_id . '_' . $id;
 	}
@@ -231,7 +210,7 @@ abstract class Form
 	
 	public function fieldset($id, $title = '', $field_id = '')
 	{
-		$id = $this->field_id($id);
+		$id = $this->fieldId($id);
 
 		if (!isset($this->fieldset[$id])) {
 			$this->fieldset[$id] = ['title' => $title, 'fields' => []];
@@ -248,7 +227,7 @@ abstract class Form
 	{
 		$this->sanitize($id, 'strip');
 
-		$id = $this->field_id($id);
+		$id = $this->fieldId($id);
 
 		if (!is_array($input)) {
 			$input = ['value' => $input]; 
@@ -273,7 +252,7 @@ abstract class Form
 		$input['attr']['id'] = $id;
 	
 		if (isset($input['group'])) {
-			$id = $this->field_id($input['group']);
+			$id = $this->fieldId($input['group']);
 		}
 		$weight = (isset($this->weight['field'][$input['id']])) ? count($this->weight['field'][$input['id']]) : 0;
 	
@@ -292,7 +271,7 @@ abstract class Form
 	{
 		$this->sanitize($id, 'strip');
 
-		$id = $this->field_id($id);
+		$id = $this->fieldId($id);
 
 		if (!isset($select['options'])) {
 			$select['options'] = $select;
@@ -326,14 +305,14 @@ abstract class Form
 		unset($option);
 
 		if (isset($select['group'])) {
-			$id = $this->field_id($select['group']);
+			$id = $this->fieldId($select['group']);
 		}
 		return $this->field($id, $select, $label);
 	}
 	
 	public function markup($id, $label = null, $markup = null)
 	{
-		$id = $this->field_id($id);
+		$id = $this->fieldId($id);
 		
 		if (!is_array($markup)) {
 			$markup = ['value' => $markup];
@@ -351,7 +330,7 @@ abstract class Form
 	{
 		$this->sanitize($id, 'strip');
 
-		$id = $this->field_id($id);
+		$id = $this->fieldId($id);
 		
 		if (!is_array($hidden)) {
 			$hidden = ['value' => $hidden];
@@ -373,7 +352,7 @@ abstract class Form
 	
 	public function button($id, $label = '', $button = [])
 	{
-		$id = $this->field_id($id);
+		$id = $this->fieldId($id);
 	
 		if (!isset($button['type'])) {
 			$button['type'] = 'submit';

@@ -12,16 +12,6 @@ class Request
 	public $method = __request::method__;
 
 	public $format = __request::format__;
-	
-	public function method($method = null)
-	{
-		return ($method) ? $this->method = $method : $this->method;
-	}
-	
-	public function format($format = null)
-	{
-		return ($format) ? $this->format = $format : $this->format;
-	}
 
 	public function header($key = '')
 	{
@@ -72,11 +62,11 @@ class Request
 		if (!$this->load()->module('validation')->validate('request')) {
 			return false;
 		}
-		if (method_exists($instance->{$subj}, 'method')) {
-			$this->method($instance->{$subj}->method());
+		if (isset($instance->{$subj}->method)) {
+			$this->method = $instance->{$subj}->method;
 		}
-		if (method_exists($instance->{$subj}, 'format')) {
-			$this->format($instance->{$subj}->format());
+		if (isset($instance->{$subj}->format)) {
+			$this->format = $instance->{$subj}->format;
 		}
 		if (method_exists($instance->{$subj}, 'request')) {
 			return $instance->{$subj}->request();

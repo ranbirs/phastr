@@ -5,16 +5,11 @@ namespace sys\components;
 abstract class Session
 {
 
-	protected $session_id;
+	public $session_id;
 
 	abstract public function generate();
 
 	abstract public function register();
-
-	public function session_id()
-	{
-		return $this->session_id;
-	}
 
 	public function start($handler = null)
 	{

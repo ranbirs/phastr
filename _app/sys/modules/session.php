@@ -25,13 +25,12 @@ class Session extends \sys\components\Session
 
 	public function register()
 	{
-		$this->set(['_timestamp' => 1], $this->timestamp(true));
 		$this->set(['_client' => 'agent'], (isset($_SERVER['HTTP_USER_AGENT'])) ? $_SERVER['HTTP_USER_AGENT'] : null);
 	}
 	
 	public function render()
 	{
-		$this->set('_request', $this->hash($this->timestamp()[1]));
+		$this->set('_request', $this->hash($this->set(['_timestamp' => 1], $this->timestamp(true))));
 	}
 
 	public function timestamp($gen = false)

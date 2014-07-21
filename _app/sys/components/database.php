@@ -8,7 +8,7 @@ use PDOException;
 class Database extends PDO
 {
 
-	protected $sth, $client;
+	public $sth;
 
 	function __construct($dsn, $username, $password, $driver_options = [])
 	{
@@ -22,16 +22,6 @@ class Database extends PDO
 			print $ex->getMessage();
 			exit();
 		}
-	}
-
-	public function sth()
-	{
-		return $this->sth;
-	}
-
-	public function client()
-	{
-		return $this->client = $this;
 	}
 
 	public function query($statement, $values = null)

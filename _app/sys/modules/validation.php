@@ -151,6 +151,7 @@ class Validation
 		foreach ($value as &$val) {
 			$val = $this->filter($val, $rule, $params);
 		}
+		unset($val);
 		return $value;
 	}
 
