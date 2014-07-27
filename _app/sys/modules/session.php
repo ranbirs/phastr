@@ -54,7 +54,7 @@ class Session extends \sys\components\Session
 		return $this->get('_key');
 	}
 
-	public function keygen($hash = '')
+	public function keygen($hash = null)
 	{
 		$key = $this->load()->module('hash')->gen($this->get('_token'), 'sha256');
 		return (!$hash) ? $key : ($hash === $key);
@@ -65,7 +65,7 @@ class Session extends \sys\components\Session
 		return $this->get(['_client' => $key]);
 	}
 	
-	public function hash($data = '', $algo = 'sha256')
+	public function hash($data = null, $algo = 'sha256')
 	{
 		return $this->load()->module('hash')->gen($data, $algo, $this->key());
 	}

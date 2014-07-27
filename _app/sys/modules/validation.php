@@ -13,7 +13,7 @@ class Validation
 
 	protected $result = [];
 
-	public function getResult($status = '')
+	public function getResult($status = null)
 	{
 		return (!$status) ? $this->result : ((isset($this->result[$status])) ? $this->result[$status] : false);
 	}
@@ -23,7 +23,7 @@ class Validation
 		return (isset($this->result[$status][$id])) ? $this->result[$status][$id] : false;
 	}
 
-	public function setStatus($id, $status = self::error__, $message = '')
+	public function setStatus($id, $status = self::error__, $message = null)
 	{
 		$this->result[$status][$id] = ['id' => $id, 'status' => $status, 'message' => $message];
 	}
@@ -59,13 +59,13 @@ class Validation
 					return false;
 				}
 				$request = $this->load()->module('request')->{$rule}(key($params));
-				return (!is_null($value) && $value === $request && $request === current($params));
+				return (isset($value) && $value === $request && $request === current($params));
 			case 'request':
 				return ($this->load()->module('request')->header($this->load()->module('session')->token()) === $this->load()->module('session')->get('_request'));
 			case 'session':
-				return (!is_null($params) && $value === $this->load()->module('session')->get($params));
+				return (isset($params) && $value === $this->load()->module('session')->get($params));
 			case 'compare':
-				return (!is_null($params) && strcmp($value, $params) == 0);
+				return (isset($params) && strcmp($value, $params) == 0);
 			case 'require':
 				if (is_array($value)) {
 					$value = implode($value);
@@ -155,10 +155,10 @@ class Validation
 		return $value;
 	}
 
-	public function filter($value = '', $rule = null, $params = null)
+	public function filter($value = null, $rule = null, $params = null)
 	{
 		$value = trim($value);
-		if (!is_null($params)) {
+		if (isset($params)) {
 			return filter_var($value, $rule, $params);
 		}
 		return filter_var($value, $rule);

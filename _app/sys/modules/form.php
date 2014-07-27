@@ -38,14 +38,17 @@ abstract class Form
 		$this->load()->module('request');
 		$this->load()->module('validation');
 		
+		$this->request->method = $this->method;
+		$this->request->format = $this->format;
+
 		foreach ($this->sanitize as $id => $filters) {
 			foreach ($filters as $filter) {
-				$this->request->{$this->method}($id, $this->validation->sanitize($this->request->{$this->method}($id), $filter));
+				$this->request->request($id, $this->validation->sanitize($this->request->request($id), $filter));
 			}
 		}
 		foreach ($this->validate as $id => $rules) {
 			foreach ($rules as $rule) {
-				$this->validation->resolve($id, $this->request->{$this->method}($id), $rule['rule'], $rule['message']);
+				$this->validation->resolve($id, $this->request->request($id), $rule['rule'], $rule['message']);
 			}
 		}
 		if (!$this->result()) {
@@ -144,22 +147,22 @@ abstract class Form
 		return $this->sanitize[$id][] = $filter;
 	}
 	
-	public function status($id = '', $status = __validation::error__)
+	public function status($id = null, $status = __validation::error__)
 	{
 		return ($id) ? $this->validation->getStatus($this->fieldId($id), $status) : $this->validation->getResult($status); 
 	}
 	
-	public function error($id = '', $message = '')
+	public function error($id = null, $message = null)
 	{
 		return $this->validation->setStatus(($id) ? $this->fieldId($id) : __validation::error__, __validation::error__, $message);
 	}
 	
-	public function success($id = '', $message = '')
+	public function success($id = null, $message = null)
 	{
 		return $this->validation->setStatus(($id) ? $this->fieldId($id) : __validation::success__, __validation::success__, $message);
 	}
 
-	public function message($message = '', $status = __validation::success__)
+	public function message($message = null, $status = __validation::success__)
 	{
 		return $this->message[$status] = $message;
 	}
@@ -208,7 +211,7 @@ abstract class Form
 		return $this->fields[$id];
 	}
 	
-	public function fieldset($id, $title = '', $field_id = '')
+	public function fieldset($id, $title = null, $field_id = null)
 	{
 		$id = $this->fieldId($id);
 
@@ -289,7 +292,7 @@ abstract class Form
 
 		if (isset($select['multiple'])) {
 			$select['attr']['name'] .= '[]';
-			$select['attr']['multiple'] = 'multiple';
+			$select['attr']['multiple'] = '';
 		}
 		foreach ($select['options'] as &$option) {
 			$option['control'] = 'option';
@@ -350,7 +353,7 @@ abstract class Form
 		return $this->hidden[$id] = $hidden;
 	}
 	
-	public function button($id, $label = '', $button = [])
+	public function button($id, $label = null, $button = [])
 	{
 		$id = $this->fieldId($id);
 	

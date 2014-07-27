@@ -15,14 +15,14 @@ class Assets
 
 	protected $assets = [];
 
-	public function script($subj = '', $type = 'file', $attr = null, $iteration = __config::iteration__)
+	public function script($subj = null, $type = 'file', $attr = null, $iteration = __config::iteration__)
 	{
 		$key = hash(self::hash__, 'script' . $type . $iteration . $subj);
 		$asset = \sys\utils\html\script($subj, $type, $attr, $iteration);
 		return $this->assets['script'][$type][$key] = ['value' => $subj, 'asset' => $asset, 'iteration' => $iteration];
 	}
 	
-	public function style($subj = '', $type = 'file', $attr = null, $iteration = __config::iteration__)
+	public function style($subj = null, $type = 'file', $attr = null, $iteration = __config::iteration__)
 	{
 		$key = hash(self::hash__, 'style' . $type . $iteration . $subj);
 		$asset = \sys\utils\html\style($subj, $type, $attr, $iteration);
@@ -39,7 +39,7 @@ class Assets
 		return $this->assets[$type][] = $asset;
 	}
 	
-	public function get($subj = 'script', $type = '')
+	public function get($subj = 'script', $type = null)
 	{
 		switch ($subj) {
 			case 'script':

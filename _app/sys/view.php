@@ -9,7 +9,7 @@ class View
 
 	public $layout = __config::layout__;
 
-	public function page($path = '')
+	public function page($path = null)
 	{
 		return $this->render('pages/' . \sys\utils\path\page($path));
 	}
@@ -19,12 +19,12 @@ class View
 		return $this->render('requests/' . $path);
 	}
 
-	public function template($type, $path, $data = null)
+	public function template($subj, $path, $data = null)
 	{
-		return $this->render('templates/' . $type . '/' . $path, [$type => $data]);
+		return $this->render('templates/' . $subj . '/' . $path, [$subj => $data]);
 	}
 
-	public function layout($path = '')
+	public function layout($path = null)
 	{
 		include \sys\utils\path\file('views/layouts/' . ((!$path) ? $this->layout : $path));
 		

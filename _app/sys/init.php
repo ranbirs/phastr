@@ -5,7 +5,7 @@ namespace sys;
 class Init
 {
 
-	private static $route, $view;
+	public static $route, $view;
 
 	function __construct()
 	{
@@ -20,16 +20,6 @@ class Init
 		self::$route->error(404);
 
 		exit();
-	}
-
-	public static function route()
-	{
-		return self::$route;
-	}
-
-	public static function view()
-	{
-		return self::$view;
 	}
 
 }

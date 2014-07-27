@@ -56,7 +56,7 @@ class Service
 
 	public function setHeader($headers = [])
 	{
-		$headers = \sys\utils\helper\iterate_join(': ', $headers);
+		$headers = \sys\utils\helper\iterate_join($headers, ': ');
 		$this->headers = array_merge((array) $this->headers, $headers);
 		
 		curl_setopt($this->handle, CURLOPT_HTTPHEADER, $this->headers);

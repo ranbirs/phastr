@@ -33,7 +33,7 @@ abstract class Nav
 		return $this->load()->init('view')->template('nav', $template, $this->nav);
 	}
 
-	protected function item($label = '', $path = '', $params = [])
+	protected function item($label = null, $path = null, $params = [])
 	{
 		$count = count($this->items);
 		$index = ($count > 0) ? $count + 1 : 0;

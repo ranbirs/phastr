@@ -16,6 +16,6 @@ require sys__ . '/utils/helper.php';
 require sys__ . '/utils/path.php';
 require sys__ . '/utils/html.php';
 
-$init = new \sys\Init();
+new \sys\Init();
 
 exit();

@@ -12,34 +12,39 @@ class Request
 	public $method = __request::method__;
 
 	public $format = __request::format__;
+	
+	public function request($key = null, $value = null)
+	{
+		return $this->{$this->method}($key, $value);
+	}
 
-	public function header($key = '')
+	public function header($key = null)
 	{
 		return $this->server(($key) ? 'HTTP_' . strtoupper($key) : null);
 	}
 
-	public function server($key = '')
+	public function server($key = null)
 	{
 		return ($key) ? ((isset($_SERVER[$key])) ? $_SERVER[$key] : false) : $_SERVER;
 	}
 
-	public function post($key = '', $value = null)
+	public function post($key = null, $value = null)
 	{
-		if ($key && !is_null($value)) {
+		if ($key && isset($value)) {
 			return $_POST[$key] = $value;
 		}
 		return ($key) ? ((isset($_POST[$key])) ? $_POST[$key] : false) : $_POST;
 	}
 
-	public function get($key = '', $value = null)
+	public function get($key = null, $value = null)
 	{
-		if ($key && !is_null($value)) {
+		if ($key && isset($value)) {
 			return $_GET[$key] = $value;
 		}
 		return ($key) ? ((isset($_GET[$key])) ? $_GET[$key] : false) : $_GET;
 	}
 
-	public function fields($subj, $method = 'post', $key = '', $delimiter = '_')
+	public function fields($subj, $method = __request::method__, $key = null, $delimiter = '_')
 	{
 		if ($key) {
 			return $this->{$method}($subj . $delimiter . $key);
@@ -61,12 +66,6 @@ class Request
 	{
 		if (!$this->load()->module('validation')->validate('request')) {
 			return false;
-		}
-		if (isset($instance->{$subj}->method)) {
-			$this->method = $instance->{$subj}->method;
-		}
-		if (isset($instance->{$subj}->format)) {
-			$this->format = $instance->{$subj}->format;
 		}
 		if (method_exists($instance->{$subj}, 'request')) {
 			return $instance->{$subj}->request();

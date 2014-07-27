@@ -14,10 +14,10 @@ class Load
 
 	protected function getInstance($path, $base = app__, $prop = true)
 	{
-		if (!isset($this->_instance->{$name = basename($path)}) || !$prop) {
+		$name = basename($path);
+		if (!isset($this->_instance->{$name}) || !$prop) {
 			$class = '\\' . $base . '\\' . implode('\\', explode('/', $path));
-			$instance = new $class();
-			return ($prop) ? $this->_instance->{$name} = $instance : $instance;
+			return ($prop) ? $this->_instance->{$name} = new $class() : new $class();
 		}
 		return $this->_instance->{$name};
 	}
@@ -25,8 +25,7 @@ class Load
 	public function init($subj, $prop = true)
 	{
 		if (!isset($this->_instance->{$subj}) || !$prop) {
-			$instance = call_user_func('\\' . sys__ . '\\Init::' . $subj);
-			return ($prop) ? $this->_instance->{$subj} = $instance : $instance;
+			return ($prop) ? $this->_instance->{$subj} = \sys\Init::${$subj} : \sys\Init::${$subj};
 		}
 		return $this->_instance->{$subj};
 	}

@@ -9,7 +9,7 @@ class Database extends \sys\components\Database
 	
 	use \sys\Loader;
 
-	function __construct($dsn = '', $username = __database::user__, $password = __database::pass__, $driver_options = [])
+	function __construct($dsn = null, $username = __database::user__, $password = __database::pass__, $driver_options = [])
 	{
 		parent::__construct((!$dsn) ? $this->dsn() : $dsn, $username, $password, $driver_options);
 	}
@@ -19,7 +19,7 @@ class Database extends \sys\components\Database
 		return $driver . ':host=' . $host . ';dbname=' . $name;
 	}
 
-	public function select($table, $cols, $clause = '', $params = [], $fetch_mode = null)
+	public function select($table, $cols, $clause = null, $params = [], $fetch_mode = null)
 	{
 		$cols = implode(', ', (array) $cols);
 		$this->sth = $this->prepare("SELECT $cols FROM $table $clause");
@@ -29,7 +29,7 @@ class Database extends \sys\components\Database
 		}
 		$this->sth->execute();
 		if ($this->sth->rowCount()) {
-			if (!is_null($fetch_mode)) {
+			if (isset($fetch_mode)) {
 				$this->sth->setFetchMode($fetch_mode);
 			}
 			return $this->sth->fetchAll();
@@ -37,9 +37,9 @@ class Database extends \sys\components\Database
 		return false;
 	}
 
-	public function update($table, $values = [], $clause = '', $params = [])
+	public function update($table, $values = [], $clause = null, $params = [])
 	{
-		$values = \sys\utils\helper\iterate_join(' = ', $values);
+		$values = \sys\utils\helper\iterate_join($values, ' = ');
 		$values = implode(', ', $values);
 		$this->sth = $this->prepare("UPDATE $table SET $values $clause");
 		

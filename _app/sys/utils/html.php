@@ -4,10 +4,10 @@ namespace sys\utils\html;
 
 function attr($attr = []) {
 	$attr = \sys\utils\helper\attr($attr);
-	return ($attr) ? ' ' . implode(' ', \sys\utils\helper\iterate_join('="', $attr, '', '"')) : '';
+	return ($attr) ? ' ' . implode(' ', \sys\utils\helper\iterate_join($attr, '="', '', '"')) : '';
 }
 
-function script($subj = '', $context = 'file', $attr = null, $iteration = null) {
+function script($subj = null, $context = 'file', $attr = null, $iteration = null) {
 	switch ($context) {
 		case 'file':
 			$subj = \sys\utils\path\base($subj);
@@ -21,7 +21,7 @@ function script($subj = '', $context = 'file', $attr = null, $iteration = null) 
 	}
 }
 
-function style($subj = '', $context = 'file', $attr = null, $iteration = null) {
+function style($subj = null, $context = 'file', $attr = null, $iteration = null) {
 	switch ($context) {
 		case 'file':
 			$subj = \sys\utils\path\base($subj);

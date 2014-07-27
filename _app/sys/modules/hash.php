@@ -7,17 +7,17 @@ use app\confs\Hash as __hash;
 class Hash
 {
 
-	public function gen($data = '', $algo = __hash::algo__, $key = __hash::key__)
+	public function gen($data = null, $algo = __hash::algo__, $key = __hash::key__)
 	{
 		return ($key) ? hash_hmac($algo, $data, $key) : hash($algo, $data);
 	}
 
-	public function cipher($data = '')
+	public function cipher($data = null)
 	{
 		return crypt($data, __hash::cipher__ . __hash::cost__ . '$' . $this->rand(__hash::salt__));
 	}
 
-	public function resolve($hash, $data = '', $algo = __hash::algo__, $key = __hash::key__)
+	public function resolve($hash, $data = null, $algo = __hash::algo__, $key = __hash::key__)
 	{
 		if ($algo) {
 			$subj = $this->gen($data, $algo, $key);

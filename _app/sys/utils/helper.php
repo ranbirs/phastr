@@ -26,21 +26,25 @@ function attr($attr = [], $glue = ' ') {
 		}
 		if (is_int($key)) {
 			$key = $val;
+			$val = '';
 		}
 		$attrs[$key] = $val;
 	}
 	return $attrs;
 }
 
-function filter_split($delimiter, $subj = '') {
-	return array_values(array_filter(array_map('trim', explode($delimiter, $subj)), 'strlen'));
-	// return preg_split('/' . preg_quote($delimiter, '/') . '/', $subj, -1, PREG_SPLIT_NO_EMPTY);
+function trim_split($delimiter, $subj = null) {
+	return array_map('trim', explode($delimiter, $subj));
 }
 
-function iterate_join($glue = '', $subj = [], $prepend = '', $append = '') {
+function filter_split($delimiter, $subj = null) {
+	return array_values(array_filter(explode($delimiter, $subj), 'strlen'));
+}
+
+function iterate_join($subj = [], $glue = null, $prepend = null, $append = null) {
 	$join = [];
 	foreach ($subj as $key => $val) {
-		$join[] = $prepend . $key . $glue . $val . $append;
+		$join[] = (strlen($val)) ? $prepend . $key . $glue . $val . $append : $key;
 	}
 	return $join;
 }
