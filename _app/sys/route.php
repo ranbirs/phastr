@@ -15,13 +15,13 @@ class Route
 	{
 		$path['file'] = $_SERVER['SCRIPT_NAME'];
 		$path['base'] = rtrim(dirname($path['file']), '/') . '/';
-		$path['path'] = (isset($_SERVER['PATH_INFO'])) ? \sys\utils\helper\filter_split('/', $_SERVER['PATH_INFO']) : [];
+		$path['path'] = (isset($_SERVER['PATH_INFO'])) ? array_values(array_filter(explode('/', trim($_SERVER['PATH_INFO'], '/'), 4))) : [];
 		$path['uri'] = ($path['path']) ? implode('/', $path['path']) : '/';
 
 		if (!isset($path['path'][0])) {
 			$path['path'][0] = __route::controller__;
 		}
-		elseif (!in_array($path['path'][0], \sys\utils\helper\trim_split(',', __route::scope__))) {
+		elseif (!in_array($path['path'][0], explode(',', __route::scope__))) {
 			return $this->error(404);
 		}
 		if (!isset($path['path'][1])) {
@@ -31,13 +31,13 @@ class Route
 			$path['path'][2] = __route::action__;
 		}
 		$path['route'] = array_slice($path['path'], 0, 3);
-		$path['params'] = (isset($path['path'][3])) ? array_slice($path['path'], 3) : [];
+		$path['params'] = (isset($path['path'][3])) ? explode('/', trim($path['path'][3],'/')) : [];
 		
 		foreach ($path['route'] as &$arg) {
 			if ((strlen($arg) > self::length__) || preg_match('/[^a-z0-9-]/', $arg = strtolower($arg))) {
 				return $this->error(404);
 			}
-			$path['label'][] = \sys\utils\path\label($arg);
+			$path['label'][] = str_replace('-', '_', $arg);
 		}
 		unset($arg);
 		

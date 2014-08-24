@@ -1,0 +1,1 @@
+<input<?= \sys\utils\html\attr($hidden['attr']); ?>>

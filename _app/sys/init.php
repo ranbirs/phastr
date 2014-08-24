@@ -5,7 +5,7 @@ namespace sys;
 class Init
 {
 
-	public static $route, $view;
+	public static $route, $view, $init;
 
 	function __construct()
 	{
@@ -13,9 +13,9 @@ class Init
 		self::$view = new \sys\View();
 		
 		$controller = self::$route->controller(true);
-		$controller = new $controller();
+		self::$init = new $controller();
 		
-		$controller->init(self::$route->action(true), self::$route->params());
+		self::$init->init(self::$route->action(true), self::$route->params());
 
 		self::$route->error(404);
 

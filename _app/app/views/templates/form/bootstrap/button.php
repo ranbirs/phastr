@@ -1,0 +1,1 @@
+<button<?= \sys\utils\html\attr($button['attr']); ?>><?= $button['label']; ?></button>
