@@ -1,7 +1,9 @@
 <?php
 
 namespace sys\utils\path;
-	
+
+use app\configs\Route as __route;
+
 function route($key = null) {
 	return \sys\Init::$route->path($key);
 }
@@ -12,7 +14,6 @@ function resolve($file) {
 
 function label($path = null) {
 	return str_replace('-', '_', $path);
-	// return str_replace('-', '_', preg_replace('/[^a-z0-9]/', '', $path));
 }
 
 function file($path, $base = app__, $ext = 'php') {
@@ -32,14 +33,14 @@ function page($path = null) {
 }
 
 function uri($path = null) {
-	$uri = (\app\confs\Route::rewrite__) ? \sys\utils\path\route('base') : \sys\utils\path\route('file');
-	return $uri .= ($path && $path != '/') ? '/' . $path : ''; // \sys\utils\path\route('uri');
+	$uri = (__route::rewrite__) ? \sys\utils\path\route('base') : \sys\utils\path\route('file');
+	return $uri .= ($path = trim($path, '/')) ? '/' . $path : '';
 }
 
 function request($path = null) {
-	return \sys\utils\path\uri(\sys\utils\path\route('route') . '/' . \app\confs\Route::request__ . '/' . $path);
+	return \sys\utils\path\uri(\sys\utils\path\route('route') . '/' . __route::request__ . '/' . $path);
 }
 
 function trail($path = null) {
-	return ($path) ? $path . \app\confs\Route::trail__ : '';
+	return ($path) ? $path . __route::trail__ : '';
 }

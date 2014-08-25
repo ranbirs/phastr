@@ -5,9 +5,9 @@ namespace app\controllers;
 class Consumer extends \sys\Controller
 {
 
-	function __construct()
+	public function init()
 	{
-		parent::__construct();
+		$this->load()->init('view');
 	}
 
 	public function request__post($params = [])

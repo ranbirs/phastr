@@ -16,9 +16,7 @@ abstract class Session
 		if (session_status() !== PHP_SESSION_ACTIVE) {
 			if ($handler) {
 				session_set_save_handler($handler);
-				register_shutdown_function('session_write_close');
 			}
-			//ini_set('session.hash_function', 'sha1');
 			session_start();
 		}
 		$this->session_id = session_id();

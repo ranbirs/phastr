@@ -2,8 +2,8 @@
 
 namespace sys\modules;
 
-use app\confs\Config as __config;
-use app\confs\Database as __database;
+use app\configs\Session as __session;
+use app\configs\Database as __database;
 
 class Session extends \sys\components\Session
 {
@@ -20,7 +20,7 @@ class Session extends \sys\components\Session
 		$this->set(['_timestamp' => 0], $this->timestamp(true));
 		$this->set('_token', $this->token(true));
 		$this->set('_key', $this->keygen());
-		$this->set(['_client' => 'lang'], __config::lang__);
+		$this->set(['_client' => 'lang'], __session::lang__);
 	}
 
 	public function register()
@@ -41,12 +41,12 @@ class Session extends \sys\components\Session
 		return uniqid(microtime(true) . '.', true);
 	}
 	
-	public function token($gen = false)
+	public function token($gen = false, $algo = 'sha1')
 	{
 		if (!$gen) {
 			return $this->get('_token');
 		}
-		return $this->load()->module('hash')->gen($this->session_id, 'sha1', $this->timestamp()[0]);
+		return $this->load()->module('hash')->gen($this->session_id, $algo, $this->timestamp()[0]);
 	}
 
 	public function key()
@@ -54,9 +54,9 @@ class Session extends \sys\components\Session
 		return $this->get('_key');
 	}
 
-	public function keygen($hash = null)
+	public function keygen($hash = null, $algo = __session::algo__)
 	{
-		$key = $this->load()->module('hash')->gen($this->get('_token'), 'sha256');
+		$key = $this->load()->module('hash')->gen($this->get('_token'), $algo, __session::key__);
 		return (!$hash) ? $key : ($hash === $key);
 	}
 
@@ -65,7 +65,7 @@ class Session extends \sys\components\Session
 		return $this->get(['_client' => $key]);
 	}
 	
-	public function hash($data = null, $algo = 'sha256')
+	public function hash($data = null, $algo = __session::algo__)
 	{
 		return $this->load()->module('hash')->gen($data, $algo, $this->key());
 	}

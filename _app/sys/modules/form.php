@@ -2,19 +2,13 @@
 
 namespace sys\modules;
 
-use app\confs\Config as __config;
-use sys\modules\Validation as __validation;
+use app\configs\Form as __form;
+use app\configs\Validation as __validation;
 
 abstract class Form
 {
 	
 	use \sys\Loader;
-	
-	const method__ = 'post';
-	
-	const format__ = 'json';
-	
-	const fieldset__ = 'default';
 
 	public $form_id, $action, $method, $format, $title;
 
@@ -76,10 +70,10 @@ abstract class Form
 			$form['action'] = \sys\utils\path\request($this->form_id);
 		}
 		if (!isset($form['method'])) {
-			$form['method'] = self::method__;
+			$form['method'] = __form::method__;
 		}
 		if (!isset($form['format'])) {
-			$form['format'] = self::format__;
+			$form['format'] = __form::format__;
 		}
 		$this->title = $form['title'];
 		$this->action = $form['action'];
@@ -103,7 +97,7 @@ abstract class Form
 		return $this->form = $form;
 	}
 
-	public function render($template = __config::form__)
+	public function render($template = __form::template__)
 	{
 		return $this->load()->init('view')->template('form', $template . '/form', $this->form);
 	}
@@ -195,7 +189,7 @@ abstract class Form
 	protected function field($id, $field, $label = null)
 	{
 		if (!isset($field['fieldset'])) {
-			$field['fieldset'] = self::fieldset__;
+			$field['fieldset'] = __form::fieldset__;
 		}
 		if (!isset($this->weight['group'][$id])) {
 			$this->fieldset($field['fieldset'], $this->title, $id);

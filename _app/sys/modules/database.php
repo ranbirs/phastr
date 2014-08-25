@@ -2,7 +2,7 @@
 
 namespace sys\modules;
 
-use app\confs\Database as __database;
+use app\configs\Database as __database;
 
 class Database extends \sys\components\Database
 {

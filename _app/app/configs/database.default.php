@@ -1,10 +1,10 @@
 <?php
 
-namespace app\confs;
+namespace app\configs;
 
 class Database
 {
-
+    
 	const session__ = 0; /* Enable for database session handling */
 
 	const type__ = 'mysql';

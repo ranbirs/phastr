@@ -1,13 +1,13 @@
 <?php
 
-namespace app\confs;
+namespace app\configs;
 
 class Hash
 {
 
-	const key__ = 'session%hashing'; /* Key for session hashing */
+	const key__ = 'secret key'; /* Default hashing key */
 
-	const algo__ = 'sha256';
+	const algo__ = 'sha512';
 
 	const cipher__ = '$2a$';
 

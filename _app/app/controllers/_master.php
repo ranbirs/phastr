@@ -5,13 +5,14 @@ namespace app\controllers;
 abstract class _master extends \sys\Controller
 {
 
-	function __construct()
+	public function init()
 	{
-		parent::__construct();
-		
+		$this->load()->init('route');
+		$this->load()->init('view');
+
 		$this->load()->module('session');
 		$this->load()->module('request');
-		$this->load()->module('conf', 'app');
+		$this->load()->module('config', 'app');
 		$this->load()->module('access', 'app');
 		
 		if (!$this->route->request()) {

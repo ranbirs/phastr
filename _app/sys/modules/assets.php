@@ -2,29 +2,23 @@
 
 namespace sys\modules;
 
-use app\confs\Config as __config;
+use app\configs\Assets as __assets;
 
 class Assets
 {
 
-	const script__ = 'js';
-
-	const style__ = 'css';
-
-	const hash__ = 'md5';
-
 	protected $assets = [];
 
-	public function script($subj = null, $type = 'file', $attr = null, $iteration = __config::iteration__)
+	public function script($subj = null, $type = 'file', $attr = null, $iteration = __assets::iteration__)
 	{
-		$key = hash(self::hash__, 'script' . $type . $iteration . $subj);
+		$key = hash(__assets::hash__, 'script' . $type . $iteration . $subj);
 		$asset = \sys\utils\html\script($subj, $type, $attr, $iteration);
 		return $this->assets['script'][$type][$key] = ['value' => $subj, 'asset' => $asset, 'iteration' => $iteration];
 	}
 	
-	public function style($subj = null, $type = 'file', $attr = null, $iteration = __config::iteration__)
+	public function style($subj = null, $type = 'file', $attr = null, $iteration = __assets::iteration__)
 	{
-		$key = hash(self::hash__, 'style' . $type . $iteration . $subj);
+		$key = hash(__assets::hash__, 'style' . $type . $iteration . $subj);
 		$asset = \sys\utils\html\style($subj, $type, $attr, $iteration);
 		return $this->assets['style'][$type][$key] = ['value' => $subj, 'asset' => $asset, 'iteration' => $iteration];
 	}
@@ -48,7 +42,7 @@ class Assets
 				$assets['file'] = [];
 				$assets['inline'] = [];
 				foreach ($this->assets[$subj] as $_type => $_assets) {
-					if (__config::assets__ && $_type == 'file') {
+					if (__assets::path__ && $_type == 'file') {
 						$_assets = [['asset' => $this->optimize($subj, $_assets)]];
 					}
 					foreach ($_assets as $asset) {
@@ -65,10 +59,10 @@ class Assets
 
 	protected function optimize($type, $assets = [])
 	{
-		$ext = constant('self::' . $type . '__');
+		$ext = constant('__assets::' . $type . '__');
 		$root_path = \sys\utils\path\root() . '/' . \sys\utils\path\base();
-		$assets_path = __config::assets__ . '/' . $ext;
-		$file_name = hash(self::hash__, implode(array_keys($assets))) . '.' . $ext;
+		$assets_path = __assets::path__ . '/' . $ext;
+		$file_name = hash(__assets::hash__, implode(array_keys($assets))) . '.' . $ext;
 		$file_path = $assets_path . '/' . $file_name;
 		$dir = $root_path . $assets_path;
 		

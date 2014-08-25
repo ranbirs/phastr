@@ -33,12 +33,12 @@ function attr($attr = [], $glue = ' ') {
 	return $attrs;
 }
 
-function trim_split($delimiter, $subj = null) {
-	return array_map('trim', explode($delimiter, $subj));
+function trim_array($subj = null) {
+	return array_map('trim', $subj);
 }
 
-function filter_split($delimiter, $subj = null) {
-	return array_values(array_filter(explode($delimiter, $subj), 'strlen'));
+function filter_split($delimiter, $subj = null, $limit = -1, $flags = PREG_SPLIT_NO_EMPTY) {
+    return preg_split('/' . preg_quote($delimiter, '/') . '/', $subj, $limit, $flags);
 }
 
 function iterate_join($subj = [], $glue = null, $prepend = null, $append = null) {

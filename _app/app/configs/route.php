@@ -1,6 +1,6 @@
 <?php
 
-namespace app\confs;
+namespace app\configs;
 
 class Route
 {
@@ -16,6 +16,8 @@ class Route
 	const page__ = 'index'; /* Default page path */
 
 	const action__ = 'index'; /* Default action path */
+	
+	const length__ = 64;
 
 	const glue__ = '__'; /* Default page-action method name delimiter */
 	

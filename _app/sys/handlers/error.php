@@ -7,12 +7,12 @@ class Error
 
 	public function exception($ex)
 	{
-		return $this->output('Exception', $ex->getCode(), $ex->getMessage(), $ex->getFile(), $ex->getLine());
+		print $this->output('Exception', $ex->getCode(), $ex->getMessage(), $ex->getFile(), $ex->getLine());
 	}
 
 	public function error($errno, $errstr, $errfile, $errline, $errcontext)
 	{
-		return $this->output('Error', $errno, $errstr, $errfile, $errline);
+		print $this->output('Error', $errno, $errstr, $errfile, $errline);
 	}
 	
 	public function output($handler, $code = null, $message = null, $file = null, $line = null)
@@ -21,7 +21,7 @@ class Error
 			<strong>{$handler}</strong>
 			<em>{$message}</em>
 			<strong>{$file}:{$line}</strong>
-		<pre>";
+		</pre>";
 	}
 
 }

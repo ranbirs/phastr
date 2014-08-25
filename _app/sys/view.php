@@ -2,12 +2,10 @@
 
 namespace sys;
 
-use app\confs\Config as __config;
+use app\configs\View as __view;
 
 class View
 {
-
-	public $layout = __config::layout__;
 
 	public function page($path = null)
 	{
@@ -24,9 +22,9 @@ class View
 		return $this->render('templates/' . $subj . '/' . $path, [$subj => $data]);
 	}
 
-	public function layout($path = null)
+	public function layout($path = __view::layout__)
 	{
-		include \sys\utils\path\file('views/layouts/' . ((!$path) ? $this->layout : $path));
+		include \sys\utils\path\file('views/layouts/' . $path);
 		
 		exit();
 	}

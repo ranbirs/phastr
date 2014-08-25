@@ -5,9 +5,9 @@ namespace app\controllers;
 class User extends _master
 {
 
-	function __construct()
+	public function init()
 	{
-		parent::__construct();
+		parent::init();
 		
 		$this->view->title = 'User';
 	}

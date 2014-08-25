@@ -2,7 +2,7 @@
 
 namespace sys\modules;
 
-use app\confs\Request as __request;
+use app\configs\Request as __request;
 
 class Request
 {

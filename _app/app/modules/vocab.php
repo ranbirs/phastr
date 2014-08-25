@@ -5,7 +5,7 @@ namespace app\modules;
 class Vocab
 {
 
-	public function t($const, $context, $args = null, $lang = \app\confs\Config::lang__)
+	public function t($const, $context, $args = null, $lang = \app\configs\Session::lang__)
 	{
 		return $this->constant($const, ($lang) ? $lang . '\\' . $context : $context, $args);
 	}

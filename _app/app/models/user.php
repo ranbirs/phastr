@@ -23,7 +23,7 @@ class User extends \sys\Model
 		$this->load()->module('database');
 		$this->load()->module('session');
 		$this->load()->module('hash');
-		$this->load()->module('conf', 'app');
+		$this->load()->module('config', 'app');
 		$this->load()->module('vocab', 'app');
 	}
 

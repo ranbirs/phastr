@@ -2,9 +2,9 @@
 
 namespace app\modules;
 
-class Conf
+class Config
 {
-
+    
 	public function k($const, $context)
 	{
 		return $this->constant($const .= '__', $context);
@@ -18,7 +18,7 @@ class Conf
 
 	protected function constant($const, $context)
 	{
-		return constant('\\app\\confs\\' . $context . '::' . $const);
+		return constant('\\app\\configs\\' . $context . '::' . $const);
 	}
 
 }

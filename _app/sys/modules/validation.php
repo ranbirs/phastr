@@ -2,14 +2,12 @@
 
 namespace sys\modules;
 
+use app\configs\Validation as __validation;
+
 class Validation
 {
 	
 	use \sys\Loader;
-
-	const error__ = 'error';
-
-	const success__ = 'success';
 
 	protected $result = [];
 
@@ -18,12 +16,12 @@ class Validation
 		return (!$status) ? $this->result : ((isset($this->result[$status])) ? $this->result[$status] : false);
 	}
 
-	public function getStatus($id, $status = self::error__)
+	public function getStatus($id, $status = __validation::error__)
 	{
 		return (isset($this->result[$status][$id])) ? $this->result[$status][$id] : false;
 	}
 
-	public function setStatus($id, $status = self::error__, $message = null)
+	public function setStatus($id, $status = __validation::error__, $message = null)
 	{
 		$this->result[$status][$id] = ['id' => $id, 'status' => $status, 'message' => $message];
 	}
@@ -34,15 +32,15 @@ class Validation
 			$params = current($rule);
 			$rule = key($rule);
 		}
-		$status = ($this->validate($value, $rule, ((isset($params)) ? $params : null))) ? self::success__ : self::error__;
+		$status = ($this->validate($value, $rule, ((isset($params)) ? $params : null))) ? __validation::success__ : __validation::error__;
 
 		if (!is_array($message)) {
-			$message = [self::error__ => $message];
+			$message = [__validation::error__ => $message];
 		}
 		if (array_key_exists($status, $message)) {
 			$this->setStatus($id, $status, $message[$status]);
 		}
-		elseif ($status === self::error__) {
+		elseif ($status === __validation::error__) {
 			$this->setStatus($id, $status);
 		}
 	}

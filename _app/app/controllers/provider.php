@@ -7,9 +7,10 @@ class Provider extends \sys\Controller
 	
 	protected $endpoint = '';
 	
-	function __construct()
+	public function init()
 	{
-		parent::__construct();
+		$this->load()->init('route');
+		$this->load()->init('view');
 
 		$this->endpoint = 'http://' . $_SERVER['SERVER_NAME'] . \sys\utils\path\uri($this->route->path('route'));
 	}
