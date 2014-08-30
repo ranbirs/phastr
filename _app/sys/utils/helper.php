@@ -33,7 +33,7 @@ function attr($attr = [], $glue = ' ') {
 	return $attrs;
 }
 
-function trim_array($subj = null) {
+function trim_array($subj = []) {
 	return array_map('trim', $subj);
 }
 

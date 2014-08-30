@@ -1,4 +1,4 @@
-*/app/configs/database.php
+_app/app/configs/database.php
 .*
 !.gitignore
 !.htaccess

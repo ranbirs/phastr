@@ -11,14 +11,14 @@ class Assets
 
 	public function script($subj = null, $type = 'file', $attr = null, $iteration = __assets::iteration__)
 	{
-		$key = hash(__assets::hash__, 'script' . $type . $iteration . $subj);
+		$key = hash(__assets::algo__, 'script' . $type . $iteration . $subj);
 		$asset = \sys\utils\html\script($subj, $type, $attr, $iteration);
 		return $this->assets['script'][$type][$key] = ['value' => $subj, 'asset' => $asset, 'iteration' => $iteration];
 	}
 	
 	public function style($subj = null, $type = 'file', $attr = null, $iteration = __assets::iteration__)
 	{
-		$key = hash(__assets::hash__, 'style' . $type . $iteration . $subj);
+		$key = hash(__assets::algo__, 'style' . $type . $iteration . $subj);
 		$asset = \sys\utils\html\style($subj, $type, $attr, $iteration);
 		return $this->assets['style'][$type][$key] = ['value' => $subj, 'asset' => $asset, 'iteration' => $iteration];
 	}
@@ -62,7 +62,7 @@ class Assets
 		$ext = constant('__assets::' . $type . '__');
 		$root_path = \sys\utils\path\root() . '/' . \sys\utils\path\base();
 		$assets_path = __assets::path__ . '/' . $ext;
-		$file_name = hash(__assets::hash__, implode(array_keys($assets))) . '.' . $ext;
+		$file_name = hash(__assets::algo__, implode(array_keys($assets))) . '.' . $ext;
 		$file_path = $assets_path . '/' . $file_name;
 		$dir = $root_path . $assets_path;
 		

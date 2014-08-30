@@ -59,7 +59,7 @@ class User extends _master
 		if ($token) {
 			if ($this->user->verify($token)) {
 				$this->view->title = 'New User Verification';
-				$this->view->body = $this->view->page('user/register/verify');
+				$this->view->body = $this->view->page('register/verify');
 				return true;
 			}
 		}

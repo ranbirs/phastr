@@ -12,47 +12,49 @@ class Load
 		$this->_instance = $instance;
 	}
 
-	protected function getInstance($path, $base = app__, $prop = true)
+	public function getInstance($path, $prop = null)
 	{
-		$name = basename($path);
-		if (!isset($this->_instance->{$name}) || !$prop) {
-			$class = '\\' . $base . '\\' . implode('\\', explode('/', $path));
-			return ($prop) ? $this->_instance->{$name} = new $class() : new $class();
+	    if (!isset($prop)) {
+	        $prop = basename($path);
+	    }
+		if (!isset($this->_instance->{$prop})) {
+			$class = '\\' . implode('\\', explode('/', $path));
+			return $this->_instance->{$prop} = new $class();
 		}
-		return $this->_instance->{$name};
+		return $this->_instance->{$prop};
 	}
 
-	public function init($subj, $prop = true)
+	public function init($subj)
 	{
-		if (!isset($this->_instance->{$subj}) || !$prop) {
-			return ($prop) ? $this->_instance->{$subj} = \sys\Init::${$subj} : \sys\Init::${$subj};
+		if (!isset($this->_instance->{$subj})) {
+			return $this->_instance->{$subj} = \sys\Init::${$subj};
 		}
 		return $this->_instance->{$subj};
 	}
 
-	public function module($path, $base = sys__, $prop = true)
+	public function module($path, $base = sys__, $prop = null)
 	{
-		return $this->getInstance('modules/' . $path, $base, $prop);
+		return $this->getInstance($base . '/modules/' . $path, $prop);
 	}
 
-	public function model($path, $prop = true)
+	public function model($path, $prop = null)
 	{
-		return $this->getInstance('models/' . $path, app__, $prop);
+		return $this->getInstance('app/models/' . $path, $prop);
 	}
 
-	public function form($path, $prop = true)
+	public function form($path, $prop = null)
 	{
-		return $this->getInstance('forms/' . $path, app__, $prop);
+		return $this->getInstance('app/forms/' . $path, $prop);
 	}
 
-	public function nav($path, $prop = true)
+	public function nav($path, $prop = null)
 	{
-		return $this->getInstance('navs/' . $path, app__, $prop);
+		return $this->getInstance('app/navs/' . $path, $prop);
 	}
 
-	public function service($path, $prop = true)
+	public function service($path, $prop = null)
 	{
-		return $this->getInstance('services/' . $path, app__, $prop);
+		return $this->getInstance('app/services/' . $path, $prop);
 	}
 
 }

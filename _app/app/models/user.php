@@ -20,10 +20,10 @@ class User extends \sys\Model
 	function __construct()
 	{
 		$this->load()->init('route');
+		$this->load()->init('view');
 		$this->load()->module('database');
 		$this->load()->module('session');
 		$this->load()->module('hash');
-		$this->load()->module('config', 'app');
 		$this->load()->module('vocab', 'app');
 	}
 
@@ -70,11 +70,11 @@ class User extends \sys\Model
 		if ($register) {
 			$host = $_SERVER['SERVER_NAME'];
 			$addr = 'noreply@' . $host;
-			$from = $this->conf->k('title');
-			$path = $this->route->path();
+			$from = $this->view->app_title;
+			$path = \sys\utils\path\uri($this->route->controller() . '/' . $this->route->page());
 			$headers = 'From: ' . $from . ' <' . $addr . '>' . eol__;
 			$subject = $this->vocab->t('register_verify_email_subject', 'user');
-			$msg = $this->vocab->t('register_verify_email_body', 'user') . eol__ . 'http://' . $host . '/' . $path .
+			$msg = $this->vocab->t('register_verify_email_body', 'user') . eol__ . 'http://' . $host . $path .
 				 '/verify/' . $this->session->key() . '/' . $token . '/';
 			mail($email, $subject, $msg, $headers, '-f ' . $addr);
 			return true;

@@ -13,7 +13,7 @@ class Route
 	{
 		$path['file'] = $_SERVER['SCRIPT_NAME'];
 		$path['base'] = rtrim(dirname($path['file']), '/') . '/';
-		$path['path'] = (isset($_SERVER['PATH_INFO'])) ? \sys\utils\helper\filter_split('/', $_SERVER['PATH_INFO'], 4) : [];
+		$path['path'] = (isset($_SERVER['PATH_INFO'])) ? \sys\utils\helper\filter_split('/', trim($_SERVER['PATH_INFO'], '/'), __route::limit__) : [];
 		$path['uri'] = ($path['path']) ? implode('/', $path['path']) : '/';
 
 		if (!isset($path['path'][0])) {
@@ -28,9 +28,9 @@ class Route
 		if (!isset($path['path'][2])) {
 			$path['path'][2] = __route::action__;
 		}
-		$path['route'] = array_slice($path['path'], 0, 3);
-		$path['params'] = (isset($path['path'][3])) ? explode('/', trim($path['path'][3],'/')) : [];
-		
+		$path['route'] = $path['path'];
+		$path['params'] = array_splice($path['route'], 3);
+
 		foreach ($path['route'] as &$arg) {
 			if ((strlen($arg) > __route::length__) || preg_match('/[^a-z0-9-]/', $arg = strtolower($arg))) {
 				return $this->error(404);
@@ -55,7 +55,7 @@ class Route
 
 	public function path($key = 'path')
 	{
-		return ($key && isset($this->path[$key])) ? $this->path[$key] : ((!$key) ? $this->path : false);
+		return (isset($this->path[$key])) ? $this->path[$key] : false;
 	}
 
 	public function controller($class = false)
@@ -78,9 +78,9 @@ class Route
 		return (!isset($index)) ? $this->path['params'] : ((isset($this->path['params'][$index])) ? $this->path['params'][$index] : false);
 	}
 	
-	public function request($param = __route::request__)
+	public function request($key = __route::request__)
 	{
-		return (isset($this->path['params'][1]) && $this->path['params'][0] == $param) ? $this->path['params'][1] : false;
+		return (isset($this->path['params'][1]) && $this->path['params'][0] == $key) ? $this->path['params'][1] : false;
 	}
 
 	public function error($code = 404, $message = null)

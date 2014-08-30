@@ -10,10 +10,10 @@ class Init
 	function __construct()
 	{
 		self::$route = new \sys\Route();
-		self::$view = new \sys\View();
 		self::$init = new self::$route->path['class']();
 
 		if (method_exists(self::$init, self::$route->path['method'])) {
+		    self::$view = new \sys\View();
 		    self::$init->init(self::$route->path['label'][1], self::$route->path['label'][2], self::$route->path['params']);
 		    self::$init->{self::$route->path['method']}(self::$route->path['params']);
 		    self::$init->render();
