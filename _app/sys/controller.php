@@ -7,13 +7,8 @@ abstract class Controller
 	
 	use \sys\Loader;
 
-	public function init()
-	{
-	}
+	abstract public function init();
 	
-	public function render()
-	{
-	    exit();
-	}
+	abstract public function render();
 
 }

@@ -5,7 +5,7 @@ namespace sys\utils\path;
 use app\configs\Route as __route;
 
 function route($key = null) {
-	return \sys\Init::$route->path($key);
+	return \sys\Init::$init->route->path($key);
 }
 
 function resolve($file) {

@@ -5,12 +5,12 @@ namespace sys;
 trait Loader
 {
 
-	private $_loader, $_export;
+	private $_loader, $_import;
 
 	protected function load($instance = null)
 	{
-		if ($instance) {
-			return $this->_export = (is_object($instance)) ? new \sys\Load($instance) : false;
+		if (isset($instance)) {
+			return $this->_import = new \sys\Load($instance);
 		}
 		return (isset($this->_loader)) ? $this->_loader : $this->_loader = new \sys\Load($this);
 	}

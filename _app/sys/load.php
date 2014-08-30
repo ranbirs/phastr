@@ -9,7 +9,7 @@ class Load
 
 	function __construct($instance)
 	{
-		$this->_instance = $instance;
+		$this->_instance = &$instance;
 	}
 
 	public function getInstance($path, $prop = null)
@@ -27,7 +27,11 @@ class Load
 	public function init($subj)
 	{
 		if (!isset($this->_instance->{$subj})) {
-			return $this->_instance->{$subj} = \sys\Init::${$subj};
+		    if (!isset(\sys\Init::$init->{$subj})) {
+		        $class = '\\sys\\' . $subj;
+		        \sys\Init::$init->{$subj} = new $class();
+		    }
+			return $this->_instance->{$subj} = \sys\Init::$init->{$subj};
 		}
 		return $this->_instance->{$subj};
 	}

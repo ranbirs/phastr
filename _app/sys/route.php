@@ -13,7 +13,7 @@ class Route
 	{
 		$path['file'] = $_SERVER['SCRIPT_NAME'];
 		$path['base'] = rtrim(dirname($path['file']), '/') . '/';
-		$path['path'] = (isset($_SERVER['PATH_INFO'])) ? \sys\utils\helper\filter_split('/', trim($_SERVER['PATH_INFO'], '/'), __route::limit__) : [];
+		$path['path'] = (isset($_SERVER['PATH_INFO'])) ? \sys\utils\helper\filter_split('/', $_SERVER['PATH_INFO'], __route::limit__) : [];
 		$path['uri'] = ($path['path']) ? implode('/', $path['path']) : '/';
 
 		if (!isset($path['path'][0])) {
