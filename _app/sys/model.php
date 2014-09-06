@@ -4,7 +4,7 @@ namespace sys;
 
 abstract class Model
 {
-	
-	use \sys\Loader;
+
+    use Loader;
 
 }

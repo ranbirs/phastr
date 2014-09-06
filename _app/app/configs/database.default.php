@@ -4,17 +4,17 @@ namespace app\configs;
 
 class Database
 {
-    
-	const session__ = 0; /* Enable for database session handling */
 
-	const type__ = 'mysql';
+    const session__ = 0; /* Enable for database session handling */
 
-	const host__ = 'localhost';
+    const type__ = 'mysql';
 
-	const name__ = '';
+    const host__ = 'localhost';
 
-	const user__ = '';
+    const name__ = '';
 
-	const pass__ = '';
+    const user__ = '';
+
+    const pass__ = '';
 
 }

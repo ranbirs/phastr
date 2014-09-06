@@ -1,3 +1,3 @@
 <section>
-	<p>Test page...</p>
+    <p>Test page...</p>
 </section>

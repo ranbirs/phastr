@@ -1,1 +1,1 @@
-<button<?= \sys\utils\html\attr($button['attr']); ?>><?= $button['label']; ?></button>
+<button<?= \sys\utils\Html::attr($button['attr']); ?>><?= $button['label']; ?></button>

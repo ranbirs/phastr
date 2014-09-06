@@ -5,35 +5,35 @@ namespace app\controllers;
 class Consumer extends \sys\Controller
 {
 
-	public function init()
-	{
-		$this->load()->init('view');
-	}
+    public function init()
+    {
+        $this->load()->init('view');
+    }
 
-	public function request__post($params = [])
-	{
-		$url = 'http://' . $_SERVER['SERVER_NAME'] . '/index.php/provider/example-service/post-action';
-		$oauth = [
-			'consumer_key' => 'consumerx',
-			'consumer_secret' => 'consumerx-secret',
-			'token' => 'consumerx-token',
-			'token_secret' => 'consumerx-token-secret'
-		];
+    public function request($params = [])
+    {
+        $url = 'http://' . $_SERVER['SERVER_NAME'] . '/index.php/provider/example-service/post-action';
+        $oauth = [
+            'consumer_key' => 'consumerx',
+            'consumer_secret' => 'consumerx-secret',
+            'token' => 'consumerx-token',
+            'token_secret' => 'consumerx-token-secret'
+        ];
 
-		$this->load()->module('aes', 'app');
-		
-		$data = ['foo' => 'bar'];
+        $this->load()->module('aes', 'app');
 
-		$params['iv'] = $this->aes->iv();
-		$params['data'] = $this->aes->encrypt($data, 'consumerx-token-secret', $params['iv']);
+        $data = ['foo' => 'bar'];
 
-		$this->load()->module('oauth_consumer', 'app');
-		$this->view->response = $this->oauth_consumer->request($url, $params, $oauth, 'post');
-	}
+        $params['iv'] = $this->aes->iv();
+        $params['data'] = $this->aes->encrypt($data, 'consumerx-token-secret', $params['iv']);
 
-	public function render()
-	{
-		print print_r($this->view->response, true);
-	}
+        $this->load()->module('oauth_consumer', 'app');
+        $this->view->response = $this->oauth_consumer->request($url, $params, $oauth, 'post');
+    }
+
+    public function render()
+    {
+        print print_r($this->view->response, true);
+    }
 
 }

@@ -4,9 +4,9 @@ namespace app\configs;
 
 class Validation
 {
-    
-	const error__ = 'error';
 
-	const success__ = 'success';
+    const error__ = 'error';
+
+    const success__ = 'success';
 
 }

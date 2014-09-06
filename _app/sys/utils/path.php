@@ -1,46 +1,57 @@
 <?php
 
-namespace sys\utils\path;
+namespace sys\utils;
 
+use sys\Init;
 use app\configs\Route as __route;
 
-function route($key = null) {
-	return \sys\Init::$init->route->path($key);
-}
+class Path
+{
 
-function resolve($file) {
-	return (($file = stream_resolve_include_path($file)) !== false) ? $file : false;
-}
+    public static function route($key = null)
+    {
+        return Init::$init->route->path($key);
+    }
 
-function label($path = null) {
-	return str_replace('-', '_', $path);
-}
+    public static function label($path = null)
+    {
+        return str_replace('-', '_', $path);
+    }
 
-function file($path, $base = app__, $ext = 'php') {
-	return \sys\utils\path\label($base . '/' . $path) . '.' . $ext;
-}
+    public static function resolve($file)
+    {
+        return (($file = stream_resolve_include_path($file)) !== false) ? $file : false;
+    }
 
-function root($path = null) {
-	return ($path) ? $_SERVER['DOCUMENT_ROOT'] . '/' . $path : $_SERVER['DOCUMENT_ROOT'];
-}
+    public static function root($path = null)
+    {
+        return (isset($path)) ? $_SERVER['DOCUMENT_ROOT'] . '/' . $path : $_SERVER['DOCUMENT_ROOT'];
+    }
 
-function base($path = null) {
-	return \sys\utils\path\route('base') . $path;
-}
+    public static function base($path = null)
+    {
+        return self::route('base') . $path;
+    }
 
-function page($path = null) {
-	return \sys\utils\path\route('label')[0] . '/' . (($path) ? \sys\utils\path\label($path) : \sys\utils\path\route('label')[1]);
-}
+    public static function page($path = null)
+    {
+        return self::route('label')[0] . '/' . ((isset($path)) ? $path : self::route('label')[1]);
+    }
 
-function uri($path = null) {
-	$uri = (__route::rewrite__) ? \sys\utils\path\route('base') : \sys\utils\path\route('file');
-	return $uri .= ($path = trim($path, '/')) ? '/' . $path : '';
-}
+    public static function uri($path = null)
+    {
+        $uri = (__route::rewrite__) ? self::route('base') : self::route('file');
+        return $uri .= ($path = trim($path, '/')) ? '/' . $path : '';
+    }
 
-function request($path = null) {
-	return \sys\utils\path\uri(\sys\utils\path\route('route') . '/' . __route::request__ . '/' . $path);
-}
+    public static function request($path = null)
+    {
+        return self::uri(self::route('route') . '/' . __route::request__ . '/' . $path);
+    }
 
-function trail($path = null) {
-	return ($path) ? $path . __route::trail__ : '';
+    public static function trail($path = null)
+    {
+        return ($path) ? $path . __route::trail__ : '';
+    }
+
 }

@@ -5,16 +5,16 @@ namespace app\models;
 class Node extends \sys\Model
 {
 
-	const table__ = 'node';
+    const table__ = 'node';
 
-	const id__ = 'nid';
+    const id__ = 'nid';
 
-	const path__ = 'path';
+    const path__ = 'path';
 
-	const title__ = 'title';
+    const title__ = 'title';
 
-	const body__ = 'body';
+    const body__ = 'body';
 
-	const teaser__ = 'teaser';
+    const teaser__ = 'teaser';
 
 }

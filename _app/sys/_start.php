@@ -1,4 +1,5 @@
 <?php
+
 spl_autoload_register();
 
 $error_handler = new \sys\handlers\Error();
@@ -10,10 +11,6 @@ require app__ . '/configs/route.php';
 
 require sys__ . '/route.php';
 require sys__ . '/init.php';
-
-require sys__ . '/utils/helper.php';
-require sys__ . '/utils/path.php';
-require sys__ . '/utils/html.php';
 
 new \sys\Init();
 
