@@ -19,11 +19,6 @@ abstract class Form
 
     protected $status, $result, $message, $callback, $expire;
 
-    function __construct()
-    {
-        $this->load()->module('session');
-    }
-
     abstract public function fields();
 
     abstract public function submit();
@@ -81,8 +76,8 @@ abstract class Form
         $this->method = $form['method'];
         $this->format = $form['format'];
 
-        $this->fields($form);
         $this->secure();
+        $this->fields($form);
 
         $form['id'] = $this->form_id;
         $form['fields'] = $this->fields;
@@ -105,6 +100,8 @@ abstract class Form
 
     protected function secure()
     {
+    	$this->load()->module('session');
+    	
         if (!$this->session->get([$this->form_id => 'token'])) {
             $this->session->set([$this->form_id => 'token'], $this->session->hash($this->form_id, 'sha256'));
         }

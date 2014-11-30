@@ -12,7 +12,7 @@ class Load
         $this->_instance = & $instance;
     }
 
-    public function getInstance($path, $prop = null)
+    public function load($path, $prop = null)
     {
         if (!isset($prop)) {
             $prop = basename($path);
@@ -38,27 +38,27 @@ class Load
 
     public function module($path, $base = sys__, $prop = null)
     {
-        return $this->getInstance($base . '/modules/' . $path, $prop);
+        return $this->load($base . '/modules/' . $path, $prop);
     }
 
     public function model($path, $prop = null)
     {
-        return $this->getInstance('app/models/' . $path, $prop);
+        return $this->load('app/models/' . $path, $prop);
     }
 
     public function form($path, $prop = null)
     {
-        return $this->getInstance('app/forms/' . $path, $prop);
+        return $this->load('app/forms/' . $path, $prop);
     }
 
     public function nav($path, $prop = null)
     {
-        return $this->getInstance('app/navs/' . $path, $prop);
+        return $this->load('app/navs/' . $path, $prop);
     }
 
     public function service($path, $prop = null)
     {
-        return $this->getInstance('app/services/' . $path, $prop);
+        return $this->load('app/services/' . $path, $prop);
     }
 
 }

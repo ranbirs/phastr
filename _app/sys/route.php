@@ -8,40 +8,45 @@ class Route
 {
 
     public $path;
-
+    
     function __construct()
     {
-        $path['file'] = $_SERVER['SCRIPT_NAME'];
-        $path['base'] = rtrim(dirname($path['file']), '/') . '/';
-        $path['uri'] = (isset($_SERVER['PATH_INFO'])) ? trim($_SERVER['PATH_INFO'], '/') : '';
-        ($path['uri']) ? $path['path'] = explode('/', $path['uri'], __route::limit__) : $path['uri'] = '/';
+    	$this->path = $this->route($_SERVER['SCRIPT_NAME'], (isset($_SERVER['PATH_INFO'])) ? $_SERVER['PATH_INFO'] : '');
+    }
 
-        if (!isset($path['path'][0])) {
-            $path['path'][0] = __route::controller__;
-        } elseif (!in_array($path['path'][0], explode(',', __route::scope__))) {
+    public function route($file, $path)
+    {
+        $route['file'] = $file;
+        $route['base'] = rtrim(dirname($route['file']), '/') . '/';
+        $route['uri'] = trim($path, '/');
+        ($route['uri']) ? $route['path'] = explode('/', $route['uri'], __route::limit__) : $route['uri'] = '/';
+
+        if (!isset($route['path'][0])) {
+            $route['path'][0] = __route::controller__;
+        } elseif (!in_array($route['path'][0], explode(',', __route::scope__))) {
             return $this->error(404);
         }
-        if (!isset($path['path'][1])) {
-            $path['path'][1] = __route::action__;
+        if (!isset($route['path'][1])) {
+            $route['path'][1] = __route::action__;
         }
-        $path['route'] = $path['path'];
-        $path['params'] = array_splice($path['route'], 2);
+        $route['route'] = $route['path'];
+        $route['params'] = array_splice($route['route'], 2);
 
-        foreach ($path['route'] as &$arg) {
+        foreach ($route['route'] as &$arg) {
             if ((strlen($arg) > __route::length__) || preg_match('/[^a-z0-9-]/', $arg = strtolower($arg))) {
                 return $this->error(404);
             }
-            $path['label'][] = str_replace('-', '_', $arg);
+            $route['label'][] = str_replace('-', '_', $arg);
         }
         unset($arg);
 
-        $path['path'] = implode('/', $path['path']);
-        $path['route'] = implode('/', $path['route']);
+        $route['path'] = implode('/', $route['path']);
+        $route['route'] = implode('/', $route['route']);
 
-        $path['class'] = '\\app\\controllers\\' . $path['label'][0];
-        $path['method'] = $path['label'][1] . __route::suffix__;
+        $route['class'] = '\\app\\controllers\\' . $route['label'][0];
+        $route['method'] = $route['label'][1] . __route::suffix__;
 
-        $this->path = $path;
+        return $route;
     }
 
     public function uri()

@@ -11,10 +11,10 @@ class Database
 
     const host__ = 'localhost';
 
-    const name__ = 'demo_phastr';
+    const name__ = 'phastr_dev';
 
-    const user__ = 'phastr.demo';
+    const user__ = 'phastr_dev';
 
-    const pass__ = 'jms51iE1KSU6XJp';
+    const pass__ = 'AnKNtrwE5v5xwRkW';
 
 }
