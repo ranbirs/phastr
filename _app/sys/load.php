@@ -28,7 +28,7 @@ class Load
     {
         if (!isset($this->_instance->{$subj})) {
             if (!isset(\sys\Init::$init->{$subj})) {
-                $class = '\\sys\\' . $subj;
+                $class = '\\' . sys__ . '\\' . $subj;
                 \sys\Init::$init->{$subj} = new $class();
             }
             return $this->_instance->{$subj} = \sys\Init::$init->{$subj};
@@ -43,22 +43,22 @@ class Load
 
     public function model($path, $prop = null)
     {
-        return $this->load('app/models/' . $path, $prop);
+        return $this->load(app__ . '/models/' . $path, $prop);
     }
 
     public function form($path, $prop = null)
     {
-        return $this->load('app/forms/' . $path, $prop);
+        return $this->load(app__ . '/forms/' . $path, $prop);
     }
 
     public function nav($path, $prop = null)
     {
-        return $this->load('app/navs/' . $path, $prop);
+        return $this->load(app__ . '/navs/' . $path, $prop);
     }
 
     public function service($path, $prop = null)
     {
-        return $this->load('app/services/' . $path, $prop);
+        return $this->load(app__ . '/services/' . $path, $prop);
     }
 
 }

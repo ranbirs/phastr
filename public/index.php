@@ -1,7 +1,7 @@
 <?php
-error_reporting(E_ALL); /* Set the error reporting level */
+error_reporting(E_ALL);
 
-define('dir__', '_app'); /* Set the app and system folder or empty if they must be public */
+define('dir__', '_app');
 
 define('sys__', 'sys');
 define('app__', 'app');

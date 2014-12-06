@@ -11,15 +11,15 @@ class Route
     
     function __construct()
     {
-    	$this->path = $this->route($_SERVER['SCRIPT_NAME'], (isset($_SERVER['PATH_INFO'])) ? $_SERVER['PATH_INFO'] : '');
+    	$this->path = $this->route();
     }
 
-    public function route($file, $path)
+    public function route()
     {
-        $route['file'] = $file;
-        $route['base'] = rtrim(dirname($route['file']), '/') . '/';
-        $route['uri'] = trim($path, '/');
-        ($route['uri']) ? $route['path'] = explode('/', $route['uri'], __route::limit__) : $route['uri'] = '/';
+        $route['file'] = $_SERVER['SCRIPT_NAME'];
+        $route['base'] = dirname($route['file']);
+        $route['uri'] = (isset($_SERVER['PATH_INFO'])) ? trim($_SERVER['PATH_INFO'], '/') : '' ;
+        (strlen($route['uri'])) ? $route['path'] = explode('/', $route['uri'], __route::limit__) : $route['uri'] = '/';
 
         if (!isset($route['path'][0])) {
             $route['path'][0] = __route::controller__;
@@ -42,7 +42,6 @@ class Route
 
         $route['path'] = implode('/', $route['path']);
         $route['route'] = implode('/', $route['route']);
-
         $route['class'] = '\\app\\controllers\\' . $route['label'][0];
         $route['method'] = $route['label'][1] . __route::suffix__;
 

@@ -30,7 +30,7 @@ class Path
 
     public static function base($path = null)
     {
-        return self::route('base') . $path;
+        return rtrim(self::route('base'), '/') . '/' . $path;
     }
 
     public static function page($path = null)
