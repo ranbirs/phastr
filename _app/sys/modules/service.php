@@ -2,6 +2,8 @@
 
 namespace sys\modules;
 
+use sys\utils\Helper;
+
 class Service
 {
 
@@ -38,7 +40,7 @@ class Service
         $this->response = curl_exec($this->handle);
         $this->info = curl_getinfo($this->handle);
         $this->header = trim(substr($this->response, 0, $header_size = (int)$this->info['header_size']));
-        $this->header = \sys\utils\Helper::args(\sys\utils\Helper::filter_split(PHP_EOL, $this->header));
+        $this->header = Helper::args(Helper::filter_split(PHP_EOL, $this->header));
         $this->result = trim(substr($this->response, $header_size));
 
         curl_close($this->handle);
@@ -56,7 +58,7 @@ class Service
 
     public function setHeader($headers = [])
     {
-        $headers = \sys\utils\Helper::iterate_join($headers, ': ');
+        $headers = Helper::iterate_join($headers, ': ');
         $this->headers = array_merge((array)$this->headers, $headers);
 
         curl_setopt($this->handle, CURLOPT_HTTPHEADER, $this->headers);

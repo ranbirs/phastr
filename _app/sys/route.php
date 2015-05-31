@@ -2,102 +2,96 @@
 
 namespace sys;
 
-use app\configs\Route as __route;
+use sys\configs\Route as __route;
 
 class Route
 {
 
-    public $path;
-    
-    function __construct()
-    {
-    	$this->path = $this->route();
-    }
+	public $route;
 
-    public function route()
-    {
-        $route['file'] = $_SERVER['SCRIPT_NAME'];
-        $route['base'] = dirname($route['file']);
-        $route['uri'] = (isset($_SERVER['PATH_INFO'])) ? trim($_SERVER['PATH_INFO'], '/') : '' ;
-        (strlen($route['uri'])) ? $route['path'] = explode('/', $route['uri'], __route::limit__) : $route['uri'] = '/';
+	function __construct($resource, $action, array $routes, $deny = null) // @todo $deny action/arg wildcards
+	{
+		$route['file'] = $_SERVER['SCRIPT_NAME'];
+		$route['base'] = dirname($route['file']);
+		$route['uri'] = (isset($_SERVER['PATH_INFO'])) ? trim($_SERVER['PATH_INFO'], '/') : '';
+		(strlen($route['uri'])) ? $route['path'] = explode('/', $route['uri']) : $route['uri'] = '/';
+		
+		if (!isset($route['path'][0])) {
+			$route['path'][0] = $resource;
+		}
+		if (!isset($routes[$route['path'][0]])) {
+			return $this->path = false;
+		}
+		if (!isset($route['path'][1])) {
+			$route['path'][1] = $action;
+		}
+		$route['route'] = $route['path'];
+		$route['params'] = array_splice($route['route'], 2);
+		
+		$route['label'][0] = basename($routes[$route['route'][0]]);
+		$route['label'][1] = preg_replace('/[^a-z0-9_]/i', '_', $route['route'][1]);
+		$route['class'] = '\\' . str_replace('/', '\\', $routes[$route['path'][0]]);
 
-        if (!isset($route['path'][0])) {
-            $route['path'][0] = __route::controller__;
-        } elseif (!in_array($route['path'][0], explode(',', __route::scope__))) {
-            return $this->error(404);
-        }
-        if (!isset($route['path'][1])) {
-            $route['path'][1] = __route::action__;
-        }
-        $route['route'] = $route['path'];
-        $route['params'] = array_splice($route['route'], 2);
+		$route['path'] = implode('/', $route['path']);
+		
+		$this->route = $route;
+	}
 
-        foreach ($route['route'] as &$arg) {
-            if ((strlen($arg) > __route::length__) || preg_match('/[^a-z0-9-]/', $arg = strtolower($arg))) {
-                return $this->error(404);
-            }
-            $route['label'][] = str_replace('-', '_', $arg);
-        }
-        unset($arg);
+	public function uri()
+	{
+		return $this->route['uri'];
+	}
 
-        $route['path'] = implode('/', $route['path']);
-        $route['route'] = implode('/', $route['route']);
-        $route['class'] = '\\app\\controllers\\' . $route['label'][0];
-        $route['method'] = $route['label'][1] . __route::suffix__;
+	public function route($key = 'path', $join = false)
+	{
+		return (isset($this->route[$key])) ? ((!$join) ? $this->route[$key] : implode('/', (array) $this->route[$key])) : false;
+	}
 
-        return $route;
-    }
+	public function resource($class = false)
+	{
+		return (!$class) ? $this->route['label'][0] : $this->route['class'];
+	}
 
-    public function uri()
-    {
-        return $this->path['uri'];
-    }
+	public function action($label = false)
+	{
+		return (!$label) ? $this->route['route'][1] : $this->route['label'][1];
+	}
 
-    public function path($key = 'path')
-    {
-        return (isset($this->path[$key])) ? $this->path[$key] : false;
-    }
+	public function params($index = null)
+	{
+		return (!isset($index)) ? $this->route['params'] : ((isset($this->route['params'][$index])) ? $this->route['params'][$index] : false);
+	}
 
-    public function controller($class = false)
-    {
-        return (!$class) ? $this->path['label'][0] : $this->path['class'];
-    }
+	/*
+	 * @param mixed|string $key
+	 * @param bool $
+	 * @return mixed|array|string self::path['params'] [$key index + 1 => value par] "array_slice" | value string ?:
+	 * null ?: false
+	 */
+	public function arg($key, $pair = false)
+	{
+		if (($index = array_search($key, $this->route['params'])) === false) {
+			return false;
+		}
+		return ($slice = array_slice($this->route['params'], $index + 1, 1, true)) ? ((!$pair) ? current($slice) : $slice) : null;
+	}
 
-    public function page()
-    {
-        return $this->path['label'][1];
-    }
+	public function status($code = null)
+	{
+		return (!isset($code)) ? http_response_code() : http_response_code($code);
+	}
 
-    public function action($method = false)
-    {
-        return (!$method) ? $this->path['label'][1] : $this->path['method'];
-    }
-
-    public function params($index = null)
-    {
-        return (!isset($index)) ? $this->path['params'] : ((isset($this->path['params'][$index])) ? $this->path['params'][$index] : false);
-    }
-
-    public function request($key = __route::request__)
-    {
-        return (isset($this->path['params'][1]) && $this->path['params'][0] == $key) ? $this->path['params'][1] : false;
-    }
-
-    public function error($code = 404, $message = null)
-    {
-        if ($message) {
-            trigger_error($message);
-        }
-        $this->status($code);
-
-        require app__ . '/views/layouts/error/' . $code . '.php';
-
-        exit();
-    }
-
-    public function status($code = null)
-    {
-        return ($code) ? http_response_code($code) : http_response_code();
-    }
+	public function error($code = 404, $view = null, $data = null)
+	{
+		$this->status($code);
+		
+		if (isset($view)) {
+			if (isset($data)) {
+				extract($data);
+			}
+			require $view . '.php';
+		}
+		exit();
+	}
 
 }

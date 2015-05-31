@@ -9,8 +9,8 @@ class Access
 
     function __construct()
     {
-        $this->load()->module('session');
-        $this->load()->model('user');
+        $this->load()->load('sys/modules/session');
+        $this->load()->load('app/models/user');
     }
 
     public function isAuth()
@@ -22,7 +22,7 @@ class Access
     public function permission($rule, $perm = null, $role = null)
     {
         if (!$this->resolve($rule, $perm, $role)) {
-            $this->load()->init('route')->error(403);
+            $this->load()->init('sys/route')->error(403, 'app/views/layouts/error/403');
         }
     }
 

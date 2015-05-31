@@ -2,7 +2,7 @@
 
 namespace sys\modules;
 
-use app\configs\Assets as __assets;
+use sys\configs\Assets as __assets;
 
 class Assets
 {

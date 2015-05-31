@@ -3,19 +3,20 @@
 namespace sys\utils;
 
 use sys\Init;
-use app\configs\Route as __route;
 
 class Path
 {
-
-    public static function route($key = null)
+	
+	public static $route;
+	
+    public static function route($key = null, $path = null)
     {
-        return Init::$init->route->path($key);
+        return Init::$init->route->route($key) . ((isset($path)) ? '/' . $path : ''); // @todo rm Init ref
     }
 
     public static function label($path = null)
     {
-        return str_replace('-', '_', $path);
+        return preg_replace('/[^a-z0-9_]/i', '_', $path);
     }
 
     public static function resolve($file)
@@ -33,25 +34,14 @@ class Path
         return rtrim(self::route('base'), '/') . '/' . $path;
     }
 
-    public static function page($path = null)
+    public static function action($path = null)
     {
         return self::route('label')[0] . '/' . ((isset($path)) ? $path : self::route('label')[1]);
     }
 
-    public static function uri($path = null)
+    public static function uri($path = null, $rewrite = false)
     {
-        $uri = (__route::rewrite__) ? self::route('base') : self::route('file');
-        return $uri .= ($path = trim($path, '/')) ? '/' . $path : '';
-    }
-
-    public static function request($path = null)
-    {
-        return self::uri(self::route('route') . '/' . __route::request__ . '/' . $path);
-    }
-
-    public static function trail($path = null)
-    {
-        return ($path) ? $path . __route::trail__ : '';
+        return (($rewrite) ? self::route('base') : self::route('file')) . (($path = trim($path, '/')) ? '/' . $path : '');
     }
 
 }

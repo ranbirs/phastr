@@ -1,6 +1,6 @@
 <?php
 
-namespace sys\modules;
+namespace app\modules;
 
 use sys\Loader;
 use sys\utils\Helper;
@@ -33,7 +33,7 @@ abstract class Nav
 
     public function render($template = 'bootstrap')
     {
-        return $this->load()->init('sys/view')->view('app/views/templates/nav/' . $template, $this->nav);
+        return $this->load()->init('sys/view')->view('app/views/templates/nav/' . $template, ['nav' => $this->nav]);
     }
 
     protected function item($label = null, $path = null, $params = [])

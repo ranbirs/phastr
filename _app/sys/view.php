@@ -2,42 +2,33 @@
 
 namespace sys;
 
-use app\configs\View as __view;
-
 class View
 {
 
-    public function page($path)
+    public function view($path, $data = null)
     {
-        return $this->render('pages/' . $path);
+        return $this->render($path, $data);
     }
-
-    public function request($path)
+    
+    public function layout($path, $data = null)
     {
-        return $this->render('requests/' . $path);
-    }
-
-    public function template($subj, $path, $data = null)
-    {
-        return $this->render('templates/' . $subj . '/' . $path, [$subj => $data]);
-    }
-
-    public function layout($path = __view::layout__)
-    {
-        include app__ . '/views/layouts/' . $path . '.php';
-
-        exit();
-    }
-
-    public function render($path, $data = null)
-    {
-        ob_start();
-
-        if ($data) {
+        if (isset($data)) {
             extract($data);
         }
-        include app__ . '/views/' . $path . '.php';
-
+        require $path . '.php';
+    
+        exit();
+    }
+    
+    protected function render($path, $data = null)
+    {
+        ob_start();
+    
+        if (isset($data)) {
+            extract($data);
+        }
+        include $path . '.php';
+    
         return ob_get_clean();
     }
 

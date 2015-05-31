@@ -9,11 +9,11 @@ class Media
 
     public function render($result, $type, $subj)
     {
-        $this->load()->init('view');
+        $this->load()->init('sys/view');
 
         $this->view->type = $type . '/' . $subj;
         $this->view->body = base64_decode($result);
-        $this->view->layout('media/' . $type);
+        $this->view->layout('app/views/layouts/media/' . $type);
     }
 
     public function application($result, $type)

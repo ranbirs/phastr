@@ -14,7 +14,7 @@ abstract class Session
     public function start($handler = null)
     {
         if (session_status() !== PHP_SESSION_ACTIVE) {
-            if ($handler) {
+            if (isset($handler)) {
                 session_set_save_handler($handler);
             }
             session_start();
@@ -22,7 +22,6 @@ abstract class Session
         $this->session_id = session_id();
 
         if (!isset($_SESSION[$this->session_id])) {
-            $_SESSION = [$this->session_id => []];
             $this->generate();
         }
         $this->register();

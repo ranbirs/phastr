@@ -2,12 +2,12 @@
 
 namespace app\controllers;
 
-class Consumer extends \sys\Controller
+class Consumer extends \app\init\mvc\Controller
 {
 
     public function init()
     {
-        $this->load()->init('view');
+        $this->load()->init('sys/view');
     }
 
     public function request($params = [])
@@ -20,14 +20,14 @@ class Consumer extends \sys\Controller
             'token_secret' => 'consumerx-token-secret'
         ];
 
-        $this->load()->module('aes', 'app');
+        $this->load()->load('app/modules/aes');
 
         $data = ['foo' => 'bar'];
 
         $params['iv'] = $this->aes->iv();
         $params['data'] = $this->aes->encrypt($data, 'consumerx-token-secret', $params['iv']);
 
-        $this->load()->module('oauth_consumer', 'app');
+        $this->load()->load('app/modules/oauth_consumer');
         $this->view->response = $this->oauth_consumer->request($url, $params, $oauth, 'post');
     }
 

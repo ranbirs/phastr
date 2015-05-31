@@ -3,8 +3,7 @@
 namespace sys\modules;
 
 use sys\Loader;
-use app\configs\Session as __session;
-use app\configs\Database as __database;
+use sys\configs\Session as __session;
 
 class Session extends \sys\components\Session
 {
@@ -13,7 +12,7 @@ class Session extends \sys\components\Session
 
     function __construct()
     {
-        $this->start((__database::session__) ? new \sys\handlers\session\Database() : null);
+        $this->start((__session::database__) ? new \sys\handlers\Session() : null);
     }
 
     public function generate()
@@ -47,7 +46,7 @@ class Session extends \sys\components\Session
         if (!$gen) {
             return $this->get('_token');
         }
-        return $this->load()->module('hash')->gen($this->session_id, $algo, $this->timestamp()[0]);
+        return $this->load()->load('sys/modules/hash')->gen($this->session_id, $algo, $this->timestamp()[0]);
     }
 
     public function key()
@@ -57,8 +56,8 @@ class Session extends \sys\components\Session
 
     public function keygen($hash = null, $algo = __session::algo__)
     {
-        $key = $this->load()->module('hash')->gen($this->get('_token'), $algo, __session::key__);
-        return (!$hash) ? $key : ($hash === $key);
+        $key = $this->load()->load('sys/modules/hash')->gen($this->get('_token'), $algo, __session::key__);
+        return (!isset($hash)) ? $key : ($hash === $key);
     }
 
     public function client($key = 'agent')
@@ -68,7 +67,7 @@ class Session extends \sys\components\Session
 
     public function hash($data = null, $algo = __session::algo__)
     {
-        return $this->load()->module('hash')->gen($data, $algo, $this->key());
+        return $this->load()->load('sys/modules/hash')->gen($data, $algo, $this->key());
     }
 
 }

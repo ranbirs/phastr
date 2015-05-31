@@ -2,7 +2,7 @@
 
 namespace app\navs;
 
-class Top_nav extends \sys\modules\Nav
+class Top_nav extends \app\modules\Nav
 {
 
     protected function items()

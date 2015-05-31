@@ -36,7 +36,7 @@ class OAuth_provider
 
     protected function consumer($key)
     {
-        return $this->load()->module('config', 'app')->ini('configs/server/consumers/' . $key);
+        return $this->load()->load('app/modules/config')->ini('configs/server/consumers/' . $key);
     }
 
     public function consumerHandler($oauth)

@@ -1,9 +1,10 @@
 <?php
 
-namespace app\configs;
+namespace sys\configs;
 
 class Form
 {
+
     const method__ = 'post';
 
     const format__ = 'json';

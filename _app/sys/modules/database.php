@@ -3,20 +3,14 @@
 namespace sys\modules;
 
 use sys\utils\Helper;
-use app\configs\Database as __database;
 
 class Database extends \sys\components\Database
 {
-
-    function __construct($dsn = null, $username = __database::user__, $password = __database::pass__, $driver_options = [])
-    {
-        parent::__construct((!$dsn) ? $this->dsn() : $dsn, $username, $password, $driver_options);
-    }
-
-    protected function dsn($driver = __database::type__, $host = __database::host__, $name = __database::name__)
-    {
-        return $driver . ':host=' . $host . ';dbname=' . $name;
-    }
+	
+	function __construct($driver, $host, $name, $username, $password, $options = [])
+	{
+	    parent::__construct($driver . ':host=' . $host . ';dbname=' . $name, $username, $password, $options);
+	}
 
     public function select($table, $cols, $clause = null, $params = [], $fetch_mode = null)
     {

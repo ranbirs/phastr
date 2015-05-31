@@ -1,6 +1,8 @@
 <?php
 
-namespace sys;
+namespace app\init\mvc;
+
+use sys\Loader;
 
 abstract class Model
 {

@@ -2,29 +2,18 @@
 
 namespace app\models;
 
-class User extends \sys\Model
+class User extends \app\init\mvc\Model
 {
-
-    const table__ = 'user';
-
-    const id__ = 'uid';
-
-    const auth__ = 'authentication';
-
-    const role__ = 'role';
-
-    const status__ = 'status';
-
-    const session_id__ = 'sid';
 
     function __construct()
     {
-        $this->load()->init('route');
-        $this->load()->init('view');
-        $this->load()->module('database');
-        $this->load()->module('session');
-        $this->load()->module('hash');
-        $this->load()->module('vocab', 'app');
+        $this->load()->init('sys/route');
+        $this->load()->init('sys/view');
+        $this->load()->load('sys/modules/database', 'database', ['mysql', 'localhost', 'phastr_dev', 'phastr_dev', 'phastr-dev']);
+        //$this->load()->load('app/modules/database');
+        $this->load()->load('sys/modules/session');
+        $this->load()->load('sys/modules/hash');
+        $this->load()->load('app/modules/vocab');
     }
 
     public function token($id)

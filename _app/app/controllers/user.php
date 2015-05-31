@@ -25,9 +25,9 @@ class User extends _master
     public function login()
     {
         $this->access->permission('public');
-        $this->load()->model('user');
+        $this->load()->load('app/models/user');
 
-        $this->load()->form('user/login_form');
+        $this->load()->load('app/forms/user/login_form');
         $this->login_form->user_model = $this->user;
 
         $this->login_form->get(['title' => 'Authentication form', 'attr' => ['class' => 'form form-horizontal']]);
@@ -37,9 +37,9 @@ class User extends _master
     public function register()
     {
         $this->access->permission('public');
-        $this->load()->model('user');
+        $this->load()->load('app/models/user');
 
-        $this->load()->form('user/register_form');
+        $this->load()->load('app/forms/user/register_form');
         $this->register_form->user_model = $this->user;
 
         $this->view->title = 'New User Registration';
@@ -50,20 +50,20 @@ class User extends _master
     public function register_verify()
     {
         $this->access->permission('public');
-        $this->load()->model('user');
+        $this->load()->load('app/models/user');
 
         $token = $this->route->params(1);
         if ($this->route->params(0) !== $this->session->key()) {
-            $this->route->error(404);
+            $this->route->error(404, 'app/views/layouts/error/404');
         }
         if ($token) {
             if ($this->user->verify($token)) {
                 $this->view->title = 'New User Verification';
-                $this->view->body = $this->view->page('register/verify');
+                $this->view->body = $this->view->view('app/views/pages/register/verify');
                 return true;
             }
         }
-        $this->route->error(404);
+        $this->route->error(404, 'app/views/layouts/error/404');
     }
 
     public function logout()

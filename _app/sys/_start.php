@@ -2,16 +2,11 @@
 
 spl_autoload_register();
 
-$error_handler = new \sys\handlers\Error();
+$_error = new \sys\handlers\Error();
 
-set_error_handler([$error_handler, 'error']);
-set_exception_handler([$error_handler, 'exception']);
+set_error_handler([$_error, 'error']);
+set_exception_handler([$_error, 'exception']);
 
-require app__ . '/configs/route.php';
-
-require sys__ . '/route.php';
-require sys__ . '/init.php';
-
-new \sys\Init();
+$_init = new \app\init\Mvc();
 
 exit();

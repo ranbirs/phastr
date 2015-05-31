@@ -3,7 +3,7 @@
 namespace sys\modules;
 
 use sys\Loader;
-use app\configs\Validation as __validation;
+use sys\configs\Validation as __validation;
 
 class Validation
 {
@@ -11,6 +11,12 @@ class Validation
     use Loader;
 
     protected $result = [];
+    
+    function __construct()
+    {      
+    	$this->load()->load('sys/modules/session');
+    	$this->load()->load('sys/modules/request');
+    }
 
     public function getResult($status = null)
     {
@@ -56,12 +62,12 @@ class Validation
                 if (!is_array($params)) {
                     return false;
                 }
-                $request = $this->load()->module('request')->{$rule}(key($params));
+                $request = $this->request->{$rule}(key($params));
                 return (isset($value) && $value === $request && $request === current($params));
             case 'request':
-                return ($this->load()->module('request')->header($this->load()->module('session')->token()) === $this->load()->module('session')->get('_request'));
+                return ($this->request->header($this->session->token()) === $this->session->get('_request'));
             case 'session':
-                return (isset($params) && $value === $this->load()->module('session')->get($params));
+                return (isset($params) && $value === $this->session->get($params));
             case 'compare':
                 return (isset($params) && strcmp($value, $params) == 0);
             case 'require':

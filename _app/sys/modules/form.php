@@ -3,8 +3,8 @@
 namespace sys\modules;
 
 use sys\Loader;
-use app\configs\Form as __form;
-use app\configs\Validation as __validation;
+use sys\configs\Form as __form;
+use sys\configs\Validation as __validation;
 
 abstract class Form
 {
@@ -25,8 +25,8 @@ abstract class Form
 
     public function request()
     {
-        $this->load()->module('request');
-        $this->load()->module('validation');
+        $this->load()->load('sys/modules/request');
+        $this->load()->load('sys/modules/validation');
 
         $this->request->method = $this->method;
         $this->request->format = $this->format;
@@ -55,15 +55,17 @@ abstract class Form
         return $this->result(false);
     }
 
-    public function get($form = null)
+    public function get($form = null, $param = 'ajax')
     {
+    	$this->load()->init('sys/route');
+    	
         $this->form_id = strtolower(\sys\utils\Helper::class_name($this));
 
         if (!is_array($form)) {
             $form = ['title' => $form];
         }
         if (!isset($form['action'])) {
-            $form['action'] = \sys\utils\Path::request($this->form_id);
+            $form['action'] = \sys\utils\Path::uri($this->route->route('route', true) . '/' . $param . '/' . $this->form_id);
         }
         if (!isset($form['method'])) {
             $form['method'] = __form::method__;
@@ -93,14 +95,14 @@ abstract class Form
         return $this->form = $form;
     }
 
-    public function render($template = __form::template__)
+    public function render($template = __form::template__) // @todo use full path v form to app
     {
-        return $this->load()->init('view')->template('form', $template . '/form', $this->form);
+        return $this->load()->init('sys/view')->view('app/views/templates/form/' . $template . '/form', ['form' => $this->form]); 
     }
 
     protected function secure()
     {
-    	$this->load()->module('session');
+    	$this->load()->load('sys/modules/session');
     	
         if (!$this->session->get([$this->form_id => 'token'])) {
             $this->session->set([$this->form_id => 'token'], $this->session->hash($this->form_id, 'sha256'));

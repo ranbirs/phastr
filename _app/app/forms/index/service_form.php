@@ -22,8 +22,8 @@ class Service_form extends Form
 
     public function submit($values = null, $status = null)
     {
-        $this->load()->module('aes', 'app');
-        $this->load()->module('oauth_consumer', 'app');
+        $this->load()->load('app/modules/aes');
+        $this->load()->load('app/modules/oauth_consumer');
 
         $url = 'http://' . $_SERVER['SERVER_NAME'] . '/index.php/provider/example-service-post-action';
         $oauth = [

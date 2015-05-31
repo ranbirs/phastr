@@ -2,7 +2,7 @@
 
 namespace sys\modules;
 
-use app\configs\Hash as __hash;
+use sys\configs\Hash as __hash;
 
 class Hash
 {

@@ -9,7 +9,7 @@ $this->assets->script('assets/js/form/bootstrap.js');
         <fieldset id="<?= $fieldset_id; ?>">
 
             <?php if (isset($fieldset['title'])) : ?>
-                <legend><?= $fieldset['title']; ?></legend>
+            <legend><?= $fieldset['title']; ?></legend>
             <?php endif; ?>
 
             <?php foreach ($fieldset['fields'] as $field_id) : ?>
@@ -17,17 +17,16 @@ $this->assets->script('assets/js/form/bootstrap.js');
             <div class="form-group">
                 <?php if (isset($fields['label']['value']) && $fields['label']['value']) : ?>
                 <label class="control-label col-sm-2" for="<?= $field_id; ?>"><?= $fields['label']['value']; ?></label>
-
                 <div class="controls col-sm-4">
-                    <?php else : ?>
-                    <div class="controls col-sm-12">
-                        <?php endif; ?>
-                        <?php foreach ($fields['field'] as $field) : ?>
-                            <?php include $field['control'] . '.php'; ?>
-                        <?php endforeach; ?>
-                    </div>
+                <?php else : ?>
+                <div class="controls col-sm-12">
+                <?php endif; ?>
+	                <?php foreach ($fields['field'] as $field) : ?>
+	                <?php include $field['control'] . '.php'; ?>
+	                <?php endforeach; ?>
                 </div>
-                <?php endforeach; ?>
+             </div>
+             <?php endforeach; ?>
 
         </fieldset>
     <?php endforeach; ?>
