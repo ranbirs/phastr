@@ -56,16 +56,14 @@ abstract class Form
 	}
 
 	public function get($form = null, $param = 'ajax')
-	{
-		$this->load()->init('sys/route');
-		
+	{	
 		$this->form_id = strtolower(\sys\utils\Helper::class_name($this));
 		
 		if (!is_array($form)) {
 			$form = ['title' => $form];
 		}
 		if (!isset($form['action'])) {
-			$form['action'] = \sys\utils\Path::uri($this->route->route('route', true) . '/' . $param . '/' . $this->form_id);
+			$form['action'] = \sys\utils\Path::route($param . '/' . $this->form_id);
 		}
 		if (!isset($form['method'])) {
 			$form['method'] = __form::method__;

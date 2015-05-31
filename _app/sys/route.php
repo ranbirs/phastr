@@ -2,8 +2,6 @@
 
 namespace sys;
 
-use sys\configs\Route as __route;
-
 class Route
 {
 
@@ -19,19 +17,12 @@ class Route
 		if (!isset($route['path'][0])) {
 			$route['path'][0] = $resource;
 		}
-		if (!isset($routes[$route['path'][0]])) {
-			return $this->path = false;
-		}
 		if (!isset($route['path'][1])) {
 			$route['path'][1] = $action;
 		}
+		$route['resource'] = (isset($routes[$route['path'][0]])) ? $routes[$route['path'][0]] : null;
 		$route['route'] = $route['path'];
 		$route['params'] = array_splice($route['route'], 2);
-		
-		$route['label'][0] = basename($routes[$route['route'][0]]);
-		$route['label'][1] = preg_replace('/[^a-z0-9_]/i', '_', $route['route'][1]);
-		$route['class'] = '\\' . str_replace('/', '\\', $routes[$route['path'][0]]);
-		
 		$route['path'] = implode('/', $route['path']);
 		
 		$this->route = $route;
@@ -49,12 +40,15 @@ class Route
 
 	public function resource($class = false)
 	{
-		return (!$class) ? $this->route['label'][0] : $this->route['class'];
+		if (!$this->route['resource']) {
+			return false;
+		}
+		return (!$class) ? basename($this->route['resource']) : '\\' . str_replace('/', '\\', $this->route['resource']);
 	}
 
 	public function action($label = false)
 	{
-		return (!$label) ? $this->route['route'][1] : $this->route['label'][1];
+		return (!$label) ? $this->route['route'][1] : preg_replace('/[^a-z0-9_]/i', '_', $this->route['route'][1]);
 	}
 
 	public function params($index = null)
@@ -62,12 +56,6 @@ class Route
 		return (!isset($index)) ? $this->route['params'] : ((isset($this->route['params'][$index])) ? $this->route['params'][$index] : false);
 	}
 
-	/*
-	 * @param mixed|string $key
-	 * @param bool $
-	 * @return mixed|array|string self::path['params'] [$key index + 1 => value par] "array_slice" | value string ?:
-	 * null ?: false
-	 */
 	public function arg($key, $pair = false)
 	{
 		if (($index = array_search($key, $this->route['params'])) === false) {
@@ -81,7 +69,7 @@ class Route
 		return (!isset($code)) ? http_response_code() : http_response_code($code);
 	}
 
-	public function error($code = 404, $view = null, $data = null)
+	public function error($code, $view = null, $data = null)
 	{
 		$this->status($code);
 		

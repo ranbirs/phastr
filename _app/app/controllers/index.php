@@ -31,7 +31,7 @@ class Index extends _master
 		$this->view->service_form = $this->service_form->render();
 		
 		$this->view->request_method = $this->request->method;
-		$this->view->request_path = \sys\utils\Path::uri($this->route->route('route', true) . '/ajax/request/request_example');
+		$this->view->request_path = \sys\utils\Path::route('ajax/request/request_example');
 	}
 
 }

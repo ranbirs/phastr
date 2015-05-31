@@ -3,15 +3,16 @@
 namespace sys\utils;
 
 use sys\Init;
+use sys\Route;
 
 class Path
 {
 
 	public static $route;
 
-	public static function route($key = null, $path = null)
+	public static function route($path = null, $rewrite = false)
 	{
-		return Init::$init->route->route($key) . ((isset($path)) ? '/' . $path : ''); // @todo rm Init ref
+		return self::uri(Init::$init->route->route('route', true) . ((isset($path)) ? '/' . $path : ''), $rewrite);
 	}
 
 	public static function label($path = null)
@@ -31,17 +32,13 @@ class Path
 
 	public static function base($path = null)
 	{
-		return rtrim(self::route('base'), '/') . '/' . $path;
-	}
-
-	public static function action($path = null)
-	{
-		return self::route('label')[0] . '/' . ((isset($path)) ? $path : self::route('label')[1]);
+		return rtrim(Init::$init->route->route['base'], '/') . '/' . $path;
 	}
 
 	public static function uri($path = null, $rewrite = false)
 	{
-		return (($rewrite) ? self::route('base') : self::route('file')) . (($path = trim($path, '/')) ? '/' . $path : '');
+		$route = Init::$init->route->route;
+		return (($rewrite) ? $route['base'] : $route['file']) . (($path = trim($path, '/')) ? '/' . $path : $route['uri']);
 	}
 
 }

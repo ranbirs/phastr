@@ -20,15 +20,18 @@ class Mvc extends \sys\Init
 		
 		$this->route = new \sys\Route('index', 'index', self::$routes, self::$deny);
 		
-		if (!$this->route->route) {
+		if (!$this->route->route['resource']) {
 			$this->route->error(404, 'app/views/layouts/error/404');
 		}
 		
-		$this->controller = new $this->route->route['class']();
+		$this->controller = $this->route->resource(true);
+		$this->controller = new $this->controller();
 		
-		if (method_exists($this->controller, $this->route->route['label'][1])) {
-			$this->controller->init($this->route->route['label'][1], $this->route->route['params']);
-			$this->controller->{$this->route->route['label'][1]}($this->route->route['params']);
+		$action = $this->route->action(true);
+		
+		if (method_exists($this->controller, $this->route->action(true))) {
+			$this->controller->init($action, $this->route->route['params']);
+			$this->controller->{$action}($this->route->route['params']);
 			$this->controller->render();
 		}
 		$this->route->error(404, 'app/views/layouts/error/404');
