@@ -5,10 +5,10 @@ namespace sys\configs;
 class Route
 {
 
-    const rewrite__ = 0;
+	const rewrite__ = 0;
 
-    const trail__ = '/';
+	const trail__ = '/';
 
-    const request__ = 'ajax';
+	const request__ = 'ajax';
 
 }

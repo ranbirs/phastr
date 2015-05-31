@@ -6,7 +6,7 @@ use sys\Loader;
 
 abstract class Model
 {
-
-    use Loader;
+	
+	use Loader;
 
 }

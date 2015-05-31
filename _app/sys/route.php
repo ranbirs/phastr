@@ -31,7 +31,7 @@ class Route
 		$route['label'][0] = basename($routes[$route['route'][0]]);
 		$route['label'][1] = preg_replace('/[^a-z0-9_]/i', '_', $route['route'][1]);
 		$route['class'] = '\\' . str_replace('/', '\\', $routes[$route['path'][0]]);
-
+		
 		$route['path'] = implode('/', $route['path']);
 		
 		$this->route = $route;

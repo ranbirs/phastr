@@ -5,8 +5,8 @@ namespace sys\configs;
 class Validation
 {
 
-    const error__ = 'error';
+	const error__ = 'error';
 
-    const success__ = 'success';
+	const success__ = 'success';
 
 }

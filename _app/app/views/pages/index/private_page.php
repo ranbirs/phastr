@@ -1,8 +1,8 @@
 <section>
-    <div class="body">
+	<div class="body">
         <?= $this->body; ?>
     </div>
 </section>
 <section>
-    <p>Teh private page...</p>
+	<p>Teh private page...</p>
 </section>

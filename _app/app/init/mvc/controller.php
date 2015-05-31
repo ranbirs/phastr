@@ -6,11 +6,11 @@ use sys\Loader;
 
 abstract class Controller
 {
+	
+	use Loader;
 
-    use Loader;
-    
-    abstract public function init();
+	abstract public function init();
 
-    abstract public function render();
+	abstract public function render();
 
 }

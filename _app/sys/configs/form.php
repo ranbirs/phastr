@@ -5,12 +5,14 @@ namespace sys\configs;
 class Form
 {
 
-    const method__ = 'post';
+	const method__ = 'post';
 
-    const format__ = 'json';
+	const format__ = 'json';
 
-    const template__ = 'bootstrap'; /* Default form template */
+	const template__ = 'bootstrap';
 
-    const fieldset__ = 'default'; /* Default fieldset ID */
+	/* Default form template */
+	const fieldset__ = 'default';
 
+	/* Default fieldset ID */
 }

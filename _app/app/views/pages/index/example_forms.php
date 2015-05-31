@@ -1,16 +1,16 @@
 <section>
-    <div class="body">
+	<div class="body">
         <?= $this->body; ?>
     </div>
 </section>
 <section>
-    <div class="form">
+	<div class="form">
         <?= $this->test_form; ?>
     </div>
-    <div class="form">
+	<div class="form">
         <?= $this->simple_form; ?>
     </div>
-    <div class="form">
+	<div class="form">
         <?= $this->service_form; ?>
     </div>
 </section>

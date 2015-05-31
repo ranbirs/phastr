@@ -7,38 +7,35 @@ use sys\modules\Form;
 class Service_form extends Form
 {
 
-    public function fields()
-    {
-        $this->input('test_service_field', ' ',
-            $params = ['attr' => ['class' => 'form-control']]);
+	public function fields()
+	{
+		$this->input('test_service_field', ' ', $params = ['attr' => ['class' => 'form-control']]);
+		
+		$this->validate('test_service_field', 'require');
+		
+		$this->button('submit_button', 'Submit', $params = ['attr' => ['class' => ['btn', 'btn-primary']]]);
+		
+		// $this->expire(true);
+	}
 
-        $this->validate('test_service_field', 'require');
-
-        $this->button('submit_button', 'Submit',
-            $params = ['attr' => ['class' => ['btn', 'btn-primary']]]);
-
-        // $this->expire(true);
-    }
-
-    public function submit($values = null, $status = null)
-    {
-        $this->load()->load('app/modules/aes');
-        $this->load()->load('app/modules/oauth_consumer');
-
-        $url = 'http://' . $_SERVER['SERVER_NAME'] . '/index.php/provider/example-service-post-action';
-        $oauth = [
-            'consumer_key' => 'consumerx',
-            'consumer_secret' => 'consumerx-secret',
-            'token' => 'consumerx-token',
-            'token_secret' => 'consumerx-token-secret'
-        ];
-        $params['iv'] = $this->aes->iv();
-        $params['data'] = $this->aes->encrypt($values, 'consumerx-token-secret', $params['iv']);
-        $response = $this->oauth_consumer->request($url, $params, $oauth, 'post');
-
-        $this->message('Went through!', 'success');
-
-        $this->callback('form_callback', serialize($response));
-    }
+	public function submit($values = null, $status = null)
+	{
+		$this->load()->load('app/modules/aes');
+		$this->load()->load('app/modules/oauth_consumer');
+		
+		$url = 'http://' . $_SERVER['SERVER_NAME'] . '/index.php/provider/example-service-post-action';
+		$oauth = [
+			'consumer_key' => 'consumerx', 
+			'consumer_secret' => 'consumerx-secret', 
+			'token' => 'consumerx-token', 
+			'token_secret' => 'consumerx-token-secret'];
+		$params['iv'] = $this->aes->iv();
+		$params['data'] = $this->aes->encrypt($values, 'consumerx-token-secret', $params['iv']);
+		$response = $this->oauth_consumer->request($url, $params, $oauth, 'post');
+		
+		$this->message('Went through!', 'success');
+		
+		$this->callback('form_callback', serialize($response));
+	}
 
 }

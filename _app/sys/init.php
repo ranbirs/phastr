@@ -5,11 +5,11 @@ namespace sys;
 abstract class Init
 {
 
-    public static $init;
+	public static $init;
 
-    function __construct()
-    {
-        self::$init = &$this;
-    }
-    
+	function __construct()
+	{
+		self::$init = &$this;
+	}
+
 }

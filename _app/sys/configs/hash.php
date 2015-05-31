@@ -5,16 +5,17 @@ namespace sys\configs;
 class Hash
 {
 
-    const key__ = 'secret key'; /* Default hashing key */
+	const key__ = 'secret key';
 
-    const algo__ = 'sha512';
+	/* Default hashing key */
+	const algo__ = 'sha512';
 
-    const cipher__ = '$2a$';
+	const cipher__ = '$2a$';
 
-    const cost__ = 10;
+	const cost__ = 10;
 
-    const salt__ = 22;
+	const salt__ = 22;
 
-    const chars__ = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+	const chars__ = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
 }

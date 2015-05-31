@@ -6,11 +6,13 @@ class Session
 {
 
 	const database__ = false;
-	
-    const lang__ = 'en'; /* Default language */
 
-    const key__ = 'session%hashing'; /* Session hashing key */
+	const lang__ = 'en';
 
-    const algo__ = 'sha256';
+	/* Default language */
+	const key__ = 'session%hashing';
+
+	/* Session hashing key */
+	const algo__ = 'sha256';
 
 }

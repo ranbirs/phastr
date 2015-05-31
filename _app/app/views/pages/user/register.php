@@ -1,5 +1,5 @@
 <section>
-    <div class="body">
+	<div class="body">
         <?= $this->body; ?>
     </div>
 </section>

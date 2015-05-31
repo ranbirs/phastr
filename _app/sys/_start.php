@@ -1,5 +1,4 @@
 <?php
-
 spl_autoload_register();
 
 $_error = new \sys\handlers\Error();

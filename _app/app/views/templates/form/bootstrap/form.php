@@ -1,9 +1,9 @@
 <?php
 $this->assets->script('assets/js/form/bootstrap.js');
 ?>
-<form<?= \sys\utils\Html::attr($form['attr']); ?>>
+<form <?= \sys\utils\Html::attr($form['attr']); ?>>
 
-    <div class="message"></div>
+	<div class="message"></div>
 
     <?php foreach ($form['fieldset'] as $fieldset_id => $fieldset) : ?>
         <fieldset id="<?= $fieldset_id; ?>">
@@ -16,8 +16,9 @@ $this->assets->script('assets/js/form/bootstrap.js');
             <?php $fields = $form['fields'][$field_id]; ?>
             <div class="form-group">
                 <?php if (isset($fields['label']['value']) && $fields['label']['value']) : ?>
-                <label class="control-label col-sm-2" for="<?= $field_id; ?>"><?= $fields['label']['value']; ?></label>
-                <div class="controls col-sm-4">
+                <label class="control-label col-sm-2"
+				for="<?= $field_id; ?>"><?= $fields['label']['value']; ?></label>
+			<div class="controls col-sm-4">
                 <?php else : ?>
                 <div class="controls col-sm-12">
                 <?php endif; ?>
@@ -25,10 +26,16 @@ $this->assets->script('assets/js/form/bootstrap.js');
 	                <?php include $field['control'] . '.php'; ?>
 	                <?php endforeach; ?>
                 </div>
-             </div>
+			</div>
              <?php endforeach; ?>
 
-        </fieldset>
+        
+	
+	
+	
+	
+	
+	</fieldset>
     <?php endforeach; ?>
 
     <?php if ($form['hidden']) : ?>
