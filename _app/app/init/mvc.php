@@ -13,7 +13,7 @@ class Mvc extends \sys\Init
 		'provider' => 'app/controllers/provider'];
 
 	public static $deny = ['index/*/*/*'];
-	// @todo
+
 	function __construct()
 	{
 		parent::__construct();
@@ -26,10 +26,8 @@ class Mvc extends \sys\Init
 		
 		$this->controller = $this->route->resource(true);
 		$this->controller = new $this->controller();
-		
-		$action = $this->route->action(true);
-		
-		if (method_exists($this->controller, $this->route->action(true))) {
+
+		if (method_exists($this->controller, $action = $this->route->action(true))) {
 			$this->controller->init($action, $this->route->route['params']);
 			$this->controller->{$action}($this->route->route['params']);
 			$this->controller->render();
