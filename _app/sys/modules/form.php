@@ -3,7 +3,6 @@
 namespace sys\modules;
 
 use sys\Loader;
-use sys\configs\Form as __form;
 use sys\configs\Validation as __validation;
 
 abstract class Form
@@ -56,7 +55,7 @@ abstract class Form
 	}
 
 	public function get($form = null, $param = 'ajax')
-	{	
+	{
 		$this->form_id = strtolower(\sys\utils\Helper::class_name($this));
 		
 		if (!is_array($form)) {
@@ -66,10 +65,10 @@ abstract class Form
 			$form['action'] = \sys\utils\Path::route($param . '/' . $this->form_id);
 		}
 		if (!isset($form['method'])) {
-			$form['method'] = __form::method__;
+			$form['method'] = 'post';
 		}
 		if (!isset($form['format'])) {
-			$form['format'] = __form::format__;
+			$form['format'] = 'json';
 		}
 		$this->title = $form['title'];
 		$this->action = $form['action'];
@@ -93,7 +92,7 @@ abstract class Form
 		return $this->form = $form;
 	}
 
-	public function render($template = __form::template__) // @todo use full path v form to app
+	public function render($template = 'bootstrap') // @todo use full path v form to app
 	{
 		return $this->load()->init('sys/view')->view('app/views/templates/form/' . $template . '/form', ['form' => $this->form]);
 	}
@@ -187,7 +186,7 @@ abstract class Form
 	protected function field($id, $field, $label = null)
 	{
 		if (!isset($field['fieldset'])) {
-			$field['fieldset'] = __form::fieldset__;
+			$field['fieldset'] = 'default';
 		}
 		if (!isset($this->weight['group'][$id])) {
 			$this->fieldset($field['fieldset'], $this->title, $id);

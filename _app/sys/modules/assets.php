@@ -2,23 +2,21 @@
 
 namespace sys\modules;
 
-use sys\configs\Assets as __assets;
-
 class Assets
 {
 
-	protected $assets = [];
+	public $assets = [];
 
-	public function script($subj = null, $type = 'file', $attr = null, $iteration = __assets::iteration__)
+	public function script($subj = null, $type = 'file', $attr = null, $iteration = null)
 	{
-		$key = hash(__assets::algo__, 'script' . $type . $iteration . $subj);
+		$key = hash('md5', 'script' . $type . $iteration . $subj);
 		$asset = $this->scriptTag($subj, $type, $attr, $iteration);
-		return $this->assets['script'][$type][$key] = ['value' => $subj, 'asset' => $asset, 'iteration' => $iteration];
+		return $this->assets['script'][$type][$key] = ['value' => $subj, 'asset' => $asset, null];
 	}
 
-	public function style($subj = null, $type = 'file', $attr = null, $iteration = __assets::iteration__)
+	public function style($subj = null, $type = 'file', $attr = null, $iteration = null)
 	{
-		$key = hash(__assets::algo__, 'style' . $type . $iteration . $subj);
+		$key = hash('md5', 'style' . $type . $iteration . $subj);
 		$asset = $this->styleTag($subj, $type, $attr, $iteration);
 		return $this->assets['style'][$type][$key] = ['value' => $subj, 'asset' => $asset, 'iteration' => $iteration];
 	}
@@ -33,7 +31,7 @@ class Assets
 		return $this->assets[$type][] = $asset;
 	}
 
-	public function get($subj = 'script', $type = null)
+	public function get($subj = 'script', $type = null, $optimize = false)
 	{
 		switch ($subj) {
 			case 'script':
@@ -42,15 +40,14 @@ class Assets
 				$assets['file'] = [];
 				$assets['inline'] = [];
 				foreach ($this->assets[$subj] as $_type => $_assets) {
-					if (__assets::path__ && $_type == 'file') {
-						$_assets = [['asset' => $this->optimize($subj, $_assets)]];
+					if ($optimize && $_type == 'file') {
+						$_assets = [['asset' => $this->optimize($subj, $_assets, 'assets')]];
 					}
 					foreach ($_assets as $asset) {
 						$assets[$_type][] = $asset['asset'];
 					}
 				}
-				return ($type) ? ((isset($assets[$type])) ? implode(PHP_EOL, $assets[$type]) : false) : implode(PHP_EOL, 
-					call_user_func_array('array_merge', $assets));
+				return (!$type) ? implode(PHP_EOL, call_user_func_array('array_merge', $assets)) : ((isset($assets[$type])) ? implode(PHP_EOL, $assets[$type]) : false);
 			case 'meta':
 				return (isset($this->assets[$subj])) ? implode(PHP_EOL, array_values($this->assets[$subj])) : false;
 			default:
@@ -94,28 +91,28 @@ class Assets
 		return '<meta' . \sys\utils\Html::attr($attr) . '>';
 	}
 
-	protected function optimize($type, $assets = [])
+	protected function optimize($type, $assets = [], $path)
 	{
-		$ext = constant('__assets::' . $type . '__');
-		$root_path = \sys\utils\Path::root() . '/' . \sys\utils\Path::base();
-		$assets_path = __assets::path__ . '/' . $ext;
-		$file_name = hash(__assets::algo__, implode(array_keys($assets))) . '.' . $ext;
-		$file_path = $assets_path . '/' . $file_name;
-		$dir = $root_path . $assets_path;
+		$ext = ['style' => 'css', 'script' => 'js'];
+		$root = \sys\utils\Path::root() . '/' . \sys\utils\Path::base();
+		$file = hash('md5', implode(array_keys($assets))) . '.' . ($ext = $ext[$type]);
+		$path = $path . '/' . $ext;
+		$base = $root . $path;
+		$path = $path . '/' . $file;
 		
-		if (!file_exists($file = $dir . '/' . $file_name)) {
-			if (!is_dir($dir)) {
-				mkdir($dir);
+		if (!file_exists($file = $base . '/' . $file)) {
+			if (!is_dir($base)) {
+				mkdir($base);
 			}
-			if (is_writable($dir)) {
+			if (is_writable($base)) {
 				$content = [];
 				foreach ($assets as $asset) {
-					$content[] = file_get_contents($root_path . $asset['value']);
+					$content[] = file_get_contents($root . $asset['value']);
 				}
 				file_put_contents($file, implode(PHP_EOL, $content));
 			}
 		}
-		return forward_static_call_array(['\\sys\\utils\\Html', $type], [$file_path, 'file']);
+		return forward_static_call_array(['\\' . sys__ . '\\utils\\Html', $type], [$path, 'file']);
 	}
 
 }

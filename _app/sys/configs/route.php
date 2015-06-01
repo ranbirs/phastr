@@ -9,6 +9,4 @@ class Route
 
 	const trail__ = '/';
 
-	const request__ = 'ajax';
-
 }

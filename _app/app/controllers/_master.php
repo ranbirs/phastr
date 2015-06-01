@@ -52,7 +52,7 @@ abstract class _master extends \app\init\mvc\Controller
 			$this->view->layout('app/views/layouts/request/' . $this->request->format);
 		}
 		$this->view->assets->script('$.ajaxSetup({headers: {\'' . $this->session->token() . '\': \'' . $this->session->get('_request') . '\'}});', 'inline');
-		$this->view->page = $this->view->view('app/views/pages/' . $this->route->resource() . '/' . $this->route->action(true));
+		$this->view->page = $this->view->view('app/views/pages/' . $this->route->resource() . '/' . $this->route->action('-', '_'));
 		$this->view->layout('app/views/layouts/default');
 	}
 

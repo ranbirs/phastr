@@ -7,7 +7,7 @@ class Route
 
 	public $route;
 
-	function __construct($resource, $action, array $routes, $deny = null) // @todo $deny action/arg wildcards
+	function __construct($resource, $action, array $routes, $deny = null) // @todo
 	{
 		$route['file'] = $_SERVER['SCRIPT_NAME'];
 		$route['base'] = dirname($route['file']);
@@ -46,9 +46,9 @@ class Route
 		return (!$class) ? basename($this->route['resource']) : '\\' . str_replace('/', '\\', $this->route['resource']);
 	}
 
-	public function action($label = false)
+	public function action($search = null, $replace = null)
 	{
-		return (!$label) ? $this->route['route'][1] : preg_replace('/[^a-z0-9_]/i', '_', $this->route['route'][1]);
+		return (!isset($search)) ? $this->route['route'][1] : str_replace($search, $replace, $this->route['route'][1]);
 	}
 
 	public function params($index = null)

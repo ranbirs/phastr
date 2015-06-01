@@ -7,7 +7,6 @@ class Hash
 
 	const key__ = 'secret key';
 
-	/* Default hashing key */
 	const algo__ = 'sha512';
 
 	const cipher__ = '$2a$';

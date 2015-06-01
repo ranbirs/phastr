@@ -3,16 +3,15 @@
 namespace sys\modules;
 
 use sys\Loader;
-use sys\configs\Request as __request;
 
 class Request
 {
 	
 	use Loader;
 
-	public $method = __request::method__;
+	public $method = 'post';
 
-	public $format = __request::format__;
+	public $format = 'json';
 
 	public function request($key = null, $value = null)
 	{
@@ -45,7 +44,7 @@ class Request
 		return ($key) ? ((isset($_GET[$key])) ? $_GET[$key] : false) : $_GET;
 	}
 
-	public function fields($subj, $method = __request::method__, $key = null, $delimiter = '_')
+	public function fields($subj, $method = 'post', $key = null, $delimiter = '_')
 	{
 		if ($key) {
 			return $this->{$method}($subj . $delimiter . $key);
