@@ -9,8 +9,8 @@ class User extends \app\init\mvc\Model
 	{
 		$this->loader()->init('sys/route');
 		$this->loader()->init('sys/modules/view');
-		$this->loader()->load('sys/modules/database', 'database', ['mysql', 'localhost', 'phastr_dev', 'phastr_dev', 'phastr-dev']);
-		// $this->loader()->load('app/modules/database');
+		// $this->loader()->load('sys/modules/database', 'database', ['mysql:host=localhost;dbname=phastr_dev', 'phastr_dev', 'phastr-dev']);
+		$this->loader()->load('app/modules/database');
 		$this->loader()->load('sys/modules/session');
 		$this->loader()->load('sys/modules/hash');
 		$this->loader()->load('app/modules/vocab');

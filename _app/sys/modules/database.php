@@ -7,9 +7,9 @@ use sys\utils\Helper;
 class Database extends \sys\components\Database
 {
 
-	function __construct($driver, $host, $name, $username, $password, $options = [])
+	function __construct($dsn, $username, $password, $options = [])
 	{
-		parent::__construct($driver . ':host=' . $host . ';dbname=' . $name, $username, $password, $options);
+		parent::__construct($dsn, $username, $password, $options);
 	}
 
 	public function select($table, $cols, $clause = null, $params = [], $fetch_mode = null)
