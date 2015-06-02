@@ -7,7 +7,7 @@ class Consumer extends \app\init\mvc\Controller
 
 	public function init()
 	{
-		$this->load()->init('sys/view');
+		$this->loader()->init('sys/modules/view');
 	}
 
 	public function request($params = [])
@@ -19,14 +19,14 @@ class Consumer extends \app\init\mvc\Controller
 			'token' => 'consumerx-token', 
 			'token_secret' => 'consumerx-token-secret'];
 		
-		$this->load()->load('app/modules/aes');
+		$this->loader()->load('app/modules/aes');
 		
 		$data = ['foo' => 'bar'];
 		
 		$params['iv'] = $this->aes->iv();
 		$params['data'] = $this->aes->encrypt($data, 'consumerx-token-secret', $params['iv']);
 		
-		$this->load()->load('app/modules/oauth_consumer');
+		$this->loader()->load('app/modules/oauth_consumer');
 		$this->view->response = $this->oauth_consumer->request($url, $params, $oauth, 'post');
 	}
 

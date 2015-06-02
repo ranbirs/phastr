@@ -24,8 +24,8 @@ abstract class Form
 
 	public function request()
 	{
-		$this->load()->load('sys/modules/request');
-		$this->load()->load('sys/modules/validation');
+		$this->loader()->load('sys/modules/request');
+		$this->loader()->load('sys/modules/validation');
 		
 		$this->request->method = $this->method;
 		$this->request->format = $this->format;
@@ -94,12 +94,12 @@ abstract class Form
 
 	public function render($template = 'bootstrap') // @todo use full path v form to app
 	{
-		return $this->load()->init('sys/view')->view('app/views/templates/form/' . $template . '/form', ['form' => $this->form]);
+		return $this->loader()->init('sys/modules/view')->view('app/views/templates/form/' . $template . '/form', ['form' => $this->form]);
 	}
 
 	protected function secure()
 	{
-		$this->load()->load('sys/modules/session');
+		$this->loader()->load('sys/modules/session');
 		
 		if (!$this->session->get([$this->form_id => 'token'])) {
 			$this->session->set([$this->form_id => 'token'], $this->session->hash($this->form_id, 'sha256'));

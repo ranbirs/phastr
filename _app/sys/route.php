@@ -7,7 +7,7 @@ class Route
 
 	public $route;
 
-	function __construct($resource, $action, array $routes, $deny = null) // @todo
+	function __construct($resource, $action, array $routes)
 	{
 		$route['file'] = $_SERVER['SCRIPT_NAME'];
 		$route['base'] = dirname($route['file']);
@@ -33,7 +33,7 @@ class Route
 		return $this->route['uri'];
 	}
 
-	public function route($key = 'path', $join = false)
+	public function route($key = 'route', $join = false)
 	{
 		return (isset($this->route[$key])) ? ((!$join) ? $this->route[$key] : implode('/', (array) $this->route[$key])) : false;
 	}
@@ -48,7 +48,7 @@ class Route
 
 	public function action($search = null, $replace = null)
 	{
-		return (!isset($search)) ? $this->route['route'][1] : str_replace($search, $replace, $this->route['route'][1]);
+		return (!isset($search) || !isset($replace)) ? $this->route['route'][1] : str_replace($search, $replace, $this->route['route'][1]);
 	}
 
 	public function params($index = null)
@@ -69,7 +69,7 @@ class Route
 		return (!isset($code)) ? http_response_code() : http_response_code($code);
 	}
 
-	public function error($code, $view = null, $data = null)
+	public function error($code, $view = null, $data = null, $ext = '.php')
 	{
 		$this->status($code);
 		
@@ -77,7 +77,7 @@ class Route
 			if (isset($data)) {
 				extract($data);
 			}
-			require $view . '.php';
+			require $view . $ext;
 		}
 		exit();
 	}

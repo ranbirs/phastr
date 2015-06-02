@@ -20,8 +20,8 @@ class Service_form extends Form
 
 	public function submit($values = null, $status = null)
 	{
-		$this->load()->load('app/modules/aes');
-		$this->load()->load('app/modules/oauth_consumer');
+		$this->loader()->load('app/modules/aes');
+		$this->loader()->load('app/modules/oauth_consumer');
 		
 		$url = 'http://' . $_SERVER['SERVER_NAME'] . '/index.php/provider/example-service-post-action';
 		$oauth = [
@@ -30,7 +30,7 @@ class Service_form extends Form
 			'token' => 'consumerx-token', 
 			'token_secret' => 'consumerx-token-secret'];
 		$params['iv'] = $this->aes->iv();
-		$params['data'] = $this->aes->encrypt($values, 'consumerx-token-secret', $params['iv']);
+		$params['data'] = $this->aes->encrypt($values, md5('consumerx-token-secret'), $params['iv']);
 		$response = $this->oauth_consumer->request($url, $params, $oauth, 'post');
 		
 		$this->message('Went through!', 'success');

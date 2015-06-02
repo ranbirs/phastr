@@ -12,7 +12,7 @@ class Session implements SessionHandlerInterface
 
 	function __construct()
 	{
-		$this->load()->load('app/modules/database');
+		$this->loader()->load('app/modules/database');
 	}
 
 	public function open($save_path, $name)

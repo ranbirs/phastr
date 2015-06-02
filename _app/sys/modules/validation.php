@@ -14,8 +14,8 @@ class Validation
 
 	function __construct()
 	{
-		$this->load()->load('sys/modules/session');
-		$this->load()->load('sys/modules/request');
+		$this->loader()->load('sys/modules/session');
+		$this->loader()->load('sys/modules/request');
 	}
 
 	public function getResult($status = null)

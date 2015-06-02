@@ -7,9 +7,13 @@ abstract class Init
 
 	public static $init;
 
-	function __construct()
+	public $route;
+
+	function __construct(Route &$route)
 	{
 		self::$init = &$this;
+		
+		$this->route = $route;
 	}
 
 }

@@ -9,7 +9,7 @@ class Register_form extends Form
 
 	public function fields()
 	{
-		$this->load()->load('app/modules/vocab');
+		$this->loader()->load('app/modules/vocab');
 		
 		$this->input('register_name', 'Name', $params = ['attr' => ['class' => 'form-control']]);
 		

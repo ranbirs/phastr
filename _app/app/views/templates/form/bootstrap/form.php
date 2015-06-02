@@ -37,6 +37,8 @@ $this->assets->script('assets/js/form/bootstrap.js');
 	
 	
 	
+	
+	
 	</fieldset>
     <?php endforeach; ?>
 

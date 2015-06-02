@@ -9,16 +9,16 @@ class Example_service
 
 	public function get_action($request, $consumer)
 	{
-		$this->load()->load('app/modules/aes');
-		$data = $this->aes->decrypt($request['data'], $consumer['token_secret'], $request['iv']);
+		$this->loader()->load('app/modules/aes');
+		$data = $this->aes->decrypt($request['data'], md5($consumer['token_secret']), $request['iv']);
 		
 		return $this->response(200, ['decrypted' => $data]);
 	}
 
 	public function post_action($request, $consumer)
 	{
-		$this->load()->load('app/modules/aes');
-		$data = $this->aes->decrypt($request['data'], $consumer['token_secret'], $request['iv']);
+		$this->loader()->load('app/modules/aes');
+		$data = $this->aes->decrypt($request['data'], md5($consumer['token_secret']), $request['iv']);
 		
 		return $this->response(200, ['decrypted' => $data]);
 	}

@@ -3,7 +3,6 @@
 namespace sys\utils;
 
 use sys\Init;
-use sys\Route;
 
 class Path
 {
@@ -15,6 +14,22 @@ class Path
 		return self::uri(Init::$init->route->route('route', true) . ((isset($path)) ? '/' . $path : ''), $rewrite);
 	}
 
+	public static function uri($path = null, $rewrite = false)
+	{
+		$route = Init::$init->route->route;
+		return (($rewrite) ? $route['base'] : $route['file']) . (($path = trim($path, '/')) ? '/' . $path : $route['uri']);
+	}
+
+	public static function base($path = null)
+	{
+		return rtrim(Init::$init->route->route['base'], '/') . '/' . $path;
+	}
+
+	public static function root($path = null)
+	{
+		return (isset($path)) ? $_SERVER['DOCUMENT_ROOT'] . '/' . $path : $_SERVER['DOCUMENT_ROOT'];
+	}
+
 	public static function label($path = null)
 	{
 		return preg_replace('/[^a-z0-9_]/i', '_', $path);
@@ -23,22 +38,6 @@ class Path
 	public static function resolve($file)
 	{
 		return (($file = stream_resolve_include_path($file)) !== false) ? $file : false;
-	}
-
-	public static function root($path = null)
-	{
-		return (isset($path)) ? $_SERVER['DOCUMENT_ROOT'] . '/' . $path : $_SERVER['DOCUMENT_ROOT'];
-	}
-
-	public static function base($path = null)
-	{
-		return rtrim(Init::$init->route->route['base'], '/') . '/' . $path;
-	}
-
-	public static function uri($path = null, $rewrite = false)
-	{
-		$route = Init::$init->route->route;
-		return (($rewrite) ? $route['base'] : $route['file']) . (($path = trim($path, '/')) ? '/' . $path : $route['uri']);
 	}
 
 }

@@ -8,7 +8,7 @@ The fastest, security-first back-end web application framework.
 
 Phastr is the web's first and only (Not only MVC) high-level framework.
 
-Phastr is resource and action. You decide what comes next. Maybe you don't need views or models or database. Maybe you only need a platform for a JavaScript application or a RESTful service. Phastr is ready to help.
+Phastr is resource and action. You decide what comes next. Maybe you don't need views or models or database. Maybe you only need a platform for a JavaScript application or a RESTful service. Phastr is ready for you.
 
 Phastr's comes with an example MCV application ready with an OAuth secure service provider and hardnened Ajax forms. Patterns are defined at the application level. It's pure plug and play fun.
 

@@ -10,11 +10,9 @@ class OAuth_provider
 	
 	use \sys\Loader;
 
-	const method__ = OAUTH_HTTP_METHOD_GET;
-
 	public $oauth;
 
-	public function request($url, $params = null, $method = self::method__)
+	public function request($url, $params = null, $method = OAUTH_HTTP_METHOD_GET)
 	{
 		try {
 			$this->oauth = new OAuthProvider();
@@ -36,7 +34,7 @@ class OAuth_provider
 
 	protected function consumer($key)
 	{
-		return $this->load()->load('app/modules/config')->ini('configs/server/consumers/' . $key);
+		return $this->loader()->load('app/modules/config')->ini('configs/server/consumers/' . $key);
 	}
 
 	public function consumerHandler($oauth)

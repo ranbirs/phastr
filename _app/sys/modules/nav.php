@@ -33,7 +33,7 @@ abstract class Nav
 
 	public function render($template = 'bootstrap')
 	{
-		return $this->load()->init('sys/view')->view('app/views/templates/nav/' . $template, $this->nav);
+		return $this->loader()->init('sys/modules/view')->view('app/views/templates/nav/' . $template, $this->nav);
 	}
 
 	protected function item($label = null, $path = null, $params = [])

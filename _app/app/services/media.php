@@ -9,7 +9,7 @@ class Media
 
 	public function render($result, $type, $subj)
 	{
-		$this->load()->init('sys/view');
+		$this->loader()->init('sys/modules/view');
 		
 		$this->view->type = $type . '/' . $subj;
 		$this->view->body = base64_decode($result);

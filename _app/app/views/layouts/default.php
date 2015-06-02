@@ -6,8 +6,7 @@
 
     <title><?= $full_title = $this->title . ' | ' . $this->app_title; ?></title>
 
-    <?= $this->assets->get('style', 'file'); ?>
-    <?= $this->assets->get('style', 'external'); ?>
+    <?= $this->assets->get('style', null, 'assets'); ?>
 
 </head>
 <body>
@@ -40,7 +39,7 @@
 		</div>
 	</div>
 
-<?= $this->assets->get('script'); ?>
+<?= $this->assets->get('script', null, 'assets'); ?>
 
 </body>
 </html>

@@ -31,7 +31,7 @@ class Assets
 		return $this->assets[$type][] = $asset;
 	}
 
-	public function get($subj = 'script', $type = null, $optimize = false)
+	public function get($subj = 'script', $type = null, $path = null)
 	{
 		switch ($subj) {
 			case 'script':
@@ -40,8 +40,8 @@ class Assets
 				$assets['file'] = [];
 				$assets['inline'] = [];
 				foreach ($this->assets[$subj] as $_type => $_assets) {
-					if ($optimize && $_type == 'file') {
-						$_assets = [['asset' => $this->optimize($subj, $_assets, 'assets')]];
+					if ($path && $_type == 'file') {
+						$_assets = [['asset' => $this->optimize($subj, $_assets, $path)]];
 					}
 					foreach ($_assets as $asset) {
 						$assets[$_type][] = $asset['asset'];
@@ -112,7 +112,7 @@ class Assets
 				file_put_contents($file, implode(PHP_EOL, $content));
 			}
 		}
-		return forward_static_call_array(['\\' . sys__ . '\\utils\\Html', $type], [$path, 'file']);
+		return $this->{($type . 'Tag')}($path, 'file');
 	}
 
 }

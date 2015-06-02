@@ -21,7 +21,7 @@ class Load
 			$prop = basename($path);
 		}
 		$class = '\\' . str_replace('/', '\\', $path);
-		return $this->_instance->{$prop} = (isset($args)) ? (new ReflectionClass($class))->newInstanceArgs((array) $args) : new $class();
+		return $this->_instance->{$prop} = $this->reflect($class, $args);
 	}
 
 	public function init($path, $prop = null, $args = null)
@@ -33,7 +33,12 @@ class Load
 			return $this->_instance->{$prop} = Init::$init->{$prop};
 		}
 		$class = '\\' . str_replace('/', '\\', $path);
-		return $this->_instance->{$prop} = Init::$init->{$prop} = new $class();
+		return $this->_instance->{$prop} = Init::$init->{$prop} = $this->reflect($class, $args);
+	}
+
+	protected function reflect($class, $args = null)
+	{
+		return (!isset($args)) ? new $class() : (new ReflectionClass($class))->newInstanceArgs((array) $args);
 	}
 
 }

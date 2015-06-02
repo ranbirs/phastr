@@ -64,7 +64,7 @@ class Request
 
 	public function resolve($instance, $subj)
 	{
-		if (!$this->load()->load('sys/modules/validation')->validate('request')) {
+		if (!$this->loader()->load('sys/modules/validation')->validate('request')) {
 			return false;
 		}
 		if (method_exists($instance->{$subj}, 'request')) {

@@ -46,7 +46,7 @@ class Session extends \sys\components\Session
 		if (!$gen) {
 			return $this->get('_token');
 		}
-		return $this->load()->load('sys/modules/hash')->gen($this->session_id, $algo, $this->timestamp()[0]);
+		return $this->loader()->load('sys/modules/hash')->gen($this->session_id, $algo, $this->timestamp()[0]);
 	}
 
 	public function key()
@@ -56,7 +56,7 @@ class Session extends \sys\components\Session
 
 	public function keygen($hash = null, $algo = __session::algo__)
 	{
-		$key = $this->load()->load('sys/modules/hash')->gen($this->get('_token'), $algo, __session::key__);
+		$key = $this->loader()->load('sys/modules/hash')->gen($this->get('_token'), $algo, __session::key__);
 		return (!isset($hash)) ? $key : ($hash === $key);
 	}
 
@@ -67,7 +67,7 @@ class Session extends \sys\components\Session
 
 	public function hash($data = null, $algo = __session::algo__)
 	{
-		return $this->load()->load('sys/modules/hash')->gen($data, $algo, $this->key());
+		return $this->loader()->load('sys/modules/hash')->gen($data, $algo, $this->key());
 	}
 
 }

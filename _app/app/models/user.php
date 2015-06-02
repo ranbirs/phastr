@@ -7,13 +7,13 @@ class User extends \app\init\mvc\Model
 
 	function __construct()
 	{
-		$this->load()->init('sys/route');
-		$this->load()->init('sys/view');
-		$this->load()->load('sys/modules/database', 'database', ['mysql', 'localhost', 'phastr_dev', 'phastr_dev', 'phastr-dev']);
-		// $this->load()->load('app/modules/database');
-		$this->load()->load('sys/modules/session');
-		$this->load()->load('sys/modules/hash');
-		$this->load()->load('app/modules/vocab');
+		$this->loader()->init('sys/route');
+		$this->loader()->init('sys/modules/view');
+		$this->loader()->load('sys/modules/database', 'database', ['mysql', 'localhost', 'phastr_dev', 'phastr_dev', 'phastr-dev']);
+		// $this->loader()->load('app/modules/database');
+		$this->loader()->load('sys/modules/session');
+		$this->loader()->load('sys/modules/hash');
+		$this->loader()->load('app/modules/vocab');
 	}
 
 	public function token($id)
