@@ -5,14 +5,10 @@ namespace app\configs;
 class Database
 {
 
-	const type__ = 'mysql';
+	const dsn__ = 'mysql:host=localhost;dbname=';
 
-	const host__ = 'localhost';
+	const username__ = '';
 
-	const name__ = '';
-
-	const user__ = '';
-
-	const pass__ = '';
+	const password__ = '';
 
 }

@@ -17,7 +17,7 @@ class Mvc extends \sys\Init
 		if (method_exists($this->controller = new $this->controller(), $action = $this->route->action('-', '_'))) {
 			$this->controller->init($action, $this->route->route['params']);
 			$this->controller->{$action}($this->route->route['params']);
-			$this->controller->render();
+			$this->controller->render($action, $this->route->route['params']);
 		}
 		$this->route->error(404, 'app/views/layouts/error/404');
 	}

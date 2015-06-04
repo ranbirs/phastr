@@ -17,7 +17,7 @@ class Path
 	public static function uri($path = null, $rewrite = false)
 	{
 		$route = Init::$init->route->route;
-		return (($rewrite) ? $route['base'] : $route['file']) . (($path = trim($path, '/')) ? '/' . $path : $route['uri']);
+		return ((!$rewrite) ? $route['file'] : $route['base']) . ((isset($path)) ? '/' . trim($path, '/') : $route['uri']);
 	}
 
 	public static function base($path = null)

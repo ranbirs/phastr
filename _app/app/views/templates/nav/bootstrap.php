@@ -32,7 +32,7 @@ foreach ($nav['items'] as $index => &$item) {
 		$leaf[] = '<li' . $val['attr'] . '>';
 		
 		if ($val['path']) {
-			$val['path'] = \sys\utils\Path::uri($val['path']) . '/';
+			$val['path'] = \sys\utils\Path::uri($val['path']);
 		}
 		$val['anchor'] = '<a' . (($val['path']) ? ' href="' . $val['path'] . '"' : '') . '>' . $val['label'] . '</a>';
 		$leaf[] = $val['anchor'];
@@ -54,7 +54,7 @@ foreach ($nav['items'] as $index => &$item) {
 	$list[] = '<li' . $item['attr'] . '>';
 	
 	if ($item['path']) {
-		$item['path'] = \sys\utils\Path::uri($item['path']) . '/';
+		$item['path'] = \sys\utils\Path::uri($item['path']);
 	}
 	if ($leaf) {
 		$item['anchor'] = '<a data-toggle="dropdown" class="dropdown-toggle"' . (($item['path']) ? ' href="' . $item['path'] . '"' : '') . '>' . $item['label'] .

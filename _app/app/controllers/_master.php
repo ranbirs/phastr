@@ -44,7 +44,7 @@ abstract class _master extends \app\init\mvc\Controller
 		$this->view->user_nav = $this->user_nav->render();
 	}
 
-	public function render()
+	public function render($action = null)
 	{
 		if ($request_subj = $this->route->arg('ajax')) {
 			$this->view->response = $this->request->resolve($this, $request_subj);
@@ -52,7 +52,7 @@ abstract class _master extends \app\init\mvc\Controller
 			$this->view->layout('app/views/layouts/request/' . $this->request->format);
 		}
 		$this->view->assets->script('$.ajaxSetup({headers: {\'' . $this->session->token() . '\': \'' . $this->session->get('_request') . '\'}});', 'inline');
-		$this->view->page = $this->view->view('app/views/pages/' . $this->route->resource() . '/' . $this->route->action('-', '_'));
+		$this->view->page = $this->view->view('app/views/pages/' . $this->route->resource() . '/' . $action);
 		$this->view->layout('app/views/layouts/default');
 	}
 
