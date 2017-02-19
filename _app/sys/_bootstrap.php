@@ -1,7 +1,6 @@
 <?php
 
 error_reporting(E_ALL); // @todo env.
-
 spl_autoload_register();
 
 define('dir__', '_app');

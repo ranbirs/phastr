@@ -15,10 +15,10 @@ class Error
 		print $this->output('Error', $errno, $errstr, $errfile, $errline);
 	}
 
-	public function output($handler, $code = null, $message = null, $file = null, $line = null)
+	public function output($tag, $code = null, $message = null, $file = null, $line = null)
 	{
 		return "<pre style=\"white-space: pre-line;\">
-			<strong>{$handler}</strong>
+			<strong>{$tag}</strong>
 			<em>{$message}</em>
 			<strong>{$file}:{$line}</strong>
 		</pre>";
