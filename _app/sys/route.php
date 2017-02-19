@@ -7,7 +7,7 @@ class Route
 
 	public $route;
 
-	function __construct($resource, $action, array $routes)
+	function __construct($def_resource, $def_action, array $routes)
 	{
 		$route['file'] = $_SERVER['SCRIPT_NAME'];
 		$route['base'] = dirname($route['file']);
@@ -15,10 +15,10 @@ class Route
 		(strlen($route['uri'])) ? $route['path'] = explode('/', $route['uri']) : $route['uri'] = '/';
 		
 		if (!isset($route['path'][0])) {
-			$route['path'][0] = $resource;
+			$route['path'][0] = $def_resource;
 		}
 		if (!isset($route['path'][1])) {
-			$route['path'][1] = $action;
+			$route['path'][1] = $def_action;
 		}
 		$route['resource'] = (isset($routes[$route['path'][0]])) ? $routes[$route['path'][0]] : null;
 		$route['route'] = $route['path'];

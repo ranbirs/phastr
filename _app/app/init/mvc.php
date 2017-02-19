@@ -2,10 +2,12 @@
 
 namespace app\init;
 
+use sys\Route;
+
 class Mvc extends \sys\Init
 {
 
-	function __construct($route)
+	function __construct(Route $route)
 	{
 		parent::__construct($route);
 		
