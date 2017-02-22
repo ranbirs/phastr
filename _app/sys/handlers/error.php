@@ -5,23 +5,22 @@ namespace sys\handlers;
 class Error
 {
 
-	public function exception($ex)
+	public static function exception($ex)
 	{
-		print $this->output('Exception', $ex->getCode(), $ex->getMessage(), $ex->getFile(), $ex->getLine());
+		print self::output($ex->getCode(), $ex->getMessage(), $ex->getFile(), $ex->getLine());
 	}
 
-	public function error($errno, $errstr, $errfile, $errline, $errcontext)
+	public static function error($errno, $errstr, $errfile, $errline, $errcontext)
 	{
-		print $this->output('Error', $errno, $errstr, $errfile, $errline);
+		print self::output($errno, $errstr, $errfile, $errline);
 	}
 
-	public function output($tag, $code = null, $message = null, $file = null, $line = null)
+	private static function output($code = null, $message = null, $file = null, $line = null)
 	{
 		return "<pre style=\"white-space: pre-line;\">
-			<strong>{$tag}</strong>
-			<em>{$message}</em>
-			<strong>{$file}:{$line}</strong>
-		</pre>";
+				<strong>{$code}</strong>&nbsp;<em>{$message}</em>
+				<strong>{$file}:{$line}</strong>
+			</pre>";
 	}
 
 }
