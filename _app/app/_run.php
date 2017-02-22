@@ -7,6 +7,6 @@ $_routes = [
 	'consumer' => 'app/controllers/consumer',
 	'provider' => 'app/controllers/provider'];
 
-$_init = new \app\init\Mvc($_route = new \sys\Route('index', 'index', $_routes));
+$_init = new \app\init\Mvc($_route = new \sys\Route($_routes, 'index', 'index'));
 
 exit();

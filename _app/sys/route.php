@@ -7,7 +7,7 @@ class Route
 
 	public $route;
 
-	function __construct($def_resource, $def_action, array $routes)
+	function __construct(array $routes, $def_resource = null, $def_action = null)
 	{
 		$route['file'] = $_SERVER['SCRIPT_NAME'];
 		$route['base'] = dirname($route['file']);
