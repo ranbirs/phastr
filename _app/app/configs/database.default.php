@@ -7,8 +7,8 @@ class Database
 
 	const dsn__ = 'mysql:host=localhost;dbname=';
 
-	const username__ = '';
+	const user__ = '';
 
-	const password__ = '';
+	const pass__ = '';
 
 }

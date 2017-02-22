@@ -12,7 +12,7 @@ class Vocab
 
 	protected function constant($const, $context, $args = null)
 	{
-		$format = constant('\\' . app__ . '\\vocabs\\' . $context . '::' . $const);
+		$format = constant('\\app\\vocabs\\' . $context . '::' . $const);
 		return call_user_func_array('sprintf', (array) $format + (array) $args);
 	}
 
