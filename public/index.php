@@ -1,11 +1,6 @@
 <?php
 
-namespace sys;
+error_reporting(E_ALL);
 
-	const app_base__ = "app/";
-	const sys_base__ = "sys/";
-
-set_include_path(dirname(__DIR__));
-
-require \sys\sys_base__ . "_autoload.php";
-require \sys\sys_base__ . "_start.php";
+require '../_app/sys/_boot.php';
+require 'app/_run.php';
